@@ -1,0 +1,26 @@
+{
+  "name": "Break Engine",
+  "implementation": "FM-1 Rhythmer Amenity/Jungle DSP with native MPC sample browser and sequence command recording",
+  "source_bars": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "performance": [
+    "16 chops",
+    "16 rolls",
+    "A/B source",
+    "Straight Return",
+    "Orbit",
+    "Variation",
+    "Drift",
+    "DJ Filter",
+    "Freeze",
+    "Tail Fill",
+    "Grain",
+    "Splice",
+    "Stretch speed"
+  ],
+  "bundled_audio": false
+}

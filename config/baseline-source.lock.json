@@ -1,0 +1,42 @@
+[
+  {
+    "id": "sd88me_mpc-vst-TR-MPC_trmpc-vst-v1.2.1",
+    "repo": "sd88me/mpc-vst-TR-MPC",
+    "tag": "trmpc-vst-v1.2.1",
+    "commit": "e511f73f48f6205df804ccc5389374c97257c7df",
+    "submodules": [],
+    "folder": "sd88me_mpc-vst-TR-MPC_trmpc-vst-v1.2.1"
+  },
+  {
+    "id": "sd88me_mpc-vst-TR-MPC_6w6-vst-v1.3.1",
+    "repo": "sd88me/mpc-vst-TR-MPC",
+    "tag": "6w6-vst-v1.3.1",
+    "commit": "e511f73f48f6205df804ccc5389374c97257c7df",
+    "submodules": [],
+    "folder": "sd88me_mpc-vst-TR-MPC_6w6-vst-v1.3.1"
+  },
+  {
+    "id": "sd88me_mpc-vst-TR-MPC_8w8-vst-v1.3.1",
+    "repo": "sd88me/mpc-vst-TR-MPC",
+    "tag": "8w8-vst-v1.3.1",
+    "commit": "e511f73f48f6205df804ccc5389374c97257c7df",
+    "submodules": [],
+    "folder": "sd88me_mpc-vst-TR-MPC_8w8-vst-v1.3.1"
+  },
+  {
+    "id": "sd88me_mpc-vst-TR-MPC_cw78-vst-v1.3.1",
+    "repo": "sd88me/mpc-vst-TR-MPC",
+    "tag": "cw78-vst-v1.3.1",
+    "commit": "e511f73f48f6205df804ccc5389374c97257c7df",
+    "submodules": [],
+    "folder": "sd88me_mpc-vst-TR-MPC_cw78-vst-v1.3.1"
+  },
+  {
+    "id": "sd88me_mpc-vst-TR-MPC_9w9-vst-v1.3.1",
+    "repo": "sd88me/mpc-vst-TR-MPC",
+    "tag": "9w9-vst-v1.3.1",
+    "commit": "e511f73f48f6205df804ccc5389374c97257c7df",
+    "submodules": [],
+    "folder": "sd88me_mpc-vst-TR-MPC_9w9-vst-v1.3.1"
+  }
+]

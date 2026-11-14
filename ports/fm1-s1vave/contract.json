@@ -1,0 +1,695 @@
+{
+  "chain_params": [
+    {
+      "key": "p0",
+      "name": "Factory Program",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p1",
+      "name": "RANGE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 5,
+      "default": 2
+    },
+    {
+      "key": "p2",
+      "name": "SQR LVL",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p3",
+      "name": "SAW LVL",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 127
+    },
+    {
+      "key": "p4",
+      "name": "SUB LVL",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p5",
+      "name": "SUB TYP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 2,
+      "default": 2
+    },
+    {
+      "key": "p6",
+      "name": "NOISE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 7
+    },
+    {
+      "key": "p7",
+      "name": "NOI MOD",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 1
+    },
+    {
+      "key": "p8",
+      "name": "FINE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64
+    },
+    {
+      "key": "p9",
+      "name": "PWM SRC",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 2,
+      "default": 2
+    },
+    {
+      "key": "p10",
+      "name": "PW/DUTY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p11",
+      "name": "DRAW SW",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 2,
+      "default": 0
+    },
+    {
+      "key": "p12",
+      "name": "DRW MLT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 31,
+      "default": 0
+    },
+    {
+      "key": "p13",
+      "name": "OVRTONE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 200,
+      "default": 0
+    },
+    {
+      "key": "p14",
+      "name": "COMB",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 31,
+      "default": 0
+    },
+    {
+      "key": "p15",
+      "name": "CUTOFF",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 58
+    },
+    {
+      "key": "p16",
+      "name": "RESO",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p17",
+      "name": "ENV AMT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100
+    },
+    {
+      "key": "p18",
+      "name": "FLT LFO",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 26
+    },
+    {
+      "key": "p19",
+      "name": "KEY TRK",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 45
+    },
+    {
+      "key": "p20",
+      "name": "FLT BND",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 24,
+      "default": 2
+    },
+    {
+      "key": "p21",
+      "name": "FLT COL",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0
+    },
+    {
+      "key": "p22",
+      "name": "TONE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64
+    },
+    {
+      "key": "p23",
+      "name": "WARMTH",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64
+    },
+    {
+      "key": "p24",
+      "name": "ATTACK",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p25",
+      "name": "DECAY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 28
+    },
+    {
+      "key": "p26",
+      "name": "SUSTAIN",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 25
+    },
+    {
+      "key": "p27",
+      "name": "RELEASE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 63
+    },
+    {
+      "key": "p28",
+      "name": "AMP MOD",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 1
+    },
+    {
+      "key": "p29",
+      "name": "ENV TRG",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 2,
+      "default": 2
+    },
+    {
+      "key": "p30",
+      "name": "RATE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 2
+    },
+    {
+      "key": "p31",
+      "name": "WAVE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 5,
+      "default": 2
+    },
+    {
+      "key": "p32",
+      "name": "SYNC",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 1
+    },
+    {
+      "key": "p33",
+      "name": "KEY TRG",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0
+    },
+    {
+      "key": "p34",
+      "name": "FAST/N",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0
+    },
+    {
+      "key": "p35",
+      "name": "PITCH",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 6
+    },
+    {
+      "key": "p36",
+      "name": "MOD DPT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 15
+    },
+    {
+      "key": "p37",
+      "name": "OSC BND",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 24,
+      "default": 2
+    },
+    {
+      "key": "p38",
+      "name": "RSR MOD",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0
+    },
+    {
+      "key": "p39",
+      "name": "RSR RES",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 100,
+      "default": 50
+    },
+    {
+      "key": "p40",
+      "name": "RSR SHP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 100,
+      "default": 0
+    },
+    {
+      "key": "p41",
+      "name": "RSR LVL",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 100,
+      "default": 50
+    },
+    {
+      "key": "p42",
+      "name": "DLY LVL",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 62
+    },
+    {
+      "key": "p43",
+      "name": "DLY TIM",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 124
+    },
+    {
+      "key": "p44",
+      "name": "DLY FB",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 68
+    },
+    {
+      "key": "p45",
+      "name": "DLY SYN",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 1
+    },
+    {
+      "key": "p46",
+      "name": "REV LVL",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 29
+    },
+    {
+      "key": "p47",
+      "name": "REV TIM",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 127
+    },
+    {
+      "key": "p48",
+      "name": "REV TYP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 6,
+      "default": 6
+    },
+    {
+      "key": "p49",
+      "name": "PRE-DLY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 100,
+      "default": 20
+    },
+    {
+      "key": "p50",
+      "name": "CHORUS",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 4,
+      "default": 0
+    },
+    {
+      "key": "p51",
+      "name": "VOICING",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 3,
+      "default": 2
+    },
+    {
+      "key": "p52",
+      "name": "PORTA M",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 2,
+      "default": 0
+    },
+    {
+      "key": "p53",
+      "name": "PORTA T",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 30
+    },
+    {
+      "key": "p54",
+      "name": "PORTA",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0
+    },
+    {
+      "key": "p55",
+      "name": "TRANSP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 124,
+      "default": 64
+    },
+    {
+      "key": "p56",
+      "name": "VOLUME",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 68
+    },
+    {
+      "key": "p57",
+      "name": "V2 SW",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 1
+    },
+    {
+      "key": "p58",
+      "name": "V3 SW",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 1
+    },
+    {
+      "key": "p59",
+      "name": "V4 SW",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 1
+    },
+    {
+      "key": "p60",
+      "name": "V2 SHFT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 24,
+      "default": 24
+    },
+    {
+      "key": "p61",
+      "name": "V3 SHFT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 24,
+      "default": 19
+    },
+    {
+      "key": "p62",
+      "name": "V4 SHFT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 24,
+      "default": 17
+    },
+    {
+      "key": "p63",
+      "name": "SPREAD",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 100,
+      "default": 0
+    },
+    {
+      "key": "p64",
+      "name": "DETUNE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 50,
+      "default": 0
+    },
+    {
+      "key": "p65",
+      "name": "PHR MIX",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 100,
+      "default": 0
+    },
+    {
+      "key": "p66",
+      "name": "FX MODE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0
+    },
+    {
+      "key": "p67",
+      "name": "FX AMT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 100,
+      "default": 0
+    },
+    {
+      "key": "p68",
+      "name": "FX MIX",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 100,
+      "default": 50
+    }
+  ],
+  "ui_hierarchy": {}
+}

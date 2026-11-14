@@ -1,0 +1,101 @@
+{
+  "schema": 1,
+  "policy": "Upstream engine names; transport identifiers and paths remain unchanged",
+  "engines": [
+    {
+      "port": "drumx",
+      "original_name": "DRUM-X",
+      "evidence": "ports/drumx/vst.json"
+    },
+    {
+      "port": "fm1-cs1",
+      "original_name": "CS-1",
+      "evidence": "ports/fm1-cs1/vst.json"
+    },
+    {
+      "port": "fm1-elixir",
+      "original_name": "Elixir",
+      "evidence": "ports/fm1-elixir/vst.json"
+    },
+    {
+      "port": "fm1-fm106",
+      "original_name": "FM-106",
+      "evidence": "ports/fm1-fm106/vst.json"
+    },
+    {
+      "port": "fm1-fmini",
+      "original_name": "FMini-1",
+      "evidence": "ports/fm1-fmini/vst.json"
+    },
+    {
+      "port": "fm1-guru600",
+      "original_name": "Guru-600",
+      "evidence": "ports/fm1-guru600/vst.json"
+    },
+    {
+      "port": "fm1-hortator",
+      "original_name": "Hortator",
+      "evidence": "ports/fm1-hortator/vst.json"
+    },
+    {
+      "port": "fm1-kwasub",
+      "original_name": "K-WASUB",
+      "evidence": "ports/fm1-kwasub/vst.json"
+    },
+    {
+      "port": "fm1-kwasub-kit",
+      "original_name": "K-WASUB",
+      "evidence": "ports/fm1-kwasub-kit/vst.json"
+    },
+    {
+      "port": "fm1-mono2k",
+      "original_name": "MONO2K",
+      "evidence": "ports/fm1-mono2k/vst.json"
+    },
+    {
+      "port": "fm1-obervave",
+      "original_name": "OberVave",
+      "evidence": "ports/fm1-obervave/vst.json"
+    },
+    {
+      "port": "fm1-prophet",
+      "original_name": "Prophet",
+      "evidence": "ports/fm1-prophet/vst.json"
+    },
+    {
+      "port": "fm1-s1vave",
+      "original_name": "S1Vave",
+      "evidence": "ports/fm1-s1vave/vst.json"
+    },
+    {
+      "port": "move-aphex",
+      "original_name": "Aphex",
+      "evidence": "filliformes/aphex-move@pinned:src/module.json"
+    },
+    {
+      "port": "move-braids",
+      "original_name": "Braids",
+      "evidence": "charlesvestal/schwung-braids@pinned:src/module.json"
+    },
+    {
+      "port": "move-dexed",
+      "original_name": "Dexed",
+      "evidence": "charlesvestal/schwung-dx7@pinned:src/module.json"
+    },
+    {
+      "port": "move-hera",
+      "original_name": "Hera",
+      "evidence": "charlesvestal/schwung-hera@pinned:src/module.json"
+    },
+    {
+      "port": "move-plaits",
+      "original_name": "Plaits",
+      "evidence": "j3threejay/move-anything-plaits@pinned:src/module.json"
+    },
+    {
+      "port": "sophie",
+      "original_name": "Sophie",
+      "evidence": "mestela/schwung-sophie module.json (pinned sources.json)"
+    }
+  ]
+}

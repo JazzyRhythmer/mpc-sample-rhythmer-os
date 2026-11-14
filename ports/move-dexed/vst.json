@@ -1,0 +1,27 @@
+{
+  "name": "Dexed",
+  "vendor": "Dexed/MSFA by google/asb2m10 (port: charlesvestal)",
+  "uid": "0hib",
+  "version": 1000,
+  "so": "rhythmer-dexed.so",
+  "module": "contract.json",
+  "custom_skin": true,
+  "targets": [
+    "aarch64"
+  ],
+  "defines": {
+    "MODULE_SUBDIR": "\"module\"",
+    "HAS_SONG_POS": 1
+  },
+  "build": {
+    "root": ".",
+    "sources": [
+      "../common/move_loader.c"
+    ],
+    "cflags": [],
+    "libs": [
+      "-ldl",
+      "-lpthread"
+    ]
+  }
+}

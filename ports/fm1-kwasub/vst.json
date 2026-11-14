@@ -1,0 +1,16 @@
+{
+  "name": "K-WASUB",
+  "vendor": "FM-1 open-source community",
+  "uid": "GKWB",
+  "version": 1000,
+  "so": "rhythmer-fm1-kwasub.so",
+  "module": "contract.json",
+  "custom_skin": true,
+  "targets": [
+    "aarch64"
+  ],
+  "defines": {
+    "MODULE_SUBDIR": "\"module\"",
+    "FM1_ISOLATED": 1
+  }
+}

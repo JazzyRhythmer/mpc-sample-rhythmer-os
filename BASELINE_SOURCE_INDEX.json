@@ -1,0 +1,32 @@
+[
+  {
+    "repo": "sd88me/mpc-vst-TR-MPC",
+    "tag": "trmpc-vst-v1.2.1",
+    "commit": "e511f73f48f6205df804ccc5389374c97257c7df",
+    "source_folder": "third_party/mpc-original/sd88me_mpc-vst-TR-MPC_trmpc-vst-v1.2.1/"
+  },
+  {
+    "repo": "sd88me/mpc-vst-TR-MPC",
+    "tag": "6w6-vst-v1.3.1",
+    "commit": "e511f73f48f6205df804ccc5389374c97257c7df",
+    "source_folder": "third_party/mpc-original/sd88me_mpc-vst-TR-MPC_trmpc-vst-v1.2.1/"
+  },
+  {
+    "repo": "sd88me/mpc-vst-TR-MPC",
+    "tag": "8w8-vst-v1.3.1",
+    "commit": "e511f73f48f6205df804ccc5389374c97257c7df",
+    "source_folder": "third_party/mpc-original/sd88me_mpc-vst-TR-MPC_trmpc-vst-v1.2.1/"
+  },
+  {
+    "repo": "sd88me/mpc-vst-TR-MPC",
+    "tag": "cw78-vst-v1.3.1",
+    "commit": "e511f73f48f6205df804ccc5389374c97257c7df",
+    "source_folder": "third_party/mpc-original/sd88me_mpc-vst-TR-MPC_trmpc-vst-v1.2.1/"
+  },
+  {
+    "repo": "sd88me/mpc-vst-TR-MPC",
+    "tag": "9w9-vst-v1.3.1",
+    "commit": "e511f73f48f6205df804ccc5389374c97257c7df",
+    "source_folder": "third_party/mpc-original/sd88me_mpc-vst-TR-MPC_trmpc-vst-v1.2.1/"
+  }
+]

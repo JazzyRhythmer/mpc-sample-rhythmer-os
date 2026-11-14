@@ -1,0 +1,281 @@
+{
+  "schema": 2,
+  "policy": "All MPC Sample ports share mpc-sample-engine-ports. Original engine names and notices remain. Each port has its own source directory.",
+  "ports": [
+    {
+      "port": "move-aphex",
+      "engine_name": "Aphex",
+      "variant": "",
+      "public_name": "Aphex for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/move-aphex/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/move-aphex",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "move-braids",
+      "engine_name": "Braids",
+      "variant": "",
+      "public_name": "Braids for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/move-braids/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/move-braids",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "fm1-cs1",
+      "engine_name": "CS-1",
+      "variant": "",
+      "public_name": "CS-1 for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/fm1-cs1/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/fm1-cs1",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "move-dexed",
+      "engine_name": "Dexed",
+      "variant": "",
+      "public_name": "Dexed for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/move-dexed/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/move-dexed",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "drumx",
+      "engine_name": "DRUM-X",
+      "variant": "",
+      "public_name": "DRUM-X for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/drumx/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/drumx",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "fm1-elixir",
+      "engine_name": "Elixir",
+      "variant": "",
+      "public_name": "Elixir for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/fm1-elixir/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/fm1-elixir",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "fm1-fm106",
+      "engine_name": "FM-106",
+      "variant": "",
+      "public_name": "FM-106 for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/fm1-fm106/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/fm1-fm106",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "fm1-fmini",
+      "engine_name": "FMini-1",
+      "variant": "",
+      "public_name": "FMini-1 for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/fm1-fmini/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/fm1-fmini",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "fm1-guru600",
+      "engine_name": "Guru-600",
+      "variant": "",
+      "public_name": "Guru-600 for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/fm1-guru600/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/fm1-guru600",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "move-hera",
+      "engine_name": "Hera",
+      "variant": "",
+      "public_name": "Hera for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/move-hera/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/move-hera",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "fm1-hortator",
+      "engine_name": "Hortator",
+      "variant": "",
+      "public_name": "Hortator for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/fm1-hortator/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/fm1-hortator",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "fm1-kwasub",
+      "engine_name": "K-WASUB",
+      "variant": "",
+      "public_name": "K-WASUB for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/fm1-kwasub/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/fm1-kwasub",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "fm1-kwasub-kit",
+      "engine_name": "K-WASUB",
+      "variant": "Drum mode",
+      "public_name": "K-WASUB for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/fm1-kwasub-kit/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/fm1-kwasub-kit",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "fm1-mono2k",
+      "engine_name": "MONO2K",
+      "variant": "",
+      "public_name": "MONO2K for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/fm1-mono2k/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/fm1-mono2k",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "fm1-obervave",
+      "engine_name": "OberVave",
+      "variant": "",
+      "public_name": "OberVave for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/fm1-obervave/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/fm1-obervave",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "move-plaits",
+      "engine_name": "Plaits",
+      "variant": "",
+      "public_name": "Plaits for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/move-plaits/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/move-plaits",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "fm1-prophet",
+      "engine_name": "Prophet",
+      "variant": "",
+      "public_name": "Prophet for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/fm1-prophet/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/fm1-prophet",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "fm1-s1vave",
+      "engine_name": "S1Vave",
+      "variant": "",
+      "public_name": "S1Vave for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/fm1-s1vave/SOURCE.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/fm1-s1vave",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "sophie",
+      "engine_name": "Sophie",
+      "variant": "",
+      "public_name": "Sophie for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/sophie/sources.json",
+      "status": "PUBLIC_MONOREPO",
+      "unofficial_port": true,
+      "source_directory": "ports/sophie",
+      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+    }
+  ],
+  "excluded_reused_packages": [
+    {
+      "engine_name": "6W6",
+      "folder": "athousanddetails - VST - 6W6",
+      "reason": "Original upstream MPC binary reused; preserve its upstream package name instead of presenting it as a new Rhythmer port."
+    },
+    {
+      "engine_name": "8W8",
+      "folder": "athousanddetails - VST - 8W8",
+      "reason": "Original upstream MPC binary reused; preserve its upstream package name instead of presenting it as a new Rhythmer port."
+    },
+    {
+      "engine_name": "9W9",
+      "folder": "athousanddetails - VST - 9W9",
+      "reason": "Original upstream MPC binary reused; preserve its upstream package name instead of presenting it as a new Rhythmer port."
+    },
+    {
+      "engine_name": "CW-78",
+      "folder": "athousanddetails - VST - CW-78",
+      "reason": "Original upstream MPC binary reused; preserve its upstream package name instead of presenting it as a new Rhythmer port."
+    },
+    {
+      "engine_name": "TR-MPC",
+      "folder": "sd88me - VST - TR-MPC",
+      "reason": "Original upstream MPC binary reused; preserve its upstream package name instead of presenting it as a new Rhythmer port."
+    }
+  ],
+  "host_views": [
+    {
+      "engine_name": "Rhythmer Kit",
+      "reason": "Native Rhythmer OS host feature; part of the OS repository."
+    },
+    {
+      "engine_name": "Break Engine",
+      "reason": "Native sampler workflow; part of the OS repository."
+    },
+    {
+      "engine_name": "Acid Engine",
+      "canonical_port": "fm1-hortator",
+      "reason": "Hortator ACID view; shipped with Hortator rather than a duplicate port."
+    }
+  ],
+  "naming_review": "Pinned source names and port notices reviewed; the labels identify adaptations and do not assert upstream endorsement or trademark ownership.",
+  "public_repositories_created": false,
+  "public_packages_published": false,
+  "target_platform": "Rhythmer OS on MPC Sample",
+  "architecture": "aarch64 Linux"
+}

@@ -1,0 +1,102 @@
+{
+  "schema": 3,
+  "reference": "OP-XY instrument identity and Robert Henke Lumiere geometric audiovisual scale; original vector sculptures, no copied assets",
+  "input_signals": [
+    "existing track level",
+    "held notes",
+    "last pitch",
+    "track pan",
+    "selected kit pad",
+    "bounded screen-only note-on age / sustain duration"
+  ],
+  "phase_rate_hz": 20,
+  "profiles": [
+    {
+      "engine": "Sophie",
+      "style": 0
+    },
+    {
+      "engine": "Aphex",
+      "style": 1
+    },
+    {
+      "engine": "Elixir",
+      "style": 2
+    },
+    {
+      "engine": "FM-106",
+      "style": 3
+    },
+    {
+      "engine": "FMini-1",
+      "style": 4
+    },
+    {
+      "engine": "CS-1",
+      "style": 5
+    },
+    {
+      "engine": "OberVave",
+      "style": 6
+    },
+    {
+      "engine": "K-WASUB",
+      "style": 7
+    },
+    {
+      "engine": "Hera",
+      "style": 8
+    },
+    {
+      "engine": "Braids",
+      "style": 9
+    },
+    {
+      "engine": "Plaits",
+      "style": 10
+    },
+    {
+      "engine": "Hortator",
+      "style": 11
+    },
+    {
+      "engine": "MONO2K",
+      "style": 12
+    },
+    {
+      "engine": "Prophet",
+      "style": 13
+    },
+    {
+      "engine": "S1Vave",
+      "style": 14
+    },
+    {
+      "engine": "Dexed",
+      "style": 15
+    },
+    {
+      "engine": "Guru-600",
+      "style": 16
+    },
+    {
+      "engine": "Acid Engine",
+      "style": 17
+    },
+    {
+      "engine": "Rhythmer Kit",
+      "style": 18
+    },
+    {
+      "engine": "Break Engine",
+      "style": 19
+    }
+  ],
+  "max_faces": 384,
+  "references": [
+    "https://teenage.engineering/guides/op-xy/synth-engines",
+    "https://roberthenke.com/concerts/lumiere.html"
+  ],
+  "motion": "Original meshes retained; pitch-dependent articulation and orbit, strike expansion, evolving held-note tilt/roll and meter-driven release. No DSP changes.",
+  "boot": "Interlocking solid rectangular monument, native vector marks, no wordmark backplate, four unlabelled abstract motifs"
+}

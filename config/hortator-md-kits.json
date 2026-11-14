@@ -1,0 +1,136 @@
+{
+  "kits": [
+    {
+      "name": "Hortator / MD TRX Deep",
+      "source": "Original Hortator factory sounds; Rhythmer pad arrangement only",
+      "sounds": [
+        "SUBTHUMP",
+        "HARDSNAP",
+        "ROOMCLAP",
+        "NOISEHAT",
+        "DARKOPEN",
+        "SWOOPTOM",
+        "KNOCK",
+        "WASHCYM",
+        "BIGBOOM",
+        "POPSNARE",
+        "WIDECLAP",
+        "METALHAT",
+        "AIROPEN",
+        "GRITCONG",
+        "PUREBELL",
+        "LONGRIDE"
+      ]
+    },
+    {
+      "name": "Hortator / MD TRX Tight",
+      "source": "Original Hortator factory sounds; Rhythmer pad arrangement only",
+      "sounds": [
+        "TICKKICK",
+        "POPSNARE",
+        "WIDECLAP",
+        "THINHAT",
+        "HALFOPEN",
+        "SHORTTOM",
+        "GRITRIM",
+        "THINCRSH",
+        "ZAPKICK",
+        "HARDSNAP",
+        "ROOMCLAP",
+        "TINHAT",
+        "SIZZLE",
+        "FUZZTOM",
+        "LONGBELL",
+        "PINGBELL"
+      ]
+    },
+    {
+      "name": "Hortator / MD EFM Metal",
+      "source": "Original Hortator factory sounds; Rhythmer pad arrangement only",
+      "sounds": [
+        "FMBOOM",
+        "TONESNR",
+        "BUZZCLAP",
+        "FMHAT",
+        "TRASHHAT",
+        "LONGTOM",
+        "CLANK",
+        "FMCRASH",
+        "NOISEZAP",
+        "RIMSNARE",
+        "RATTLE",
+        "TREMHAT",
+        "SPITHAT",
+        "GRITTOM",
+        "GONG",
+        "SIZZRIDE"
+      ]
+    },
+    {
+      "name": "Hortator / MD EFM Pulse",
+      "source": "Original Hortator factory sounds; Rhythmer pad arrangement only",
+      "sounds": [
+        "FMSUB",
+        "TONESNR",
+        "DEEPBLIP",
+        "SPITHAT",
+        "TREMHAT",
+        "DROPTOM",
+        "FMRIM",
+        "LOWCHIME",
+        "RISEKICK",
+        "RIMSNARE",
+        "FMZAP",
+        "FMHAT",
+        "TRASHHAT",
+        "RISETOM",
+        "CLANK",
+        "FMSPLASH"
+      ]
+    },
+    {
+      "name": "Hortator / MD Hybrid",
+      "source": "Original Hortator factory sounds; Rhythmer pad arrangement only",
+      "sounds": [
+        "SUBDIRT",
+        "TONESNR",
+        "WIDECLAP",
+        "METALHAT",
+        "AIROPEN",
+        "GRITTOM",
+        "FMRIM",
+        "FMCRASH",
+        "FMBOOM",
+        "HARDSNAP",
+        "RATTLE",
+        "SPITHAT",
+        "SIZZLE",
+        "BUZZLOW",
+        "PUREBELL",
+        "LOWCHIME"
+      ]
+    },
+    {
+      "name": "Hortator / MD Percussion",
+      "source": "Original Hortator factory sounds; Rhythmer pad arrangement only",
+      "sounds": [
+        "ZAPKICK",
+        "POPSNARE",
+        "FMZAP",
+        "TINHAT",
+        "HALFOPEN",
+        "GRITCONG",
+        "CLANK",
+        "PINGBELL",
+        "NOISEZAP",
+        "RIMSNARE",
+        "RATTLE",
+        "TREMHAT",
+        "DARKOPEN",
+        "RISETOM",
+        "LONGBELL",
+        "FMSPLASH"
+      ]
+    }
+  ]
+}

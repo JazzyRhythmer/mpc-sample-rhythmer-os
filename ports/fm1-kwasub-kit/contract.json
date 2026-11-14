@@ -1,0 +1,387 @@
+{
+  "chain_params": [
+    {
+      "key": "p0",
+      "name": "Kit",
+      "dynamic_name": true,
+      "type": "enum",
+      "display": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "options": [
+        "808",
+        "909",
+        "Dub Techno",
+        "Acoustic"
+      ]
+    },
+    {
+      "key": "p1",
+      "name": "Volume",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100
+    },
+    {
+      "key": "p2",
+      "name": "Kick Level",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 105
+    },
+    {
+      "key": "p3",
+      "name": "Kick Tune",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p4",
+      "name": "Kick Decay",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64
+    },
+    {
+      "key": "p5",
+      "name": "Kick Tone",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 40
+    },
+    {
+      "key": "p6",
+      "name": "Snare Level",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 95
+    },
+    {
+      "key": "p7",
+      "name": "Snare Tune",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p8",
+      "name": "Snare Decay",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 56
+    },
+    {
+      "key": "p9",
+      "name": "Snare Tone",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 70
+    },
+    {
+      "key": "p10",
+      "name": "Clap Level",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 90
+    },
+    {
+      "key": "p11",
+      "name": "Clap Tune",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p12",
+      "name": "Clap Decay",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 60
+    },
+    {
+      "key": "p13",
+      "name": "Clap Tone",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 50
+    },
+    {
+      "key": "p14",
+      "name": "Closed Hat Level",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 80
+    },
+    {
+      "key": "p15",
+      "name": "Closed Hat Tune",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p16",
+      "name": "Closed Hat Decay",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 60
+    },
+    {
+      "key": "p17",
+      "name": "Closed Hat Tone",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64
+    },
+    {
+      "key": "p18",
+      "name": "Open Hat Level",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 78
+    },
+    {
+      "key": "p19",
+      "name": "Open Hat Tune",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p20",
+      "name": "Open Hat Decay",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 60
+    },
+    {
+      "key": "p21",
+      "name": "Open Hat Tone",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64
+    },
+    {
+      "key": "p22",
+      "name": "Tom Level",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 95
+    },
+    {
+      "key": "p23",
+      "name": "Tom Tune",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p24",
+      "name": "Tom Decay",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64
+    },
+    {
+      "key": "p25",
+      "name": "Tom Tone",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64
+    },
+    {
+      "key": "p26",
+      "name": "Percussion Level",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 85
+    },
+    {
+      "key": "p27",
+      "name": "Percussion Tune",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p28",
+      "name": "Percussion Decay",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64
+    },
+    {
+      "key": "p29",
+      "name": "Percussion Tone",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64
+    },
+    {
+      "key": "p30",
+      "name": "Cymbal Level",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 70
+    },
+    {
+      "key": "p31",
+      "name": "Cymbal Tune",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p32",
+      "name": "Cymbal Decay",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64
+    },
+    {
+      "key": "p33",
+      "name": "Cymbal Tone",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64
+    }
+  ],
+  "ui_hierarchy": {
+    "pad_layout": "drums",
+    "levels": {
+      "0": {
+        "name": "Kick",
+        "note": 36
+      },
+      "1": {
+        "name": "Snare",
+        "note": 37
+      },
+      "2": {
+        "name": "Clap",
+        "note": 38
+      },
+      "3": {
+        "name": "Closed Hat",
+        "note": 39
+      },
+      "4": {
+        "name": "Open Hat",
+        "note": 40
+      },
+      "5": {
+        "name": "Tom",
+        "note": 41
+      },
+      "6": {
+        "name": "Percussion",
+        "note": 42
+      },
+      "7": {
+        "name": "Cymbal",
+        "note": 43
+      }
+    }
+  }
+}

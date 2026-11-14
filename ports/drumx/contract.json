@@ -1,0 +1,1541 @@
+{
+  "chain_params": [
+    {
+      "key": "kit",
+      "name": "Factory Kit",
+      "type": "enum",
+      "min": 0,
+      "max": 8,
+      "default": 0,
+      "display": "int",
+      "options": [
+        "DRUM-X",
+        "909 CLUB",
+        "808 BOOM",
+        "LOFI DUST",
+        "INDUSTRIAL",
+        "ACOUSTIC",
+        "DUB ROOTS",
+        "TECHNO RAW",
+        "BREAKS"
+      ]
+    },
+    {
+      "key": "morph",
+      "name": "Morph",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "tune",
+      "name": "Tune",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "color",
+      "name": "Tone",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "decay",
+      "name": "Decay",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "noise",
+      "name": "Noise",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "fm",
+      "name": "FM Env",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "fold",
+      "name": "Fold",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "tone_bp",
+      "name": "Metal BP",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "feedback",
+      "name": "Feedback",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "hands",
+      "name": "Clap Hands",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "volume",
+      "name": "Volume",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100,
+      "display": "int"
+    },
+    {
+      "key": "note_map",
+      "name": "Note Map",
+      "type": "enum",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int",
+      "options": [
+        "Rack 36-43",
+        "General MIDI"
+      ]
+    },
+    {
+      "key": "l0_wave",
+      "name": "Kick Wave",
+      "type": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l0_filter",
+      "name": "Kick Filter",
+      "type": "int",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l0_snap",
+      "name": "Kick Snap",
+      "type": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l0_pmod",
+      "name": "Kick Pitch Mode",
+      "type": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l0_drive",
+      "name": "Kick Drive",
+      "type": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l0_layer",
+      "name": "Kick Layer",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l0_feedback",
+      "name": "Kick Feedback",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l0_level",
+      "name": "Kick Level",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100,
+      "display": "int"
+    },
+    {
+      "key": "l0_pan",
+      "name": "Kick Pan",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l0_a_pitch",
+      "name": "Kick A Pitch",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l0_a_pmod",
+      "name": "Kick A Pmod",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l0_a_decay",
+      "name": "Kick A Decay",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l0_a_noise",
+      "name": "Kick A Noise",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l0_a_color",
+      "name": "Kick A Color",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l0_b_pitch",
+      "name": "Kick B Pitch",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l0_b_pmod",
+      "name": "Kick B Pmod",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l0_b_decay",
+      "name": "Kick B Decay",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l0_b_noise",
+      "name": "Kick B Noise",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l0_b_color",
+      "name": "Kick B Color",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l1_wave",
+      "name": "Snare Wave",
+      "type": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l1_filter",
+      "name": "Snare Filter",
+      "type": "int",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l1_snap",
+      "name": "Snare Snap",
+      "type": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l1_pmod",
+      "name": "Snare Pitch Mode",
+      "type": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l1_drive",
+      "name": "Snare Drive",
+      "type": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l1_layer",
+      "name": "Snare Layer",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l1_feedback",
+      "name": "Snare Feedback",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l1_level",
+      "name": "Snare Level",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100,
+      "display": "int"
+    },
+    {
+      "key": "l1_pan",
+      "name": "Snare Pan",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l1_a_pitch",
+      "name": "Snare A Pitch",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l1_a_pmod",
+      "name": "Snare A Pmod",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l1_a_decay",
+      "name": "Snare A Decay",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l1_a_noise",
+      "name": "Snare A Noise",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l1_a_color",
+      "name": "Snare A Color",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l1_b_pitch",
+      "name": "Snare B Pitch",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l1_b_pmod",
+      "name": "Snare B Pmod",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l1_b_decay",
+      "name": "Snare B Decay",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l1_b_noise",
+      "name": "Snare B Noise",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l1_b_color",
+      "name": "Snare B Color",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l2_wave",
+      "name": "Clap Wave",
+      "type": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l2_filter",
+      "name": "Clap Filter",
+      "type": "int",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l2_snap",
+      "name": "Clap Snap",
+      "type": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l2_pmod",
+      "name": "Clap Pitch Mode",
+      "type": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l2_drive",
+      "name": "Clap Drive",
+      "type": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l2_layer",
+      "name": "Clap Layer",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l2_feedback",
+      "name": "Clap Feedback",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l2_level",
+      "name": "Clap Level",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100,
+      "display": "int"
+    },
+    {
+      "key": "l2_pan",
+      "name": "Clap Pan",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l2_a_pitch",
+      "name": "Clap A Pitch",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l2_a_pmod",
+      "name": "Clap A Pmod",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l2_a_decay",
+      "name": "Clap A Decay",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l2_a_noise",
+      "name": "Clap A Noise",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l2_a_color",
+      "name": "Clap A Color",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l2_b_pitch",
+      "name": "Clap B Pitch",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l2_b_pmod",
+      "name": "Clap B Pmod",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l2_b_decay",
+      "name": "Clap B Decay",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l2_b_noise",
+      "name": "Clap B Noise",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l2_b_color",
+      "name": "Clap B Color",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l3_wave",
+      "name": "Closed Hat Wave",
+      "type": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l3_filter",
+      "name": "Closed Hat Filter",
+      "type": "int",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l3_snap",
+      "name": "Closed Hat Snap",
+      "type": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l3_pmod",
+      "name": "Closed Hat Pitch Mode",
+      "type": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l3_drive",
+      "name": "Closed Hat Drive",
+      "type": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l3_layer",
+      "name": "Closed Hat Layer",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l3_feedback",
+      "name": "Closed Hat Feedback",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l3_level",
+      "name": "Closed Hat Level",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100,
+      "display": "int"
+    },
+    {
+      "key": "l3_pan",
+      "name": "Closed Hat Pan",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l3_a_pitch",
+      "name": "Closed Hat A Pitch",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l3_a_pmod",
+      "name": "Closed Hat A Pmod",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l3_a_decay",
+      "name": "Closed Hat A Decay",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l3_a_noise",
+      "name": "Closed Hat A Noise",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l3_a_color",
+      "name": "Closed Hat A Color",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l3_b_pitch",
+      "name": "Closed Hat B Pitch",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l3_b_pmod",
+      "name": "Closed Hat B Pmod",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l3_b_decay",
+      "name": "Closed Hat B Decay",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l3_b_noise",
+      "name": "Closed Hat B Noise",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l3_b_color",
+      "name": "Closed Hat B Color",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l4_wave",
+      "name": "Open Hat Wave",
+      "type": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l4_filter",
+      "name": "Open Hat Filter",
+      "type": "int",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l4_snap",
+      "name": "Open Hat Snap",
+      "type": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l4_pmod",
+      "name": "Open Hat Pitch Mode",
+      "type": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l4_drive",
+      "name": "Open Hat Drive",
+      "type": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l4_layer",
+      "name": "Open Hat Layer",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l4_feedback",
+      "name": "Open Hat Feedback",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l4_level",
+      "name": "Open Hat Level",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100,
+      "display": "int"
+    },
+    {
+      "key": "l4_pan",
+      "name": "Open Hat Pan",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l4_a_pitch",
+      "name": "Open Hat A Pitch",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l4_a_pmod",
+      "name": "Open Hat A Pmod",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l4_a_decay",
+      "name": "Open Hat A Decay",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l4_a_noise",
+      "name": "Open Hat A Noise",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l4_a_color",
+      "name": "Open Hat A Color",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l4_b_pitch",
+      "name": "Open Hat B Pitch",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l4_b_pmod",
+      "name": "Open Hat B Pmod",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l4_b_decay",
+      "name": "Open Hat B Decay",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l4_b_noise",
+      "name": "Open Hat B Noise",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l4_b_color",
+      "name": "Open Hat B Color",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l5_wave",
+      "name": "Tom Wave",
+      "type": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l5_filter",
+      "name": "Tom Filter",
+      "type": "int",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l5_snap",
+      "name": "Tom Snap",
+      "type": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l5_pmod",
+      "name": "Tom Pitch Mode",
+      "type": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l5_drive",
+      "name": "Tom Drive",
+      "type": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l5_layer",
+      "name": "Tom Layer",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l5_feedback",
+      "name": "Tom Feedback",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l5_level",
+      "name": "Tom Level",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100,
+      "display": "int"
+    },
+    {
+      "key": "l5_pan",
+      "name": "Tom Pan",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l5_a_pitch",
+      "name": "Tom A Pitch",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l5_a_pmod",
+      "name": "Tom A Pmod",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l5_a_decay",
+      "name": "Tom A Decay",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l5_a_noise",
+      "name": "Tom A Noise",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l5_a_color",
+      "name": "Tom A Color",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l5_b_pitch",
+      "name": "Tom B Pitch",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l5_b_pmod",
+      "name": "Tom B Pmod",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l5_b_decay",
+      "name": "Tom B Decay",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l5_b_noise",
+      "name": "Tom B Noise",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l5_b_color",
+      "name": "Tom B Color",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l6_wave",
+      "name": "Rim Wave",
+      "type": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l6_filter",
+      "name": "Rim Filter",
+      "type": "int",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l6_snap",
+      "name": "Rim Snap",
+      "type": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l6_pmod",
+      "name": "Rim Pitch Mode",
+      "type": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l6_drive",
+      "name": "Rim Drive",
+      "type": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l6_layer",
+      "name": "Rim Layer",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l6_feedback",
+      "name": "Rim Feedback",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l6_level",
+      "name": "Rim Level",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100,
+      "display": "int"
+    },
+    {
+      "key": "l6_pan",
+      "name": "Rim Pan",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l6_a_pitch",
+      "name": "Rim A Pitch",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l6_a_pmod",
+      "name": "Rim A Pmod",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l6_a_decay",
+      "name": "Rim A Decay",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l6_a_noise",
+      "name": "Rim A Noise",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l6_a_color",
+      "name": "Rim A Color",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l6_b_pitch",
+      "name": "Rim B Pitch",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l6_b_pmod",
+      "name": "Rim B Pmod",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l6_b_decay",
+      "name": "Rim B Decay",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l6_b_noise",
+      "name": "Rim B Noise",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l6_b_color",
+      "name": "Rim B Color",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l7_wave",
+      "name": "Bell Wave",
+      "type": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l7_filter",
+      "name": "Bell Filter",
+      "type": "int",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l7_snap",
+      "name": "Bell Snap",
+      "type": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l7_pmod",
+      "name": "Bell Pitch Mode",
+      "type": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l7_drive",
+      "name": "Bell Drive",
+      "type": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l7_layer",
+      "name": "Bell Layer",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l7_feedback",
+      "name": "Bell Feedback",
+      "type": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0,
+      "display": "int"
+    },
+    {
+      "key": "l7_level",
+      "name": "Bell Level",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100,
+      "display": "int"
+    },
+    {
+      "key": "l7_pan",
+      "name": "Bell Pan",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l7_a_pitch",
+      "name": "Bell A Pitch",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l7_a_pmod",
+      "name": "Bell A Pmod",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l7_a_decay",
+      "name": "Bell A Decay",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l7_a_noise",
+      "name": "Bell A Noise",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l7_a_color",
+      "name": "Bell A Color",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l7_b_pitch",
+      "name": "Bell B Pitch",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l7_b_pmod",
+      "name": "Bell B Pmod",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l7_b_decay",
+      "name": "Bell B Decay",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l7_b_noise",
+      "name": "Bell B Noise",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    },
+    {
+      "key": "l7_b_color",
+      "name": "Bell B Color",
+      "type": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "display": "int"
+    }
+  ],
+  "ui_hierarchy": {
+    "pad_layout": "drums",
+    "levels": {
+      "l0": {
+        "name": "Kick",
+        "note": 36
+      },
+      "l1": {
+        "name": "Snare",
+        "note": 37
+      },
+      "l2": {
+        "name": "Clap",
+        "note": 38
+      },
+      "l3": {
+        "name": "Closed Hat",
+        "note": 39
+      },
+      "l4": {
+        "name": "Open Hat",
+        "note": 40
+      },
+      "l5": {
+        "name": "Tom",
+        "note": 41
+      },
+      "l6": {
+        "name": "Rim",
+        "note": 42
+      },
+      "l7": {
+        "name": "Bell",
+        "note": 43
+      }
+    }
+  }
+}

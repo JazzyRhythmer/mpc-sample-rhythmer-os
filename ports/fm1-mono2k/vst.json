@@ -1,0 +1,16 @@
+{
+  "name": "MONO2K",
+  "vendor": "FM-1 open-source community",
+  "uid": "GM2K",
+  "version": 1000,
+  "so": "rhythmer-fm1-mono2k.so",
+  "module": "contract.json",
+  "custom_skin": true,
+  "targets": [
+    "aarch64"
+  ],
+  "defines": {
+    "MODULE_SUBDIR": "\"module\"",
+    "FM1_ISOLATED": 1
+  }
+}

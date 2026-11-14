@@ -1,0 +1,17 @@
+engine
+timbre
+color
+attack
+decay
+sustain
+release
+fm
+cutoff
+resonance
+filt_env
+f_attack
+f_decay
+f_sustain
+f_release
+volume
+octave_transpose

@@ -1,0 +1,14 @@
+{
+  "third_party/mpc-original/sd88me_mpc-vst-TR-MPC_trmpc-vst-v1.2.1/ports/8w8/src/vendor/sc808/sc808.scd": {
+    "original_sha256": "1d5d381bfeab976ac611c83922257de9a1cbcc437f0b30a5c5d739f26bab4aa4",
+    "change": "Generic upstream home-path example in comment/documentation normalized; executable expressions and copyright retained"
+  },
+  "third_party/runtime/JUCE/docs/CMake API.md": {
+    "original_sha256": "2289752a62c8b85fe1ad8503f5e08598d02c0fd73f71261ed6b891b39e32bd57",
+    "change": "Generic upstream home-path example in comment/documentation normalized; executable expressions and copyright retained"
+  },
+  "third_party/runtime/JUCE/modules/juce_core/native/juce_Files_linux.cpp": {
+    "original_sha256": "13a73ba4add499947d279820c503bacd21bd43d1c1c62a29b63610aebe702c94",
+    "change": "Generic upstream home-path example in comment/documentation normalized; executable expressions and copyright retained"
+  }
+}

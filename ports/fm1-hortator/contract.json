@@ -1,0 +1,1050 @@
+{
+  "chain_params": [
+    {
+      "key": "p0",
+      "name": "Kit",
+      "dynamic_name": true,
+      "type": "enum",
+      "display": "int",
+      "min": 0,
+      "max": 5,
+      "default": 0,
+      "dynamic_display": true,
+      "options": [
+        "TRX Classic",
+        "808",
+        "909",
+        "Plaits",
+        "FM",
+        "Industrial"
+      ]
+    },
+    {
+      "key": "p1",
+      "name": "Kick Model",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 43,
+      "default": 23,
+      "dynamic_display": true
+    },
+    {
+      "key": "p2",
+      "name": "Kick TUNE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 52,
+      "dynamic_display": true
+    },
+    {
+      "key": "p3",
+      "name": "Kick DECAY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 68,
+      "dynamic_display": true
+    },
+    {
+      "key": "p4",
+      "name": "Kick SWEEP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 35,
+      "dynamic_display": true
+    },
+    {
+      "key": "p5",
+      "name": "Kick SDEC",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 35,
+      "dynamic_display": true
+    },
+    {
+      "key": "p6",
+      "name": "Kick PUNCH",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 14,
+      "dynamic_display": true
+    },
+    {
+      "key": "p7",
+      "name": "Kick NOISE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 14,
+      "dynamic_display": true
+    },
+    {
+      "key": "p8",
+      "name": "Kick SUB",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 35,
+      "dynamic_display": true
+    },
+    {
+      "key": "p9",
+      "name": "Kick CLIP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 24,
+      "dynamic_display": true
+    },
+    {
+      "key": "p10",
+      "name": "Kick Level",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100,
+      "dynamic_display": true
+    },
+    {
+      "key": "p11",
+      "name": "Kick Pan",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "dynamic_display": true
+    },
+    {
+      "key": "p12",
+      "name": "Snare Model",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 43,
+      "default": 24,
+      "dynamic_display": true
+    },
+    {
+      "key": "p13",
+      "name": "Snare TUNE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 63,
+      "dynamic_display": true
+    },
+    {
+      "key": "p14",
+      "name": "Snare DECAY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 7,
+      "dynamic_display": true
+    },
+    {
+      "key": "p15",
+      "name": "Snare SNAP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 127,
+      "dynamic_display": true
+    },
+    {
+      "key": "p16",
+      "name": "Snare TONE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p17",
+      "name": "Snare BUMP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p18",
+      "name": "Snare BENV",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "dynamic_display": true
+    },
+    {
+      "key": "p19",
+      "name": "Snare CLIP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 92,
+      "dynamic_display": true
+    },
+    {
+      "key": "p20",
+      "name": "Unused",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p21",
+      "name": "Snare Level",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100,
+      "dynamic_display": true
+    },
+    {
+      "key": "p22",
+      "name": "Snare Pan",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "dynamic_display": true
+    },
+    {
+      "key": "p23",
+      "name": "Clap Model",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 43,
+      "default": 27,
+      "dynamic_display": true
+    },
+    {
+      "key": "p24",
+      "name": "Clap TUNE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 89,
+      "dynamic_display": true
+    },
+    {
+      "key": "p25",
+      "name": "Clap DECAY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 127,
+      "dynamic_display": true
+    },
+    {
+      "key": "p26",
+      "name": "Clap CLPY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 56,
+      "dynamic_display": true
+    },
+    {
+      "key": "p27",
+      "name": "Clap HARD",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 7,
+      "dynamic_display": true
+    },
+    {
+      "key": "p28",
+      "name": "Clap RATE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 43,
+      "dynamic_display": true
+    },
+    {
+      "key": "p29",
+      "name": "Clap ROOM",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 56,
+      "dynamic_display": true
+    },
+    {
+      "key": "p30",
+      "name": "Clap RSIZ",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p31",
+      "name": "Clap RTUN",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 93,
+      "dynamic_display": true
+    },
+    {
+      "key": "p32",
+      "name": "Clap Level",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100,
+      "dynamic_display": true
+    },
+    {
+      "key": "p33",
+      "name": "Clap Pan",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "dynamic_display": true
+    },
+    {
+      "key": "p34",
+      "name": "Closed Hat Model",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 43,
+      "default": 30,
+      "dynamic_display": true
+    },
+    {
+      "key": "p35",
+      "name": "Closed Hat TUNE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 63,
+      "dynamic_display": true
+    },
+    {
+      "key": "p36",
+      "name": "Closed Hat DECAY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 8,
+      "dynamic_display": true
+    },
+    {
+      "key": "p37",
+      "name": "Closed Hat GAP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p38",
+      "name": "Closed Hat HPF",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p39",
+      "name": "Closed Hat LPF",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 127,
+      "dynamic_display": true
+    },
+    {
+      "key": "p40",
+      "name": "Closed Hat MTAL",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p41",
+      "name": "Unused",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p42",
+      "name": "Unused",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p43",
+      "name": "Closed Hat Level",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100,
+      "dynamic_display": true
+    },
+    {
+      "key": "p44",
+      "name": "Closed Hat Pan",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "dynamic_display": true
+    },
+    {
+      "key": "p45",
+      "name": "Open Hat Model",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 43,
+      "default": 31,
+      "dynamic_display": true
+    },
+    {
+      "key": "p46",
+      "name": "Open Hat TUNE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 63,
+      "dynamic_display": true
+    },
+    {
+      "key": "p47",
+      "name": "Open Hat DECAY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 61,
+      "dynamic_display": true
+    },
+    {
+      "key": "p48",
+      "name": "Open Hat GAP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 57,
+      "dynamic_display": true
+    },
+    {
+      "key": "p49",
+      "name": "Open Hat HPF",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 8,
+      "dynamic_display": true
+    },
+    {
+      "key": "p50",
+      "name": "Open Hat LPF",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 127,
+      "dynamic_display": true
+    },
+    {
+      "key": "p51",
+      "name": "Open Hat MTAL",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p52",
+      "name": "Unused",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p53",
+      "name": "Unused",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p54",
+      "name": "Open Hat Level",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100,
+      "dynamic_display": true
+    },
+    {
+      "key": "p55",
+      "name": "Open Hat Pan",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "dynamic_display": true
+    },
+    {
+      "key": "p56",
+      "name": "Tom Model",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 43,
+      "default": 25,
+      "dynamic_display": true
+    },
+    {
+      "key": "p57",
+      "name": "Tom TUNE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 63,
+      "dynamic_display": true
+    },
+    {
+      "key": "p58",
+      "name": "Tom DECAY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 48,
+      "dynamic_display": true
+    },
+    {
+      "key": "p59",
+      "name": "Tom RAMP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 48,
+      "dynamic_display": true
+    },
+    {
+      "key": "p60",
+      "name": "Tom RDEC",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 102,
+      "dynamic_display": true
+    },
+    {
+      "key": "p61",
+      "name": "Tom DAMP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "dynamic_display": true
+    },
+    {
+      "key": "p62",
+      "name": "Tom DIST",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p63",
+      "name": "Tom DTYP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p64",
+      "name": "Unused",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p65",
+      "name": "Tom Level",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100,
+      "dynamic_display": true
+    },
+    {
+      "key": "p66",
+      "name": "Tom Pan",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "dynamic_display": true
+    },
+    {
+      "key": "p67",
+      "name": "Rim Model",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 43,
+      "default": 28,
+      "dynamic_display": true
+    },
+    {
+      "key": "p68",
+      "name": "Rim TUNE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 52,
+      "dynamic_display": true
+    },
+    {
+      "key": "p69",
+      "name": "Rim DECAY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p70",
+      "name": "Rim DIST",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p71",
+      "name": "Unused",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p72",
+      "name": "Unused",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p73",
+      "name": "Unused",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p74",
+      "name": "Unused",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p75",
+      "name": "Unused",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p76",
+      "name": "Rim Level",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100,
+      "dynamic_display": true
+    },
+    {
+      "key": "p77",
+      "name": "Rim Pan",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "dynamic_display": true
+    },
+    {
+      "key": "p78",
+      "name": "Cymbal Model",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 43,
+      "default": 32,
+      "dynamic_display": true
+    },
+    {
+      "key": "p79",
+      "name": "Cymbal TUNE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 63,
+      "dynamic_display": true
+    },
+    {
+      "key": "p80",
+      "name": "Cymbal DECAY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 35,
+      "dynamic_display": true
+    },
+    {
+      "key": "p81",
+      "name": "Cymbal RICH",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 127,
+      "dynamic_display": true
+    },
+    {
+      "key": "p82",
+      "name": "Cymbal TOP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 93,
+      "dynamic_display": true
+    },
+    {
+      "key": "p83",
+      "name": "Cymbal TTUN",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 107,
+      "dynamic_display": true
+    },
+    {
+      "key": "p84",
+      "name": "Cymbal SIZE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 127,
+      "dynamic_display": true
+    },
+    {
+      "key": "p85",
+      "name": "Cymbal PEAK",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p86",
+      "name": "Unused",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p87",
+      "name": "Cymbal Level",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100,
+      "dynamic_display": true
+    },
+    {
+      "key": "p88",
+      "name": "Cymbal Pan",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64,
+      "dynamic_display": true
+    },
+    {
+      "key": "p89",
+      "name": "Acid MIDI mode",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0,
+      "dynamic_display": true
+    },
+    {
+      "key": "p90",
+      "name": "Factory Sound",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 146,
+      "default": 0,
+      "dynamic_display": true
+    }
+  ],
+  "ui_hierarchy": {
+    "pad_layout": "drums",
+    "levels": {
+      "0": {
+        "name": "Kick",
+        "note": 36
+      },
+      "1": {
+        "name": "Snare",
+        "note": 38
+      },
+      "2": {
+        "name": "Clap",
+        "note": 39
+      },
+      "3": {
+        "name": "Closed Hat",
+        "note": 42
+      },
+      "4": {
+        "name": "Open Hat",
+        "note": 46
+      },
+      "5": {
+        "name": "Tom",
+        "note": 45
+      },
+      "6": {
+        "name": "Rim",
+        "note": 37
+      },
+      "7": {
+        "name": "Cymbal",
+        "note": 49
+      }
+    }
+  }
+}

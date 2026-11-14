@@ -1,0 +1,16 @@
+{
+  "name": "Elixir Kit",
+  "vendor": "FM-1 open-source community",
+  "uid": "GEK1",
+  "version": 1000,
+  "so": "rhythmer-fm1-elixir.so",
+  "module": "contract.json",
+  "custom_skin": true,
+  "targets": [
+    "aarch64"
+  ],
+  "defines": {
+    "MODULE_SUBDIR": "\"module\"",
+    "FM1_ISOLATED": 1
+  }
+}

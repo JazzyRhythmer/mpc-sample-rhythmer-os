@@ -1,0 +1,69 @@
+{
+  "pad_layout": "drums",
+  "levels": {
+    "0": {
+      "name": "Slot 01",
+      "note": 36
+    },
+    "1": {
+      "name": "Slot 02",
+      "note": 37
+    },
+    "2": {
+      "name": "Slot 03",
+      "note": 38
+    },
+    "3": {
+      "name": "Slot 04",
+      "note": 39
+    },
+    "4": {
+      "name": "Slot 05",
+      "note": 40
+    },
+    "5": {
+      "name": "Slot 06",
+      "note": 41
+    },
+    "6": {
+      "name": "Slot 07",
+      "note": 42
+    },
+    "7": {
+      "name": "Slot 08",
+      "note": 43
+    },
+    "8": {
+      "name": "Slot 09",
+      "note": 44
+    },
+    "9": {
+      "name": "Slot 10",
+      "note": 45
+    },
+    "10": {
+      "name": "Slot 11",
+      "note": 46
+    },
+    "11": {
+      "name": "Slot 12",
+      "note": 47
+    },
+    "12": {
+      "name": "Slot 13",
+      "note": 48
+    },
+    "13": {
+      "name": "Slot 14",
+      "note": 49
+    },
+    "14": {
+      "name": "Slot 15",
+      "note": 50
+    },
+    "15": {
+      "name": "Slot 16",
+      "note": 51
+    }
+  }
+}

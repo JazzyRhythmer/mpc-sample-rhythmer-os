@@ -1,0 +1,38 @@
+{
+  "name": "TR-MPC",
+  "vendor": "sd88me",
+  "uid": "TRMP",
+  "version": 1000,
+  "so": "trmpc.so",
+  "targets": ["armv7", "aarch64"],
+  "params": "params.json",
+  "build": {
+    "root": "..",
+    "sources": [
+      "trkit/src/trkit.cpp",
+      "trkit/engines/6w6/sd606_engine.cpp",
+      "trkit/engines/8w8/sc808_engine.cpp",
+      "trkit/engines/cw78/cr78_engine.cpp",
+      "trkit/engines/9w9/er99_engine.c"
+    ],
+    "cflags": [
+      "-Itrkit/src",
+      "-Itrkit/engines/6w6",
+      "-I6w6/src/vendor/606",
+      "-Itrkit/engines/8w8",
+      "-Itrkit/engines/cw78",
+      "-Itrkit/engines/9w9",
+      "-std=gnu++14",
+      "-O3"
+    ],
+    "libs": [
+      "-lm"
+    ]
+  },
+  "defines": {
+    "MODULE_SUBDIR": "\"engine\"",
+    "HAS_LFO_BPM": 1
+  },
+  "layout": "layout.conf",
+  "art": "html"
+}

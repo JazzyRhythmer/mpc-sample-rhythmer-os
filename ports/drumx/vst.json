@@ -1,0 +1,25 @@
+{
+  "name": "DRUM-X",
+  "vendor": "JIANT",
+  "uid": "GDX1",
+  "version": 1000,
+  "so": "rhythmer-drumx.so",
+  "module": "contract.json",
+  "custom_skin": true,
+  "targets": [
+    "aarch64"
+  ],
+  "build": {
+    "root": ".",
+    "sources": [
+      "drumx.cpp"
+    ],
+    "cflags": [
+      "-fwrapv"
+    ],
+    "libs": [
+      "-lm",
+      "-lpthread"
+    ]
+  }
+}

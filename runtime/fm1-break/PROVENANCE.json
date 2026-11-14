@@ -1,0 +1,12 @@
+{
+  "source": "Rhythmer OS for FM-1",
+  "commit": "4b799e4b95e02adc31f3d449134ed097d453e834",
+  "baseline": "20261110.3 / selected fixes 20261112.1",
+  "license": "GPL-3.0-only WITH GPL-3.0-linking-exception",
+  "purpose": "Original Amenity/Jungle performance DSP; no source audio included",
+  "files": {
+    "jungle.c": "4fc2be29086df5c3e8123ae41e7b3499b5d77709caa8051cde5e8370bf031ae9",
+    "jungle.h": "7cc4c6edbd30b972befde49600532ceb4760efac03360b727835828e3d7e0730",
+    "six_memory.h": "6295ac411beaca2959fc377358b1874359d2aa95e016fc5c3d79c451372ee8b5"
+  }
+}

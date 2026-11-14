@@ -1,0 +1,27 @@
+{
+  "schema": 2,
+  "engines": [
+    "DRUM-X",
+    "K-WASUB / Drum mode",
+    "6W6",
+    "8W8",
+    "9W9",
+    "CW-78",
+    "TR-MPC"
+  ],
+  "retain_individual": [
+    "Sophie",
+    "Elixir",
+    "Hortator"
+  ],
+  "behavior": "Kit sources hidden from standalone browsing",
+  "folders": [
+    "RHYTHMER - FM1 - drumx - DRUM-X",
+    "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+    "athousanddetails - VST - 6W6",
+    "athousanddetails - VST - 8W8",
+    "athousanddetails - VST - 9W9",
+    "athousanddetails - VST - CW-78",
+    "sd88me - VST - TR-MPC"
+  ]
+}

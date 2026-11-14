@@ -1,0 +1,236 @@
+{
+  "chain_params": [
+    {
+      "key": "engine",
+      "name": "Engine",
+      "type": "enum",
+      "options": [
+        "VA VCF",
+        "Phase Dist",
+        "6-Op I",
+        "6-Op II",
+        "6-Op III",
+        "Wave Terr",
+        "Str Mach",
+        "Chiptune",
+        "V. Analog",
+        "Waveshape",
+        "FM",
+        "Grain",
+        "Additive",
+        "Wavetable",
+        "Chord",
+        "Speech",
+        "Swarm",
+        "Noise",
+        "Particle",
+        "String",
+        "Modal",
+        "Bass Drum",
+        "Snare Drum",
+        "Hi-Hat"
+      ],
+      "default": "VA VCF",
+      "refreshes_labels": true
+    },
+    {
+      "key": "harmonics",
+      "name": "Detune",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.5
+    },
+    {
+      "key": "timbre",
+      "name": "Cutoff",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.5
+    },
+    {
+      "key": "morph",
+      "name": "Resonance",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.5
+    },
+    {
+      "key": "decay",
+      "name": "Decay",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.5
+    },
+    {
+      "key": "lpg_colour",
+      "name": "LPG Color",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.5
+    },
+    {
+      "key": "fm_amount",
+      "name": "FM",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.0
+    },
+    {
+      "key": "aux_mix",
+      "name": "Mix",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.0
+    },
+    {
+      "key": "attack",
+      "name": "Attack",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.0
+    },
+    {
+      "key": "timbre_mod",
+      "name": "Timbre Mod",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.0
+    },
+    {
+      "key": "morph_mod",
+      "name": "Morph Mod",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.0
+    },
+    {
+      "key": "legato",
+      "name": "Legato",
+      "type": "enum",
+      "options": [
+        "off",
+        "on"
+      ],
+      "default": "off"
+    },
+    {
+      "key": "velocity_sensitivity",
+      "name": "Vel Sens",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.5
+    },
+    {
+      "key": "octave_transpose",
+      "name": "Octave",
+      "type": "int",
+      "min": -3,
+      "max": 3,
+      "default": 0
+    }
+  ],
+  "ui_hierarchy": {
+    "label": "Plaits",
+    "levels": {
+      "root": {
+        "label": "Plaits",
+        "knobs": [
+          "engine",
+          "harmonics",
+          "timbre",
+          "morph",
+          "decay",
+          "lpg_colour",
+          "fm_amount",
+          "aux_mix"
+        ],
+        "params": [
+          {
+            "key": "engine",
+            "label": "Engine",
+            "type": "enum"
+          },
+          {
+            "key": "fm_preset",
+            "label": "FM Preset",
+            "type": "enum"
+          },
+          {
+            "key": "harmonics",
+            "label": "Harmonics"
+          },
+          {
+            "key": "timbre",
+            "label": "Timbre"
+          },
+          {
+            "key": "morph",
+            "label": "Morph"
+          },
+          {
+            "key": "decay",
+            "label": "Decay"
+          },
+          {
+            "key": "lpg_colour",
+            "label": "LPG Color"
+          },
+          {
+            "key": "fm_amount",
+            "label": "FM"
+          },
+          {
+            "key": "attack",
+            "label": "Attack"
+          },
+          {
+            "key": "timbre_mod",
+            "label": "Timbre Mod"
+          },
+          {
+            "key": "morph_mod",
+            "label": "Morph Mod"
+          },
+          {
+            "key": "aux_mix",
+            "label": "Mix"
+          },
+          {
+            "key": "legato",
+            "label": "Legato"
+          },
+          {
+            "key": "velocity_sensitivity",
+            "label": "Vel Sens"
+          },
+          {
+            "key": "octave_transpose",
+            "label": "Octave"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "Braids",
+  "vendor": "Emilie Gillet (port: charlesvestal)",
+  "uid": "9YTs",
+  "version": 1000,
+  "so": "rhythmer-braids.so",
+  "module": "contract.json",
+  "custom_skin": true,
+  "targets": [
+    "aarch64"
+  ],
+  "defines": {
+    "MODULE_SUBDIR": "\"module\"",
+    "HAS_SONG_POS": 1
+  },
+  "build": {
+    "root": ".",
+    "sources": [
+      "../common/move_loader.c"
+    ],
+    "cflags": [],
+    "libs": [
+      "-ldl",
+      "-lpthread"
+    ]
+  }
+}

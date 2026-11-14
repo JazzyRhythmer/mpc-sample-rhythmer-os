@@ -1,0 +1,21 @@
+# GEN workflow — Rhythmer OS
+
+GEN uses the original Rhythmer OS for FM-1 generator, including its independent seeded random streams, genre orchestration, bass/kick relationship, chord voicing and melodic development. Required upstream C sources are preserved unchanged under `third_party/fm1-gen`; a small native bridge translates their steps to MPC events. FM-1 audio is not rendered by this bridge.
+
+SEQ → PATTERNS → Shift+B3 GEN opens GEN. K1 Energy, K2 Explore / Random / genre, K3 Seed. Generate Song replaces the selected group (T1-4 / T5-8 / T9-12 / T13-16) as one undoable operation: first track Rhythmer Kit, next three tracks the original melodic roles. Default is T1-4. Original root, scale and tempo are applied with Undo/Redo. The original GEN_ORDER menu and gen_press reroll are retained: pressing Generate Song again without changing settings selects a new seed while avoiding the last eight random throws. Setting a previous seed manually reproduces it. Engine and preset mapping uses this OS's available instruments; MONK is excluded from automatic assignment. Tracks and patterns outside the selected group are preserved.
+
+Generate Track keeps the selected instrument. Mutate preserves instruments. GEN Setup selects MIDI ONLY and an inclusive track range 1–16; selecting the same start/end targets one track. SOUND + MIDI uses SONG GROUP, independently of MIDI FROM / TO. In GEN SETUP, choose one of the four visible rows and press SELECT; K1 also changes the group directly. K3 selects SOUND + MIDI or MIDI ONLY. Sound and preset state return with Undo.
+
+The selected engine controls ENGINE GEN: Break GEN appears only for a track loaded as Break Engine; Acid GEN appears for Acid Engine. Back from either returns to the main GEN sheet. Back from the main sheet returns to PATTERNS. B2 labels its next destination (VARY / SETUP / GEN) and cycles main GEN / original Variations / Setup.
+
+Acid Engine uses Hortator's original ACID synthesis model, with native MIDI pitch and gate handling. Acid GEN exposes Energy, Accent and Seed, and calls the same original TB-3PO generator and scale-mask wrapper as the FM-1 build; seed, accents, slides, ties and mutate are converted to native events. Its source headers preserve the upstream schwung-tb3po → Phazerville Hemisphere Suite credits.
+
+Break Engine uses the existing sampler: select a loop and source length 1–4 bars. It divides the whole loop into 16 equal slices, calculates source tempo, and follows project tempo. All four source lengths use the same chop workflow. Break GEN offers Genre, Straight, Random, Mutate, Tail Fill and Browse Sample. Sample Kit continues to load the existing MPC kit formats.
+
+This is an owner beta. Device audio, knob timing and physical navigation require owner verification.
+
+The interface shows each operation's target: Generate Song shows the selected four-track range / NEW SOUNDS; Mutate Song shows that range / KEEP SOUNDS; Generate Tn and Mutate Tn show the current track and KEEP SOUND. MIDI FROM / MIDI TO apply only to MIDI ONLY. Crossing an endpoint keeps the inclusive range valid. OPEN enters a subpage, APPLY executes, DONE returns from Setup. Reopening GEN starts at its main page.
+
+The Break browser exposes K1 LOAD BARS before loading. Push returns to Break GEN while loading; B1 GEN at the drive root cancels back to Break GEN. LOAD BARS describes the next load. To reinterpret an existing loop's bar count, choose the count and load that file again. Straight/Genre generation uses the loaded track's stored bar count. Random/Mutate intensity follows ENERGY on main GEN. MIDI-only/single-track generation reuses another active original melodic role if its preferred original role is empty. Full-song generation retains the original arrangement.
+
+The project persists SONG GROUP as an optional GNGP project section; older projects default to T1-4. Groups route the same four original roles by relative position, so T5, T9 or T13 can be the kit. Generate/Mutate Song affect only the selected group's current patterns and, on Generate, instruments. Single-track Generate/Mutate and engine-specific Acid/Break ignore SONG GROUP. The original project's shared root, scale and tempo behavior remains: full Generate Song still applies them globally, with Undo/Redo.

@@ -1,0 +1,23 @@
+{
+  "JUCE": {
+    "commit": "d60b7a78030661574a615b586d9325ba7a7fa7dd",
+    "license": "AGPL-3.0 route; file-level third-party licences retained",
+    "spdx_sha256": "b0e711d2ea5e6872e83f515dae4e4322db0bee7349757461f254499135ee889e"
+  },
+  "Rubik": {
+    "license": "OFL-1.1",
+    "font_sha256": "1b3a7437ba2af80e465e773ed60c5036d1ba6ace492d89046dbcf18fb31e4e88"
+  },
+  "native_notice_comparison": {
+    "ports": 18,
+    "named_legal_files": 221,
+    "missing_or_changed": 0,
+    "spdx_files": 556
+  },
+  "license_audit_complete": false,
+  "fm1_upstream_notices": {
+    "ports": 12,
+    "pinned_documents": 162,
+    "source": "ports/*/UPSTREAM_NOTICES/PROVENANCE.json"
+  }
+}

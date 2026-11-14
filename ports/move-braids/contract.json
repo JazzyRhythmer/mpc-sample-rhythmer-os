@@ -1,0 +1,344 @@
+{
+  "chain_params": [
+    {
+      "key": "engine",
+      "name": "Algorithm",
+      "type": "enum",
+      "options": [
+        "CSAW",
+        "MORPH",
+        "/\\-_",
+        "SINE^",
+        "BUZZ",
+        "SQR<",
+        "SAW<",
+        "SQsync",
+        "SWsync",
+        "3xSAW",
+        "3xSQR",
+        "3xTRI",
+        "3xSIN",
+        "3xRNG",
+        "SWARM",
+        "COMB",
+        "TOY",
+        "ZLPF",
+        "ZPKF",
+        "ZBPF",
+        "ZHPF",
+        "VOSIM",
+        "VOWL",
+        "V.FOF",
+        "HARM",
+        "FM",
+        "FBFM",
+        "WTFM",
+        "PLUK",
+        "BOWD",
+        "BLOW",
+        "FLUT",
+        "BELL",
+        "DRUM",
+        "KICK",
+        "CYMB",
+        "SNAR",
+        "WTBL",
+        "WMAP",
+        "WLIN",
+        "WTx4",
+        "NOIS",
+        "TWNQ",
+        "CLKN",
+        "GRN",
+        "PART",
+        "QPSK"
+      ]
+    },
+    {
+      "key": "timbre",
+      "name": "Timbre",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "unit": "%",
+      "display_format": "%.0f"
+    },
+    {
+      "key": "color",
+      "name": "Color",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "unit": "%",
+      "display_format": "%.0f"
+    },
+    {
+      "key": "attack",
+      "name": "Attack",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "unit": "%",
+      "display_format": "%.0f",
+      "viz": {
+        "group": "amp",
+        "role": "attack"
+      }
+    },
+    {
+      "key": "decay",
+      "name": "Decay",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "unit": "%",
+      "display_format": "%.0f",
+      "viz": {
+        "group": "amp",
+        "role": "decay"
+      }
+    },
+    {
+      "key": "sustain",
+      "name": "Sustain",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "unit": "%",
+      "display_format": "%.0f",
+      "viz": {
+        "group": "amp",
+        "role": "sustain"
+      }
+    },
+    {
+      "key": "release",
+      "name": "Release",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "unit": "%",
+      "display_format": "%.0f",
+      "viz": {
+        "group": "amp",
+        "role": "release"
+      }
+    },
+    {
+      "key": "fm",
+      "name": "FM",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "unit": "%",
+      "display_format": "%.0f"
+    },
+    {
+      "key": "cutoff",
+      "name": "Cutoff",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "unit": "%",
+      "display_format": "%.0f",
+      "viz": {
+        "group": "filter",
+        "role": "cutoff"
+      }
+    },
+    {
+      "key": "resonance",
+      "name": "Resonance",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "unit": "%",
+      "display_format": "%.0f",
+      "viz": {
+        "group": "filter",
+        "role": "resonance"
+      }
+    },
+    {
+      "key": "filt_env",
+      "name": "Filt Env",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "unit": "%",
+      "display_format": "%.0f"
+    },
+    {
+      "key": "f_attack",
+      "name": "F.Attack",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "unit": "%",
+      "display_format": "%.0f",
+      "viz": {
+        "group": "filter_env",
+        "role": "attack"
+      }
+    },
+    {
+      "key": "f_decay",
+      "name": "F.Decay",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "unit": "%",
+      "display_format": "%.0f",
+      "viz": {
+        "group": "filter_env",
+        "role": "decay"
+      }
+    },
+    {
+      "key": "f_sustain",
+      "name": "F.Sustain",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "unit": "%",
+      "display_format": "%.0f",
+      "viz": {
+        "group": "filter_env",
+        "role": "sustain"
+      }
+    },
+    {
+      "key": "f_release",
+      "name": "F.Release",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "unit": "%",
+      "display_format": "%.0f",
+      "viz": {
+        "group": "filter_env",
+        "role": "release"
+      }
+    },
+    {
+      "key": "volume",
+      "name": "Volume",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "unit": "%",
+      "display_format": "%.0f",
+      "viz": {
+        "kind": "fader"
+      }
+    },
+    {
+      "key": "octave_transpose",
+      "name": "Octave",
+      "type": "int",
+      "min": -3,
+      "max": 3
+    }
+  ],
+  "ui_hierarchy": {
+    "modes": null,
+    "levels": {
+      "root": {
+        "list_param": "preset",
+        "count_param": "preset_count",
+        "name_param": "preset_name",
+        "children": null,
+        "knobs": [
+          "engine",
+          "timbre",
+          "color",
+          "cutoff",
+          "attack",
+          "decay",
+          "sustain",
+          "release"
+        ],
+        "params": [
+          {
+            "level": "oscillator",
+            "label": "Oscillator"
+          },
+          {
+            "level": "envelope",
+            "label": "Amp Envelope"
+          },
+          {
+            "level": "filter",
+            "label": "Filter"
+          },
+          {
+            "level": "global",
+            "label": "Global"
+          }
+        ]
+      },
+      "oscillator": {
+        "children": null,
+        "knobs": [
+          "engine",
+          "timbre",
+          "color",
+          "fm"
+        ],
+        "params": [
+          "engine",
+          "timbre",
+          "color",
+          "fm"
+        ]
+      },
+      "envelope": {
+        "children": null,
+        "knobs": [
+          "attack",
+          "decay",
+          "sustain",
+          "release"
+        ],
+        "params": [
+          "attack",
+          "decay",
+          "sustain",
+          "release"
+        ]
+      },
+      "filter": {
+        "children": null,
+        "knobs": [
+          "f_attack",
+          "f_decay",
+          "f_sustain",
+          "f_release",
+          "cutoff",
+          "resonance",
+          "filt_env"
+        ],
+        "params": [
+          "f_attack",
+          "f_decay",
+          "f_sustain",
+          "f_release",
+          "cutoff",
+          "resonance",
+          "filt_env"
+        ]
+      },
+      "global": {
+        "children": null,
+        "knobs": [
+          "volume",
+          "octave_transpose"
+        ],
+        "params": [
+          "volume",
+          "octave_transpose"
+        ]
+      }
+    }
+  }
+}

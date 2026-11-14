@@ -1,0 +1,62 @@
+[
+  {
+    "repo": "keremimo/melodee-sample",
+    "tag": "v0.2.0",
+    "asset": "Melodee-MPC-Sample-v0.2.0.zip",
+    "url": "https://github.com/keremimo/melodee-sample/releases/download/v0.2.0/Melodee-MPC-Sample-v0.2.0.zip",
+    "sha256": "7d985917d2b1fbf91cfdb8c396cc017dea0d1aae3d4f913f86bfdb5a4a887bbd",
+    "github_digest": "sha256:7d985917d2b1fbf91cfdb8c396cc017dea0d1aae3d4f913f86bfdb5a4a887bbd",
+    "bytes": 15955490,
+    "source_commit": "8880d16116ccb3c69f75fb46bf2166b16c51ef0c"
+  },
+  {
+    "repo": "sd88me/mpc-vst-TR-MPC",
+    "tag": "trmpc-vst-v1.2.1",
+    "asset": "TR-MPC-1.2.1-mpc-aarch64.zip",
+    "url": "https://github.com/sd88me/mpc-vst-TR-MPC/releases/download/trmpc-vst-v1.2.1/TR-MPC-1.2.1-mpc-aarch64.zip",
+    "sha256": "0098a4b459609568d1635c85388bc8cf810d782209175c1b03b5dfe1c5514151",
+    "github_digest": "sha256:0098a4b459609568d1635c85388bc8cf810d782209175c1b03b5dfe1c5514151",
+    "bytes": 30561506,
+    "source_commit": "e511f73f48f6205df804ccc5389374c97257c7df"
+  },
+  {
+    "repo": "sd88me/mpc-vst-TR-MPC",
+    "tag": "6w6-vst-v1.3.1",
+    "asset": "6W6-1.3.1-mpc-aarch64.zip",
+    "url": "https://github.com/sd88me/mpc-vst-TR-MPC/releases/download/6w6-vst-v1.3.1/6W6-1.3.1-mpc-aarch64.zip",
+    "sha256": "6cc2626cc5f54fee5b2d3035da0add9a7fa62da53c3086d59133f3db97bcffe7",
+    "github_digest": "sha256:6cc2626cc5f54fee5b2d3035da0add9a7fa62da53c3086d59133f3db97bcffe7",
+    "bytes": 8011963,
+    "source_commit": "e511f73f48f6205df804ccc5389374c97257c7df"
+  },
+  {
+    "repo": "sd88me/mpc-vst-TR-MPC",
+    "tag": "8w8-vst-v1.3.1",
+    "asset": "8W8-1.3.1-mpc-aarch64.zip",
+    "url": "https://github.com/sd88me/mpc-vst-TR-MPC/releases/download/8w8-vst-v1.3.1/8W8-1.3.1-mpc-aarch64.zip",
+    "sha256": "0389c69670cd41b965ce3006d8940e6de0489aa037fd4e40b60622306e0cdfd0",
+    "github_digest": "sha256:0389c69670cd41b965ce3006d8940e6de0489aa037fd4e40b60622306e0cdfd0",
+    "bytes": 6158851,
+    "source_commit": "e511f73f48f6205df804ccc5389374c97257c7df"
+  },
+  {
+    "repo": "sd88me/mpc-vst-TR-MPC",
+    "tag": "cw78-vst-v1.3.1",
+    "asset": "CW-78-1.3.1-mpc-aarch64.zip",
+    "url": "https://github.com/sd88me/mpc-vst-TR-MPC/releases/download/cw78-vst-v1.3.1/CW-78-1.3.1-mpc-aarch64.zip",
+    "sha256": "2f4dcb8ed1be40a5d3fb01ffd69638735815b54abaec6446c72a06945e0e582f",
+    "github_digest": "sha256:2f4dcb8ed1be40a5d3fb01ffd69638735815b54abaec6446c72a06945e0e582f",
+    "bytes": 7200124,
+    "source_commit": "e511f73f48f6205df804ccc5389374c97257c7df"
+  },
+  {
+    "repo": "sd88me/mpc-vst-TR-MPC",
+    "tag": "9w9-vst-v1.3.1",
+    "asset": "9W9-1.3.1-mpc-aarch64.zip",
+    "url": "https://github.com/sd88me/mpc-vst-TR-MPC/releases/download/9w9-vst-v1.3.1/9W9-1.3.1-mpc-aarch64.zip",
+    "sha256": "62a6f21f62e81900e792056a843cb850b35b5daa5b2b505bf9046c9534d52001",
+    "github_digest": "sha256:62a6f21f62e81900e792056a843cb850b35b5daa5b2b505bf9046c9534d52001",
+    "bytes": 5327722,
+    "source_commit": "e511f73f48f6205df804ccc5389374c97257c7df"
+  }
+]

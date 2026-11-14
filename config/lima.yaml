@@ -1,0 +1,20 @@
+# Dedicated development VM. All disks, images, containers and caches are on SSD.
+vmType: vz
+arch: aarch64
+cpus: 2
+memory: 3GiB
+disk: 24GiB
+images:
+  - location: https://cloud-images.ubuntu.com/releases/noble/release-20260926/ubuntu-24.04-server-cloudimg-arm64.img
+    arch: aarch64
+    digest: sha256:1d6bffe64b848468ac97f821d369a4846d983de1800ccf6b5ec8853e85cefc55
+mounts:
+  - location: /Volumes/SSD/Development/BuildCache/rhythmer-os
+    mountPoint: /Volumes/SSD/Development/BuildCache/rhythmer-os
+    writable: true
+  - location: /Volumes/SSD/Development/BuildCache/groove-os
+    mountPoint: /Volumes/SSD/Development/BuildCache/groove-os
+    writable: true
+containerd:
+  system: false
+  user: true

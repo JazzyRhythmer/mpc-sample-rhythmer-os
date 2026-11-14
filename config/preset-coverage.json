@@ -1,0 +1,1442 @@
+{
+  "version": "0.4.0-beta.1",
+  "source_views": 25,
+  "track_picker_entries": 20,
+  "factory_kits": 36,
+  "exposed_sounds": 2563,
+  "missing_source_names": 0,
+  "explicit_exclusions": 7,
+  "excluded_factory_presets": 4,
+  "excluded_input_only_models": 3,
+  "excluded_external_bank_assets": 118,
+  "excluded_external_sound_selections": 1019,
+  "original_source_selections": 2520,
+  "rhythmer_authored_selections": 43,
+  "policy": "Original bank names/data retained except 118 excluded external assets. User-authorized Rhythmer presets are separately identified: 15 Prophet sounds and four Elixir kits / 28 voices, made from GPL Init with independent edits. No hidden envelope overrides. This report is not blanket public distribution clearance.",
+  "engines": [
+    {
+      "engine": "CS-1",
+      "folder": "RHYTHMER - FM1 - cs1 - CS-1",
+      "variant": "",
+      "source_slots": 69,
+      "exposed_sounds": 69,
+      "basis": "Pinned original factory table, exact source order and names",
+      "bank_assets": [
+        {
+          "file": "firmware/gen/cs1_presets.h",
+          "sha256": "5a352468272732f731238718766b64ee4a226c6725bd497b663a1080212c9dff"
+        },
+        {
+          "file": "firmware/gen/cs1_sounds_conv.h",
+          "sha256": "bbd05e1a970c36eaf1b49f97d850ea1145d51a52ebc4a1a3592a3c003a214854"
+        }
+      ],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "DRUM-X",
+      "folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+      "variant": "",
+      "source_slots": 72,
+      "exposed_sounds": 72,
+      "basis": "Original native voice/model palette (not a factory patch bank)",
+      "bank_assets": [],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "Elixir",
+      "folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+      "variant": "",
+      "source_slots": 35,
+      "exposed_sounds": 35,
+      "basis": "Original GPL Initkit plus four explicitly authored Rhythmer kits, each seven voices; external Erica/Hrtl kit assets excluded",
+      "bank_assets": [],
+      "excluded": [
+        {
+          "file": "assets/kits/hrtl-dlc/003-FADERS.SND",
+          "sha256": "15a32d9b8f9b0ef6d80d51af0c6c7c8b2253a81635dd14d9fd939b1da2b3d9ab",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-dlc/011-SPACED.SND",
+          "sha256": "b27cc04dd7804fee44e3012bbfe3d665fdf573201a9565748dac148be6714a63",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-dlc/015-NECRO.SND",
+          "sha256": "a155747a0570fac358cc3a37e7c138a2d3a78bb31d3631caa6e6fc57ac2a64f5",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-dlc/014-EXPRESS.SND",
+          "sha256": "fa71d1ff12ba7fc9ec3b9c5d15e30cb9bb3e7ee9273572a3163177ba3a97c73e",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-dlc/013-DIALUP.SND",
+          "sha256": "6a6d8c48ecbcd05e8752578a344d077f7e98bb45bdee77a06d50fb1b740090aa",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-dlc/004-MALWARE.SND",
+          "sha256": "4b413790c1f0344ca6617c953ed36096c6ca0878b1c5d272f1b3960eafff6292",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-dlc/001-LAMBO.SND",
+          "sha256": "1cd66e3f35bde47068ca411402070fedf0435ae6c565bfaae9f1d0093c5d1356",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-dlc/005-ZIPPER.SND",
+          "sha256": "3d7c370c69665b9588567ae282a7f34aee14c8e4311fa5711c24a91a6be91cd8",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-dlc/010-GOONDAM.SND",
+          "sha256": "03a73c0cd9c50b1118280c0c7924f26d8b6c48f1c2cc8e5c542a8787c6306efe",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-dlc/002-RESERVOI.SND",
+          "sha256": "3d0954e4f865baf6a8384e9b932205682c6ea4c5c5b2b4a814e6084bcfbe2ef7",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-dlc/012-PENALTY.SND",
+          "sha256": "a3c200ec3650db62b8a31ca74ff60aec12b359d2ce762a616c65145bf7176933",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-dlc/006-NANOBYTE.SND",
+          "sha256": "616da0a4ce93abc039e21f69f0b79083e74697a5d2759121a598f8fc1e3e823c",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-dlc/016-MIST.SND",
+          "sha256": "9739739fc075321e90dc5faa705c3359994582ce5b962341eaf7c54fa5d48eec",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-dlc/008-BOOOOST.SND",
+          "sha256": "acf9f2876a0b0bd2706c2eaf9ef2e4658d5401a4d5cc379a9c6449fd5cd955d4",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-dlc/009-DROPBAR.SND",
+          "sha256": "1346556fbf19072b770b3753b8896b3b219c0e1032dce1d49fdd3f3e98f5bdb6",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-dlc/007-KRONKY.SND",
+          "sha256": "38c033f43d84599180d6ef0d0ced175e97c4c45e86bfa2dc2f86c21fd95b5514",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-untz/016-RESONIT.SND",
+          "sha256": "adbf45a966f4793329b6cdb09b71efa30dbb4dda13716b41879827cbb928eb96",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-untz/011-THRESSS.SND",
+          "sha256": "42bfb2bad1d6a4ce1e115a73dc5a6ab15a427fc280f50e032d4d1c990531d92b",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-untz/014-PAPAGAI.SND",
+          "sha256": "1889091c7332acc8aa8c8e646bc1841e667139f4fe086849ef082bb5421557c5",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-untz/004-GOBLIN.SND",
+          "sha256": "c362dba6a195a98ffa2ba6217cdffe8c41499e59b7cd3834aa1acd72f2f45fe4",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-untz/009-LITHIUM.SND",
+          "sha256": "a5d1c2b04a4bc9b13bd794a3ba4119afd2645517ef457496be1c7b77634557e9",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-untz/015-CORPORAT.SND",
+          "sha256": "f2473979f4a75de4ddc78fdec8a7ae1caf7062163bdb30b864a214da4214eac2",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-untz/002-RYZEN.SND",
+          "sha256": "f9c161235bc7a5c1ad688c9bb5e8477445a896dc15ed35b2927cdd73b79e16e6",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-untz/006-NETRUN.SND",
+          "sha256": "a9ef95fcab7ec1abb0248420879aa0e4684002767aeee6dcb300846ae4ea1c64",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-untz/001-STOVE.SND",
+          "sha256": "840b4505d0ea8fa2d74baa802a6afe84dad34bd97f07d747965ce6e4a3fdc22d",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-untz/007-TAIPEI.SND",
+          "sha256": "787579d64d2a150d8ef1b33b466c07a2b3560bd2d54d249735d4548044741c07",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-untz/003-FLANGE.SND",
+          "sha256": "9376d33a8c062247c72a44e7580fc1ed13b433a71ad275644079c12282d3a834",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-untz/010-OPIATE.SND",
+          "sha256": "e9c9bb7c2d3e1f98b7ee154fb495e8b44d535f28651792b8ea375a07b96ab824",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-untz/005-TITANIUM.SND",
+          "sha256": "f806f20979877e4083c9b61297c81dea1cab55e47dd7a3532336c9f0e7c57cfd",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-untz/008-HEXEN.SND",
+          "sha256": "5524b48a603fdd9144ae9159235ea67739a65d1b18441d429220eec4d1a60ad8",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-untz/013-FOLDED.SND",
+          "sha256": "8fcf53a66830cba9f8049c5f3376c9f09458413a7c077f0457b24e4bc22f4f7d",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/hrtl-untz/012-ARCADE.SND",
+          "sha256": "c36583a3c7e7106700995f3e635d604eca1883c3e0f3c2531da08db9907892b8",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/021-WARMTUBE.SND",
+          "sha256": "ac1bdc4b38e9ae0a37006a575b60f96b4fff4b45261df0272f4cdc32eb15c29c",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/057-DELOREAN.SND",
+          "sha256": "a09faacc4d524e0023fe6aae5d8c7fcc7d67e9c6c43419b0496bb2100d546032",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/061-ASSEMBLY.SND",
+          "sha256": "d34834ea46eb7347e391bb1ae8a14eb6e9135f4df2c47d5e78c0f25857eca41a",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/066-VHS.SND",
+          "sha256": "51ae717bde85b4103d89fd2e13de7c2fadaf6165a2da18f9afa32a21bb290953",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/028-ATARIST.SND",
+          "sha256": "d937658e8b26647f8314cd63c9ab41fefcb31f64f377323de10e330f017da7ce",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/072-ZUBAT.SND",
+          "sha256": "0ab7e0834259c88bbd773d3b0870f9845b66858d262902a2591a5bae6a93411e",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/024-MILLSBEL.SND",
+          "sha256": "939afad197c346c5668c31a16b1dbd8523911b70aa6b6f534ae398f69bef1c1c",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/031-SAWER.SND",
+          "sha256": "3ee034666ed19b10662951376da44193190997fe881b981be6c77cd10e3f7158",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/064-BROWNIE2.SND",
+          "sha256": "e86f7881658e62a9c1569aa0e78a48cf0c46d2616045c4696773ab5e5d76c5ba",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/037-JURAPARK.SND",
+          "sha256": "93a0952f1e21071a78ebacfcfe85aaa65d19dd8cf60ea22f2da2e0bd2970202a",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/003-DUBEES.SND",
+          "sha256": "26f36d28175b527ac27e5a42c90990296d3c9e0e64c25f65ca2b45d567207953",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/014-NERVOUS.SND",
+          "sha256": "a29505548e58625b503a693c1f942b51735ccf47ea5d2e9d3005d22e5f482ab6",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/033-FAXMACH.SND",
+          "sha256": "cd5718fda21d5248ceeb1a7f2be3f2ac2a1fa2f7a5d2559d4d4fdff0f11e5b53",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/043-BITJAZZ.SND",
+          "sha256": "bceaccc3ea55bdac3db7760bf2cce7549a890c6f5f8d34fb92704acdab5eae4e",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/023-VHS.SND",
+          "sha256": "654c61c8f442f731d3773940ebb4e778f324c1243e8e083559466e1f98bfba48",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/068-SIMMONER.SND",
+          "sha256": "c2c9e1d719f38ea181a0d8199c931a3ce811246cebf2710179fc1219dbee2685",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/009-STRING.SND",
+          "sha256": "771e44fbf1d2ee562ed5708e19e776525899b3cbcb0eb3d828397ccf9d9259c6",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/002-SHORTCIR.SND",
+          "sha256": "9237b1cf98deb3ca78974bf5cfba6540d27e338ff96233e56da5528f42a73b97",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/042-FLIPPHON.SND",
+          "sha256": "224cda94f50289c8e06167e5b406cd1fa6d2cd00a9b549c144286e6bee1dafc3",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/075-DUBEES.SND",
+          "sha256": "15b289cc8f98da9106826bce07c1b1ab0d7f088064790119fadc95d115213ce3",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/065-BROWNIE3.SND",
+          "sha256": "a1b5562157dafc28f386d8ff923fb203ad68d599f630943190227051ab261e2d",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/006-WOODSTYK.SND",
+          "sha256": "542aa39859a93705f57bd5596da9849052840149dd5793fd4ffc5fefa459c9a4",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/055-BERLINER.SND",
+          "sha256": "c3233bc8cbb79fb0d78315f20da5d881135e9fce5eece37965ef5b9a1e23fb45",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/035-LIU_DANG.SND",
+          "sha256": "de691869bf1252efb724c2c4be3598743de7e420350b60a3295694b075529fcf",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/085-KRAFTWOK.SND",
+          "sha256": "506ae200c191152dd7c2311fc5a5a46f3d754583bf2cda28d87a072ac47e149e",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/080-LYSERG.SND",
+          "sha256": "1641beea41c94dad53625a765e3e8bdcf69b22b3a755c43c5f16ea885e9a0885",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/054-DYNASNR.SND",
+          "sha256": "222953f025a482283ee048c59c56d9b33edd3fb5d92fa4a65708cb6aa41d3246",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/005-BLUMP404.SND",
+          "sha256": "f3b66cfac3ac866e21613cda81b163e129c79fa6b0c2fb014ba948c976343523",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/013-BROKE.SND",
+          "sha256": "9f9a8c29230ea41645ec5b1f74861028d64d7653ff6e6475c01237cdde403048",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/046-SIMMONER.SND",
+          "sha256": "55ad200db887ff70ad35ca3a53d37717ba90e07f840ba06ef8f7f02af0e8c52e",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/022-CLICKITY.SND",
+          "sha256": "6bde2a792d1a7956e1a6451ad872e3ab9ac372b4df02e9e45151dfbb50689df4",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/051-TANKER.SND",
+          "sha256": "302318c0c972b41ea52eb4df645eacfbcb94ef7b7ca556c765942053fc9cd5c2",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/067-FAXMACH.SND",
+          "sha256": "98a177f2364df8c4b3537aa649670bdb66c22bc28e48f9f90b5797670c24f0b4",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/025-FREAKUFO.SND",
+          "sha256": "6183d9d251dbd9eb7114bb129600deec565fa227a37291a431d1492fbf80eaf8",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/059-ROBOKOP.SND",
+          "sha256": "d66744323b286b3fff2d2af9af5f633e5fe337200f324789711cf8a2540d8466",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/001-BADONKA.SND",
+          "sha256": "7edfdca0a40d785bb68ddbfa26b921316ecb085cb75707745de87ea7c8dc7239",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/008-KARPCORE.SND",
+          "sha256": "25cbcda47e2096746839f8569b0e8eb5703134d8952aa2c6af68ffa68dc12167",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/017-UDUSMACK.SND",
+          "sha256": "e50aaa4a8f91cb182a77d674d0ed601da59e8b12b86aaa09a310d2097ce44ba2",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/077-BAKEDONE.SND",
+          "sha256": "215395edf79d38091694366349e67afe0a3958e6a771e5cd21026f72506f7095",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/049-ERRORCOD.SND",
+          "sha256": "0bea2d39b5ca3ff9390b5f08d6f1e5151601f4bac07d5703d80218e7b1f4ee7c",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/058-BURNER.SND",
+          "sha256": "f6cbfe10f6659a5ac9498a7653c8a6010fd15e68807c13310302d4762f2cc219",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/018-ROBOWASP.SND",
+          "sha256": "5e4c2a4478aa1e64c6014cd911fb2167cf6ac1c836c3baa213a879941bb28ace",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/050-BANZAII.SND",
+          "sha256": "bae1019a8fa3973b8b3f7c2a51f64f1d3969a2b3d2d0aba122d2d139555c9633",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/027-CLUNK.SND",
+          "sha256": "3c8993bde8747fef5f420ffde9ad3b63a4911c0086536b7050306b6ced11ef82",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/062-OCTOPUS.SND",
+          "sha256": "3b7e160ec38ec3544b1a6329db016f3b6af01a43a10a6d531447fa5bb894bb3b",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/084-STOMP.SND",
+          "sha256": "160acce2ad16cbc3f45fcf6da6678496c284d7be36218bd0292d32953a66e74d",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/069-ROBOWASP.SND",
+          "sha256": "4b900eac579d3226eb504dc4ab913e80aeb4dae2d09776c5134f78ba2de70738",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/034-SIZZURP.SND",
+          "sha256": "04ebb157527474947a8f829a8613dfbdc8a27df94db70848e1f093c51554363f",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/063-BROWNIE.SND",
+          "sha256": "a8b5864ec9aa7fdc4dd92c77bf7481ea8890905e61a5612cc2e0a8bdea4499f3",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/011-POLYDRUM.SND",
+          "sha256": "5d9353b09323e292e511e9c6ec8487111822bf094de2bfbf682699fa739d49f9",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/026-BROWNIE.SND",
+          "sha256": "83c984c9b40b18e4cafee8d3b2a3063db84f607bac0a903d8c51d0354c8037c4",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/004-METROID.SND",
+          "sha256": "5b618ced18614e1d6e8bd33cc9465b4961889bc4a9bf5fd92e98a1f1c9381493",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/019-NUYORK.SND",
+          "sha256": "1b672ea6952dcdd1de3c5818256a5a3d3c6f8e07c3f12a37a4220100cec4a84c",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/079-LECTRO.SND",
+          "sha256": "7b13b592ddb37f25c7036ec7a0ab4194e9d58998a8cdaa1f96f19a4eda61bd0f",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/020-8_BIT.SND",
+          "sha256": "2ef0bada8204bd2d6add4b541c10ae20b29b55d4030af3578f5435d381fc047d",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/032-JUNGLIST.SND",
+          "sha256": "feaf8f5f7fae514157ae3e9c024a811be92f15ce47f0ca7b7afaf4bdf02191d7",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/029-NAPALM.SND",
+          "sha256": "6c537e05b57607282452f53b8d9fddb8e16a204b30090b2ac91cae5d91a4e908",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/015-SLAPPER.SND",
+          "sha256": "0b48aa697e3aad0b04be8df13d9603ebc4c72ca316cd2a712b5d281d869e59bc",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/060-LINNKRAK.SND",
+          "sha256": "b7d9ee8b9f5abaf6ec7aa352950d552413bdbc6f3f9d345f7c3872270eb68083",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/056-MEGADRIV.SND",
+          "sha256": "c4350576f5f105bf930542da218cfed51af637140d77a382e8c4a425c9ce6b9a",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/040-SUBMARIN.SND",
+          "sha256": "07527e8bfe46d35e6b7336f1db5b8b55923a0fd8734e5a60a4d010e23f7ee6a5",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/070-PA_.SND",
+          "sha256": "3013e0720de9bd56ca9b26c1bca7768261ef6b8f3da06611694a4eb49e5cc8fe",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/083-BOOM__.SND",
+          "sha256": "eab6c0dedd132bb1d4c54354b274271e9795168c1bd333266d6dde6c5a112e5c",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/036-REPLICNT.SND",
+          "sha256": "bc6d9de8d702072de0584b833cadaae85d6132908ea25ff80d6483c98c281214",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/082-CHIMESON.SND",
+          "sha256": "f051aa19d5db4b4fd278ca70709eed7e0ab6d9f60961d58a57d7b5a44d70dfe5",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/038-TETRIX.SND",
+          "sha256": "4dbc4fdb7eb2f5d98ca82e45442a306646dbabf828e01828fedfc03c3a29fc8f",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/052-LOADIN.SND",
+          "sha256": "564ff71859fa1f77740b0a7397c280b1413eb820de6e0a7fe09a705857a14360",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/048-AMAZONA.SND",
+          "sha256": "d10806aacd473b04e4259ff293469d861064d3e2767fbbf29d182431d6dab033",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/016-HACKED.SND",
+          "sha256": "adbb19290264909c22fe91c3818083013cdf3452e93c4151ec5673136e2f2971",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/010-ZARTAN.SND",
+          "sha256": "672502fcafc109c2a344896fe8786fb0a7078dca7b3557b15816ecbd6339e0dd",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/081-ACID.SND",
+          "sha256": "0523085b246e503d8a758b10099d5e311fdafffedede2432845523ab0c7eee12",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/007-BOW.SND",
+          "sha256": "4009627829b8c8445bd8206e200f2bd07d1dd31d17768f139caccf437bccaaee",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/045-NIGHTCIT.SND",
+          "sha256": "0fcd51c243a03ad7a974cc97399795b5ae6939cb254f6282e0b335e79d4ed779",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/078-SCHIEBT.SND",
+          "sha256": "c9558316a1dc3dd59b66a9884799da7cc549639290f7c7dba9ae793104d5454f",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/071-RAILGUN.SND",
+          "sha256": "4199cad48889094f3921e1d514d359f27698c615c0a24d9e8c33e977e013cc4c",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/073-LOADIN.SND",
+          "sha256": "9479507ceb644d2fe43ee7c48ee42eb02f4a4ba1f9ce02c6272b47d1b34fb90b",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/044-ZUBAT.SND",
+          "sha256": "55e0e6edbf6db2ca64a61c00e274ff1a9f9b8a4b4b4d40b6bdcf39f60fb00c3b",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/076-DUBEES2.SND",
+          "sha256": "64de2915ff315fa469341d481ac8e6c4da26a62653822205975343824c80d6cf",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/074-JURAPARK.SND",
+          "sha256": "219db8bd7dd431a0080a93c9c4849a9d5a3b5af20cd34edf7fc22d84c7cbbbd5",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/012-DIRTBAG.SND",
+          "sha256": "e754f7a6435a1052c68c54bf6c5ed762af1fb92a499145b20091f84bb3f482d3",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/030-STEELBAR.SND",
+          "sha256": "c8b76de0bed503d4802791fdc2a926c5f6dacf014b8f7334d69f2a2664a7a6e5",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/047-ROTERDAM.SND",
+          "sha256": "c83c429a7391d3cb20900a69acf906a69c296e4d4569f8ac3ab66717a30cbeee",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/053-RAILGUN.SND",
+          "sha256": "315193a4761055921e5de8abfc20d7b01c1ee1666d4bcba89a9de7fff0dd5c73",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/039-DRUMTRIX.SND",
+          "sha256": "ed58ba17dd49b932c6285037d306436570e12687c205ab7239c366206c63db22",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        },
+        {
+          "file": "assets/kits/factory/041-AUTOBOT.SND",
+          "sha256": "aad368174ccfdf844d13d0b4132d64925c7daae98602ae5c939c4e90ed9e2260",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "engine": "FM-106",
+      "folder": "RHYTHMER - FM1 - fm106 - FM-106",
+      "variant": "",
+      "source_slots": 128,
+      "exposed_sounds": 128,
+      "basis": "Pinned original factory table, exact source order and names",
+      "bank_assets": [
+        {
+          "file": "firmware/src/fm106_presets.h",
+          "sha256": "fe105a3007307fea9dbe3159e628d79d38d222853898343fcdae32bb2fd7ef3e"
+        }
+      ],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "FMini-1",
+      "folder": "RHYTHMER - FM1 - fmini - FMini-1",
+      "variant": "",
+      "source_slots": 200,
+      "exposed_sounds": 200,
+      "basis": "Pinned original factory table, exact source order and names",
+      "bank_assets": [
+        {
+          "file": "firmware/src/eng_fmini_presets.h",
+          "sha256": "e1004dfafac4b43563b522bcda9076f160dc090c8990e3604187bde3426fac9c"
+        },
+        {
+          "file": "firmware/src/upreset.c",
+          "sha256": "f2850fffac5efcd646985a095ae182e54804b3767f876c4051cb8ca6486be54f"
+        },
+        {
+          "file": "tools/gen_fm6_patches.py",
+          "sha256": "3956c375a86f63692f7ee55a4610362f428d9c001d03763b5183e9e37614d9f4"
+        }
+      ],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "Guru-600",
+      "folder": "RHYTHMER - FM1 - guru600 - Guru-600",
+      "variant": "",
+      "source_slots": 255,
+      "exposed_sounds": 255,
+      "basis": "Pinned original factory table, exact source order and names",
+      "bank_assets": [
+        {
+          "file": "firmware/firmware/src/p600_sci.h",
+          "sha256": "2c51ceef361b7d338f59f578d81f13b0ad0f936530fdb92a66eb1a5c24c60c4e"
+        },
+        {
+          "file": "firmware/firmware/src/upreset.c",
+          "sha256": "560f853442ae045117104cda92ea102ad6a4c2ffbc8bfc7575589b3d4a8e51c1"
+        },
+        {
+          "file": "firmware/firmware/src/p600_bank.h",
+          "sha256": "9e67cf1f764b13800cfcca708e38c566373ba5942960246055182d8bc763d005"
+        },
+        {
+          "file": "firmware/tools/gen_fm6_patches.py",
+          "sha256": "3956c375a86f63692f7ee55a4610362f428d9c001d03763b5183e9e37614d9f4"
+        }
+      ],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "Hortator",
+      "folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+      "variant": "",
+      "source_slots": 147,
+      "exposed_sounds": 147,
+      "basis": "Original Hortator factory bank; four sample-dependent presets explicitly excluded",
+      "bank_assets": [
+        {
+          "file": "firmware/src/preset_bank.h",
+          "sha256": "c1c6ecc849f788fcbbd75b6cef21e60a305138b04faa8a2fd47afd289270ff0c"
+        },
+        {
+          "file": "firmware/src/presets.c",
+          "sha256": "3c5e276bb0f298537e209a6cca85eebd522bd5733247574b97ba5e8956b7b51a"
+        }
+      ],
+      "excluded": [
+        {
+          "name": "SMPKICK",
+          "reason": "Requires original sample assets and sample model, absent from synthesis-only port"
+        },
+        {
+          "name": "TAMBO",
+          "reason": "Requires original sample assets and sample model, absent from synthesis-only port"
+        },
+        {
+          "name": "SHAKER",
+          "reason": "Requires original sample assets and sample model, absent from synthesis-only port"
+        },
+        {
+          "name": "LOFICONG",
+          "reason": "Requires original sample assets and sample model, absent from synthesis-only port"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "engine": "K-WASUB",
+      "folder": "RHYTHMER - FM1 - kwasub - K-WASUB",
+      "variant": "",
+      "source_slots": 97,
+      "exposed_sounds": 97,
+      "basis": "Pinned original factory table, exact source order and names",
+      "bank_assets": [],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "K-WASUB",
+      "folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+      "variant": "Drum mode",
+      "source_slots": 32,
+      "exposed_sounds": 32,
+      "basis": "Original native voice/model palette (not a factory patch bank)",
+      "bank_assets": [],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "MONO2K",
+      "folder": "RHYTHMER - FM1 - mono2k - MONO2K",
+      "variant": "",
+      "source_slots": 112,
+      "exposed_sounds": 112,
+      "basis": "Original 96-sound SND library plus 16 standalone machine Init choices",
+      "bank_assets": [
+        {
+          "file": "firmware/src/m2k_lib.c",
+          "sha256": "ce30d46433e0445400fb5a8188303f04e881235f50397c13ad03ec9faea26eb8"
+        }
+      ],
+      "excluded": [
+        {
+          "name": "FX-CHORS",
+          "reason": "Original input-only FX machine; standalone instrument has no audio input"
+        },
+        {
+          "name": "FX-RING",
+          "reason": "Original input-only FX machine; standalone instrument has no audio input"
+        },
+        {
+          "name": "FX-DYNMX",
+          "reason": "Original input-only FX machine; standalone instrument has no audio input"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "engine": "OberVave",
+      "folder": "RHYTHMER - FM1 - obervave - OberVave",
+      "variant": "",
+      "source_slots": 64,
+      "exposed_sounds": 64,
+      "basis": "Pinned original factory table, exact source order and names",
+      "bank_assets": [
+        {
+          "file": "firmware/src/obv_patches.h",
+          "sha256": "e1f25415dab1acebee57f3702549f1f2aaed2a7861b315db3770759cc79008b6"
+        }
+      ],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "Prophet",
+      "folder": "RHYTHMER - FM1 - prophet - Prophet",
+      "variant": "",
+      "source_slots": 16,
+      "exposed_sounds": 16,
+      "basis": "Original GPL Init plus 15 explicitly authored Rhythmer presets; external Sequential bank excluded",
+      "bank_assets": [
+        {
+          "file": "firmware/src/cz_patch.h",
+          "sha256": "79beb80354fe420991493ffa2f56e8a8bcc56fc8328551ce6c7522dcc67f3926"
+        },
+        {
+          "file": "firmware/src/prophet_patch.c",
+          "sha256": "22d11c201230d897f720ed52d87df58ce80ae8eccf56d2504f634fe8206c2e57"
+        },
+        {
+          "file": "firmware/src/native_presets.c",
+          "sha256": "7df8184c010dd17fd2eced75cbeaf7c73b09145c99af63bebb5123127f91d37f"
+        },
+        {
+          "file": "firmware/src/upreset.c",
+          "sha256": "a05434c6febd0c99961c97d9dc0a6b3d9e40d8855481a1421b2fab7eb3c15207"
+        },
+        {
+          "file": "firmware/src/shared_presets.c",
+          "sha256": "842c5a697f03e861e0f6a06eb43f7fd8509fa246902962590b926b8e7e348530"
+        },
+        {
+          "file": "tools/gen_fm6_patches.py",
+          "sha256": "ff7be674d8cface352402dde3bdc51d6dc3a5daa91642f09c66dbe4d77dac08e"
+        }
+      ],
+      "excluded": [
+        {
+          "file": "assets/prophet5-factory/prophet5-v1.03.syx",
+          "sha256": "1d6e9dec2753a08ac6d07b98f0f4e755e33b41de11dc3bed46fa23217619d232",
+          "reason": "External factory data excluded from public build; redistribution permission not established"
+        }
+      ],
+      "missing": []
+    },
+    {
+      "engine": "S1Vave",
+      "folder": "RHYTHMER - FM1 - s1vave - S1Vave",
+      "variant": "",
+      "source_slots": 64,
+      "exposed_sounds": 64,
+      "basis": "Pinned original factory table, exact source order and names",
+      "bank_assets": [
+        {
+          "file": "firmware/src/obv_patches.h",
+          "sha256": "35ab8f59827fac62545939f4d5e095fcf8d81d61c6985d6817850845721d6fab"
+        }
+      ],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "Aphex",
+      "folder": "RHYTHMER - Move - aphex - Aphex",
+      "variant": "",
+      "source_slots": 41,
+      "exposed_sounds": 41,
+      "basis": "Original 41-preset module enum; original attack and hold retained",
+      "bank_assets": [],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "Braids",
+      "folder": "RHYTHMER - Move - braids - Braids",
+      "variant": "",
+      "source_slots": 10,
+      "exposed_sounds": 10,
+      "basis": "Original published bank files; source, unmodified release and staged copies match SHA-256; native names read back",
+      "bank_assets": [
+        {
+          "file": "presets/01_Init.braids",
+          "sha256": "5fe7595a586af2b591c169ac9d22fc49d4cc34b6bb4e3d74c69ccfb0c5291405"
+        },
+        {
+          "file": "presets/02_Pluck.braids",
+          "sha256": "f9f066e7d5547184e0ef1dc099f218c2517ab87e3e663455fcc17da5d77232b3"
+        },
+        {
+          "file": "presets/03_Bass.braids",
+          "sha256": "5e5e4212b0a2c0dac42e1e7f93507083504d53aa81cdc5c1df59e844b8b53797"
+        },
+        {
+          "file": "presets/04_Pad.braids",
+          "sha256": "66cf8012ef27da719d410d39d3537dac2e1f0adf75af7bfc490a7d7b00c1c3aa"
+        },
+        {
+          "file": "presets/05_Stab.braids",
+          "sha256": "556a5d716683d043adacf74370568964cb26dadee409e50ccd7452cec1ba602b"
+        },
+        {
+          "file": "presets/06_Acid.braids",
+          "sha256": "6b3cc7f0fea5ac67d1ef251239b53fbaeba2b554deee9afbfa735ebdd36848d1"
+        },
+        {
+          "file": "presets/07_Bells.braids",
+          "sha256": "982c1302d55aba38d9c7c1c130a66b828c125bba0c12f226126b0cf4bf52e9cc"
+        },
+        {
+          "file": "presets/08_Lead.braids",
+          "sha256": "45deb64059b1e93ee9a2a0d698674864c6908f6d47461f9414dfe369deb5b6d8"
+        },
+        {
+          "file": "presets/09_Strings.braids",
+          "sha256": "f1fd323a3fc372b1afb01f33d7071a12efd69cb3eca9099dd47e9c504a776a28"
+        },
+        {
+          "file": "presets/10_Perc.braids",
+          "sha256": "4c154334aab17bfbfc2f67fff775719a8183f702d088ff8f71b83123d7b5a226"
+        }
+      ],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "Dexed",
+      "folder": "RHYTHMER - Move - dexed - Dexed",
+      "variant": "",
+      "source_slots": 1056,
+      "exposed_sounds": 1056,
+      "basis": "Original published bank files; source, unmodified release and staged copies match SHA-256; native names read back",
+      "bank_assets": [
+        {
+          "file": "banks/Dexed_01.syx",
+          "sha256": "6941967c5098ce318320aef59ac7e7397acb57dfca1bb457457f0fd93ae43581"
+        },
+        {
+          "file": "banks/SynprezFM_01.syx",
+          "sha256": "2b933e6ac10312a8ebd5f48c010c5af2cfc495a0a952508c2a8dddba6243aeeb"
+        },
+        {
+          "file": "banks/SynprezFM_02.syx",
+          "sha256": "ea338909ab793412441ffb057dc2f9e66018c3f1e1e95ccc29fb59f0e886e970"
+        },
+        {
+          "file": "banks/SynprezFM_03.syx",
+          "sha256": "9542aa1ced33d4d967ef022ea4a073175215cd7380321ab92828a9e124597444"
+        },
+        {
+          "file": "banks/SynprezFM_04.syx",
+          "sha256": "e26aaf82c0f3cda30e375140dfd21d8081dbd7c58322d6fd28769662f85bd797"
+        },
+        {
+          "file": "banks/SynprezFM_05.syx",
+          "sha256": "d7214b157033e7928331710e1dd6b72343f73bd11c575f8ad0237164710995b6"
+        },
+        {
+          "file": "banks/SynprezFM_06.syx",
+          "sha256": "6f05b4ca73f6dd7c7d0f8692a8737fc63ad58d2132e19623f2da8503fade11a9"
+        },
+        {
+          "file": "banks/SynprezFM_07.syx",
+          "sha256": "30801366903eb6299d098c8a2eb5b15d75b225d1f6eacb684cb8a254aed1b0c1"
+        },
+        {
+          "file": "banks/SynprezFM_08.syx",
+          "sha256": "e59c624553629f74ff13c4fe473930fa92eb3c0bd833ac33480aaf09df178116"
+        },
+        {
+          "file": "banks/SynprezFM_09.syx",
+          "sha256": "0602cba53fffe690f5c6d73eff8b4c97831469bb2005db49dd5e0d1539ace0f0"
+        },
+        {
+          "file": "banks/SynprezFM_10.syx",
+          "sha256": "15596bc74d65473b308fcf7d8f2197c02596e9736a7b2da771af690cb060cd11"
+        },
+        {
+          "file": "banks/SynprezFM_11.syx",
+          "sha256": "10de585d9f8deb5218018324f1786d15ebbb517fa5314696f158eef0e951951d"
+        },
+        {
+          "file": "banks/SynprezFM_12.syx",
+          "sha256": "f10dba23d0f8b8d0f7551b5d07022dbbeb06146213c33b0489c36f7161b394b1"
+        },
+        {
+          "file": "banks/SynprezFM_13.syx",
+          "sha256": "6118576ae11422c596dbc8db4e89a6af50e6c9c0ed2bd7c364003fe272882955"
+        },
+        {
+          "file": "banks/SynprezFM_14.syx",
+          "sha256": "5a4af9f0eb7edde9ba3f72bf0632e0e4569bafd9cd66c51910d43e0e949475c9"
+        },
+        {
+          "file": "banks/SynprezFM_15.syx",
+          "sha256": "96d341eabc8bcaa339822b347e8c6ae92530d11f08cb7330abd493ac40615340"
+        },
+        {
+          "file": "banks/SynprezFM_16.syx",
+          "sha256": "d47a35f0b9285301b8706e947f0795cdffcd61150086369f9b72145e26c2296f"
+        },
+        {
+          "file": "banks/SynprezFM_17.syx",
+          "sha256": "70e7cb2eb5bbf428c7c54a759d4cfa88bdf5aa513ae4235844c4b586f2a27038"
+        },
+        {
+          "file": "banks/SynprezFM_18.syx",
+          "sha256": "5aabedbde9c18cb7a0006323ff822019d6ec3b456578c7e71d528c1e46df01af"
+        },
+        {
+          "file": "banks/SynprezFM_19.syx",
+          "sha256": "e146ce998c89397f8493c74f6d5c287970ac7723338e4889017ce3509f728235"
+        },
+        {
+          "file": "banks/SynprezFM_20.syx",
+          "sha256": "6e93ea08ad1b2058684d0951742e8ecef79169c5885978830eacdfb2658d491f"
+        },
+        {
+          "file": "banks/SynprezFM_21.syx",
+          "sha256": "fd8d2ec94f123b89ecb72d48ce49aa73b58dc64ce869baf1f3ed5044b824037d"
+        },
+        {
+          "file": "banks/SynprezFM_22.syx",
+          "sha256": "9699da0919e82f1276956fd45e9432f17f6909a5e7468a068eab27ca25f0de01"
+        },
+        {
+          "file": "banks/SynprezFM_23.syx",
+          "sha256": "4db1e9c63e6420a62bdc3b97d550cdfc9814b2abd6e2c59ac949cc5b5e7c87f4"
+        },
+        {
+          "file": "banks/SynprezFM_24.syx",
+          "sha256": "9aa7f4a24dabcb86e903e654192d2a32cb1c4f3d624dd4c5233ea35f18c167b5"
+        },
+        {
+          "file": "banks/SynprezFM_25.syx",
+          "sha256": "437056ec8934808f6967d74d929bf5c14ad2294dc4a6095982785bb0a0b5cb0b"
+        },
+        {
+          "file": "banks/SynprezFM_26.syx",
+          "sha256": "4fc0ff6395f4ed2230b899233b226427df1c8ef65977dbe03a6d57d1cbb0591e"
+        },
+        {
+          "file": "banks/SynprezFM_27.syx",
+          "sha256": "d12219ab6a53efa2b9e075748afa07d1eecfd68e3cbf780de889693a614e7405"
+        },
+        {
+          "file": "banks/SynprezFM_28.syx",
+          "sha256": "6d665072f021c0824b11096e1685de70fa0f07f15ef66c563a06f245fc8b92ff"
+        },
+        {
+          "file": "banks/SynprezFM_29.syx",
+          "sha256": "bff2248e0e5aa82de6400ce696bf8f1c905249db82171bd0a998f49d63a8381a"
+        },
+        {
+          "file": "banks/SynprezFM_30.syx",
+          "sha256": "2bbc0afc121e59d73c748a70b1604dc23df439f26b50345e5bac4107920582e6"
+        },
+        {
+          "file": "banks/SynprezFM_31.syx",
+          "sha256": "2a83e36c82b8947ff8dc596fdf133c33701db8d9f70201c9a3cd8c6468f624a1"
+        },
+        {
+          "file": "banks/SynprezFM_32.syx",
+          "sha256": "657e4bd5aad7b2f4875f0b32c5856523118205b77c7b6607af35dc513ce9f65d"
+        }
+      ],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "Hera",
+      "folder": "RHYTHMER - Move - hera - Hera",
+      "variant": "",
+      "source_slots": 56,
+      "exposed_sounds": 56,
+      "basis": "Original published bank files; source, unmodified release and staged copies match SHA-256; native names read back",
+      "bank_assets": [
+        {
+          "file": "presets/Preset000.xml",
+          "sha256": "ab6dc895fbacb7ff065e45245b4b8d48efc4f5a8aa5eb26d9cb9772b84316847"
+        },
+        {
+          "file": "presets/Preset001.xml",
+          "sha256": "b509f7ad9f61f4ed0df99b341100de26e4f282e70c9a50aa5b4d79847838c988"
+        },
+        {
+          "file": "presets/Preset002.xml",
+          "sha256": "fa6278e7ea34cc33f1de3be4d2406fb01aa97635b33abc128a604c46d52a531a"
+        },
+        {
+          "file": "presets/Preset003.xml",
+          "sha256": "f9cee0c315fda6d5fdc399082b13892f53c6ac41025e5b9eba7c01c7a7e40606"
+        },
+        {
+          "file": "presets/Preset004.xml",
+          "sha256": "37fb4c9884a59d198ceab420ba4be3fe026fcaf8f1feaaf1d6c58dd47014a414"
+        },
+        {
+          "file": "presets/Preset005.xml",
+          "sha256": "0e7b92e7cb12981559344b2cdbd85db22ed3e72cdc1a617448749d8478303932"
+        },
+        {
+          "file": "presets/Preset006.xml",
+          "sha256": "383473a4e147261810b39f91b95a83c4c759f72c201431002e5d20ad6d1d8734"
+        },
+        {
+          "file": "presets/Preset007.xml",
+          "sha256": "7df731e964a75529eafa819a4c2aeae407c127cf9481a9813494d8f52da954e4"
+        },
+        {
+          "file": "presets/Preset008.xml",
+          "sha256": "1d6009d0d1f7a3ab73910583c89da7d23c062eeb71ae7a64f594f3be53b39f6a"
+        },
+        {
+          "file": "presets/Preset009.xml",
+          "sha256": "ba6d9b45153fc8c9aab4f7069c2134db776f09c40458708a8508be4788fc7d33"
+        },
+        {
+          "file": "presets/Preset010.xml",
+          "sha256": "7a2ee6771e1ae6d1a24a23724b7a12da1b07a3c400ab77b76400fc0f1fa3e07a"
+        },
+        {
+          "file": "presets/Preset011.xml",
+          "sha256": "c9865132b4a5f758e8fae869f24129b258235b7880afc608514b9d52bb85d5ad"
+        },
+        {
+          "file": "presets/Preset012.xml",
+          "sha256": "489599c9eaaa05c97aa6feb8c144c202414cf9650395ce3d74d62c55d257aa26"
+        },
+        {
+          "file": "presets/Preset013.xml",
+          "sha256": "0c22464f429debbfc2a2e8192ee8eededa94a42de9801ddd9a6859b3ed592671"
+        },
+        {
+          "file": "presets/Preset014.xml",
+          "sha256": "fa75a122a4bc580f11aaffa733ea45afb0bfeeea288058c7f61a71197e023c06"
+        },
+        {
+          "file": "presets/Preset015.xml",
+          "sha256": "3d13a30532e35e24e8175c93a9e97aa172b7cefad4abc22a4d4cc426ab5d1793"
+        },
+        {
+          "file": "presets/Preset016.xml",
+          "sha256": "acf1f366808c467dfd8ee0c9b8b753ee58ce2bf7de5146fde4751043be86448f"
+        },
+        {
+          "file": "presets/Preset017.xml",
+          "sha256": "b21c58718888ee22fb4d6b0d10dd43eb00bb31a0d06346ce960c5151f9421384"
+        },
+        {
+          "file": "presets/Preset018.xml",
+          "sha256": "97b08447bc48f46e9fc9bcddf8efd03795ed872b0e05fc55b17d51a404fbf445"
+        },
+        {
+          "file": "presets/Preset019.xml",
+          "sha256": "2fbd88a2f50589b7d4072f5dd70ee0e9d642593bbe3ecf98ea850ce910759ef2"
+        },
+        {
+          "file": "presets/Preset020.xml",
+          "sha256": "88bd44ba1eb2613a93b996fb34ebc9f3435fe19d7fc0aaf66ebf17a5b71a452c"
+        },
+        {
+          "file": "presets/Preset021.xml",
+          "sha256": "8bc3be9a77b537d67ad38a7751a2e11c3e1e7519a9dea17d4df52159d6199e33"
+        },
+        {
+          "file": "presets/Preset022.xml",
+          "sha256": "aa7ffda833ff283e65f5abeeb7142b6d93477850fd5a1f55872b8a37ee3b3e7f"
+        },
+        {
+          "file": "presets/Preset023.xml",
+          "sha256": "d24e52d925ce08c562c4d201fe281885f7d46abcdee094ae7845ebeaba1553ab"
+        },
+        {
+          "file": "presets/Preset024.xml",
+          "sha256": "8c08f0eb73cf24f18f8dbbe673df71a8fbac8a175c4d832fc3ce885251022019"
+        },
+        {
+          "file": "presets/Preset025.xml",
+          "sha256": "597832f0ca72ceaf184052b95d4bdf53df835fac24c91e613e58d8fa3214c08e"
+        },
+        {
+          "file": "presets/Preset026.xml",
+          "sha256": "c660a7b8ff46d604066aca5e683f9c46c0becb5c25476cff0c6000584e57a7bc"
+        },
+        {
+          "file": "presets/Preset027.xml",
+          "sha256": "c903ea4fce3084446a25e14bc1a54620128a498d7d794bd9dc19928d1ef0e8f3"
+        },
+        {
+          "file": "presets/Preset028.xml",
+          "sha256": "921a5a97a195229c968cd28467e99b91427eb9e2ebf72e54aa46241c2be212ed"
+        },
+        {
+          "file": "presets/Preset029.xml",
+          "sha256": "402d6b3fb55843da5bc6d86f0749e527ba3eaa663698bc7d41f6383223e327c0"
+        },
+        {
+          "file": "presets/Preset030.xml",
+          "sha256": "5e7311be1a75592a55cd31ffd0e611ee0e90fb121a27df88388c7d66fbed3ee9"
+        },
+        {
+          "file": "presets/Preset031.xml",
+          "sha256": "c42ca654c848c2a7556e8cbf977bdf6ee089c0ecfdab1579271a6be596659f8f"
+        },
+        {
+          "file": "presets/Preset032.xml",
+          "sha256": "c213867a81990762671b25b6140acf7466dafab0f7ec82b9c91982ee3e8fad3d"
+        },
+        {
+          "file": "presets/Preset033.xml",
+          "sha256": "e3754b6bb77b285514f2673168a271da2f9d175cd493c4c5c3ff61ba4899061e"
+        },
+        {
+          "file": "presets/Preset034.xml",
+          "sha256": "fc1fed0f063b222be81a8aeccdfa3dd0065e8a5fc8bfe71b7ac3e7a8e4275ac1"
+        },
+        {
+          "file": "presets/Preset035.xml",
+          "sha256": "7897922f175ca9078d7b35a04bc25fab59fdd6233dea830c8060215e094125aa"
+        },
+        {
+          "file": "presets/Preset036.xml",
+          "sha256": "13cb7e282eb335e992fbdfe30234c4b56e7a6ca405b3115ea4db4b42ff8b04b2"
+        },
+        {
+          "file": "presets/Preset037.xml",
+          "sha256": "a542f3802df1123991fd51b6c87e290214379d78eead234f0eb15fad9e88b6b3"
+        },
+        {
+          "file": "presets/Preset038.xml",
+          "sha256": "cae1c3fe3e0aac71cd03eb0bdf23890eb5d9435fdeba37871b529bf3079c8dd3"
+        },
+        {
+          "file": "presets/Preset039.xml",
+          "sha256": "9b8f45fd1fb1c8f5cdb20b9caecefba5f7b4724021e16c9b848751b2b70a77ea"
+        },
+        {
+          "file": "presets/Preset040.xml",
+          "sha256": "1e6361da67081f0fd4c10bc96be7b9d4a865e5d911544ac2ee65660af0a0744e"
+        },
+        {
+          "file": "presets/Preset041.xml",
+          "sha256": "f765d86c72beaab33f00c4a53208729f595c9e5762f29cafb5ba3beb9e7520fa"
+        },
+        {
+          "file": "presets/Preset042.xml",
+          "sha256": "783124ef505ec9efd570b8c3f7bf2273321d6da6ea9208fa0912ab71d4bd6693"
+        },
+        {
+          "file": "presets/Preset043.xml",
+          "sha256": "d670561ff94b2ee7ee17d58aa67e35310cc6b15d8d0053104cc4a93401147523"
+        },
+        {
+          "file": "presets/Preset044.xml",
+          "sha256": "f13d818d8f1971ae053f739182702512494ea0f01b42641f663be9eaec862295"
+        },
+        {
+          "file": "presets/Preset045.xml",
+          "sha256": "3e77dd43c2cfa03709ad67e521a39f60e3c0ce79801c0c278b5751b6ddb571cc"
+        },
+        {
+          "file": "presets/Preset046.xml",
+          "sha256": "f471e3ea4f2c4d5da9299d1ef961406901c17c727adc3aa94bb750f29fd79caa"
+        },
+        {
+          "file": "presets/Preset047.xml",
+          "sha256": "2c7b3b50568335b03569b9db2cf19f2bdf70ef77f24b3e93b6f2631d8ca2b613"
+        },
+        {
+          "file": "presets/Preset048.xml",
+          "sha256": "23ce3259478b33c93cc9f7c66841c0d6ecdc24b9fa5bb94da163cf77e4bad632"
+        },
+        {
+          "file": "presets/Preset049.xml",
+          "sha256": "1a9a4e1d95fb02949f47da986972244de14252be5dd194e2ed0b072019c81d36"
+        },
+        {
+          "file": "presets/Preset050.xml",
+          "sha256": "c283a0fb11a05ba9ddc0055236d88659412ada5c26197e1875a8ce5704afbcd3"
+        },
+        {
+          "file": "presets/Preset051.xml",
+          "sha256": "5c9247f82fe2fec01ba8a419fba45a06bfadf594831c45e9999ff9a16862a45a"
+        },
+        {
+          "file": "presets/Preset052.xml",
+          "sha256": "653eeb4c63674fbc4769190a7f4b12e8a26b8edd457ec1d49d89643cd7cb924b"
+        },
+        {
+          "file": "presets/Preset053.xml",
+          "sha256": "f5263c38f326bd64df41fd704c8bd6a44f4bf8f4b2baae1c3abef001ded4c5e2"
+        },
+        {
+          "file": "presets/Preset054.xml",
+          "sha256": "0a4d0cd28edab128d68449bf5b5e3e77d6693e04d23414b331ef5ced678a2c14"
+        },
+        {
+          "file": "presets/Preset055.xml",
+          "sha256": "7a82a6398a3e08053079116922eb50e985c51fce4f6c6969e48d58ad9f8ab4ea"
+        }
+      ],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "Plaits",
+      "folder": "RHYTHMER - Move - plaits - Plaits",
+      "variant": "",
+      "source_slots": 24,
+      "exposed_sounds": 24,
+      "basis": "Original 24-model palette; internal ROM FM programs remain in original DSP",
+      "bank_assets": [],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "Sophie",
+      "folder": "Matt Estela - VST - Sophie",
+      "variant": "",
+      "source_slots": 16,
+      "exposed_sounds": 16,
+      "basis": "Byte-identical original Sophie DSP and its 16 default pad voices; no separate bank",
+      "bank_assets": [
+        {
+          "file": "dsp/plugin_api_v1.h",
+          "sha256": "e6b2e3699a9e9229d32017750e55d9bd92b58dd7f68f3faff868664d30134928"
+        },
+        {
+          "file": "dsp/sophie.c",
+          "sha256": "d949aab59a4e5ab2775752bd3c5adb8d159fb914f968cedb8f38bd215b8a3106"
+        }
+      ],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "6W6",
+      "folder": "athousanddetails - VST - 6W6",
+      "variant": "",
+      "source_slots": 8,
+      "exposed_sounds": 8,
+      "basis": "Original native voice/model palette (not a factory patch bank)",
+      "bank_assets": [],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "8W8",
+      "folder": "athousanddetails - VST - 8W8",
+      "variant": "",
+      "source_slots": 16,
+      "exposed_sounds": 16,
+      "basis": "Original native voice/model palette (not a factory patch bank)",
+      "bank_assets": [],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "9W9",
+      "folder": "athousanddetails - VST - 9W9",
+      "variant": "",
+      "source_slots": 11,
+      "exposed_sounds": 11,
+      "basis": "Original native voice/model palette (not a factory patch bank)",
+      "bank_assets": [],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "CW-78",
+      "folder": "athousanddetails - VST - CW-78",
+      "variant": "",
+      "source_slots": 14,
+      "exposed_sounds": 14,
+      "basis": "Original native voice/model palette (not a factory patch bank)",
+      "bank_assets": [],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "TR-MPC",
+      "folder": "sd88me - VST - TR-MPC",
+      "variant": "",
+      "source_slots": 16,
+      "exposed_sounds": 16,
+      "basis": "Original native voice/model palette (not a factory patch bank)",
+      "bank_assets": [],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "Acid Engine",
+      "folder": "RHYTHMER - Acid Engine",
+      "variant": "",
+      "source_slots": 4,
+      "exposed_sounds": 4,
+      "basis": "Original Hortator factory bank; four sample-dependent presets explicitly excluded",
+      "bank_assets": [
+        {
+          "file": "firmware/src/preset_bank.h",
+          "sha256": "c1c6ecc849f788fcbbd75b6cef21e60a305138b04faa8a2fd47afd289270ff0c"
+        },
+        {
+          "file": "firmware/src/presets.c",
+          "sha256": "3c5e276bb0f298537e209a6cca85eebd522bd5733247574b97ba5e8956b7b51a"
+        }
+      ],
+      "excluded": [
+        {
+          "name": "SMPKICK",
+          "reason": "Requires original sample assets and sample model, absent from synthesis-only port"
+        },
+        {
+          "name": "TAMBO",
+          "reason": "Requires original sample assets and sample model, absent from synthesis-only port"
+        },
+        {
+          "name": "SHAKER",
+          "reason": "Requires original sample assets and sample model, absent from synthesis-only port"
+        },
+        {
+          "name": "LOFICONG",
+          "reason": "Requires original sample assets and sample model, absent from synthesis-only port"
+        }
+      ],
+      "missing": []
+    }
+  ]
+}

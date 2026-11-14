@@ -1,0 +1,77 @@
+# Rhythmer on the sample-base runtime: the base layers come from the base/
+# submodule, Rhythmer and its main.cpp from src/. The build is base/base.mk.
+BASE_SRC := base/src
+TARGET := build/rhythmer
+APP_SOURCES := $(wildcard src/*.cpp src/*/*.cpp src/*/*/*.cpp)
+include base/base.mk
+
+# The version shown on the Credits page and used to compare updates
+# (shell/update.cpp): ./release.sh passes its VERSION, build.sh passes git
+# describe, plain make uses "dev". The stamp file changes only when the
+# version changes, so update.cpp is recompiled only then.
+RHYTHMER_VERSION ?= dev
+build/gen/rhythmer_version: FORCE
+	@mkdir -p build/gen
+	@printf '%s\n' '$(RHYTHMER_VERSION)' > $@.new
+	@if cmp -s $@.new $@; then rm $@.new; else mv $@.new $@; fi
+build/obj/rhythmer/shell/update.o: build/gen/rhythmer_version
+build/obj/rhythmer/shell/update.o: CPPFLAGS += -DRHYTHMER_VERSION='"$(RHYTHMER_VERSION)"'
+.PHONY: FORCE
+FORCE:
+
+# The web page's files (src/rhythmer/web/web_bundle.h): its own pages, the
+# quickstart and the user guide as HTML, and the images they show, in one
+# file the binary carries.
+WEB_INPUTS := tools/web_bundle.py $(wildcard src/rhythmer/web/static/*) docs/QUICKSTART.md docs/GUIDE.md \
+	$(wildcard docs/guide/*.md) $(wildcard docs/images/*/*.png docs/images/*.png)
+build/gen/web_bundle.bin: $(WEB_INPUTS)
+	@mkdir -p build/gen
+	python3 tools/web_bundle.py $@
+build/obj/rhythmer/web/web_bundle.o: build/gen/web_bundle.bin
+
+# JUCE's decoders, for an SFZ's FLAC, Ogg and AIFF samples and an MPC
+# expansion's MP3 previews. Rhythmer's alone, so the base stays as it is.
+FORMATS := $(JUCE)/juce_audio_formats
+FORMAT_FLAGS := -DJUCE_USE_MP3AUDIOFORMAT=1 -DJUCE_USE_WINDOWS_MEDIA_FORMAT=0 -DJUCE_USE_OPUS=0
+FORMAT_OBJECTS := build/obj/juce_audio_formats.o build/obj/juce_audio_formats_flac_1.o build/obj/juce_audio_formats_flac_2.o build/obj/juce_audio_formats_ogg.o
+OBJECTS += $(FORMAT_OBJECTS)
+$(TARGET): $(FORMAT_OBJECTS)
+build/obj/juce_audio_formats.o: $(FORMATS)/juce_audio_formats.cpp
+	@mkdir -p build/obj
+	$(CXX) $(CPPFLAGS) $(FORMAT_FLAGS) $(CXXFLAGS) -w -c $< -o $@
+build/obj/juce_audio_formats_%.o: $(FORMATS)/juce_audio_formats_%.c
+	@mkdir -p build/obj
+	$(CC) $(CPPFLAGS) $(FORMAT_FLAGS) $(CFLAGS) -w -c $< -o $@
+build/obj/rhythmer/shell/sample_decode.o: CPPFLAGS += $(FORMAT_FLAGS)
+
+# Plug-ins (docs/RHYTHMER.md, Plug-ins): JUCE's headless plug-in hosting with
+# VST3 and LV2 (lilv and its libraries, bundled in JUCE; VST2, CLAP and the
+# armv7 bridge are Rhythmer's own, src/rhythmer/plugin/; CLAP's headers from
+# build/deps/clap, src/rhythmer/dependencies.py), and
+# the support pack (GUI stubs, the bridge and its armhf runtime) linked into
+# the binary. The pack needs Rhythmer's build image (tools/plugin_support/Dockerfile).
+HOSTING := $(JUCE)/juce_audio_processors_headless
+CPPFLAGS += -DJUCE_PLUGINHOST_VST3=1 -DJUCE_PLUGINHOST_LV2=1 -I$(HOSTING)/format_types/VST3_SDK -Ibuild/deps/clap/include
+LV2_SDK := $(HOSTING)/format_types/LV2_SDK
+LV2_INCLUDES := $(addprefix -I$(LV2_SDK),/ /lv2 /serd /sord /sord/src /sratom /lilv /lilv/src)
+PLUGIN_OBJECTS := build/obj/juce_audio_processors_headless.o build/obj/juce_audio_processors_headless_lv2_libs.o build/obj/plugin_support_pack.o
+OBJECTS += $(PLUGIN_OBJECTS)
+$(TARGET): $(PLUGIN_OBJECTS)
+# Makefile too: a hosting flag changed here builds them again.
+build/obj/juce_audio_processors_headless.o build/obj/juce_audio_processors_headless_lv2_libs.o: build/obj/%.o: $(HOSTING)/%.cpp Makefile
+	@mkdir -p build/obj
+	$(CXX) $(CPPFLAGS) $(LV2_INCLUDES) $(CXXFLAGS) -w -c $< -o $@
+build/plugin-support.pack: tools/plugin_support/build.py tools/plugin_support/make_stubs.py tools/plugin_support/Dockerfile \
+        src/rhythmer/plugin/bridge32/vst2_bridge32.cpp src/rhythmer/plugin/vst2_abi.h src/rhythmer/plugin/vst2_bridge_protocol.h
+	python3 tools/plugin_support/build.py build/plugin-support $@
+build/obj/plugin_support_pack.o: src/rhythmer/plugin/bridge32/support_pack.S build/plugin-support.pack
+	@mkdir -p build/obj
+	$(CC) -c $< -o $@
+
+LDLIBS += -Wl,--gc-sections
+FM1_GEN_OBJ := build/obj/fm1-gen.o
+OBJECTS += $(FM1_GEN_OBJ)
+$(TARGET): $(FM1_GEN_OBJ)
+$(FM1_GEN_OBJ): $(shell find fm1-gen -type f)
+	@mkdir -p build/obj
+	$(CC) -O1 -w -ffunction-sections -fdata-sections -DFM1_HOST_TEST=1 -Ifm1-gen/generated -Ifm1-gen/firmware/src -Ifm1-gen/tests -c fm1-gen/bridge.c -o $@

@@ -1,0 +1,348 @@
+{
+  "chain_params": [
+    {
+      "key": "preset",
+      "name": "Preset",
+      "type": "int",
+      "min": 0,
+      "max": 9999
+    },
+    {
+      "key": "volume",
+      "name": "Volume",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "octave_transpose",
+      "name": "Octave",
+      "type": "int",
+      "min": -3,
+      "max": 3
+    },
+    {
+      "key": "saw_level",
+      "name": "Saw Level",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "pulse_level",
+      "name": "Pulse Level",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "sub_level",
+      "name": "Sub Level",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "noise_level",
+      "name": "Noise Level",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "pwm_depth",
+      "name": "PWM Depth",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "pwm_mod",
+      "name": "PWM Mod",
+      "type": "int",
+      "min": 0,
+      "max": 2
+    },
+    {
+      "key": "pitch_range",
+      "name": "Range",
+      "type": "int",
+      "min": 0,
+      "max": 2
+    },
+    {
+      "key": "pitch_mod",
+      "name": "Pitch Mod",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "vcf_cutoff",
+      "name": "VCF Cutoff",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "vcf_resonance",
+      "name": "VCF Reso",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "vcf_env",
+      "name": "VCF Env",
+      "type": "float",
+      "min": -1,
+      "max": 1
+    },
+    {
+      "key": "vcf_lfo",
+      "name": "VCF LFO",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "vcf_key",
+      "name": "VCF Key",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "vcf_bend",
+      "name": "VCF Bend",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "vca_depth",
+      "name": "VCA Depth",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "vca_type",
+      "name": "VCA Type",
+      "type": "int",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "attack",
+      "name": "Attack",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "decay",
+      "name": "Decay",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "sustain",
+      "name": "Sustain",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "release",
+      "name": "Release",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "lfo_rate",
+      "name": "LFO Rate",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "lfo_delay",
+      "name": "LFO Delay",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "lfo_trigger",
+      "name": "LFO Trigger",
+      "type": "int",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "hpf",
+      "name": "HPF",
+      "type": "float",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "chorus_i",
+      "name": "Chorus I",
+      "type": "int",
+      "min": 0,
+      "max": 1
+    },
+    {
+      "key": "chorus_ii",
+      "name": "Chorus II",
+      "type": "int",
+      "min": 0,
+      "max": 1
+    }
+  ],
+  "ui_hierarchy": {
+    "modes": null,
+    "levels": {
+      "root": {
+        "list_param": "preset",
+        "count_param": "preset_count",
+        "name_param": "preset_name",
+        "children": null,
+        "knobs": [
+          "volume",
+          "vcf_cutoff",
+          "vcf_resonance",
+          "vcf_env",
+          "attack",
+          "decay",
+          "sustain",
+          "octave_transpose"
+        ],
+        "params": [
+          {
+            "level": "dco",
+            "label": "DCO"
+          },
+          {
+            "level": "vcf",
+            "label": "VCF"
+          },
+          {
+            "level": "vca",
+            "label": "VCA"
+          },
+          {
+            "level": "env",
+            "label": "Envelope"
+          },
+          {
+            "level": "lfo",
+            "label": "LFO"
+          },
+          {
+            "level": "effects",
+            "label": "Effects"
+          }
+        ]
+      },
+      "dco": {
+        "children": null,
+        "knobs": [
+          "saw_level",
+          "pulse_level",
+          "sub_level",
+          "noise_level",
+          "pwm_depth",
+          "pwm_mod",
+          "pitch_range",
+          "pitch_mod"
+        ],
+        "params": [
+          "saw_level",
+          "pulse_level",
+          "sub_level",
+          "noise_level",
+          "pwm_depth",
+          "pwm_mod",
+          "pitch_range",
+          "pitch_mod"
+        ]
+      },
+      "vcf": {
+        "children": null,
+        "knobs": [
+          "vcf_cutoff",
+          "vcf_resonance",
+          "vcf_env",
+          "vcf_lfo",
+          "vcf_key",
+          "vcf_bend"
+        ],
+        "params": [
+          "vcf_cutoff",
+          "vcf_resonance",
+          "vcf_env",
+          "vcf_lfo",
+          "vcf_key",
+          "vcf_bend"
+        ]
+      },
+      "vca": {
+        "children": null,
+        "knobs": [
+          "vca_depth",
+          "vca_type"
+        ],
+        "params": [
+          "vca_depth",
+          "vca_type"
+        ]
+      },
+      "env": {
+        "children": null,
+        "knobs": [
+          "attack",
+          "decay",
+          "sustain",
+          "release"
+        ],
+        "params": [
+          "attack",
+          "decay",
+          "sustain",
+          "release"
+        ]
+      },
+      "lfo": {
+        "children": null,
+        "knobs": [
+          "lfo_rate",
+          "lfo_delay",
+          "lfo_trigger"
+        ],
+        "params": [
+          "lfo_rate",
+          "lfo_delay",
+          "lfo_trigger"
+        ]
+      },
+      "effects": {
+        "children": null,
+        "knobs": [
+          "hpf",
+          "chorus_i",
+          "chorus_ii"
+        ],
+        "params": [
+          "hpf",
+          "chorus_i",
+          "chorus_ii"
+        ]
+      }
+    }
+  }
+}

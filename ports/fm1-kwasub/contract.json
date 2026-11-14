@@ -1,0 +1,1415 @@
+{
+  "chain_params": [
+    {
+      "key": "p0",
+      "name": "Factory Program",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 96,
+      "default": 0
+    },
+    {
+      "key": "p1",
+      "name": "A ENGINE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 10,
+      "default": 0
+    },
+    {
+      "key": "p2",
+      "name": "A LEVEL",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 70
+    },
+    {
+      "key": "p3",
+      "name": "A P1",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p4",
+      "name": "A P2",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p5",
+      "name": "A P3",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p6",
+      "name": "A OCTAVE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -3,
+      "max": 2,
+      "default": 0
+    },
+    {
+      "key": "p7",
+      "name": "A SEMI",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -12,
+      "max": 12,
+      "default": 0
+    },
+    {
+      "key": "p8",
+      "name": "A FINE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -50,
+      "max": 50,
+      "default": 0
+    },
+    {
+      "key": "p9",
+      "name": "B ENGINE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 10,
+      "default": 1
+    },
+    {
+      "key": "p10",
+      "name": "B LEVEL",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p11",
+      "name": "B P1",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 85
+    },
+    {
+      "key": "p12",
+      "name": "B P2",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p13",
+      "name": "B P3",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p14",
+      "name": "B OCTAVE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -3,
+      "max": 2,
+      "default": 0
+    },
+    {
+      "key": "p15",
+      "name": "B SEMI",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -12,
+      "max": 12,
+      "default": 0
+    },
+    {
+      "key": "p16",
+      "name": "B FINE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -50,
+      "max": 50,
+      "default": 0
+    },
+    {
+      "key": "p17",
+      "name": "SUB WAVE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0
+    },
+    {
+      "key": "p18",
+      "name": "SUB OCTAVE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 2,
+      "default": 1
+    },
+    {
+      "key": "p19",
+      "name": "SUB LEVEL",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 105
+    },
+    {
+      "key": "p20",
+      "name": "SUB ROUTE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 1
+    },
+    {
+      "key": "p21",
+      "name": "NOISE LEVEL",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p22",
+      "name": "NOISE COLOR",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 40
+    },
+    {
+      "key": "p23",
+      "name": "MODE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0
+    },
+    {
+      "key": "p24",
+      "name": "X-MOD",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p25",
+      "name": "DRIFT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 6
+    },
+    {
+      "key": "p26",
+      "name": "KEY RESET",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 1
+    },
+    {
+      "key": "p27",
+      "name": "TYPE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 6,
+      "default": 0
+    },
+    {
+      "key": "p28",
+      "name": "CUTOFF",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 70
+    },
+    {
+      "key": "p29",
+      "name": "RESONANCE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 20
+    },
+    {
+      "key": "p30",
+      "name": "DRIVE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 30
+    },
+    {
+      "key": "p31",
+      "name": "ENV AMOUNT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p32",
+      "name": "KEY TRACK",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64
+    },
+    {
+      "key": "p33",
+      "name": "VELOCITY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p34",
+      "name": "01 ATTACK",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p35",
+      "name": "02 DECAY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 70
+    },
+    {
+      "key": "p36",
+      "name": "03 SUSTAIN",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 127
+    },
+    {
+      "key": "p37",
+      "name": "04 RELEASE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 30
+    },
+    {
+      "key": "p38",
+      "name": "01 ATTACK",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p39",
+      "name": "02 DECAY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 70
+    },
+    {
+      "key": "p40",
+      "name": "03 SUSTAIN",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64
+    },
+    {
+      "key": "p41",
+      "name": "04 RELEASE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 40
+    },
+    {
+      "key": "p42",
+      "name": "01 ATTACK",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p43",
+      "name": "02 DECAY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 35
+    },
+    {
+      "key": "p44",
+      "name": "03 AMOUNT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 20
+    },
+    {
+      "key": "p45",
+      "name": "04 DEST",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 89,
+      "default": 3
+    },
+    {
+      "key": "p46",
+      "name": "SHAPE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 8,
+      "default": 0
+    },
+    {
+      "key": "p47",
+      "name": "SYNC",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 1
+    },
+    {
+      "key": "p48",
+      "name": "RATE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 70
+    },
+    {
+      "key": "p49",
+      "name": "RATE / SYNC",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 15,
+      "default": 9
+    },
+    {
+      "key": "p50",
+      "name": "DEPTH",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p51",
+      "name": "DEST",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 89,
+      "default": 1
+    },
+    {
+      "key": "p52",
+      "name": "RETRIG",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0
+    },
+    {
+      "key": "p53",
+      "name": "PHASE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p54",
+      "name": "SMOOTH",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p55",
+      "name": "SHAPE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 8,
+      "default": 1
+    },
+    {
+      "key": "p56",
+      "name": "SYNC",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0
+    },
+    {
+      "key": "p57",
+      "name": "RATE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 70
+    },
+    {
+      "key": "p58",
+      "name": "RATE / SYNC",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 15,
+      "default": 9
+    },
+    {
+      "key": "p59",
+      "name": "DEPTH",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p60",
+      "name": "DEST",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 89,
+      "default": 1
+    },
+    {
+      "key": "p61",
+      "name": "RETRIG",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0
+    },
+    {
+      "key": "p62",
+      "name": "PHASE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p63",
+      "name": "SMOOTH",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p64",
+      "name": "1 SOURCE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 11,
+      "default": 0
+    },
+    {
+      "key": "p65",
+      "name": "1 DEST",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 89,
+      "default": 0
+    },
+    {
+      "key": "p66",
+      "name": "1 AMOUNT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p67",
+      "name": "2 SOURCE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 11,
+      "default": 0
+    },
+    {
+      "key": "p68",
+      "name": "2 DEST",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 89,
+      "default": 0
+    },
+    {
+      "key": "p69",
+      "name": "2 AMOUNT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p70",
+      "name": "3 SOURCE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 11,
+      "default": 0
+    },
+    {
+      "key": "p71",
+      "name": "3 DEST",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 89,
+      "default": 0
+    },
+    {
+      "key": "p72",
+      "name": "3 AMOUNT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p73",
+      "name": "4 SOURCE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 11,
+      "default": 0
+    },
+    {
+      "key": "p74",
+      "name": "4 DEST",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 89,
+      "default": 0
+    },
+    {
+      "key": "p75",
+      "name": "4 AMOUNT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p76",
+      "name": "EFFECT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 1
+    },
+    {
+      "key": "p77",
+      "name": "TYPE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 3,
+      "default": 1
+    },
+    {
+      "key": "p78",
+      "name": "AMOUNT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 30
+    },
+    {
+      "key": "p79",
+      "name": "MIX",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 60
+    },
+    {
+      "key": "p80",
+      "name": "EFFECT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0
+    },
+    {
+      "key": "p81",
+      "name": "BITS",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 40
+    },
+    {
+      "key": "p82",
+      "name": "RATE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 20
+    },
+    {
+      "key": "p83",
+      "name": "MIX",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64
+    },
+    {
+      "key": "p84",
+      "name": "CHORUS",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0
+    },
+    {
+      "key": "p85",
+      "name": "CHORUS RATE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 30
+    },
+    {
+      "key": "p86",
+      "name": "CHORUS DEPTH",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 60
+    },
+    {
+      "key": "p87",
+      "name": "CHORUS MIX",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 50
+    },
+    {
+      "key": "p88",
+      "name": "EFFECT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0
+    },
+    {
+      "key": "p89",
+      "name": "TIME",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 3,
+      "max": 13,
+      "default": 8
+    },
+    {
+      "key": "p90",
+      "name": "FEEDBACK",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 60
+    },
+    {
+      "key": "p91",
+      "name": "TONE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 50
+    },
+    {
+      "key": "p92",
+      "name": "MIX",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 30
+    },
+    {
+      "key": "p93",
+      "name": "EFFECT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0
+    },
+    {
+      "key": "p94",
+      "name": "SIZE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 70
+    },
+    {
+      "key": "p95",
+      "name": "DAMP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 60
+    },
+    {
+      "key": "p96",
+      "name": "MIX",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 25
+    },
+    {
+      "key": "p97",
+      "name": "GLUE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 30
+    },
+    {
+      "key": "p98",
+      "name": "SUB BOOST",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 30
+    },
+    {
+      "key": "p99",
+      "name": "OUTPUT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 76
+    },
+    {
+      "key": "p100",
+      "name": "VOICE MODE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 2,
+      "default": 0
+    },
+    {
+      "key": "p101",
+      "name": "GLIDE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p102",
+      "name": "BEND RANGE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 24,
+      "default": 2
+    },
+    {
+      "key": "p103",
+      "name": "VELOCITY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 40
+    },
+    {
+      "key": "p104",
+      "name": "STYLE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 11,
+      "default": 0
+    },
+    {
+      "key": "p105",
+      "name": "STEP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0
+    },
+    {
+      "key": "p106",
+      "name": "PATTERN",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 15,
+      "default": 0
+    },
+    {
+      "key": "p107",
+      "name": "RATE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 5,
+      "default": 3
+    },
+    {
+      "key": "p108",
+      "name": "GATE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 100
+    },
+    {
+      "key": "p109",
+      "name": "DEST",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 89,
+      "default": 0
+    },
+    {
+      "key": "p110",
+      "name": "DEPTH",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p111",
+      "name": "SMOOTH",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 10
+    },
+    {
+      "key": "p112",
+      "name": "COMPRESSOR",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0
+    },
+    {
+      "key": "p113",
+      "name": "COMP AMOUNT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 50
+    },
+    {
+      "key": "p114",
+      "name": "ATTACK",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 20
+    },
+    {
+      "key": "p115",
+      "name": "RELEASE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 50
+    },
+    {
+      "key": "p116",
+      "name": "PUMP",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p117",
+      "name": "PUMP RATE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0
+    },
+    {
+      "key": "p118",
+      "name": "TYPE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 3,
+      "default": 1
+    },
+    {
+      "key": "p119",
+      "name": "TYPE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 3,
+      "default": 0
+    },
+    {
+      "key": "p120",
+      "name": "PHASER",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0
+    },
+    {
+      "key": "p121",
+      "name": "PHASER RATE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 40
+    },
+    {
+      "key": "p122",
+      "name": "PHASER DEPTH",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 80
+    },
+    {
+      "key": "p123",
+      "name": "PHASER FDBK",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 50
+    },
+    {
+      "key": "p124",
+      "name": "PHASER MIX",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 64
+    },
+    {
+      "key": "p125",
+      "name": "SAMPLE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 28,
+      "default": 0
+    },
+    {
+      "key": "p126",
+      "name": "LEVEL",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 90
+    },
+    {
+      "key": "p127",
+      "name": "TUNE",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -24,
+      "max": 24,
+      "default": 0
+    },
+    {
+      "key": "p128",
+      "name": "PITCH",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 2,
+      "default": 0
+    },
+    {
+      "key": "p129",
+      "name": "PLAY",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 2,
+      "default": 0
+    },
+    {
+      "key": "p130",
+      "name": "SPEED",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p131",
+      "name": "OTT AMOUNT",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p132",
+      "name": "OTT LOW",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p133",
+      "name": "OTT HIGH",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": -64,
+      "max": 63,
+      "default": 0
+    },
+    {
+      "key": "p134",
+      "name": "MONO BASS",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 6,
+      "default": 4
+    },
+    {
+      "key": "p135",
+      "name": "SUB LOCK",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 1
+    },
+    {
+      "key": "p136",
+      "name": "START",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p137",
+      "name": "END",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p138",
+      "name": "DIRECTION",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 2,
+      "default": 0
+    },
+    {
+      "key": "p139",
+      "name": "A P4",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    },
+    {
+      "key": "p140",
+      "name": "B P4",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 127,
+      "default": 0
+    }
+  ],
+  "ui_hierarchy": {}
+}

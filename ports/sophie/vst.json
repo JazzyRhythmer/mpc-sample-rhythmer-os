@@ -1,0 +1,28 @@
+{
+  "name": "Sophie",
+  "vendor": "Matt Estela",
+  "uid": "GoSp",
+  "version": 1000,
+  "so": "sophie.so",
+  "targets": [
+    "aarch64"
+  ],
+  "module": "contract.json",
+  "custom_skin": true,
+  "defines": {
+    "SAMPLE_ACCURATE": 1
+  },
+  "build": {
+    "root": ".",
+    "sources": [
+      "dsp/sophie.c",
+      "drum_metadata.c"
+    ],
+    "cflags": [
+      "-Idsp"
+    ],
+    "libs": [
+      "-lm"
+    ]
+  }
+}

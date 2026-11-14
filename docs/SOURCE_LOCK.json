@@ -1,0 +1,51 @@
+{
+  "checked_on": "2026-11-14",
+  "timezone": "Asia/Seoul",
+  "repositories": {
+    "melodee-sample": {
+      "url": "https://github.com/keremimo/melodee-sample.git",
+      "commit": "8880d16116ccb3c69f75fb46bf2166b16c51ef0c",
+      "role": "pinned origin in vendor/rhythmer; product snapshot mechanically renamed to Rhythmer",
+      "shallow": true,
+      "tag": "v0.2.0"
+    },
+    "sample-base": {
+      "url": "https://github.com/keremimo/sample-base.git",
+      "commit": "7e2d15d9ca086608b942599f6471a82f48c139f7",
+      "role": "unchanged runtime submodule",
+      "shallow": true
+    },
+    "schwung-sophie": {
+      "url": "https://github.com/mestela/schwung-sophie.git",
+      "commit": "abd132dc50b43f1f1bd775d3a9faf11e70fb9d9c",
+      "role": "vendored unchanged DSP",
+      "shallow": true
+    },
+    "mpc-vst-plugins": {
+      "url": "https://github.com/open-mpc/mpc-vst-plugins.git",
+      "commit": "009353816044739537adab030927fe9765af67f1",
+      "role": "unchanged build wrapper/adapter",
+      "shallow": true
+    },
+    "jiant-original": {
+      "url": "https://github.com/juanjiant-bit/JIANT.git",
+      "commit": "b2c7f365dd8b8d14047d0dbe9b4edd82cc5f09ae",
+      "role": "DRUM-X original native synthesis/reference and musical generation tables",
+      "shallow": true
+    }
+  },
+  "melodee_base_gitlink": "7e2d15d9ca086608b942599f6471a82f48c139f7",
+  "baseline_built": false,
+  "hardware_validated": false,
+  "license_audit_complete": false,
+  "product_names": {
+    "source": "src/rhythmer",
+    "namespace": "rhythmer",
+    "class": "RhythmerApp",
+    "binary": "rhythmer",
+    "sd_runtime": "autorun/rhythmer"
+  },
+  "native_engine_acceptance": "config/native-engines.lock.json",
+  "baseline_release_source_pins": "config/baseline-source.lock.json",
+  "license_audit_scope": "Accepted native code grants, required notices and sound-data exclusions recorded per engine; not a blanket legal certification for external branding or future releases"
+}

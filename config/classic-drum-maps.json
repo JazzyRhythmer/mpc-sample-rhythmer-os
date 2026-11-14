@@ -1,0 +1,218 @@
+{
+  "6W6": {
+    "pad_layout": "drums",
+    "levels": {
+      "0": {
+        "name": "Voice 01",
+        "note": 36
+      },
+      "1": {
+        "name": "Voice 02",
+        "note": 37
+      },
+      "2": {
+        "name": "Voice 03",
+        "note": 38
+      },
+      "3": {
+        "name": "Voice 04",
+        "note": 39
+      },
+      "4": {
+        "name": "Voice 05",
+        "note": 40
+      },
+      "5": {
+        "name": "Voice 06",
+        "note": 41
+      },
+      "6": {
+        "name": "Voice 07",
+        "note": 42
+      },
+      "7": {
+        "name": "Voice 08",
+        "note": 43
+      }
+    }
+  },
+  "8W8": {
+    "pad_layout": "drums",
+    "levels": {
+      "0": {
+        "name": "Voice 01",
+        "note": 36
+      },
+      "1": {
+        "name": "Voice 02",
+        "note": 37
+      },
+      "2": {
+        "name": "Voice 03",
+        "note": 38
+      },
+      "3": {
+        "name": "Voice 04",
+        "note": 39
+      },
+      "4": {
+        "name": "Voice 05",
+        "note": 40
+      },
+      "5": {
+        "name": "Voice 06",
+        "note": 41
+      },
+      "6": {
+        "name": "Voice 07",
+        "note": 42
+      },
+      "7": {
+        "name": "Voice 08",
+        "note": 43
+      },
+      "8": {
+        "name": "Voice 09",
+        "note": 44
+      },
+      "9": {
+        "name": "Voice 10",
+        "note": 45
+      },
+      "10": {
+        "name": "Voice 11",
+        "note": 46
+      },
+      "11": {
+        "name": "Voice 12",
+        "note": 47
+      },
+      "12": {
+        "name": "Voice 13",
+        "note": 48
+      },
+      "13": {
+        "name": "Voice 14",
+        "note": 49
+      },
+      "14": {
+        "name": "Voice 15",
+        "note": 50
+      },
+      "15": {
+        "name": "Voice 16",
+        "note": 51
+      }
+    }
+  },
+  "9W9": {
+    "pad_layout": "drums",
+    "levels": {
+      "0": {
+        "name": "Voice 01",
+        "note": 36
+      },
+      "1": {
+        "name": "Voice 02",
+        "note": 37
+      },
+      "2": {
+        "name": "Voice 03",
+        "note": 38
+      },
+      "3": {
+        "name": "Voice 04",
+        "note": 39
+      },
+      "4": {
+        "name": "Voice 05",
+        "note": 40
+      },
+      "5": {
+        "name": "Voice 06",
+        "note": 41
+      },
+      "6": {
+        "name": "Voice 07",
+        "note": 42
+      },
+      "7": {
+        "name": "Voice 08",
+        "note": 43
+      },
+      "8": {
+        "name": "Voice 09",
+        "note": 44
+      },
+      "9": {
+        "name": "Voice 10",
+        "note": 45
+      },
+      "10": {
+        "name": "Voice 11",
+        "note": 46
+      }
+    }
+  },
+  "CW-78": {
+    "pad_layout": "drums",
+    "levels": {
+      "0": {
+        "name": "Voice 01",
+        "note": 36
+      },
+      "1": {
+        "name": "Voice 02",
+        "note": 37
+      },
+      "2": {
+        "name": "Voice 03",
+        "note": 38
+      },
+      "3": {
+        "name": "Voice 04",
+        "note": 39
+      },
+      "4": {
+        "name": "Voice 05",
+        "note": 40
+      },
+      "5": {
+        "name": "Voice 06",
+        "note": 41
+      },
+      "6": {
+        "name": "Voice 07",
+        "note": 42
+      },
+      "7": {
+        "name": "Voice 08",
+        "note": 43
+      },
+      "8": {
+        "name": "Voice 09",
+        "note": 44
+      },
+      "9": {
+        "name": "Voice 10",
+        "note": 45
+      },
+      "10": {
+        "name": "Voice 11",
+        "note": 46
+      },
+      "11": {
+        "name": "Voice 12",
+        "note": 47
+      },
+      "12": {
+        "name": "Voice 13",
+        "note": 48
+      },
+      "13": {
+        "name": "Voice 14",
+        "note": 49
+      }
+    }
+  }
+}

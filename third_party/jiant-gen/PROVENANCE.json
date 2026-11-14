@@ -1,0 +1,17 @@
+{
+  "original_repo": "https://github.com/juanjiant-bit/JIANT",
+  "original_commit": "b2c7f365dd8b8d14047d0dbe9b4edd82cc5f09ae",
+  "rhythmer_data": "Rhythmer musical genres and break GEN/sequence logic; no JAZZY DSP",
+  "sha256": {
+    "LICENSE": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+    "original-gen_tables.c": "42d9dcb81f735171e3b156b873a9d0f337fa4d945ad85c0931f189301eef13b6",
+    "original-song_dice.c": "4511c3b1dfd5dbf4145f232ab79d592439e9e89c5797716eb5d444294b7678bc",
+    "rhythmer-gen.c": "6a1e77b891c3c809d20a8c04b1196c397f603ef648db468c7f24bd17b993056b",
+    "rhythmer-gen_tables.c": "0758eec7cb199789c1643bff42d168982a4ed4fb38c537581f884eab8ef54b69",
+    "GEN-GENRE-ORDER.json": "33fadae467b76e56944403d0bfc9e730bfbfbcfe608f9bf106d6031e3fb456ac",
+    "original-gen.c": "bb93e283994a467bbf28186f92ae1250ea069a2a78c48bf5abc2a6c00d0f72e5",
+    "rhythmer-gen_jr_progressions.h": "58e44bf183acb533fbec6986b6507a5789d94816ff7b0b9488374b798f53a9eb",
+    "rhythmer-break_sequence.c": "926a35be77496eec81c5d2f6377049665b85cd19d62a1d4783d392b20e30a7ac",
+    "rhythmer-ui_break_tools.c": "310e694b025091ba269847198c5a2d496d5def54de7bfde8976bb9ad6c541ad9"
+  }
+}

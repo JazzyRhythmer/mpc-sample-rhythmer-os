@@ -1,0 +1,362 @@
+[
+  {
+    "id": "drumx",
+    "name": "DRUM-X",
+    "uid": "GDX1",
+    "folder_needle": "rhythmer - fm1 - drumx - ",
+    "drums": true,
+    "mono": false,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43
+    ]
+  },
+  {
+    "id": "cs1",
+    "name": "CS-1",
+    "uid": "GCS1",
+    "folder_needle": "rhythmer - fm1 - cs1 - ",
+    "drums": false,
+    "mono": false,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "id": "elixir",
+    "name": "Elixir Kit",
+    "uid": "GEK1",
+    "folder_needle": "rhythmer - fm1 - elixir - ",
+    "drums": true,
+    "mono": false,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      36,
+      38,
+      255,
+      42,
+      46,
+      45,
+      255,
+      47
+    ]
+  },
+  {
+    "id": "fm106",
+    "name": "FM-106",
+    "uid": "GF61",
+    "folder_needle": "rhythmer - fm1 - fm106 - ",
+    "drums": false,
+    "mono": false,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "id": "fmini",
+    "name": "FMini-1",
+    "uid": "GFM1",
+    "folder_needle": "rhythmer - fm1 - fmini - ",
+    "drums": false,
+    "mono": false,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "id": "guru600",
+    "name": "Guru-600",
+    "uid": "GG61",
+    "folder_needle": "rhythmer - fm1 - guru600 - ",
+    "drums": false,
+    "mono": false,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "id": "hortator",
+    "name": "Hortator Kit",
+    "uid": "GHK1",
+    "folder_needle": "rhythmer - fm1 - hortator - ",
+    "drums": true,
+    "mono": false,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      36,
+      38,
+      39,
+      42,
+      46,
+      45,
+      37,
+      49
+    ]
+  },
+  {
+    "id": "kwasub",
+    "name": "K-WASUB",
+    "uid": "GKWB",
+    "folder_needle": "rhythmer - fm1 - kwasub - ",
+    "drums": false,
+    "mono": true,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "id": "kwasub-kit",
+    "name": "K-WASUB Kit",
+    "uid": "GKWK",
+    "folder_needle": "rhythmer - fm1 - kwasub-kit - ",
+    "drums": true,
+    "mono": false,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      43,
+      42
+    ]
+  },
+  {
+    "id": "mono2k",
+    "name": "MONO2K",
+    "uid": "GM2K",
+    "folder_needle": "rhythmer - fm1 - mono2k - ",
+    "drums": false,
+    "mono": true,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "id": "obervave",
+    "name": "OberVave",
+    "uid": "GOV1",
+    "folder_needle": "rhythmer - fm1 - obervave - ",
+    "drums": false,
+    "mono": false,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "id": "prophet",
+    "name": "Prophet",
+    "uid": "GP51",
+    "folder_needle": "rhythmer - fm1 - prophet - ",
+    "drums": false,
+    "mono": false,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "id": "s1vave",
+    "name": "S1Vave",
+    "uid": "GS11",
+    "folder_needle": "rhythmer - fm1 - s1vave - ",
+    "drums": false,
+    "mono": false,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "id": "aphex",
+    "name": "Aphex",
+    "uid": "8eBq",
+    "folder_needle": "rhythmer - move - aphex - ",
+    "drums": false,
+    "mono": true,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "id": "braids",
+    "name": "Braids",
+    "uid": "9YTs",
+    "folder_needle": "rhythmer - move - braids - ",
+    "drums": false,
+    "mono": false,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "id": "dexed",
+    "name": "Dexed",
+    "uid": "0hib",
+    "folder_needle": "rhythmer - move - dexed - ",
+    "drums": false,
+    "mono": false,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "id": "hera",
+    "name": "Hera",
+    "uid": "uLEF",
+    "folder_needle": "rhythmer - move - hera - ",
+    "drums": false,
+    "mono": false,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "id": "plaits",
+    "name": "Plaits",
+    "uid": "wM8p",
+    "folder_needle": "rhythmer - move - plaits - ",
+    "drums": false,
+    "mono": false,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255
+    ]
+  }
+]

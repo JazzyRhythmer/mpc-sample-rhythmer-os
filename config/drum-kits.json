@@ -1,0 +1,887 @@
+{
+  "factory_kits": [
+    {
+      "engine": "DRUM-X",
+      "port": "drumx",
+      "selector": "kit",
+      "index": 0,
+      "name": "DRUM-X",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "l0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "l1": {
+            "name": "Snare",
+            "note": 37
+          },
+          "l2": {
+            "name": "Clap",
+            "note": 38
+          },
+          "l3": {
+            "name": "Closed Hat",
+            "note": 39
+          },
+          "l4": {
+            "name": "Open Hat",
+            "note": 40
+          },
+          "l5": {
+            "name": "Tom",
+            "note": 41
+          },
+          "l6": {
+            "name": "Rim",
+            "note": 42
+          },
+          "l7": {
+            "name": "Bell",
+            "note": 43
+          }
+        }
+      }
+    },
+    {
+      "engine": "DRUM-X",
+      "port": "drumx",
+      "selector": "kit",
+      "index": 1,
+      "name": "909 CLUB",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "l0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "l1": {
+            "name": "Snare",
+            "note": 37
+          },
+          "l2": {
+            "name": "Clap",
+            "note": 38
+          },
+          "l3": {
+            "name": "Closed Hat",
+            "note": 39
+          },
+          "l4": {
+            "name": "Open Hat",
+            "note": 40
+          },
+          "l5": {
+            "name": "Tom",
+            "note": 41
+          },
+          "l6": {
+            "name": "Rim",
+            "note": 42
+          },
+          "l7": {
+            "name": "Bell",
+            "note": 43
+          }
+        }
+      }
+    },
+    {
+      "engine": "DRUM-X",
+      "port": "drumx",
+      "selector": "kit",
+      "index": 2,
+      "name": "808 BOOM",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "l0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "l1": {
+            "name": "Snare",
+            "note": 37
+          },
+          "l2": {
+            "name": "Clap",
+            "note": 38
+          },
+          "l3": {
+            "name": "Closed Hat",
+            "note": 39
+          },
+          "l4": {
+            "name": "Open Hat",
+            "note": 40
+          },
+          "l5": {
+            "name": "Tom",
+            "note": 41
+          },
+          "l6": {
+            "name": "Rim",
+            "note": 42
+          },
+          "l7": {
+            "name": "Bell",
+            "note": 43
+          }
+        }
+      }
+    },
+    {
+      "engine": "DRUM-X",
+      "port": "drumx",
+      "selector": "kit",
+      "index": 3,
+      "name": "LOFI DUST",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "l0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "l1": {
+            "name": "Snare",
+            "note": 37
+          },
+          "l2": {
+            "name": "Clap",
+            "note": 38
+          },
+          "l3": {
+            "name": "Closed Hat",
+            "note": 39
+          },
+          "l4": {
+            "name": "Open Hat",
+            "note": 40
+          },
+          "l5": {
+            "name": "Tom",
+            "note": 41
+          },
+          "l6": {
+            "name": "Rim",
+            "note": 42
+          },
+          "l7": {
+            "name": "Bell",
+            "note": 43
+          }
+        }
+      }
+    },
+    {
+      "engine": "DRUM-X",
+      "port": "drumx",
+      "selector": "kit",
+      "index": 4,
+      "name": "INDUSTRIAL",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "l0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "l1": {
+            "name": "Snare",
+            "note": 37
+          },
+          "l2": {
+            "name": "Clap",
+            "note": 38
+          },
+          "l3": {
+            "name": "Closed Hat",
+            "note": 39
+          },
+          "l4": {
+            "name": "Open Hat",
+            "note": 40
+          },
+          "l5": {
+            "name": "Tom",
+            "note": 41
+          },
+          "l6": {
+            "name": "Rim",
+            "note": 42
+          },
+          "l7": {
+            "name": "Bell",
+            "note": 43
+          }
+        }
+      }
+    },
+    {
+      "engine": "DRUM-X",
+      "port": "drumx",
+      "selector": "kit",
+      "index": 5,
+      "name": "ACOUSTIC",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "l0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "l1": {
+            "name": "Snare",
+            "note": 37
+          },
+          "l2": {
+            "name": "Clap",
+            "note": 38
+          },
+          "l3": {
+            "name": "Closed Hat",
+            "note": 39
+          },
+          "l4": {
+            "name": "Open Hat",
+            "note": 40
+          },
+          "l5": {
+            "name": "Tom",
+            "note": 41
+          },
+          "l6": {
+            "name": "Rim",
+            "note": 42
+          },
+          "l7": {
+            "name": "Bell",
+            "note": 43
+          }
+        }
+      }
+    },
+    {
+      "engine": "DRUM-X",
+      "port": "drumx",
+      "selector": "kit",
+      "index": 6,
+      "name": "DUB ROOTS",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "l0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "l1": {
+            "name": "Snare",
+            "note": 37
+          },
+          "l2": {
+            "name": "Clap",
+            "note": 38
+          },
+          "l3": {
+            "name": "Closed Hat",
+            "note": 39
+          },
+          "l4": {
+            "name": "Open Hat",
+            "note": 40
+          },
+          "l5": {
+            "name": "Tom",
+            "note": 41
+          },
+          "l6": {
+            "name": "Rim",
+            "note": 42
+          },
+          "l7": {
+            "name": "Bell",
+            "note": 43
+          }
+        }
+      }
+    },
+    {
+      "engine": "DRUM-X",
+      "port": "drumx",
+      "selector": "kit",
+      "index": 7,
+      "name": "TECHNO RAW",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "l0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "l1": {
+            "name": "Snare",
+            "note": 37
+          },
+          "l2": {
+            "name": "Clap",
+            "note": 38
+          },
+          "l3": {
+            "name": "Closed Hat",
+            "note": 39
+          },
+          "l4": {
+            "name": "Open Hat",
+            "note": 40
+          },
+          "l5": {
+            "name": "Tom",
+            "note": 41
+          },
+          "l6": {
+            "name": "Rim",
+            "note": 42
+          },
+          "l7": {
+            "name": "Bell",
+            "note": 43
+          }
+        }
+      }
+    },
+    {
+      "engine": "DRUM-X",
+      "port": "drumx",
+      "selector": "kit",
+      "index": 8,
+      "name": "BREAKS",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "l0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "l1": {
+            "name": "Snare",
+            "note": 37
+          },
+          "l2": {
+            "name": "Clap",
+            "note": 38
+          },
+          "l3": {
+            "name": "Closed Hat",
+            "note": 39
+          },
+          "l4": {
+            "name": "Open Hat",
+            "note": 40
+          },
+          "l5": {
+            "name": "Tom",
+            "note": 41
+          },
+          "l6": {
+            "name": "Rim",
+            "note": 42
+          },
+          "l7": {
+            "name": "Bell",
+            "note": 43
+          }
+        }
+      }
+    },
+    {
+      "engine": "Hortator Kit",
+      "port": "fm1-hortator",
+      "selector": "p0",
+      "index": 0,
+      "name": "TRX Classic",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "1": {
+            "name": "Snare",
+            "note": 38
+          },
+          "2": {
+            "name": "Clap",
+            "note": 39
+          },
+          "3": {
+            "name": "Closed Hat",
+            "note": 42
+          },
+          "4": {
+            "name": "Open Hat",
+            "note": 46
+          },
+          "5": {
+            "name": "Tom",
+            "note": 45
+          },
+          "6": {
+            "name": "Rim",
+            "note": 37
+          },
+          "7": {
+            "name": "Cymbal",
+            "note": 49
+          }
+        }
+      },
+      "origin": "Rhythmer pad arrangement of original Hortator factory sounds; not a new patch bank"
+    },
+    {
+      "engine": "Hortator Kit",
+      "port": "fm1-hortator",
+      "selector": "p0",
+      "index": 1,
+      "name": "808",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "1": {
+            "name": "Snare",
+            "note": 38
+          },
+          "2": {
+            "name": "Clap",
+            "note": 39
+          },
+          "3": {
+            "name": "Closed Hat",
+            "note": 42
+          },
+          "4": {
+            "name": "Open Hat",
+            "note": 46
+          },
+          "5": {
+            "name": "Tom",
+            "note": 45
+          },
+          "6": {
+            "name": "Rim",
+            "note": 37
+          },
+          "7": {
+            "name": "Cymbal",
+            "note": 49
+          }
+        }
+      },
+      "origin": "Rhythmer pad arrangement of original Hortator factory sounds; not a new patch bank"
+    },
+    {
+      "engine": "Hortator Kit",
+      "port": "fm1-hortator",
+      "selector": "p0",
+      "index": 2,
+      "name": "909",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "1": {
+            "name": "Snare",
+            "note": 38
+          },
+          "2": {
+            "name": "Clap",
+            "note": 39
+          },
+          "3": {
+            "name": "Closed Hat",
+            "note": 42
+          },
+          "4": {
+            "name": "Open Hat",
+            "note": 46
+          },
+          "5": {
+            "name": "Tom",
+            "note": 45
+          },
+          "6": {
+            "name": "Rim",
+            "note": 37
+          },
+          "7": {
+            "name": "Cymbal",
+            "note": 49
+          }
+        }
+      },
+      "origin": "Rhythmer pad arrangement of original Hortator factory sounds; not a new patch bank"
+    },
+    {
+      "engine": "Hortator Kit",
+      "port": "fm1-hortator",
+      "selector": "p0",
+      "index": 3,
+      "name": "Plaits",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "1": {
+            "name": "Snare",
+            "note": 38
+          },
+          "2": {
+            "name": "Clap",
+            "note": 39
+          },
+          "3": {
+            "name": "Closed Hat",
+            "note": 42
+          },
+          "4": {
+            "name": "Open Hat",
+            "note": 46
+          },
+          "5": {
+            "name": "Tom",
+            "note": 45
+          },
+          "6": {
+            "name": "Rim",
+            "note": 37
+          },
+          "7": {
+            "name": "Cymbal",
+            "note": 49
+          }
+        }
+      },
+      "origin": "Rhythmer pad arrangement of original Hortator factory sounds; not a new patch bank"
+    },
+    {
+      "engine": "Hortator Kit",
+      "port": "fm1-hortator",
+      "selector": "p0",
+      "index": 4,
+      "name": "FM",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "1": {
+            "name": "Snare",
+            "note": 38
+          },
+          "2": {
+            "name": "Clap",
+            "note": 39
+          },
+          "3": {
+            "name": "Closed Hat",
+            "note": 42
+          },
+          "4": {
+            "name": "Open Hat",
+            "note": 46
+          },
+          "5": {
+            "name": "Tom",
+            "note": 45
+          },
+          "6": {
+            "name": "Rim",
+            "note": 37
+          },
+          "7": {
+            "name": "Cymbal",
+            "note": 49
+          }
+        }
+      },
+      "origin": "Rhythmer pad arrangement of original Hortator factory sounds; not a new patch bank"
+    },
+    {
+      "engine": "Hortator Kit",
+      "port": "fm1-hortator",
+      "selector": "p0",
+      "index": 5,
+      "name": "Industrial",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "1": {
+            "name": "Snare",
+            "note": 38
+          },
+          "2": {
+            "name": "Clap",
+            "note": 39
+          },
+          "3": {
+            "name": "Closed Hat",
+            "note": 42
+          },
+          "4": {
+            "name": "Open Hat",
+            "note": 46
+          },
+          "5": {
+            "name": "Tom",
+            "note": 45
+          },
+          "6": {
+            "name": "Rim",
+            "note": 37
+          },
+          "7": {
+            "name": "Cymbal",
+            "note": 49
+          }
+        }
+      },
+      "origin": "Rhythmer pad arrangement of original Hortator factory sounds; not a new patch bank"
+    },
+    {
+      "engine": "K-WASUB Kit",
+      "port": "fm1-kwasub-kit",
+      "selector": "p0",
+      "index": 0,
+      "name": "808",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "1": {
+            "name": "Snare",
+            "note": 37
+          },
+          "2": {
+            "name": "Clap",
+            "note": 38
+          },
+          "3": {
+            "name": "Closed Hat",
+            "note": 39
+          },
+          "4": {
+            "name": "Open Hat",
+            "note": 40
+          },
+          "5": {
+            "name": "Tom",
+            "note": 41
+          },
+          "6": {
+            "name": "Percussion",
+            "note": 42
+          },
+          "7": {
+            "name": "Cymbal",
+            "note": 43
+          }
+        }
+      }
+    },
+    {
+      "engine": "K-WASUB Kit",
+      "port": "fm1-kwasub-kit",
+      "selector": "p0",
+      "index": 1,
+      "name": "909",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "1": {
+            "name": "Snare",
+            "note": 37
+          },
+          "2": {
+            "name": "Clap",
+            "note": 38
+          },
+          "3": {
+            "name": "Closed Hat",
+            "note": 39
+          },
+          "4": {
+            "name": "Open Hat",
+            "note": 40
+          },
+          "5": {
+            "name": "Tom",
+            "note": 41
+          },
+          "6": {
+            "name": "Percussion",
+            "note": 42
+          },
+          "7": {
+            "name": "Cymbal",
+            "note": 43
+          }
+        }
+      }
+    },
+    {
+      "engine": "K-WASUB Kit",
+      "port": "fm1-kwasub-kit",
+      "selector": "p0",
+      "index": 2,
+      "name": "Dub Techno",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "1": {
+            "name": "Snare",
+            "note": 37
+          },
+          "2": {
+            "name": "Clap",
+            "note": 38
+          },
+          "3": {
+            "name": "Closed Hat",
+            "note": 39
+          },
+          "4": {
+            "name": "Open Hat",
+            "note": 40
+          },
+          "5": {
+            "name": "Tom",
+            "note": 41
+          },
+          "6": {
+            "name": "Percussion",
+            "note": 42
+          },
+          "7": {
+            "name": "Cymbal",
+            "note": 43
+          }
+        }
+      }
+    },
+    {
+      "engine": "K-WASUB Kit",
+      "port": "fm1-kwasub-kit",
+      "selector": "p0",
+      "index": 3,
+      "name": "Acoustic",
+      "note_map": {
+        "pad_layout": "drums",
+        "levels": {
+          "0": {
+            "name": "Kick",
+            "note": 36
+          },
+          "1": {
+            "name": "Snare",
+            "note": 37
+          },
+          "2": {
+            "name": "Clap",
+            "note": 38
+          },
+          "3": {
+            "name": "Closed Hat",
+            "note": 39
+          },
+          "4": {
+            "name": "Open Hat",
+            "note": 40
+          },
+          "5": {
+            "name": "Tom",
+            "note": 41
+          },
+          "6": {
+            "name": "Percussion",
+            "note": 42
+          },
+          "7": {
+            "name": "Cymbal",
+            "note": 43
+          }
+        }
+      }
+    },
+    {
+      "engine": "Elixir",
+      "port": "fm1-elixir",
+      "selector": "p0",
+      "index": 0,
+      "name": "Initkit",
+      "origin": "Original GPL Elixir kit_init_values; external Erica/Hrtl banks omitted"
+    },
+    {
+      "engine": "Elixir",
+      "port": "fm1-elixir",
+      "selector": "p0",
+      "index": 0,
+      "name": "Dry Circuit",
+      "origin": "Rhythmer original kit by jazzy rhythmer; GPL-3.0-only"
+    },
+    {
+      "engine": "Elixir",
+      "port": "fm1-elixir",
+      "selector": "p0",
+      "index": 0,
+      "name": "Warm Machine",
+      "origin": "Rhythmer original kit by jazzy rhythmer; GPL-3.0-only"
+    },
+    {
+      "engine": "Elixir",
+      "port": "fm1-elixir",
+      "selector": "p0",
+      "index": 0,
+      "name": "Bright Logic",
+      "origin": "Rhythmer original kit by jazzy rhythmer; GPL-3.0-only"
+    },
+    {
+      "engine": "Elixir",
+      "port": "fm1-elixir",
+      "selector": "p0",
+      "index": 0,
+      "name": "Soft Pulse",
+      "origin": "Rhythmer original kit by jazzy rhythmer; GPL-3.0-only"
+    }
+  ],
+  "cc0_percussion_samples": 5
+}

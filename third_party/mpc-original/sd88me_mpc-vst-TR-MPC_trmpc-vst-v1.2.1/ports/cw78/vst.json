@@ -1,0 +1,33 @@
+{
+  "name": "CW-78",
+  "vendor": "athousanddetails",
+  "uid": "TC78",
+  "version": 1101,
+  "so": "trcw78.so",
+  "targets": ["armv7", "aarch64"],
+  "art": "html",
+  "build": {
+    "root": ".",
+    "sources": [
+      "src/dsp/cr78_plugin.cpp",
+      "src/dsp/cr78_engine.cpp",
+      "src/mpc_pads_engine.c"
+    ],
+    "cflags": [
+      "-Isrc",
+      "-Isrc/dsp",
+      "-Isrc/host",
+      "-std=gnu++14",
+      "-O3"
+    ],
+    "libs": [
+      "-lm"
+    ]
+  },
+  "layout": "layout.conf",
+  "params": "module.mpc.json",
+  "defines": {
+    "HAS_TRANSPORT": 1,
+    "HAS_LFO_BPM": 1
+  }
+}

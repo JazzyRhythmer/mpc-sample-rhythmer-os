@@ -1,0 +1,4396 @@
+{
+ "name": "TR-MPC",
+ "params": [
+  {
+   "key": "s01_src",
+   "name": "Slot 1 voice",
+   "options": [
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "HIGH TOM",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "HAND CLAP",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HIGH TOM",
+    "LOW CONGA",
+    "MID CONGA",
+    "HI CONGA",
+    "RIM SHOT",
+    "CLAVES",
+    "MARACAS",
+    "HAND CLAP",
+    "COWBELL",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "BASS DRUM",
+    "SNARE",
+    "RIM SHOT",
+    "HI-HAT",
+    "CYMBAL",
+    "MARACAS",
+    "CLAVES",
+    "HI BONGO",
+    "LOW BONGO",
+    "LOW CONGA",
+    "COWBELL",
+    "TAMBOURINE",
+    "GUIRO",
+    "METAL BEAT",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HI TOM",
+    "RIM SHOT",
+    "HAND CLAP",
+    "OPEN HAT",
+    "CLOSED HAT",
+    "RIDE",
+    "CRASH"
+   ],
+   "default": 8,
+   "refresh_display": true
+  },
+  {
+   "key": "s01_fam",
+   "name": "Kit",
+   "options": [
+    "6W6",
+    "8W8",
+    "CW-78",
+    "9W9",
+    "9W9 BD"
+   ],
+   "default": 1
+  },
+  {
+   "key": "s01_level",
+   "name": "S1 Level",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s01_tune",
+   "name": "S1 Tune",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s01_decay",
+   "name": "S1 Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s01_drive",
+   "name": "S1 Drive",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s01_dist",
+   "name": "S1 Dist",
+   "default": 0,
+   "options": [
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "s01_attack",
+   "name": "S1 Attack",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s01_tone",
+   "name": "S1 Tone",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s01_snappy",
+   "name": "S1 Snappy",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s01_noise",
+   "name": "S1 Noise",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s01_rate",
+   "name": "S1 Rate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s01_sweep",
+   "name": "S1 Sweep",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s01_pmod",
+   "name": "S1 Pitch Mod",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s01_ndecay",
+   "name": "S1 Noise Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s01_sat",
+   "name": "S1 Saturate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s01_pan",
+   "name": "S1 Pan",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s01_rev",
+   "name": "S1 Rev",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s01_dly",
+   "name": "S1 Dly",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s02_src",
+   "name": "Slot 2 voice",
+   "options": [
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "HIGH TOM",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "HAND CLAP",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HIGH TOM",
+    "LOW CONGA",
+    "MID CONGA",
+    "HI CONGA",
+    "RIM SHOT",
+    "CLAVES",
+    "MARACAS",
+    "HAND CLAP",
+    "COWBELL",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "BASS DRUM",
+    "SNARE",
+    "RIM SHOT",
+    "HI-HAT",
+    "CYMBAL",
+    "MARACAS",
+    "CLAVES",
+    "HI BONGO",
+    "LOW BONGO",
+    "LOW CONGA",
+    "COWBELL",
+    "TAMBOURINE",
+    "GUIRO",
+    "METAL BEAT",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HI TOM",
+    "RIM SHOT",
+    "HAND CLAP",
+    "OPEN HAT",
+    "CLOSED HAT",
+    "RIDE",
+    "CRASH"
+   ],
+   "default": 39,
+   "refresh_display": true
+  },
+  {
+   "key": "s02_fam",
+   "name": "Kit",
+   "options": [
+    "6W6",
+    "8W8",
+    "CW-78",
+    "9W9",
+    "9W9 BD"
+   ],
+   "default": 3
+  },
+  {
+   "key": "s02_level",
+   "name": "S2 Level",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s02_tune",
+   "name": "S2 Tune",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s02_decay",
+   "name": "S2 Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s02_drive",
+   "name": "S2 Drive",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s02_dist",
+   "name": "S2 Dist",
+   "default": 0,
+   "options": [
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "s02_attack",
+   "name": "S2 Attack",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s02_tone",
+   "name": "S2 Tone",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s02_snappy",
+   "name": "S2 Snappy",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s02_noise",
+   "name": "S2 Noise",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s02_rate",
+   "name": "S2 Rate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s02_sweep",
+   "name": "S2 Sweep",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s02_pmod",
+   "name": "S2 Pitch Mod",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s02_ndecay",
+   "name": "S2 Noise Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s02_sat",
+   "name": "S2 Saturate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s02_pan",
+   "name": "S2 Pan",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s02_rev",
+   "name": "S2 Rev",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s02_dly",
+   "name": "S2 Dly",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s03_src",
+   "name": "Slot 3 voice",
+   "options": [
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "HIGH TOM",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "HAND CLAP",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HIGH TOM",
+    "LOW CONGA",
+    "MID CONGA",
+    "HI CONGA",
+    "RIM SHOT",
+    "CLAVES",
+    "MARACAS",
+    "HAND CLAP",
+    "COWBELL",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "BASS DRUM",
+    "SNARE",
+    "RIM SHOT",
+    "HI-HAT",
+    "CYMBAL",
+    "MARACAS",
+    "CLAVES",
+    "HI BONGO",
+    "LOW BONGO",
+    "LOW CONGA",
+    "COWBELL",
+    "TAMBOURINE",
+    "GUIRO",
+    "METAL BEAT",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HI TOM",
+    "RIM SHOT",
+    "HAND CLAP",
+    "OPEN HAT",
+    "CLOSED HAT",
+    "RIDE",
+    "CRASH"
+   ],
+   "default": 4,
+   "refresh_display": true
+  },
+  {
+   "key": "s03_fam",
+   "name": "Kit",
+   "options": [
+    "6W6",
+    "8W8",
+    "CW-78",
+    "9W9",
+    "9W9 BD"
+   ],
+   "default": 0
+  },
+  {
+   "key": "s03_level",
+   "name": "S3 Level",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s03_tune",
+   "name": "S3 Tune",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s03_decay",
+   "name": "S3 Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s03_drive",
+   "name": "S3 Drive",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s03_dist",
+   "name": "S3 Dist",
+   "default": 0,
+   "options": [
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "s03_attack",
+   "name": "S3 Attack",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s03_tone",
+   "name": "S3 Tone",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s03_snappy",
+   "name": "S3 Snappy",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s03_noise",
+   "name": "S3 Noise",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s03_rate",
+   "name": "S3 Rate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s03_sweep",
+   "name": "S3 Sweep",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s03_pmod",
+   "name": "S3 Pitch Mod",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s03_ndecay",
+   "name": "S3 Noise Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s03_sat",
+   "name": "S3 Saturate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s03_pan",
+   "name": "S3 Pan",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s03_rev",
+   "name": "S3 Rev",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s03_dly",
+   "name": "S3 Dly",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s04_src",
+   "name": "Slot 4 voice",
+   "options": [
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "HIGH TOM",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "HAND CLAP",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HIGH TOM",
+    "LOW CONGA",
+    "MID CONGA",
+    "HI CONGA",
+    "RIM SHOT",
+    "CLAVES",
+    "MARACAS",
+    "HAND CLAP",
+    "COWBELL",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "BASS DRUM",
+    "SNARE",
+    "RIM SHOT",
+    "HI-HAT",
+    "CYMBAL",
+    "MARACAS",
+    "CLAVES",
+    "HI BONGO",
+    "LOW BONGO",
+    "LOW CONGA",
+    "COWBELL",
+    "TAMBOURINE",
+    "GUIRO",
+    "METAL BEAT",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HI TOM",
+    "RIM SHOT",
+    "HAND CLAP",
+    "OPEN HAT",
+    "CLOSED HAT",
+    "RIDE",
+    "CRASH"
+   ],
+   "default": 27,
+   "refresh_display": true
+  },
+  {
+   "key": "s04_fam",
+   "name": "Kit",
+   "options": [
+    "6W6",
+    "8W8",
+    "CW-78",
+    "9W9",
+    "9W9 BD"
+   ],
+   "default": 2
+  },
+  {
+   "key": "s04_level",
+   "name": "S4 Level",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s04_tune",
+   "name": "S4 Tune",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s04_decay",
+   "name": "S4 Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s04_drive",
+   "name": "S4 Drive",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s04_dist",
+   "name": "S4 Dist",
+   "default": 0,
+   "options": [
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "s04_attack",
+   "name": "S4 Attack",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s04_tone",
+   "name": "S4 Tone",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s04_snappy",
+   "name": "S4 Snappy",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s04_noise",
+   "name": "S4 Noise",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s04_rate",
+   "name": "S4 Rate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s04_sweep",
+   "name": "S4 Sweep",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s04_pmod",
+   "name": "S4 Pitch Mod",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s04_ndecay",
+   "name": "S4 Noise Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s04_sat",
+   "name": "S4 Saturate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s04_pan",
+   "name": "S4 Pan",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s04_rev",
+   "name": "S4 Rev",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s04_dly",
+   "name": "S4 Dly",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s05_src",
+   "name": "Slot 5 voice",
+   "options": [
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "HIGH TOM",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "HAND CLAP",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HIGH TOM",
+    "LOW CONGA",
+    "MID CONGA",
+    "HI CONGA",
+    "RIM SHOT",
+    "CLAVES",
+    "MARACAS",
+    "HAND CLAP",
+    "COWBELL",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "BASS DRUM",
+    "SNARE",
+    "RIM SHOT",
+    "HI-HAT",
+    "CYMBAL",
+    "MARACAS",
+    "CLAVES",
+    "HI BONGO",
+    "LOW BONGO",
+    "LOW CONGA",
+    "COWBELL",
+    "TAMBOURINE",
+    "GUIRO",
+    "METAL BEAT",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HI TOM",
+    "RIM SHOT",
+    "HAND CLAP",
+    "OPEN HAT",
+    "CLOSED HAT",
+    "RIDE",
+    "CRASH"
+   ],
+   "default": 38,
+   "refresh_display": true
+  },
+  {
+   "key": "s05_fam",
+   "name": "Kit",
+   "options": [
+    "6W6",
+    "8W8",
+    "CW-78",
+    "9W9",
+    "9W9 BD"
+   ],
+   "default": 4
+  },
+  {
+   "key": "s05_level",
+   "name": "S5 Level",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s05_tune",
+   "name": "S5 Tune",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s05_decay",
+   "name": "S5 Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s05_drive",
+   "name": "S5 Drive",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s05_dist",
+   "name": "S5 Dist",
+   "default": 0,
+   "options": [
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "s05_attack",
+   "name": "S5 Attack",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s05_tone",
+   "name": "S5 Tone",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s05_snappy",
+   "name": "S5 Snappy",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s05_noise",
+   "name": "S5 Noise",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s05_rate",
+   "name": "S5 Rate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s05_sweep",
+   "name": "S5 Sweep",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s05_pmod",
+   "name": "S5 Pitch Mod",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s05_ndecay",
+   "name": "S5 Noise Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s05_sat",
+   "name": "S5 Saturate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s05_pan",
+   "name": "S5 Pan",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s05_rev",
+   "name": "S5 Rev",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s05_dly",
+   "name": "S5 Dly",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s06_src",
+   "name": "Slot 6 voice",
+   "options": [
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "HIGH TOM",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "HAND CLAP",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HIGH TOM",
+    "LOW CONGA",
+    "MID CONGA",
+    "HI CONGA",
+    "RIM SHOT",
+    "CLAVES",
+    "MARACAS",
+    "HAND CLAP",
+    "COWBELL",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "BASS DRUM",
+    "SNARE",
+    "RIM SHOT",
+    "HI-HAT",
+    "CYMBAL",
+    "MARACAS",
+    "CLAVES",
+    "HI BONGO",
+    "LOW BONGO",
+    "LOW CONGA",
+    "COWBELL",
+    "TAMBOURINE",
+    "GUIRO",
+    "METAL BEAT",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HI TOM",
+    "RIM SHOT",
+    "HAND CLAP",
+    "OPEN HAT",
+    "CLOSED HAT",
+    "RIDE",
+    "CRASH"
+   ],
+   "default": 1,
+   "refresh_display": true
+  },
+  {
+   "key": "s06_fam",
+   "name": "Kit",
+   "options": [
+    "6W6",
+    "8W8",
+    "CW-78",
+    "9W9",
+    "9W9 BD"
+   ],
+   "default": 0
+  },
+  {
+   "key": "s06_level",
+   "name": "S6 Level",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s06_tune",
+   "name": "S6 Tune",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s06_decay",
+   "name": "S6 Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s06_drive",
+   "name": "S6 Drive",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s06_dist",
+   "name": "S6 Dist",
+   "default": 0,
+   "options": [
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "s06_attack",
+   "name": "S6 Attack",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s06_tone",
+   "name": "S6 Tone",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s06_snappy",
+   "name": "S6 Snappy",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s06_noise",
+   "name": "S6 Noise",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s06_rate",
+   "name": "S6 Rate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s06_sweep",
+   "name": "S6 Sweep",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s06_pmod",
+   "name": "S6 Pitch Mod",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s06_ndecay",
+   "name": "S6 Noise Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s06_sat",
+   "name": "S6 Saturate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s06_pan",
+   "name": "S6 Pan",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s06_rev",
+   "name": "S6 Rev",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s06_dly",
+   "name": "S6 Dly",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s07_src",
+   "name": "Slot 7 voice",
+   "options": [
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "HIGH TOM",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "HAND CLAP",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HIGH TOM",
+    "LOW CONGA",
+    "MID CONGA",
+    "HI CONGA",
+    "RIM SHOT",
+    "CLAVES",
+    "MARACAS",
+    "HAND CLAP",
+    "COWBELL",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "BASS DRUM",
+    "SNARE",
+    "RIM SHOT",
+    "HI-HAT",
+    "CYMBAL",
+    "MARACAS",
+    "CLAVES",
+    "HI BONGO",
+    "LOW BONGO",
+    "LOW CONGA",
+    "COWBELL",
+    "TAMBOURINE",
+    "GUIRO",
+    "METAL BEAT",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HI TOM",
+    "RIM SHOT",
+    "HAND CLAP",
+    "OPEN HAT",
+    "CLOSED HAT",
+    "RIDE",
+    "CRASH"
+   ],
+   "default": 19,
+   "refresh_display": true
+  },
+  {
+   "key": "s07_fam",
+   "name": "Kit",
+   "options": [
+    "6W6",
+    "8W8",
+    "CW-78",
+    "9W9",
+    "9W9 BD"
+   ],
+   "default": 1
+  },
+  {
+   "key": "s07_level",
+   "name": "S7 Level",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s07_tune",
+   "name": "S7 Tune",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s07_decay",
+   "name": "S7 Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s07_drive",
+   "name": "S7 Drive",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s07_dist",
+   "name": "S7 Dist",
+   "default": 0,
+   "options": [
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "s07_attack",
+   "name": "S7 Attack",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s07_tone",
+   "name": "S7 Tone",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s07_snappy",
+   "name": "S7 Snappy",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s07_noise",
+   "name": "S7 Noise",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s07_rate",
+   "name": "S7 Rate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s07_sweep",
+   "name": "S7 Sweep",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s07_pmod",
+   "name": "S7 Pitch Mod",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s07_ndecay",
+   "name": "S7 Noise Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s07_sat",
+   "name": "S7 Saturate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s07_pan",
+   "name": "S7 Pan",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s07_rev",
+   "name": "S7 Rev",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s07_dly",
+   "name": "S7 Dly",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s08_src",
+   "name": "Slot 8 voice",
+   "options": [
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "HIGH TOM",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "HAND CLAP",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HIGH TOM",
+    "LOW CONGA",
+    "MID CONGA",
+    "HI CONGA",
+    "RIM SHOT",
+    "CLAVES",
+    "MARACAS",
+    "HAND CLAP",
+    "COWBELL",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "BASS DRUM",
+    "SNARE",
+    "RIM SHOT",
+    "HI-HAT",
+    "CYMBAL",
+    "MARACAS",
+    "CLAVES",
+    "HI BONGO",
+    "LOW BONGO",
+    "LOW CONGA",
+    "COWBELL",
+    "TAMBOURINE",
+    "GUIRO",
+    "METAL BEAT",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HI TOM",
+    "RIM SHOT",
+    "HAND CLAP",
+    "OPEN HAT",
+    "CLOSED HAT",
+    "RIDE",
+    "CRASH"
+   ],
+   "default": 26,
+   "refresh_display": true
+  },
+  {
+   "key": "s08_fam",
+   "name": "Kit",
+   "options": [
+    "6W6",
+    "8W8",
+    "CW-78",
+    "9W9",
+    "9W9 BD"
+   ],
+   "default": 2
+  },
+  {
+   "key": "s08_level",
+   "name": "S8 Level",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s08_tune",
+   "name": "S8 Tune",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s08_decay",
+   "name": "S8 Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s08_drive",
+   "name": "S8 Drive",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s08_dist",
+   "name": "S8 Dist",
+   "default": 0,
+   "options": [
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "s08_attack",
+   "name": "S8 Attack",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s08_tone",
+   "name": "S8 Tone",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s08_snappy",
+   "name": "S8 Snappy",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s08_noise",
+   "name": "S8 Noise",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s08_rate",
+   "name": "S8 Rate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s08_sweep",
+   "name": "S8 Sweep",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s08_pmod",
+   "name": "S8 Pitch Mod",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s08_ndecay",
+   "name": "S8 Noise Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s08_sat",
+   "name": "S8 Saturate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s08_pan",
+   "name": "S8 Pan",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s08_rev",
+   "name": "S8 Rev",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s08_dly",
+   "name": "S8 Dly",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s09_src",
+   "name": "Slot 9 voice",
+   "options": [
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "HIGH TOM",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "HAND CLAP",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HIGH TOM",
+    "LOW CONGA",
+    "MID CONGA",
+    "HI CONGA",
+    "RIM SHOT",
+    "CLAVES",
+    "MARACAS",
+    "HAND CLAP",
+    "COWBELL",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "BASS DRUM",
+    "SNARE",
+    "RIM SHOT",
+    "HI-HAT",
+    "CYMBAL",
+    "MARACAS",
+    "CLAVES",
+    "HI BONGO",
+    "LOW BONGO",
+    "LOW CONGA",
+    "COWBELL",
+    "TAMBOURINE",
+    "GUIRO",
+    "METAL BEAT",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HI TOM",
+    "RIM SHOT",
+    "HAND CLAP",
+    "OPEN HAT",
+    "CLOSED HAT",
+    "RIDE",
+    "CRASH"
+   ],
+   "default": 2,
+   "refresh_display": true
+  },
+  {
+   "key": "s09_fam",
+   "name": "Kit",
+   "options": [
+    "6W6",
+    "8W8",
+    "CW-78",
+    "9W9",
+    "9W9 BD"
+   ],
+   "default": 0
+  },
+  {
+   "key": "s09_level",
+   "name": "S9 Level",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s09_tune",
+   "name": "S9 Tune",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s09_decay",
+   "name": "S9 Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s09_drive",
+   "name": "S9 Drive",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s09_dist",
+   "name": "S9 Dist",
+   "default": 0,
+   "options": [
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "s09_attack",
+   "name": "S9 Attack",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s09_tone",
+   "name": "S9 Tone",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s09_snappy",
+   "name": "S9 Snappy",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s09_noise",
+   "name": "S9 Noise",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s09_rate",
+   "name": "S9 Rate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s09_sweep",
+   "name": "S9 Sweep",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s09_pmod",
+   "name": "S9 Pitch Mod",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s09_ndecay",
+   "name": "S9 Noise Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s09_sat",
+   "name": "S9 Saturate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s09_pan",
+   "name": "S9 Pan",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s09_rev",
+   "name": "S9 Rev",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s09_dly",
+   "name": "S9 Dly",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s10_src",
+   "name": "Slot 10 voice",
+   "options": [
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "HIGH TOM",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "HAND CLAP",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HIGH TOM",
+    "LOW CONGA",
+    "MID CONGA",
+    "HI CONGA",
+    "RIM SHOT",
+    "CLAVES",
+    "MARACAS",
+    "HAND CLAP",
+    "COWBELL",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "BASS DRUM",
+    "SNARE",
+    "RIM SHOT",
+    "HI-HAT",
+    "CYMBAL",
+    "MARACAS",
+    "CLAVES",
+    "HI BONGO",
+    "LOW BONGO",
+    "LOW CONGA",
+    "COWBELL",
+    "TAMBOURINE",
+    "GUIRO",
+    "METAL BEAT",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HI TOM",
+    "RIM SHOT",
+    "HAND CLAP",
+    "OPEN HAT",
+    "CLOSED HAT",
+    "RIDE",
+    "CRASH"
+   ],
+   "default": 11,
+   "refresh_display": true
+  },
+  {
+   "key": "s10_fam",
+   "name": "Kit",
+   "options": [
+    "6W6",
+    "8W8",
+    "CW-78",
+    "9W9",
+    "9W9 BD"
+   ],
+   "default": 1
+  },
+  {
+   "key": "s10_level",
+   "name": "S10 Level",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s10_tune",
+   "name": "S10 Tune",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s10_decay",
+   "name": "S10 Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s10_drive",
+   "name": "S10 Drive",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s10_dist",
+   "name": "S10 Dist",
+   "default": 0,
+   "options": [
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "s10_attack",
+   "name": "S10 Attack",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s10_tone",
+   "name": "S10 Tone",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s10_snappy",
+   "name": "S10 Snappy",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s10_noise",
+   "name": "S10 Noise",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s10_rate",
+   "name": "S10 Rate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s10_sweep",
+   "name": "S10 Sweep",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s10_pmod",
+   "name": "S10 Pitch Mod",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s10_ndecay",
+   "name": "S10 Noise Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s10_sat",
+   "name": "S10 Saturate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s10_pan",
+   "name": "S10 Pan",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s10_rev",
+   "name": "S10 Rev",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s10_dly",
+   "name": "S10 Dly",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s11_src",
+   "name": "Slot 11 voice",
+   "options": [
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "HIGH TOM",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "HAND CLAP",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HIGH TOM",
+    "LOW CONGA",
+    "MID CONGA",
+    "HI CONGA",
+    "RIM SHOT",
+    "CLAVES",
+    "MARACAS",
+    "HAND CLAP",
+    "COWBELL",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "BASS DRUM",
+    "SNARE",
+    "RIM SHOT",
+    "HI-HAT",
+    "CYMBAL",
+    "MARACAS",
+    "CLAVES",
+    "HI BONGO",
+    "LOW BONGO",
+    "LOW CONGA",
+    "COWBELL",
+    "TAMBOURINE",
+    "GUIRO",
+    "METAL BEAT",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HI TOM",
+    "RIM SHOT",
+    "HAND CLAP",
+    "OPEN HAT",
+    "CLOSED HAT",
+    "RIDE",
+    "CRASH"
+   ],
+   "default": 42,
+   "refresh_display": true
+  },
+  {
+   "key": "s11_fam",
+   "name": "Kit",
+   "options": [
+    "6W6",
+    "8W8",
+    "CW-78",
+    "9W9",
+    "9W9 BD"
+   ],
+   "default": 3
+  },
+  {
+   "key": "s11_level",
+   "name": "S11 Level",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s11_tune",
+   "name": "S11 Tune",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s11_decay",
+   "name": "S11 Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s11_drive",
+   "name": "S11 Drive",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s11_dist",
+   "name": "S11 Dist",
+   "default": 0,
+   "options": [
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "s11_attack",
+   "name": "S11 Attack",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s11_tone",
+   "name": "S11 Tone",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s11_snappy",
+   "name": "S11 Snappy",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s11_noise",
+   "name": "S11 Noise",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s11_rate",
+   "name": "S11 Rate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s11_sweep",
+   "name": "S11 Sweep",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s11_pmod",
+   "name": "S11 Pitch Mod",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s11_ndecay",
+   "name": "S11 Noise Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s11_sat",
+   "name": "S11 Saturate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s11_pan",
+   "name": "S11 Pan",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s11_rev",
+   "name": "S11 Rev",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s11_dly",
+   "name": "S11 Dly",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s12_src",
+   "name": "Slot 12 voice",
+   "options": [
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "HIGH TOM",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "HAND CLAP",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HIGH TOM",
+    "LOW CONGA",
+    "MID CONGA",
+    "HI CONGA",
+    "RIM SHOT",
+    "CLAVES",
+    "MARACAS",
+    "HAND CLAP",
+    "COWBELL",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "BASS DRUM",
+    "SNARE",
+    "RIM SHOT",
+    "HI-HAT",
+    "CYMBAL",
+    "MARACAS",
+    "CLAVES",
+    "HI BONGO",
+    "LOW BONGO",
+    "LOW CONGA",
+    "COWBELL",
+    "TAMBOURINE",
+    "GUIRO",
+    "METAL BEAT",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HI TOM",
+    "RIM SHOT",
+    "HAND CLAP",
+    "OPEN HAT",
+    "CLOSED HAT",
+    "RIDE",
+    "CRASH"
+   ],
+   "default": 31,
+   "refresh_display": true
+  },
+  {
+   "key": "s12_fam",
+   "name": "Kit",
+   "options": [
+    "6W6",
+    "8W8",
+    "CW-78",
+    "9W9",
+    "9W9 BD"
+   ],
+   "default": 2
+  },
+  {
+   "key": "s12_level",
+   "name": "S12 Level",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s12_tune",
+   "name": "S12 Tune",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s12_decay",
+   "name": "S12 Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s12_drive",
+   "name": "S12 Drive",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s12_dist",
+   "name": "S12 Dist",
+   "default": 0,
+   "options": [
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "s12_attack",
+   "name": "S12 Attack",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s12_tone",
+   "name": "S12 Tone",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s12_snappy",
+   "name": "S12 Snappy",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s12_noise",
+   "name": "S12 Noise",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s12_rate",
+   "name": "S12 Rate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s12_sweep",
+   "name": "S12 Sweep",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s12_pmod",
+   "name": "S12 Pitch Mod",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s12_ndecay",
+   "name": "S12 Noise Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s12_sat",
+   "name": "S12 Saturate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s12_pan",
+   "name": "S12 Pan",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s12_rev",
+   "name": "S12 Rev",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s12_dly",
+   "name": "S12 Dly",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s13_src",
+   "name": "Slot 13 voice",
+   "options": [
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "HIGH TOM",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "HAND CLAP",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HIGH TOM",
+    "LOW CONGA",
+    "MID CONGA",
+    "HI CONGA",
+    "RIM SHOT",
+    "CLAVES",
+    "MARACAS",
+    "HAND CLAP",
+    "COWBELL",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "BASS DRUM",
+    "SNARE",
+    "RIM SHOT",
+    "HI-HAT",
+    "CYMBAL",
+    "MARACAS",
+    "CLAVES",
+    "HI BONGO",
+    "LOW BONGO",
+    "LOW CONGA",
+    "COWBELL",
+    "TAMBOURINE",
+    "GUIRO",
+    "METAL BEAT",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HI TOM",
+    "RIM SHOT",
+    "HAND CLAP",
+    "OPEN HAT",
+    "CLOSED HAT",
+    "RIDE",
+    "CRASH"
+   ],
+   "default": 47,
+   "refresh_display": true
+  },
+  {
+   "key": "s13_fam",
+   "name": "Kit",
+   "options": [
+    "6W6",
+    "8W8",
+    "CW-78",
+    "9W9",
+    "9W9 BD"
+   ],
+   "default": 3
+  },
+  {
+   "key": "s13_level",
+   "name": "S13 Level",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s13_tune",
+   "name": "S13 Tune",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s13_decay",
+   "name": "S13 Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s13_drive",
+   "name": "S13 Drive",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s13_dist",
+   "name": "S13 Dist",
+   "default": 0,
+   "options": [
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "s13_attack",
+   "name": "S13 Attack",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s13_tone",
+   "name": "S13 Tone",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s13_snappy",
+   "name": "S13 Snappy",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s13_noise",
+   "name": "S13 Noise",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s13_rate",
+   "name": "S13 Rate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s13_sweep",
+   "name": "S13 Sweep",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s13_pmod",
+   "name": "S13 Pitch Mod",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s13_ndecay",
+   "name": "S13 Noise Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s13_sat",
+   "name": "S13 Saturate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s13_pan",
+   "name": "S13 Pan",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s13_rev",
+   "name": "S13 Rev",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s13_dly",
+   "name": "S13 Dly",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s14_src",
+   "name": "Slot 14 voice",
+   "options": [
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "HIGH TOM",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "HAND CLAP",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HIGH TOM",
+    "LOW CONGA",
+    "MID CONGA",
+    "HI CONGA",
+    "RIM SHOT",
+    "CLAVES",
+    "MARACAS",
+    "HAND CLAP",
+    "COWBELL",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "BASS DRUM",
+    "SNARE",
+    "RIM SHOT",
+    "HI-HAT",
+    "CYMBAL",
+    "MARACAS",
+    "CLAVES",
+    "HI BONGO",
+    "LOW BONGO",
+    "LOW CONGA",
+    "COWBELL",
+    "TAMBOURINE",
+    "GUIRO",
+    "METAL BEAT",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HI TOM",
+    "RIM SHOT",
+    "HAND CLAP",
+    "OPEN HAT",
+    "CLOSED HAT",
+    "RIDE",
+    "CRASH"
+   ],
+   "default": 6,
+   "refresh_display": true
+  },
+  {
+   "key": "s14_fam",
+   "name": "Kit",
+   "options": [
+    "6W6",
+    "8W8",
+    "CW-78",
+    "9W9",
+    "9W9 BD"
+   ],
+   "default": 0
+  },
+  {
+   "key": "s14_level",
+   "name": "S14 Level",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s14_tune",
+   "name": "S14 Tune",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s14_decay",
+   "name": "S14 Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s14_drive",
+   "name": "S14 Drive",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s14_dist",
+   "name": "S14 Dist",
+   "default": 0,
+   "options": [
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "s14_attack",
+   "name": "S14 Attack",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s14_tone",
+   "name": "S14 Tone",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s14_snappy",
+   "name": "S14 Snappy",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s14_noise",
+   "name": "S14 Noise",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s14_rate",
+   "name": "S14 Rate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s14_sweep",
+   "name": "S14 Sweep",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s14_pmod",
+   "name": "S14 Pitch Mod",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s14_ndecay",
+   "name": "S14 Noise Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s14_sat",
+   "name": "S14 Saturate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s14_pan",
+   "name": "S14 Pan",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s14_rev",
+   "name": "S14 Rev",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s14_dly",
+   "name": "S14 Dly",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s15_src",
+   "name": "Slot 15 voice",
+   "options": [
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "HIGH TOM",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "HAND CLAP",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HIGH TOM",
+    "LOW CONGA",
+    "MID CONGA",
+    "HI CONGA",
+    "RIM SHOT",
+    "CLAVES",
+    "MARACAS",
+    "HAND CLAP",
+    "COWBELL",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "BASS DRUM",
+    "SNARE",
+    "RIM SHOT",
+    "HI-HAT",
+    "CYMBAL",
+    "MARACAS",
+    "CLAVES",
+    "HI BONGO",
+    "LOW BONGO",
+    "LOW CONGA",
+    "COWBELL",
+    "TAMBOURINE",
+    "GUIRO",
+    "METAL BEAT",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HI TOM",
+    "RIM SHOT",
+    "HAND CLAP",
+    "OPEN HAT",
+    "CLOSED HAT",
+    "RIDE",
+    "CRASH"
+   ],
+   "default": 20,
+   "refresh_display": true
+  },
+  {
+   "key": "s15_fam",
+   "name": "Kit",
+   "options": [
+    "6W6",
+    "8W8",
+    "CW-78",
+    "9W9",
+    "9W9 BD"
+   ],
+   "default": 1
+  },
+  {
+   "key": "s15_level",
+   "name": "S15 Level",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s15_tune",
+   "name": "S15 Tune",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s15_decay",
+   "name": "S15 Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s15_drive",
+   "name": "S15 Drive",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s15_dist",
+   "name": "S15 Dist",
+   "default": 0,
+   "options": [
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "s15_attack",
+   "name": "S15 Attack",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s15_tone",
+   "name": "S15 Tone",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s15_snappy",
+   "name": "S15 Snappy",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s15_noise",
+   "name": "S15 Noise",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s15_rate",
+   "name": "S15 Rate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s15_sweep",
+   "name": "S15 Sweep",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s15_pmod",
+   "name": "S15 Pitch Mod",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s15_ndecay",
+   "name": "S15 Noise Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s15_sat",
+   "name": "S15 Saturate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s15_pan",
+   "name": "S15 Pan",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s15_rev",
+   "name": "S15 Rev",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s15_dly",
+   "name": "S15 Dly",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s16_src",
+   "name": "Slot 16 voice",
+   "options": [
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "HIGH TOM",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "HAND CLAP",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HIGH TOM",
+    "LOW CONGA",
+    "MID CONGA",
+    "HI CONGA",
+    "RIM SHOT",
+    "CLAVES",
+    "MARACAS",
+    "HAND CLAP",
+    "COWBELL",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "BASS DRUM",
+    "SNARE",
+    "RIM SHOT",
+    "HI-HAT",
+    "CYMBAL",
+    "MARACAS",
+    "CLAVES",
+    "HI BONGO",
+    "LOW BONGO",
+    "LOW CONGA",
+    "COWBELL",
+    "TAMBOURINE",
+    "GUIRO",
+    "METAL BEAT",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HI TOM",
+    "RIM SHOT",
+    "HAND CLAP",
+    "OPEN HAT",
+    "CLOSED HAT",
+    "RIDE",
+    "CRASH"
+   ],
+   "default": 36,
+   "refresh_display": true
+  },
+  {
+   "key": "s16_fam",
+   "name": "Kit",
+   "options": [
+    "6W6",
+    "8W8",
+    "CW-78",
+    "9W9",
+    "9W9 BD"
+   ],
+   "default": 2
+  },
+  {
+   "key": "s16_level",
+   "name": "S16 Level",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s16_tune",
+   "name": "S16 Tune",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s16_decay",
+   "name": "S16 Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s16_drive",
+   "name": "S16 Drive",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s16_dist",
+   "name": "S16 Dist",
+   "default": 0,
+   "options": [
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "s16_attack",
+   "name": "S16 Attack",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s16_tone",
+   "name": "S16 Tone",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s16_snappy",
+   "name": "S16 Snappy",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s16_noise",
+   "name": "S16 Noise",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s16_rate",
+   "name": "S16 Rate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s16_sweep",
+   "name": "S16 Sweep",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s16_pmod",
+   "name": "S16 Pitch Mod",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s16_ndecay",
+   "name": "S16 Noise Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s16_sat",
+   "name": "S16 Saturate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s16_pan",
+   "name": "S16 Pan",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s16_rev",
+   "name": "S16 Rev",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "s16_dly",
+   "name": "S16 Dly",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "edit_slot",
+   "name": "Slot",
+   "options": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16"
+   ],
+   "default": 0
+  },
+  {
+   "key": "edit_voice",
+   "name": "Voice",
+   "options": [
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "HIGH TOM",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "HAND CLAP",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HIGH TOM",
+    "LOW CONGA",
+    "MID CONGA",
+    "HI CONGA",
+    "RIM SHOT",
+    "CLAVES",
+    "MARACAS",
+    "HAND CLAP",
+    "COWBELL",
+    "CLOSED HAT",
+    "OPEN HAT",
+    "CYMBAL",
+    "BASS DRUM",
+    "SNARE",
+    "RIM SHOT",
+    "HI-HAT",
+    "CYMBAL",
+    "MARACAS",
+    "CLAVES",
+    "HI BONGO",
+    "LOW BONGO",
+    "LOW CONGA",
+    "COWBELL",
+    "TAMBOURINE",
+    "GUIRO",
+    "METAL BEAT",
+    "BASS DRUM",
+    "SNARE",
+    "LOW TOM",
+    "MID TOM",
+    "HI TOM",
+    "RIM SHOT",
+    "HAND CLAP",
+    "OPEN HAT",
+    "CLOSED HAT",
+    "RIDE",
+    "CRASH"
+   ],
+   "default": 8
+  },
+  {
+   "key": "e_level",
+   "name": "Level",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "e_tune",
+   "name": "Tune",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "e_decay",
+   "name": "Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "e_drive",
+   "name": "Drive",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "e_dist",
+   "name": "Dist",
+   "default": 0,
+   "options": [
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "e_attack",
+   "name": "Attack",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "e_tone",
+   "name": "Tone",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "e_snappy",
+   "name": "Snappy",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "e_noise",
+   "name": "Noise",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "e_rate",
+   "name": "Rate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "e_sweep",
+   "name": "Sweep",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "e_pmod",
+   "name": "Pitch Mod",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "e_ndecay",
+   "name": "Noise Decay",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "e_sat",
+   "name": "Saturate",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "e_pan",
+   "name": "Pan",
+   "default": 64,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "e_rev",
+   "name": "Rev",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "e_dly",
+   "name": "Dly",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "rnd_amount",
+   "name": "Random Amount",
+   "min": 0,
+   "max": 127,
+   "default": 64,
+   "nudge_gain": 3
+  },
+  {
+   "key": "rnd_voice",
+   "name": "Random Voice",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 0
+  },
+  {
+   "key": "rnd_go",
+   "name": "Randomise",
+   "momentary": true
+  },
+  {
+   "key": "rnd_all",
+   "name": "Select All",
+   "momentary": true
+  },
+  {
+   "key": "rnd_none",
+   "name": "Clear",
+   "momentary": true
+  },
+  {
+   "key": "rnd_s01",
+   "name": "Slot 1",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 0
+  },
+  {
+   "key": "rnd_s02",
+   "name": "Slot 2",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 0
+  },
+  {
+   "key": "rnd_s03",
+   "name": "Slot 3",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 0
+  },
+  {
+   "key": "rnd_s04",
+   "name": "Slot 4",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 0
+  },
+  {
+   "key": "rnd_s05",
+   "name": "Slot 5",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 0
+  },
+  {
+   "key": "rnd_s06",
+   "name": "Slot 6",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 0
+  },
+  {
+   "key": "rnd_s07",
+   "name": "Slot 7",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 0
+  },
+  {
+   "key": "rnd_s08",
+   "name": "Slot 8",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 0
+  },
+  {
+   "key": "rnd_s09",
+   "name": "Slot 9",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 0
+  },
+  {
+   "key": "rnd_s10",
+   "name": "Slot 10",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 0
+  },
+  {
+   "key": "rnd_s11",
+   "name": "Slot 11",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 0
+  },
+  {
+   "key": "rnd_s12",
+   "name": "Slot 12",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 0
+  },
+  {
+   "key": "rnd_s13",
+   "name": "Slot 13",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 0
+  },
+  {
+   "key": "rnd_s14",
+   "name": "Slot 14",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 0
+  },
+  {
+   "key": "rnd_s15",
+   "name": "Slot 15",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 0
+  },
+  {
+   "key": "rnd_s16",
+   "name": "Slot 16",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 0
+  },
+  {
+   "key": "fx_rev_decay",
+   "name": "Rev Decay",
+   "default": 73,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "fx_rev_tone",
+   "name": "Rev Tone",
+   "default": 57,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "fx_rev_hpf",
+   "name": "Rev HPF",
+   "default": 62,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "fx_rev_level",
+   "name": "Rev Level",
+   "default": 85,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "fx_dly_time",
+   "name": "Dly Time",
+   "default": 7,
+   "options": [
+    "1/32",
+    "1/16T",
+    "1/16",
+    "1/8T",
+    "1/16.",
+    "1/8",
+    "1/4T",
+    "1/8.",
+    "1/4",
+    "1/2T",
+    "1/4.",
+    "1/2",
+    "1/2."
+   ]
+  },
+  {
+   "key": "fx_dly_fdbk",
+   "name": "Dly Fdbk",
+   "default": 52,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "fx_dly_tone",
+   "name": "Dly Tone",
+   "default": 51,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "fx_dly_hpf",
+   "name": "Dly HPF",
+   "default": 62,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "fx_dly_level",
+   "name": "Dly Level",
+   "default": 85,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "fx_master_dist",
+   "name": "Master Dist",
+   "default": 0,
+   "options": [
+    "Off",
+    "Diode",
+    "Clip",
+    "SAT",
+    "BFZ",
+    "PDIST",
+    "Fold",
+    "Crush"
+   ]
+  },
+  {
+   "key": "fx_master_drive",
+   "name": "Master Drive",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "fx_comp",
+   "name": "Comp",
+   "default": 0,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "fx_volume",
+   "name": "Volume",
+   "default": 100,
+   "min": 0,
+   "max": 127,
+   "nudge_gain": 3
+  },
+  {
+   "key": "int_rev",
+   "name": "Internal Reverb",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 1
+  },
+  {
+   "key": "int_dly",
+   "name": "Internal Delay",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 1
+  },
+  {
+   "key": "int_comp",
+   "name": "Internal Comp",
+   "options": [
+    "OFF",
+    "ON"
+   ],
+   "default": 1
+  },
+  {
+   "key": "rnd_go_voice",
+   "name": "Random Voices",
+   "momentary": true
+  }
+ ],
+ "sections": [
+  {
+   "label": "Slot 1",
+   "keys": [
+    "s01_src",
+    "s01_fam",
+    "s01_level",
+    "s01_tune",
+    "s01_decay",
+    "s01_drive",
+    "s01_dist",
+    "s01_attack",
+    "s01_tone",
+    "s01_snappy",
+    "s01_noise",
+    "s01_rate",
+    "s01_sweep",
+    "s01_pmod",
+    "s01_ndecay",
+    "s01_sat",
+    "s01_pan",
+    "s01_rev",
+    "s01_dly"
+   ]
+  },
+  {
+   "label": "Slot 2",
+   "keys": [
+    "s02_src",
+    "s02_fam",
+    "s02_level",
+    "s02_tune",
+    "s02_decay",
+    "s02_drive",
+    "s02_dist",
+    "s02_attack",
+    "s02_tone",
+    "s02_snappy",
+    "s02_noise",
+    "s02_rate",
+    "s02_sweep",
+    "s02_pmod",
+    "s02_ndecay",
+    "s02_sat",
+    "s02_pan",
+    "s02_rev",
+    "s02_dly"
+   ]
+  },
+  {
+   "label": "Slot 3",
+   "keys": [
+    "s03_src",
+    "s03_fam",
+    "s03_level",
+    "s03_tune",
+    "s03_decay",
+    "s03_drive",
+    "s03_dist",
+    "s03_attack",
+    "s03_tone",
+    "s03_snappy",
+    "s03_noise",
+    "s03_rate",
+    "s03_sweep",
+    "s03_pmod",
+    "s03_ndecay",
+    "s03_sat",
+    "s03_pan",
+    "s03_rev",
+    "s03_dly"
+   ]
+  },
+  {
+   "label": "Slot 4",
+   "keys": [
+    "s04_src",
+    "s04_fam",
+    "s04_level",
+    "s04_tune",
+    "s04_decay",
+    "s04_drive",
+    "s04_dist",
+    "s04_attack",
+    "s04_tone",
+    "s04_snappy",
+    "s04_noise",
+    "s04_rate",
+    "s04_sweep",
+    "s04_pmod",
+    "s04_ndecay",
+    "s04_sat",
+    "s04_pan",
+    "s04_rev",
+    "s04_dly"
+   ]
+  },
+  {
+   "label": "Slot 5",
+   "keys": [
+    "s05_src",
+    "s05_fam",
+    "s05_level",
+    "s05_tune",
+    "s05_decay",
+    "s05_drive",
+    "s05_dist",
+    "s05_attack",
+    "s05_tone",
+    "s05_snappy",
+    "s05_noise",
+    "s05_rate",
+    "s05_sweep",
+    "s05_pmod",
+    "s05_ndecay",
+    "s05_sat",
+    "s05_pan",
+    "s05_rev",
+    "s05_dly"
+   ]
+  },
+  {
+   "label": "Slot 6",
+   "keys": [
+    "s06_src",
+    "s06_fam",
+    "s06_level",
+    "s06_tune",
+    "s06_decay",
+    "s06_drive",
+    "s06_dist",
+    "s06_attack",
+    "s06_tone",
+    "s06_snappy",
+    "s06_noise",
+    "s06_rate",
+    "s06_sweep",
+    "s06_pmod",
+    "s06_ndecay",
+    "s06_sat",
+    "s06_pan",
+    "s06_rev",
+    "s06_dly"
+   ]
+  },
+  {
+   "label": "Slot 7",
+   "keys": [
+    "s07_src",
+    "s07_fam",
+    "s07_level",
+    "s07_tune",
+    "s07_decay",
+    "s07_drive",
+    "s07_dist",
+    "s07_attack",
+    "s07_tone",
+    "s07_snappy",
+    "s07_noise",
+    "s07_rate",
+    "s07_sweep",
+    "s07_pmod",
+    "s07_ndecay",
+    "s07_sat",
+    "s07_pan",
+    "s07_rev",
+    "s07_dly"
+   ]
+  },
+  {
+   "label": "Slot 8",
+   "keys": [
+    "s08_src",
+    "s08_fam",
+    "s08_level",
+    "s08_tune",
+    "s08_decay",
+    "s08_drive",
+    "s08_dist",
+    "s08_attack",
+    "s08_tone",
+    "s08_snappy",
+    "s08_noise",
+    "s08_rate",
+    "s08_sweep",
+    "s08_pmod",
+    "s08_ndecay",
+    "s08_sat",
+    "s08_pan",
+    "s08_rev",
+    "s08_dly"
+   ]
+  },
+  {
+   "label": "Slot 9",
+   "keys": [
+    "s09_src",
+    "s09_fam",
+    "s09_level",
+    "s09_tune",
+    "s09_decay",
+    "s09_drive",
+    "s09_dist",
+    "s09_attack",
+    "s09_tone",
+    "s09_snappy",
+    "s09_noise",
+    "s09_rate",
+    "s09_sweep",
+    "s09_pmod",
+    "s09_ndecay",
+    "s09_sat",
+    "s09_pan",
+    "s09_rev",
+    "s09_dly"
+   ]
+  },
+  {
+   "label": "Slot 10",
+   "keys": [
+    "s10_src",
+    "s10_fam",
+    "s10_level",
+    "s10_tune",
+    "s10_decay",
+    "s10_drive",
+    "s10_dist",
+    "s10_attack",
+    "s10_tone",
+    "s10_snappy",
+    "s10_noise",
+    "s10_rate",
+    "s10_sweep",
+    "s10_pmod",
+    "s10_ndecay",
+    "s10_sat",
+    "s10_pan",
+    "s10_rev",
+    "s10_dly"
+   ]
+  },
+  {
+   "label": "Slot 11",
+   "keys": [
+    "s11_src",
+    "s11_fam",
+    "s11_level",
+    "s11_tune",
+    "s11_decay",
+    "s11_drive",
+    "s11_dist",
+    "s11_attack",
+    "s11_tone",
+    "s11_snappy",
+    "s11_noise",
+    "s11_rate",
+    "s11_sweep",
+    "s11_pmod",
+    "s11_ndecay",
+    "s11_sat",
+    "s11_pan",
+    "s11_rev",
+    "s11_dly"
+   ]
+  },
+  {
+   "label": "Slot 12",
+   "keys": [
+    "s12_src",
+    "s12_fam",
+    "s12_level",
+    "s12_tune",
+    "s12_decay",
+    "s12_drive",
+    "s12_dist",
+    "s12_attack",
+    "s12_tone",
+    "s12_snappy",
+    "s12_noise",
+    "s12_rate",
+    "s12_sweep",
+    "s12_pmod",
+    "s12_ndecay",
+    "s12_sat",
+    "s12_pan",
+    "s12_rev",
+    "s12_dly"
+   ]
+  },
+  {
+   "label": "Slot 13",
+   "keys": [
+    "s13_src",
+    "s13_fam",
+    "s13_level",
+    "s13_tune",
+    "s13_decay",
+    "s13_drive",
+    "s13_dist",
+    "s13_attack",
+    "s13_tone",
+    "s13_snappy",
+    "s13_noise",
+    "s13_rate",
+    "s13_sweep",
+    "s13_pmod",
+    "s13_ndecay",
+    "s13_sat",
+    "s13_pan",
+    "s13_rev",
+    "s13_dly"
+   ]
+  },
+  {
+   "label": "Slot 14",
+   "keys": [
+    "s14_src",
+    "s14_fam",
+    "s14_level",
+    "s14_tune",
+    "s14_decay",
+    "s14_drive",
+    "s14_dist",
+    "s14_attack",
+    "s14_tone",
+    "s14_snappy",
+    "s14_noise",
+    "s14_rate",
+    "s14_sweep",
+    "s14_pmod",
+    "s14_ndecay",
+    "s14_sat",
+    "s14_pan",
+    "s14_rev",
+    "s14_dly"
+   ]
+  },
+  {
+   "label": "Slot 15",
+   "keys": [
+    "s15_src",
+    "s15_fam",
+    "s15_level",
+    "s15_tune",
+    "s15_decay",
+    "s15_drive",
+    "s15_dist",
+    "s15_attack",
+    "s15_tone",
+    "s15_snappy",
+    "s15_noise",
+    "s15_rate",
+    "s15_sweep",
+    "s15_pmod",
+    "s15_ndecay",
+    "s15_sat",
+    "s15_pan",
+    "s15_rev",
+    "s15_dly"
+   ]
+  },
+  {
+   "label": "Slot 16",
+   "keys": [
+    "s16_src",
+    "s16_fam",
+    "s16_level",
+    "s16_tune",
+    "s16_decay",
+    "s16_drive",
+    "s16_dist",
+    "s16_attack",
+    "s16_tone",
+    "s16_snappy",
+    "s16_noise",
+    "s16_rate",
+    "s16_sweep",
+    "s16_pmod",
+    "s16_ndecay",
+    "s16_sat",
+    "s16_pan",
+    "s16_rev",
+    "s16_dly"
+   ]
+  },
+  {
+   "label": "Editor",
+   "keys": [
+    "edit_slot",
+    "edit_voice",
+    "e_level",
+    "e_tune",
+    "e_decay",
+    "e_drive",
+    "e_dist",
+    "e_attack",
+    "e_tone",
+    "e_snappy",
+    "e_noise",
+    "e_rate",
+    "e_sweep",
+    "e_pmod",
+    "e_ndecay",
+    "e_sat",
+    "e_pan",
+    "e_rev",
+    "e_dly"
+   ]
+  },
+  {
+   "label": "Randomise",
+   "keys": [
+    "rnd_amount",
+    "rnd_voice",
+    "rnd_go",
+    "rnd_all",
+    "rnd_none",
+    "rnd_s01",
+    "rnd_s02",
+    "rnd_s03",
+    "rnd_s04",
+    "rnd_s05",
+    "rnd_s06",
+    "rnd_s07",
+    "rnd_s08",
+    "rnd_s09",
+    "rnd_s10",
+    "rnd_s11",
+    "rnd_s12",
+    "rnd_s13",
+    "rnd_s14",
+    "rnd_s15",
+    "rnd_s16",
+    "rnd_go_voice"
+   ]
+  },
+  {
+   "label": "FX and master",
+   "keys": [
+    "fx_rev_decay",
+    "fx_rev_tone",
+    "fx_rev_hpf",
+    "fx_rev_level",
+    "fx_dly_time",
+    "fx_dly_fdbk",
+    "fx_dly_tone",
+    "fx_dly_hpf",
+    "fx_dly_level",
+    "fx_master_dist",
+    "fx_master_drive",
+    "fx_comp",
+    "fx_volume"
+   ]
+  },
+  {
+   "label": "Internal FX",
+   "keys": [
+    "int_rev",
+    "int_dly",
+    "int_comp"
+   ]
+  }
+ ]
+}
