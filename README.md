@@ -35,7 +35,7 @@ This is an unofficial project, not affiliated with or endorsed by AKAI Professio
 <!-- JAZZY-RHYTHMER-PORTFOLIO:START -->
 ## More from Jazzy Rhythmer
 
-**For MPC Sample:** [RHYTHMER OS](https://jazzyrhythmer.github.io/mpc-sample/) · **For FM-1:** [JAZZY](https://jazzyrhythmer.github.io/Jazzy/) / [RHYTHMER](https://jazzyrhythmer.github.io/Rhythmer/)
+**For MPC Sample:** [RHYTHMER OS](https://jazzyrhythmer.github.io/mpc-sample/) · **For FM-1:** [JAZZY](https://jazzyrhythmer.github.io/jazzy/) / [RHYTHMER](https://jazzyrhythmer.github.io/rhythmer/)
 
 **JR Audio Software** — in development, expected in 2027: [JR ACID](https://jazzyrhythmer.github.io/software.html#jr-acid) · [JR FX](https://jazzyrhythmer.github.io/software.html#jr-fx) · [JR SMPL](https://jazzyrhythmer.github.io/software.html#jr-smpl) · [JR RYTM](https://jazzyrhythmer.github.io/software.html#jr-rytm) · [JR DRAW](https://jazzyrhythmer.github.io/software.html#jr-draw) · [JR PLAY](https://jazzyrhythmer.github.io/software.html#jr-play) · [JR TREK](https://jazzyrhythmer.github.io/software.html#jr-trek).
 
