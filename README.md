@@ -8,11 +8,11 @@ Free and open-source custom firmware by **jazzy rhythmer**, built on **Melodee 0
 
 ## Your first groove with RHYTHMER OS.
 
-**Watch it come together. Then make it yours.** Follow drums, bass, FM-106 chords, an acid phrase and a chopped Think break from the first sound to a finished four-bar groove. Shape the sounds, balance the tracks and turn the loop into a mute jam.
+**Watch the latest guided session. Then make it yours.** Follow drums, bass, FM-106 chords, an acid phrase and a chopped Think break from the first sound to a finished four-bar groove. Shape the sounds, balance the tracks and turn the loop into a mute jam.
 
-[![Watch Your first groove with RHYTHMER OS — click to play the film](assets/preview/your-first-groove.jpg)](https://jazzyrhythmer.github.io/mpc-sample/#first-groove)
+[![Watch Your first groove with RHYTHMER OS — click to play the film](assets/preview/your-first-groove-v4.jpg)](https://jazzyrhythmer.github.io/mpc-sample/#first-groove)
 
-**[▶ WATCH THE FILM](https://jazzyrhythmer.github.io/mpc-sample/#first-groove)** &nbsp; · &nbsp; **[FOLLOW THE STEP-BY-STEP GUIDE ↗](https://jazzyrhythmer.github.io/mpc-sample/manual/quickstart.html)**
+**[▶ WATCH THE FILM](https://jazzyrhythmer.github.io/mpc-sample/#first-groove)** &nbsp; · &nbsp; **[FOLLOW THE UPDATED GUIDE ↗](https://jazzyrhythmer.github.io/mpc-sample/manual/quickstart.html)** &nbsp; · &nbsp; [DOWNLOAD THE VIDEO ↗](https://github.com/jazzyrhythmer/mpc-sample-rhythmer-os/releases/download/v0.4.0-beta.3-r2/RHYTHMER-Your-First-Groove-YouTube-v4.mp4)
 
 *4 bars · 140 BPM · C minor · Follow at your own pace. Click the thumbnail to open the video.*
 
