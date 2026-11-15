@@ -53,7 +53,7 @@ inline StageAt stage_at(const UiState& ui, const Track& t, bool instrument) {
     unsigned track = ui.track % track_count, group = ui.stage_group[track] % 3;
     if (!stage_has(g, group) || stage_opens_edit(t, group)) group = 0; // left on a button with no Stage pages under it
     unsigned sub = ui.stage_sub[track] % stage_count(g, group);
-    if (stage_skips(g, group, sub, instrument)) sub = 0; // left on LAYERS: an instrument pad shows ZONES, a sample pad LAYERS again
+    if(stage_skips(g,group,sub,instrument)){do{sub=(sub+stage_count(g,group)-1)%stage_count(g,group);}while(stage_skips(g,group,sub,instrument));} // left on LAYERS: an instrument pad shows ZONES, a sample pad LAYERS again
     return {group, sub};
 }
 

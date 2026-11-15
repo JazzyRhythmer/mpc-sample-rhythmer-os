@@ -48,7 +48,7 @@ public:
         runner->midi(0xb0, 64, 0);  // sustain up
         runner->midi(0xb0, 123, 0); // all notes off
     }
-    void silence() override { if (runner) runner->silence(); }
+    void silence() override { if (runner) runner->silence(); macros.release(); } // hard stop: discard performance-effect tails too
     // The track's parameters are its performance knobs (plugin_track); a plug-in's own are the rack's to set.
     void set_param(int id, int value) override {
         if (id < 0 || id >= plugin_track::Count) return;

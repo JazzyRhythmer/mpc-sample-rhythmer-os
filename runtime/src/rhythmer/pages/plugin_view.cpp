@@ -57,31 +57,39 @@ void draw_plugin_view(Paint& p, const Snapshot& s, unsigned entry, float top) {
     // Six rows: the three in hand raised on one panel, ticked in their knobs' colours.
     if(panel.preset[0]) {
         auto style=plain(colour::text,type::body,Weight::SemiBold);
-        auto lines=p.wrap(juce::String::fromUTF8(panel.preset),style,w-12,3);
+        auto caption=juce::String::fromUTF8(panel.preset);if(panel.focused_pad>=0&&panel.row==2){const bool modified=caption.endsWith(" *");caption=caption.upToFirstOccurrenceOf(" / Pad ",false,false)+" / ALL PADS"+(modified?" *":"");}
+        else if(panel.focused_pad>=0&&panel.row>=3){
+            auto sound=caption.fromFirstOccurrenceOf(" / Pad ",false,false).fromFirstOccurrenceOf(": ",false,false);
+            auto source=juce::String::fromUTF8(panel.design_source);if(source.isEmpty())source="Empty";
+            caption="P"+juce::String(panel.focused_pad+1).paddedLeft('0',2)+" / "+source;
+            if(sound.isNotEmpty())caption+=" / "+sound;
+        }
+        auto lines=p.wrap(caption,style,w-12,3);
         const float height=lines.size()*14.0f+2;
         p.fill(x,top,w,height,colour::surf);
         for(int i=0;i<lines.size();++i)p.text(lines[i],x+6,top+i*14,w-12,14,style);
         top+=height+2;
     }
     const float row_h = panel.preset[0]?std::min(23.0f,(zone::picture_y+zone::picture_h-top-2)/6.0f):23.0f;
-    unsigned hand = panel.row * 3u;
+    unsigned hand = panel.design?unsigned(panel.design_half)*3u:panel.row*3u;
     int first_hand = -1;
-    for (unsigned k = 0; k < panel.window.size(); ++k) if (panel.window_first + k == hand) { first_hand = int(k); break; }
+    for (unsigned k = 0; k < panel.window.size(); ++k) if ((panel.design?k:panel.window_first+k) == hand) { first_hand = int(k); break; }
     if (first_hand >= 0) p.fill(x, top + 2 + first_hand * row_h, w, 3 * row_h, colour::panel, 3);
     for (unsigned k = 0; k < panel.window.size(); ++k) {
         const auto& param = panel.window[k];
         if (!param.used) continue;
-        unsigned at = panel.window_first + k;
+        unsigned at = panel.design?k:panel.window_first+k;
         bool held = at >= hand && at < hand + 3;
         float y = top + 2 + k * row_h;
         if (held) p.fill(x + 4, y + 5, 2.5f, row_h - 10, knob_shade(s.ui.track, at - hand), 1);
-        p.text(juce::String(at + 1), x + 6, y, 22, row_h, plain(colour::dim, type::small, Weight::SemiBold), juce::Justification::centredRight);
+        p.text(held?juce::String("K")+juce::String(at-hand+1):juce::String(at+1), x + 6, y, 22, row_h, plain(colour::dim, type::small, Weight::SemiBold), juce::Justification::centredRight);
         juce::String name = juce::String::fromUTF8(param.name), value = juce::String::fromUTF8(param.text);
         auto value_style = plain(colour::mid, type::body, Weight::SemiBold);
-        float vw = held ? 0 : std::min(w*0.55f,p.width(value, value_style) + 10);
+        float vw = held ? 0 : std::min(w*0.35f,p.width(value, value_style) + 10);
         auto name_style = plain(held ? colour::text : colour::mid, type::body, held ? Weight::Medium : Weight::Regular);
+        if(!held&&(p.width(name,plain(colour::mid,type::floor))>w-42-vw||p.width(value,plain(colour::mid,type::floor,Weight::SemiBold))>vw-10))vw=0;
         p.text(name, x + 34, y, w - 42 - vw, row_h, p.fit(name, name_style, w - 42 - vw, type::floor));
-        if (!held) p.text(value, x + w - 8 - vw + 10, y, vw - 10, row_h, p.fit(value,value_style,vw-10,type::floor), juce::Justification::centredRight);
+        if (!held&&vw>0) p.text(value, x + w - 8 - vw + 10, y, vw - 10, row_h, p.fit(value,value_style,vw-10,type::floor), juce::Justification::centredRight);
     }
 }
 

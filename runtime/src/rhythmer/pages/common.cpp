@@ -179,7 +179,7 @@ void describe_card(const Snapshot& s, const Binding& b, ui::KnobCard& c) {
         if (track.engine == EngineKind::Sampler && b.id == sampler::Level) c.label = "KIT VOLUME";
         break;
     }
-    case Kind::Level: c.label = "LEVEL"; c.value = juce::String(b.value); break;
+    case Kind::Level: c.label = s.ui.page==PageId::Stage&&s.ui.plugin_panel.focused_pad>=0&&track.engine==EngineKind::Plugin?"TRACK LEVEL":"LEVEL"; c.value = juce::String(b.value); break;
     case Kind::Pan:
         c.label = "PAN"; c.bipolar = true;
         c.value = b.value == 0 ? juce::String("C") : (b.value < 0 ? "L" : "R") + juce::String(std::abs(b.value));
@@ -583,15 +583,19 @@ void describe_card(const Snapshot& s, const Binding& b, ui::KnobCard& c) {
     case Kind::PluginParam: { // as the shell last read it from the plug-in (plugin/plugin_panel.h)
         const auto& panel=s.ui.plugin_panel;unsigned slot=plugin_binding_shown(b.id)%3;
         if(panel.design)for(unsigned k=0;k<3;++k)if(panel.params[k].used&&panel.params[k].shown==int(plugin_binding_shown(b.id))){slot=k;break;}
-        const auto& card=panel.params[slot];
+        const auto* quick=plugin_card(panel,b.id);const bool front=s.ui.page==PageId::Stage&&stage_page_now(s.ui,s.track(),false).kind==StageKind::PluginSound;
+        const auto& card=front&&quick?*quick:panel.params[slot];
         // Its name as the plug-in gives it (capitals, else mixed case, else over two lines: ui/knobs.cpp); its number
         // where it has none.
-        auto name = juce::String::fromUTF8(card.name).trim();
+        auto name = juce::String::fromUTF8(card.name).trim().replace("Velocity Sensitivity","Velocity Sens.");
         c.label = name.isEmpty() ? juce::String(plugin_binding_shown(b.id) + 1) : name.toUpperCase();
-        if(panel.design)c.label=juce::String(slot+1);
-        else if (name.isNotEmpty()) c.label_mixed = name;
+        if(front){c.label=name.toUpperCase();c.label_mixed=name;}
+        else if(panel.design)c.label=juce::String(slot+1);
+        else if(name.startsWithIgnoreCase("KIT ")){c.label="KIT / K"+juce::String(slot+1);}
+        else if(panel.layout_revision&&panel.row>=2){
+            c.label=(panel.focused_pad>=0?juce::String("P")+juce::String(panel.focused_pad+1).paddedLeft('0',2)+" / ":juce::String())+"K"+juce::String(slot+1);
+        }else if(name.isNotEmpty())c.label_mixed=name;
         c.value = juce::String::fromUTF8(card.text);
-        if(!panel.design&&s.ui.plugin_panel.preset[0]&&(juce::String::fromUTF8(card.name)=="Sound"||juce::String::fromUTF8(card.name).endsWith(" Sound"))&&c.value.length()>16)c.value="NAME ABOVE";
         c.fill = std::clamp(b.value / float(plugin_param_max), 0.0f, 1.0f);
         break;
     }

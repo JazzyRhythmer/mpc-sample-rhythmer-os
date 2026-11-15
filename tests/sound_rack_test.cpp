@@ -15,6 +15,11 @@
 using namespace juce;
 static void require(bool b,const char* why){if(!b)throw std::runtime_error(why);}
 static double play(AudioPluginInstance& synth,int note,int blocks=128){AudioBuffer<float> out(2,128);MidiBuffer midi;midi.addEvent(MidiMessage::noteOn(1,note,uint8(110)),7);double energy=0;for(int b=0;b<blocks;++b){out.clear();synth.processBlock(out,midi);midi.clear();for(int c=0;c<2;++c)for(int f=0;f<128;++f){float v=out.getSample(c,f);require(std::isfinite(v),"Non-finite sound");energy+=v*v;}}midi.addEvent(MidiMessage::noteOff(1,note),0);midi.addEvent(MidiMessage::allSoundOff(1),0);synth.processBlock(out,midi);return energy;}
+static var quick_view(AudioPluginInstance* synth){
+    Array<var> result;std::set<int> used;
+    for(int index:rhythmer::sound_rack_quick_parameters(synth)){if(index<0)continue;require(index>=6&&index<rhythmer::sound_rack_parameter_count(synth),"Invalid first-page source target");require(used.insert(index).second,"Duplicate first-page source target");auto* p=synth->getParameters()[index];var row(new DynamicObject());auto* o=row.getDynamicObject();o->setProperty("shown",index);o->setProperty("name",p->getName(128));o->setProperty("text",p->getText(p->getValue(),128));o->setProperty("value",p->getValue());o->setProperty("initial",p->getDefaultValue());o->setProperty("steps",p->getNumSteps());result.add(row);}
+    if(rhythmer::sound_rack_focus(synth)<0)require(result.size()==3,"Engine first page lacks three meaningful controls");return result;
+}
 static void design_view(var& view,AudioPluginInstance* synth,bool state_check=false){
     MemoryBlock before;if(state_check)synth->getStateInformation(before);
     rhythmer::PluginPanel panel;require(rhythmer::sound_rack_design_pages(synth,panel),"Missing functional design pages");
@@ -25,11 +30,17 @@ static void design_view(var& view,AudioPluginInstance* synth,bool state_check=fa
     }
     require(int(reached.size())==rhythmer::sound_rack_parameter_count(synth)-6,"A sound control is missing from functional pages");
     if(state_check){MemoryBlock after;synth->getStateInformation(after);require(before==after,"Reading design pages changed the sound state");}
+    view.getDynamicObject()->setProperty("quick",quick_view(synth));
     view.getDynamicObject()->setProperty("design_pages",pages);view.getDynamicObject()->setProperty("design_source",panel.design_source);
+    if(rhythmer::sound_rack_focus(synth)>=0)require(rhythmer::sound_rack_source_name(synth)==String(panel.design_source),"Focused pad source identity differs from design header");
 }
 #include "sound_transport.inc"
 #include "authored_presets.inc"
 #include "preset_audition.inc"
+#include "preset_controls.inc"
+#include "rhythmer/plugin/kit_filter.h"
+#include "kit_filter_check.inc"
+#include "engine_filter_check.inc"
 int main(int argc,char** argv){try{
     if(argc>3&&String(argv[3])=="transport")return transport_check();
     require(argc>=3,"catalogue and Plugins required");ScopedJuceInitialiser_GUI init;
@@ -53,6 +64,54 @@ int main(int argc,char** argv){try{
     }
     require(hidden==7,"Unexpected kit-only source count");
     String error;
+    if(argc>3&&String(argv[3])=="qualityreview")return quality_review(catalog,loader,argv[1]);
+    if(argc>3&&String(argv[3])=="plaitscontrols")return plaits_controls(catalog,loader,argv[1]);
+    if(argc>3&&String(argv[3])=="enginefilter")return engine_filter_check(catalog,loader,argv[1]);
+    if(argc>3&&String(argv[3])=="kitfilter")return kit_filter_check(catalog,loader,argv[1]);
+    if(argc>3&&String(argv[3])=="kitmodels")return kit_ownership(catalog,loader,argv[1],true);
+    if(argc>3&&String(argv[3])=="kitownership")return kit_ownership(catalog,loader,argv[1],false,argc>4?String(argv[4]):String());
+    if(argc>3&&String(argv[3])=="controlroundtrip")return control_roundtrip(catalog,loader,argv[1]);
+    if(argc>3&&String(argv[3])=="signalquality")return signal_quality(catalog,loader,argv[1]);
+    if(argc>3&&String(argv[3])=="presetcontrols")return preset_controls(catalog,loader,argv[1]);
+    if(argc>3&&String(argv[3])=="userdefaults") {
+        for(int e=-1;e<engines.size();++e){
+            const String label=e<0?String("Rhythmer Kit"):engines[e]["name"].toString();
+            auto sound=rhythmer::make_sound_rack(catalog,e,loader,44100,128,error);require(bool(sound),error.toRawUTF8());
+            int index=6;require(rhythmer::sound_rack_parameter_count(sound.get())>index,"No sound control");
+            String name=sound->getParameters()[index]->getName(128);
+            sound->getParameters()[index]->setValue(.6f);MemoryBlock state;sound->getStateInformation(state);
+            float saved=sound->getParameters()[index]->getValue();
+            int factory=sound->getNumPrograms();sound->getParameters()[4]->setValue(1);sound->getStateInformation(state);
+            require(sound->getNumPrograms()==factory+1,"User preset save missing");sound->setCurrentProgram(0);sound->setCurrentProgram(factory);
+            index=-1;for(int p=6;p<rhythmer::sound_rack_parameter_count(sound.get());++p)if(sound->getParameters()[p]->getName(128)==name)index=p;
+            require(index>=0,"Saved control disappeared");auto* parameter=sound->getParameters()[index];
+            require(std::abs(parameter->getValue()-saved)<.0001f,("User preset changed saved value: "+label+" / "+name+" saved="+String(saved,8)+" loaded="+String(parameter->getValue(),8)).toRawUTF8());
+            require(std::abs(parameter->getDefaultValue()-saved)<.0001f,("User reset differs from saved preset: "+label+" saved="+String(saved,8)+" reset="+String(parameter->getDefaultValue(),8)).toRawUTF8());
+            sound->getStateInformation(state);auto restored=rhythmer::make_sound_rack(catalog,e,loader,44100,128,error);require(bool(restored),error.toRawUTF8());restored->setStateInformation(state.getData(),int(state.getSize()));
+            int restored_index=-1;for(int p=6;p<rhythmer::sound_rack_parameter_count(restored.get());++p)if(restored->getParameters()[p]->getName(128)==name)restored_index=p;
+            require(restored_index>=0&&std::abs(restored->getParameters()[restored_index]->getDefaultValue()-saved)<.0001f,"Project lost user reset baseline");
+            std::cout<<"USER_DEFAULT "<<label<<" saved_reset=ok"<<std::endl;
+        }return 0;
+    }
+    if(argc>3&&String(argv[3])=="labels") {
+        int e=-1;for(int n=0;n<engines.size();++n)if(engines[n]["name"].toString()=="Prophet")e=n;
+        require(e>=0,"Missing Prophet label fixture");auto sound=rhythmer::make_sound_rack(catalog,e,loader,44100,128,error);require(bool(sound),error.toRawUTF8());
+        unsigned checked=0;
+        for(int slot=1;slot<=3;++slot){
+            const String label="Shared FX "+String(slot)+" Type";
+            auto selector=[&](){for(int p=6;p<rhythmer::sound_rack_parameter_count(sound.get());++p)if(sound->getParameters()[p]->getName(128)==label)return p;return -1;};
+            int index=selector();require(index>=0,"Missing shared FX selector");int choices=sound->getParameters()[index]->getNumSteps();require(choices==17,"Shared FX exposes a retired or MIDI-only algorithm");
+            for(int choice=0;choice<choices;++choice){
+                index=selector();require(index>=0,"Shared FX selector disappeared");sound->getParameters()[index]->setValue(choice/float(choices-1));MemoryBlock state;sound->getStateInformation(state);
+                std::set<String> names;
+                for(int p=6;p<rhythmer::sound_rack_parameter_count(sound.get());++p){auto* param=sound->getParameters()[p];String name=param->getName(128),text=param->getText(param->getValue(),128);
+                    require(name.isNotEmpty()&&!name.endsWith(" -"),"Inactive FX label leaked into edit list");require(names.insert(name).second,("Duplicate dynamic label: "+name).toRawUTF8());require(text.isNotEmpty(),("Blank dynamic FX value: "+name).toRawUTF8());}
+                ++checked;
+            }
+            index=selector();sound->getParameters()[index]->setValue(0);MemoryBlock state;sound->getStateInformation(state);
+        }
+        std::cout<<"DYNAMIC_LABELS Prophet slots=3 algorithm_states="<<checked<<" labels_values_unique=ok reserved_algorithms=hidden"<<std::endl;return 0;
+    }
     if(argc>3&&String(argv[3])=="musical")return musical_audition(catalog,loader,argv[1]);
     if(argc>3&&String(argv[3])=="audition")return preset_audition(catalog,loader,argv[1]);
     if(argc>3&&String(argv[3])=="authored")return authored_check(catalog,loader,argv[1]);
@@ -85,7 +144,7 @@ int main(int argc,char** argv){try{
             std::set<String> visible_names;
             for(int n=0;n<rhythmer::sound_rack_parameter_count(rack.get());n++){
                 auto* p=rack->getParameters()[n];var v(new DynamicObject());auto* q=v.getDynamicObject();
-                if(n>=6){auto name=p->getName(47),value=p->getText(p->getValue(),128);require(name.isNotEmpty()&&!name.startsWith("Parameter ")&&!name.containsIgnoreCase("Inactive"),"Invalid edit label");require(visible_names.insert(name).second,("Duplicate visible edit label: "+engines[e]["name"].toString()+" / "+name).toRawUTF8());require(value.isNotEmpty(),("Blank edit value: "+name).toRawUTF8());}
+                if(n>=6){require(std::isfinite(p->getValue())&&p->getValue()>=0&&p->getValue()<=1,"Out-of-range normalized edit value");auto name=p->getName(47),value=p->getText(p->getValue(),128);require(name.isNotEmpty()&&!name.startsWith("Parameter ")&&!name.containsIgnoreCase("Inactive"),"Invalid edit label");require(visible_names.insert(name).second,("Duplicate visible edit label: "+engines[e]["name"].toString()+" / "+name).toRawUTF8());require(value.isNotEmpty(),("Blank edit value: "+name).toRawUTF8());}
                 q->setProperty("index",n);q->setProperty("name",p->getName(128));q->setProperty("text",p->getText(p->getValue(),128));q->setProperty("value",p->getValue());parameters.add(v);
             }
             o->setProperty("programs",programs);o->setProperty("parameters",parameters);design_view(row,rack.get(),true);rows.add(row);
@@ -164,7 +223,7 @@ int main(int argc,char** argv){try{
 
 
         // These three FM-1 engines change the available names with algorithms.
-        if((sound->getName()=="K-WASUB"&&!bool(engines[i]["drums"]))||sound->getName()=="MONO2K"||sound->getName()=="Hortator"||sound->getName()=="Elixir"){
+        if((sound->getName()=="K-WASUB"&&!bool(engines[i]["drums"]))||sound->getName()=="MONO2K"||sound->getName()=="Hortator"||sound->getName()=="Elixir"||sound->getName()=="Plaits"){
             for(int program=0;program<sound->getNumPrograms();program++){
                 sound->setCurrentProgram(program);std::set<String> seen;
                 for(int p=6;p<rhythmer::sound_rack_parameter_count(sound.get());p++){
@@ -186,7 +245,7 @@ int main(int argc,char** argv){try{
         if(sound->getName()=="DRUM-X"||sound->getName()=="Hortator"||sound->getName()=="K-WASUB Drums")for(int p=6;p<count;++p){auto name=sound->getParameters()[p]->getName(128);require(!name.startsWithIgnoreCase("Snare "),"Another drum voice leaked into a single kick");}
         if(sound->getName()=="Hortator"){require(sound->getNumPrograms()==147,"Original Hortator bank incomplete");int acid=-1;for(int n=0;n<sound->getNumPrograms();++n)if(sound->getProgramName(n)=="SQUELCH")acid=n;require(acid>=0,"Original Hortator acid missing");sound->setCurrentProgram(acid);require(sound->getParameters()[2]->getText(0,128)=="Key Pitch","Hortator acid lacks native key tracking");require(play(*sound,60)>1e-7,"Hortator acid silent");sound->setCurrentProgram(0);}
 
-        if(sound->getName()=="Acid Engine"){for(int program=0;program<sound->getNumPrograms();program++){sound->setCurrentProgram(program);for(int key:{36,48,60,72,84})require(play(*sound,key)>1e-7,"Hortator Acid preset/pitch silent");}sound->setCurrentProgram(0);for(int p=6;p<rhythmer::sound_rack_parameter_count(sound.get());p++){auto* parameter=sound->getParameters()[p];require(!parameter->getName(128).containsIgnoreCase("Model"),"Acid-only view exposes drum model selector");if(parameter->getName(128)=="Wave")require(parameter->getText(parameter->getValue(),128).isNotEmpty(),"Acid wave enum is not named");}}
+        if(sound->getName()=="Acid Engine"){for(int program=0;program<sound->getNumPrograms();program++){sound->setCurrentProgram(program);for(int key:{36,48,60,72,84})require(play(*sound,key)>1e-7,"Hortator Acid preset/pitch silent");}sound->setCurrentProgram(0);for(int p=6;p<rhythmer::sound_rack_parameter_count(sound.get());p++){auto* parameter=sound->getParameters()[p];require(!parameter->getName(128).equalsIgnoreCase("Model")&&!parameter->getName(128).equalsIgnoreCase("Sound model"),"Acid-only view exposes drum model selector");if(parameter->getName(128)=="Wave")require(parameter->getText(parameter->getValue(),128).isNotEmpty(),"Acid wave enum is not named");}}
         if(sound->getName()=="Elixir")require(count<150,"All Elixir voices leaked into single-sound controls");
         sound->getParameters()[count-1]->getName(128); // final original control remains reachable
         sound->setStateInformation(state.getData(),int(state.getSize()));auto status=sound->getParameters()[5]->getText(0,128);require(status=="Ready",("Single state restore failed: "+status).toRawUTF8());
@@ -208,7 +267,7 @@ int main(int argc,char** argv){try{
             for(int pad=0;pad<16;++pad){
                 kit->getParameters()[0]->setValue(pad/63.0f);std::set<String> seen;
                 String prefix="P"+String(pad+1).paddedLeft('0',2)+" ";
-                for(int p=6;p<rhythmer::sound_rack_parameter_count(kit.get());p++){
+                for(int p=rhythmer::sound_rack_source_parameter_begin(kit.get());p<rhythmer::sound_rack_parameter_count(kit.get());p++){
                     auto* control=kit->getParameters()[p];auto label=control->getName(47);
                     require(label.startsWith(prefix),"Kit edit label differs from pressed destination pad");
                     require(seen.insert(label).second,("Ambiguous kit edit label: "+kit->getProgramName(k)+" / "+label).toRawUTF8());
@@ -223,17 +282,17 @@ int main(int argc,char** argv){try{
         Array<var> empty_views;kit->setCurrentProgram(0);
         for(int pad:{16,63}){
             kit->getParameters()[0]->setValue(pad/63.0f);MemoryBlock state;kit->getStateInformation(state);rhythmer::PluginPanel panel;
-            require(!rhythmer::sound_rack_design_pages(kit.get(),panel)&&panel.design_count==0&&rhythmer::sound_rack_parameter_count(kit.get())==6,"Empty pad retained another pad's design controls");
-            var view(new DynamicObject());auto* o=view.getDynamicObject();o->setProperty("engine","Rhythmer Kit");o->setProperty("focused_pad",pad);Array<var> programs;programs.add(rhythmer::sound_rack_preset_name(kit.get()));o->setProperty("programs",programs);o->setProperty("parameters",Array<var>{});o->setProperty("design_pages",Array<var>{});empty_views.add(view);
+            require(rhythmer::sound_rack_design_pages(kit.get(),panel)&&panel.design_count==1&&rhythmer::sound_rack_parameter_count(kit.get())==9,"Empty pad must retain only the whole-kit filter");
+            var view(new DynamicObject());auto* o=view.getDynamicObject();o->setProperty("engine","Rhythmer Kit");o->setProperty("focused_pad",pad);Array<var> programs;programs.add(rhythmer::sound_rack_preset_name(kit.get()));o->setProperty("programs",programs);Array<var> controls;for(int n=0;n<rhythmer::sound_rack_parameter_count(kit.get());++n){auto* p=kit->getParameters()[n];var v(new DynamicObject());v.getDynamicObject()->setProperty("name",p->getName(128));v.getDynamicObject()->setProperty("text",p->getText(p->getValue(),128));v.getDynamicObject()->setProperty("value",p->getValue());controls.add(v);}o->setProperty("parameters",controls);design_view(view,kit.get());empty_views.add(view);
         }
         File(argv[1]).getSiblingFile("empty-pad-inspect.json").replaceWithText(JSON::toString(var(empty_views),true));
-        for(int pad=0;pad<16;++pad){kit->getParameters()[0]->setValue(pad/63.0f);{MemoryBlock ready;kit->getStateInformation(ready);}String prefix="P"+String(pad+1).paddedLeft('0',2)+" ";for(int p=6;p<rhythmer::sound_rack_parameter_count(kit.get());++p){auto* parameter=kit->getParameters()[p];require(parameter->getName(128).startsWith(prefix),"Selected pad number differs from edit control");require(!parameter->getText(parameter->getValue(),128).startsWithIgnoreCase("Pad "),"Native source pad number leaked into destination text");}}
-        kit->getParameters()[0]->setValue(1.0f/63.0f);{MemoryBlock ready;kit->getStateInformation(ready);}for(int p=6;p<rhythmer::sound_rack_parameter_count(kit.get());++p)require(kit->getParameters()[p]->getName(128).startsWith("P02 "),"Kit controls missing focused pad number");
+        for(int pad=0;pad<16;++pad){kit->getParameters()[0]->setValue(pad/63.0f);{MemoryBlock ready;kit->getStateInformation(ready);}String prefix="P"+String(pad+1).paddedLeft('0',2)+" ";for(int p=rhythmer::sound_rack_source_parameter_begin(kit.get());p<rhythmer::sound_rack_parameter_count(kit.get());++p){auto* parameter=kit->getParameters()[p];require(parameter->getName(128).startsWith(prefix),"Selected pad number differs from edit control");require(!parameter->getText(parameter->getValue(),128).startsWithIgnoreCase("Pad "),"Native source pad number leaked into destination text");}}
+        kit->getParameters()[0]->setValue(1.0f/63.0f);{MemoryBlock ready;kit->getStateInformation(ready);}for(int p=rhythmer::sound_rack_source_parameter_begin(kit.get());p<rhythmer::sound_rack_parameter_count(kit.get());++p)require(kit->getParameters()[p]->getName(128).startsWith("P02 "),"Kit controls missing focused pad number");
         kit->getParameters()[0]->setValue(0);{MemoryBlock ready;kit->getStateInformation(ready);}
         auto old_revision=rhythmer::sound_rack_revision(kit.get());kit->getParameters()[0]->setValue(1.0f/63.0f);
         MemoryBlock expected_stale;kit->getStateInformation(expected_stale);
         require(rhythmer::sound_rack_revision(kit.get())!=old_revision,"Pad focus did not invalidate old controls");
-        rhythmer::sound_rack_set_parameter_checked(kit.get(),6,0.123f,old_revision);
+        rhythmer::sound_rack_set_parameter_checked(kit.get(),rhythmer::sound_rack_source_parameter_begin(kit.get()),0.123f,old_revision);
         MemoryBlock rejected;kit->getStateInformation(rejected);require(rejected==expected_stale,"Old pad cards modified the newly focused pad");
         kit->getParameters()[0]->setValue(0);
         // Every source is also inspected in the longer P11 destination labels.
@@ -244,7 +303,7 @@ int main(int argc,char** argv){try{
             var view(new DynamicObject());Array<var> params,programs;programs.add(rhythmer::sound_rack_preset_name(kit.get()));std::set<String> seen;
             for(int n=0;n<rhythmer::sound_rack_parameter_count(kit.get());n++){
                 auto* control=kit->getParameters()[n];auto name=control->getName(47);auto text=control->getText(control->getValue(),128);
-                if(n>=6){require(name.startsWith("P11 "),"Kit source control does not follow pad 11");require(seen.insert(name).second,("Ambiguous P11 label: "+engines[e]["name"].toString()+" / "+name).toRawUTF8());require(text.isNotEmpty(),("Blank P11 value: "+name).toRawUTF8());}
+                if(n>=6){require(name.startsWith(n<rhythmer::sound_rack_source_parameter_begin(kit.get())?"KIT ":"P11 "),"Kit control does not match whole-kit or pad-11 scope");require(seen.insert(name).second,("Ambiguous P11 label: "+engines[e]["name"].toString()+" / "+name).toRawUTF8());require(text.isNotEmpty(),("Blank P11 value: "+name).toRawUTF8());}
                 var value(new DynamicObject());value.getDynamicObject()->setProperty("name",name);value.getDynamicObject()->setProperty("text",text);value.getDynamicObject()->setProperty("value",control->getValue());params.add(value);
             }
             view.getDynamicObject()->setProperty("engine","Rhythmer Kit");view.getDynamicObject()->setProperty("focused_pad",10);view.getDynamicObject()->setProperty("programs",programs);view.getDynamicObject()->setProperty("parameters",params);design_view(view,kit.get());kit_views.add(view);
@@ -271,14 +330,14 @@ int main(int argc,char** argv){try{
         require(rhythmer::load_project(bytes,*project,*patterns,nullptr,&restored).empty(),"Project roundtrip failed");require(restored[0]==states[0],"Project changed kit state");
         // Edit a sound parameter after a pad override, save a reusable preset,
         // and load it in a new rack (not just the same running instance).
-        kit->getParameters()[6]->setValue(0.35f);MemoryBlock designed;kit->getStateInformation(designed);
+        kit->getParameters()[6]->setValue(0.35f);kit->getParameters()[rhythmer::sound_rack_source_parameter_begin(kit.get())]->setValue(0.4f);MemoryBlock designed;kit->getStateInformation(designed);
         kit->getParameters()[3]->setValue(1.0f/63.0f);kit->getParameters()[4]->setValue(1);
         MemoryBlock flushed;kit->getStateInformation(flushed);
         require(user.getChildFile("Kits/Slot02.rhythmer.json").existsAsFile(),"User kit file missing");
         auto fresh=rhythmer::make_sound_rack(catalog,-1,loader,44100,128,error);require(bool(fresh),error.toRawUTF8());
         require(fresh->getProgramName(fresh->getNumPrograms()-1)=="User Kit 02","Saved kit not listed");
         fresh->setCurrentProgram(fresh->getNumPrograms()-1);MemoryBlock reopened;fresh->getStateInformation(reopened);
-        auto expected=JSON::parse(designed.toString());expected.getDynamicObject()->setProperty("user_label","User Kit 02");expected.getDynamicObject()->setProperty("user_slot",1);require(JSON::toString(JSON::parse(reopened.toString()),true)==JSON::toString(expected,true),"Saved kit did not restore edited controls");
+        auto expected=JSON::parse(designed.toString());for(auto& child:*expected["children"].getArray())child.getDynamicObject()->setProperty("reset_defaults",child["values"]);expected.getDynamicObject()->setProperty("kit_filter_defaults",expected["kit_filter"]);expected.getDynamicObject()->setProperty("kit_filter_edited",false);expected.getDynamicObject()->setProperty("user_label","User Kit 02");expected.getDynamicObject()->setProperty("user_slot",1);require(JSON::toString(JSON::parse(reopened.toString()),true)==JSON::toString(expected,true),"Saved kit did not restore edited controls");
         require(play(*fresh,36)>1e-7&&play(*fresh,37)>1e-7,"Reopened user kit silent");
         fresh.reset();
         std::atomic<bool> stop{false};std::atomic<bool> finite{true};

@@ -1,6 +1,6 @@
 # Edit and preset acceptance
 
-See [current inventory](ENGINE_REGISTRY.md) and [verification](VERIFICATION.md) for 0.4.0-beta.1.
+See [current inventory](ENGINE_REGISTRY.md) and [verification](VERIFICATION.md) for 0.4.0-beta.3.
 
 Engine home uses original names, named preset, selected pad, common MIX/SENDS/SOURCE/SAVE pages and input-reactive monochrome graphics. EDIT opens paged original controls. Kit controls show KIT MIX and the selected destination pad only; parameter names start with its pad number. Per-pad replacement forks the source on demand. Original engine selectors and Sound/PRESETS remain synchronized.
 

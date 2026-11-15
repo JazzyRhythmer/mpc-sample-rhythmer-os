@@ -4,6 +4,7 @@
 #include "rhythmer/engine/effects.h"
 #include "rhythmer/engine/macros.h"
 #include <sstream>
+#include <cstring>
 #include <fstream>
 #include <filesystem>
 #include <functional>
@@ -5574,7 +5575,7 @@ void stage() {
     }
     CHECK(stage_groups(EngineKind::Plugin).groups[0].pages[0].kind == StageKind::PluginSound);
     CHECK(stage_groups(EngineKind::Plugin).groups[2].pages[0].kind == StageKind::Mix && stage_groups(EngineKind::Sampler).groups[2].pages[0].kind == StageKind::PadMix);
-    CHECK(stage_groups(EngineKind::Sampler).groups[0].pages[0].kind == StageKind::Trim && stage_groups(EngineKind::Sampler).groups[1].count == 4);
+    CHECK(stage_groups(EngineKind::Sampler).groups[0].pages[0].kind == StageKind::Params && stage_groups(EngineKind::Sampler).groups[1].count == 4);
     CHECK(stage_groups(EngineKind::None).groups[2].pages[0].kind == StageKind::NewMidi);
 
     auto project = std::make_unique<Project>();
@@ -5595,9 +5596,10 @@ void stage() {
     CHECK(key() == "PRESETS");
     stage_press(ui, project->tracks[0], 0, false); CHECK(key() == "EDIT");
     stage_press(ui, project->tracks[0], 0, false); CHECK(key() == "PRESETS");
+    stage_press(ui, project->tracks[0], 1, false); CHECK(key() == "PERFORM");
     stage_press(ui, project->tracks[0], 1, false); CHECK(key() == "ARP");
     stage_press(ui, project->tracks[0], 1, false); CHECK(key() == "CHORD");
-    ui.track = 1; CHECK(key() == "TRIM");
+    ui.track = 1; CHECK(key() == "SOUND");
     stage_press(ui, project->tracks[1], 2, false); CHECK(key() == "MIX");
     ui.track = 0; CHECK(key() == "CHORD");
     stage_press(ui, project->tracks[0], 2, false); CHECK(key() == "MIX"); // another button: its first page
@@ -5606,16 +5608,27 @@ void stage() {
     stage_press(ui, project->tracks[0], 2, false); CHECK(key() == "MIX");
     // PRESETS: the performance knobs, the plug-in open or not; EDIT: its own row of three once it is open (none
     // before). No Shift row on either.
-    CHECK(stage_go(ui, EngineKind::Plugin, StageKind::PluginSound) && cards(false)[0].kind == K::Param && !shift_bindings(*project, ui, pattern)[0].bound());
+    CHECK(stage_go(ui, EngineKind::Plugin, StageKind::PluginSound) && !cards(false)[0].bound() && !shift_bindings(*project, ui, pattern)[0].bound());
     CHECK(stage_go(ui, EngineKind::Plugin, StageKind::PluginEdit) && !cards(false)[0].bound());
     CHECK(stage_go(ui, EngineKind::Plugin, StageKind::PluginSound));
     ui.plugin_panel.entry = project->tracks[0].plugin; ui.plugin_panel.status = PluginStatus::Ready; ui.plugin_panel.params[0].used = true;
-    { // PRESETS: the three performance knobs, whatever the plug-in (engine/macros.h); a slot's kind 0 is its default
+    for(unsigned n=0;n<3;++n){auto& q=ui.plugin_panel.quick[n];q.used=true;q.shown=int16_t(6+n);q.value=int16_t(300+n);}
+    {auto q=cards(false);for(unsigned n=0;n<3;++n){CHECK(q[n].kind==K::PluginParam&&plugin_binding_shown(q[n].id)==6+n);CHECK(q[n].value==int(300+n));CHECK(plugin_card(ui.plugin_panel,q[n].id)==&ui.plugin_panel.quick[n]);}}
+    { // Whole-kit filter mirrors stay fixed as a different source pad is selected.
+        ui.plugin_panel.focused_pad=10;auto q=cards(false);
+        CHECK(q[0].kind==K::PluginParam&&plugin_binding_shown(q[0].id)==6);
+        CHECK(q[1].kind==K::PluginParam&&plugin_binding_shown(q[1].id)==7);
+        CHECK(q[2].kind==K::Level);
+        ui.plugin_panel.focused_pad=7;CHECK(cards(false)[0].id==q[0].id);
+        ui.plugin_panel.focused_pad=-1;
+    }
+    CHECK(stage_go(ui,EngineKind::Plugin,StageKind::PluginPerform));
+    { // PERFORM retains the three original track knobs; a slot's kind 0 is its default
         auto knobs = cards(false);
         CHECK(knobs[0].kind == K::Param && knobs[0].id == plugin_track::Macro1 && knobs[0].min == -100 && knobs[0].max == 100);
         CHECK(knobs[1].id == plugin_track::Macro2 && knobs[1].min == 0 && knobs[2].id == plugin_track::Macro3 && knobs[2].max == 100);
         auto& pt = project->tracks[0];
-        CHECK(std::string(track_param_info(pt.engine, pt.params, 0).label) == "FILTER" &&
+        CHECK(std::string(track_param_info(pt.engine, pt.params, 0).label) == "DJ FILTER" &&
               std::string(track_param_info(pt.engine, pt.params, 1).label) == "ECHO" && std::string(track_param_info(pt.engine, pt.params, 2).label) == "SPACE");
         pt.params[plugin_track::Kind3] = int16_t(MacroKind::Echo); // a slot set to another kind: its card and lane follow
         CHECK(std::string(track_param_info(pt.engine, pt.params, 2).label) == "ECHO" && lane_name(pt, plugin_track::Macro3) == "ECHO");
@@ -5651,10 +5664,10 @@ void stage() {
     ui.sends_bus = 3;
     CHECK(cards(false)[0].value == 3 && cards(false)[1].id == 3 && cards(false)[2].id == 3);
     // ARP: mode, rate, octaves; Shift + K1 gate, Shift + K3 hold.
-    stage_go(ui, 1, 0);
+    stage_go(ui,EngineKind::Plugin,StageKind::Arp);
     CHECK(cards(false)[0].kind == K::ArpMode && cards(false)[1].kind == K::ArpRate && cards(true)[0].kind == K::ArpGate && cards(true)[2].kind == K::ArpHold);
     // CHORD: type, voicing, inversion; Shift + K1 chords on or off, Shift + K3 hold.
-    stage_go(ui, 1, 1);
+    stage_go(ui,EngineKind::Plugin,StageKind::Chord);
     CHECK(key() == "CHORD" && cards(false)[0].kind == K::ChordType && cards(false)[2].kind == K::ChordInvert);
     CHECK(cards(true)[0].kind == K::ChordOn && cards(true)[2].kind == K::ArpHold);
     // FX: nothing without effects; with one, its first row and (Shift) its second.
@@ -5670,16 +5683,16 @@ void stage() {
     ui.track = 1;
     auto& kit = project->tracks[1];
     kit.pads[5].sample = 0; project->samples[0].frames = 44100; kit.last_pad = 5;
-    stage_go(ui, 0, 0);
+    stage_go(ui,EngineKind::Sampler,StageKind::Trim);
     CHECK(cards(false)[0].kind == K::PadStart && cards(false)[1].kind == K::PadEnd && cards(false)[2].kind == K::PadLoopPoint);
     CHECK(cards(true)[0].kind == K::TrimZoom);
-    stage_go(ui, 0, 1); // LAYERS (roadmap P3): the layer in hand, its velocities; Shift + K1 how a hit picks
+    stage_go(ui,EngineKind::Sampler,StageKind::Layers); // LAYERS (roadmap P3): the layer in hand, its velocities; Shift + K1 how a hit picks
     CHECK(key() == "LAYERS" && cards(false)[0].kind == K::LayerPick && cards(false)[1].kind == K::LayerLow && cards(true)[0].kind == K::LayerPlayMode);
     stage_go(ui, 2, 0);
     CHECK(key() == "MIX" && cards(false)[0].kind == K::PadLevel && cards(false)[1].kind == K::Param && cards(false)[1].id == sampler::Level && cards(false)[2].kind == K::PadPan);
-    stage_go(ui, 0, 3);
+    stage_go(ui,EngineKind::Sampler,StageKind::AmpEnv);
     CHECK(key() == "AMP ENV" && cards(false)[0].kind == K::PadAttack && cards(true)[1].kind == K::PadDecayFrom);
-    stage_go(ui, 0, 2);
+    stage_go(ui,EngineKind::Sampler,StageKind::Tune);
     CHECK(key() == "TUNE" && cards(false)[0].kind == K::PadPitch && cards(true)[2].kind == K::PadBeats);
     stage_go(ui, 1, 0);
     CHECK(key() == "PLAY" && cards(false)[0].kind == K::PadMono && cards(true)[1].kind == K::PadLink);
@@ -5702,18 +5715,19 @@ void stage() {
     project->samples[1].zones = 6; // read
     kit.pads[7].sample = 1; kit.last_pad = 7;
     CHECK(stage_instrument(*project, kit) && !stage_instrument(*project, project->tracks[0]));
-    stage_go(ui, 0, 0);
+    stage_go(ui,EngineKind::Sampler,StageKind::Trim);
     CHECK(cards(false)[0].kind == K::ZonePick);
     stage_press(ui, kit, 0, true); CHECK(key() == "TUNE");
     stage_press(ui, kit, 0, true); CHECK(key() == "AMP ENV");
+    stage_press(ui, kit, 0, true); CHECK(key() == "SOUND");
     stage_press(ui, kit, 0, true); CHECK(key() == "TRIM");
-    stage_go(ui, 0, 1);
-    CHECK(stage_at(ui, kit, true).sub == 0 && key() == "TRIM" && cards(false)[0].kind == K::ZonePick);
+    stage_go(ui,EngineKind::Sampler,StageKind::Layers);
+    CHECK(stage_at(ui,kit,true).sub==stage_find(EngineKind::Sampler,StageKind::Trim).at.sub && key() == "TRIM" && cards(false)[0].kind == K::ZonePick);
     stage_press(ui, kit, 0, true); CHECK(key() == "TUNE");
-    stage_go(ui, 0, 1); kit.last_pad = 5;
+    stage_go(ui,EngineKind::Sampler,StageKind::Layers); kit.last_pad = 5;
     CHECK(key() == "LAYERS" && cards(false)[0].kind == K::LayerPick);
     const auto& kit_groups = stage_groups(EngineKind::Sampler);
-    CHECK(stage_shown(kit_groups, 0, true) == 3 && stage_shown(kit_groups, 0, false) == 4 && stage_shown_at(kit_groups, 0, 2, true) == 1);
+    CHECK(stage_shown(kit_groups,0,true)==4&&stage_shown(kit_groups,0,false)==5&&stage_shown_at(kit_groups,0,stage_find(EngineKind::Sampler,StageKind::Tune).at.sub,true)==2);
     kit.pads[7] = PadSound {}; project->samples[1] = SampleRef {};
     stage_go(ui, 2, 4);
     CHECK(key() == "KIT FILT" && cards(false)[0].id == sampler::Filter && cards(false)[2].id == sampler::FilterType);
@@ -5788,7 +5802,7 @@ void stage() {
     CHECK(cards(false)[0].kind == K::TrackPick && cards(false)[1].kind == K::Level && cards(false)[2].kind == K::Pan);
 
     // Undo: Shift + B1 / B2 on a kit's TRIM (Loop Lock, Normalize) are the pad's; B1 alone on Stage keeps nothing.
-    ui.page = PageId::Stage; ui.track = 1; stage_go(ui, 0, 0); kit.last_pad = 5;
+    ui.page=PageId::Stage;ui.track=1;stage_go(ui,EngineKind::Sampler,StageKind::Trim);kit.last_pad=5;
     ui.shift = true;
     CHECK(press_scope(*project, ui, SurfaceButton::TopLeft, false).kind == UndoScope::Kind::Pad);
     CHECK(button_has_shift_job(*project, ui, SurfaceButton::TopMiddle, true));
@@ -9009,6 +9023,7 @@ void plugins() {
         project->buses[0].fx.slots[0] = {plugin_effect_kind, false, {7, 0, 0, 0, 0, 0}};
         project->master.slots[0] = {plugin_effect_kind, false, {9, 0, 0, 0, 0, 0}};
         project->plugins[9].transport = false; // a plug-in with its own sequencer, played only by its notes
+        std::snprintf(project->plugins[5].preset, sizeof(project->plugins[5].preset), "Leads/Acid Line");
         std::array<std::vector<uint8_t>, max_plugins> states;
         states[5] = {1, 2, 3, 250};
         auto data = save_project(*project, *bank, &states);
@@ -9024,6 +9039,7 @@ void plugins() {
         CHECK(copy->master.slots[0].kind == plugin_effect_kind && copy->master.slots[0].params[0] == 9);
         CHECK(plugin_used_by(*copy, 5) && plugin_used_by(*copy, 9) && !plugin_used_by(*copy, 4));
         CHECK(!copy->plugins[9].transport && copy->plugins[5].transport && copy->plugins[7].transport);
+        CHECK(std::string(copy->plugins[5].preset) == "Leads/Acid Line" && copy->plugins[7].preset[0] == 0);
         copy->tracks[2].engine = EngineKind::Midi; // the entry stays in the table but nothing plays it
         CHECK(!plugin_used_by(*copy, 5));
     }
@@ -13776,6 +13792,26 @@ void plugin_macros() {
     std::fill(l.begin(), l.end(), 0.5f); std::fill(r.begin(), r.end(), 0.5f);
     starved.process(l.data(), r.data(), 256);
     CHECK(l[100] == 0.5f);
+
+    { // Hard stop discards the host performance tails, not just the native instrument's notes.
+        DelayPool local_pool(4);
+        ToneRunner tone;
+        PluginEngine plugin;
+        plugin.set_pool(&local_pool); plugin.attach(&tone);
+        plugin.set_param(plugin_track::Macro2, 100); plugin.set_param(plugin_track::Macro3, 100);
+        plugin.note_on(60, 110);
+        auto render = [&] { float left[128] {}, right[128] {}; plugin.render_stereo(left, right, 128); float energy = 0; for (float f : left) energy += f * f; return energy; };
+        for (unsigned b = 0; b < 40; ++b) render();
+        CHECK(local_pool.free_blocks() == 2);
+        plugin.silence();
+        CHECK(local_pool.free_blocks() == 4);
+        for (unsigned b = 0; b < 600; ++b) CHECK(render() == 0);
+        // Stored macro amounts survive the panic; the next note gets fresh effects, not an old tail.
+        plugin.note_on(60, 110);
+        CHECK(render() > 0 && local_pool.free_blocks() == 2);
+        plugin.silence();
+        CHECK(local_pool.free_blocks() == 4);
+    }
 
     CHECK(macro_kind(0, 0) == MacroKind::Filter && macro_kind(0, 1) == MacroKind::Echo && macro_kind(0, 2) == MacroKind::Space &&
           macro_kind(int(MacroKind::Space), 0) == MacroKind::Space && macro_kind(99, 1) == MacroKind::Echo);

@@ -82,6 +82,13 @@ static const preset_t SMP_PRESET_TABLE[1]={{0}};
         registry=registry.replace(' DM_SMPL,','').replace(' DM_SMPL_DEF,','').replace('"SAMPL", ','')
         (out/'registry.h').write_text(registry)
         (out/'pitch_helper.h').write_text(function((p/'original/eng_sample.c').read_text(),'pow2_q16'))
+        # Original descriptor tables and DSP only; no firmware UI or sequencer.
+        params=(p/'original/params.c').read_text()
+        (out/'hortator_params.h').write_text(params[:params.index('/* (upstream 1.0.2, #48)')].replace('SMP_ALL_NAMES','N_DASH'))
+        (out/'hortator_mix.h').write_text(function((p/'original/perform.c').read_text(),'pf_mix')+'\n#define SWING_MAX 100\n'+function((p/'original/drum_core.c').read_text(),'track_swing'))
+        fx=(p/'original/fx.c').read_text()
+        (out/'hortator_fx.h').write_text(fx[:fx.index('static void events_block')].replace('#include "perform.c"','/* Master performance uses the Rhythmer host. */'))
+
     if ident=='elixir':
         flags+=['-I'+str(p/'original/firmware/src')]
         sp.run([sys.executable,str(p/'original/tools/gen_tables.py'),str(out/'elixir_tables.h')],check=True)
@@ -112,6 +119,30 @@ static const preset_t SMP_PRESET_TABLE[1]={{0}};
     probe=WORK/'move-probes/probe'
     result=sp.run([str(probe),str(out/'dsp.so'),str(out)],capture_output=True,text=True,timeout=60,check=True)
     info=json.loads(result.stdout.split('RHYTHMER_PROBE_BEGIN\n',1)[1]);params=json.loads(info['chain_params'])
+    for parameter in params:
+        if parameter['name']=='FX Routing':parameter.update(type='enum',options=['CHAIN','SPLIT'])
+        if parameter['name']=='Reverb Type':
+            original=(p/'original/params.c' if (p/'original/params.c').is_file() else p/'original/firmware/src/params.c').read_text()
+            candidates=re.findall(r'N_RTYPE\[\]\s*=\s*\{([^}]+)\}',original)
+            choices=[re.findall(r'"([^"\n]+)"',x) for x in candidates]
+            names=next(x for x in choices if len(x)==parameter['max']-parameter['min']+1)
+            parameter.update(type='enum',options=names)
+
+    if ident=='fmini':
+        source=(p/'original/firmware/src/params.c').read_text()
+        from presentation_metadata import arrays
+        tables=arrays(source)
+        options={'Drive Type':tables['N_DRVTYPE'],'Chorus Type':tables['N_CHOTYPE'],
+                 'Pitch Bend Range':['+/-2 st','+/-12 st','+2 / -12 st','+2 / -24 st']}
+        for parameter in params:
+            name=parameter['name']
+            if name in options:parameter.update(type='enum',options=options[name])
+            if name in ('OSC 1 On','OSC 2 On','OSC 3 On','Noise On','Pink Noise','Mod to Osc','Mod to Filter','Glide On','LFO Square','High Pass On','Release Follows Decay'):parameter.update(type='enum',options=['Off','On'])
+    if ident in ('fmini','guru600','prophet'):
+        import source_panels
+        source_panels.export(ident)
+    if ident in ('fmini','guru600','prophet','s1vave','obervave'):
+        for parameter in params[1:]:parameter['dynamic_display']=True
     (out/'probe.json').write_text(json.dumps(info,indent=2)+'\n')
     hierarchy={}
     if ident=='hortator':
@@ -132,6 +163,7 @@ static const preset_t SMP_PRESET_TABLE[1]={{0}};
     if ident=='mono2k':
         from original_banks import mono2k_models
         params[0].update(type='enum',options=mono2k_models())
+        for parameter in params[1:-1]:parameter['dynamic_display']=True
     (p/'contract.json').write_text(json.dumps({'chain_params':params,'ui_hierarchy':hierarchy},indent=2)+'\n')
     compile_wrapper(p,cfg,ident)
     dest=WORK/'move-stage/Plugins'/('RHYTHMER - FM1 - '+ident+' - '+cfg['name']);dest.mkdir(parents=True,exist_ok=True)

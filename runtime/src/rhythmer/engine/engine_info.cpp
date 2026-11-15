@@ -18,8 +18,8 @@ const EngineInfo& engine_info(EngineKind kind) {
     static const char* const follow_hows[] {"Beats", "Tones", "Tape"};
     static const char* const pitch_hows[] {"Speed", "Stretch"};
     static const ParamInfo kit_params[] {
-        {"TUNE", -24, 24, 0, Format::Semitones, nullptr}, {"FILTER", 0, 100, 100, Format::Percent, nullptr},
-        {"RESO", 0, 100, 10, Format::Percent, nullptr}, {"DECAY", 0, 100, 100, Format::Percent, nullptr},
+        {"TUNE", -24, 24, 0, Format::Semitones, nullptr}, {"KIT CUTOFF", 0, 100, 100, Format::Percent, nullptr},
+        {"KIT RESO", 0, 100, 10, Format::Percent, nullptr}, {"DECAY", 0, 100, 100, Format::Percent, nullptr},
         {"KIT VOL", 0, 127, 100, Format::Level, nullptr},
         {"TYPE", 0, 2, 0, Format::Choice, filter_types}, {"FOLLOW", 0, 1, 0, Format::Switch, nullptr},
         {"CLOUD", 0, 1, 0, Format::Switch, nullptr}, {"POSITION", 0, 100, 38, Format::Percent, nullptr},
@@ -90,8 +90,8 @@ const EngineInfo& engine_info(EngineKind kind) {
     // SENDS, FX (engine_info.h, stage_mix).
     static const StageGroups plugin_stage {{{
         {{{{"PRESETS", StageKind::PluginSound, StagePicture::PluginSound}, {"EDIT", StageKind::PluginEdit, StagePicture::PluginEdit}}}, 2},
-        {{{stage_arp, stage_chord}}, 2},
-        {{{stage_mix, stage_sends, stage_fx}}, 3},
+        {{{{"PERFORM", StageKind::PluginPerform, StagePicture::Bars},stage_arp,stage_chord}}, 3},
+        {{{stage_mix,stage_sends,stage_fx}}, 3},
     }}};
     // Its parameters are PRESETS' three performance knobs (engine/macros.h): each slot's value, whose card, range
     // and lane name follow the slot's kind (macro_param()), then each slot's kind (0: the slot's default).
@@ -116,7 +116,7 @@ const StageGroups& stage_groups(EngineKind kind) {
     // A kit, on the last pad hit: B1 the sample (trim, layers, tune, its envelope), B2 how it plays (as
     // the sampler pages, shell/sampler_map.h) and the pad's colour, B3 where it goes (mix, sends) and its filters.
     static const StageGroups kit {{{
-        {{{{"TRIM", K::Trim, P::Wave}, {"LAYERS", K::Layers, P::Wave}, {"TUNE", K::Tune, P::Wave}, {"AMP ENV", K::AmpEnv, P::Wave}}}, 4},
+        {{{{"SOUND", K::Params, P::Wave, {{sampler::Filter, sampler::Resonance, sampler::Level}}}, {"TRIM", K::Trim, P::Wave}, {"LAYERS", K::Layers, P::Wave}, {"TUNE", K::Tune, P::Wave}, {"AMP ENV", K::AmpEnv, P::Wave}}}, 5},
         {{{{"PLAY", K::Play, P::Wave}, {"COLOUR", K::Colour, P::Colours}, {"FOLLOW", K::Follow, P::Wave}, {"CLOUD", K::Cloud, P::Wave}}}, 4},
         {{{{"MIX", K::PadMix, P::Wave}, stage_sends, {"FILTER", K::Filter, P::Wave}, {"FILT ENV", K::FiltEnv, P::Wave}, {"KIT FILT", K::KitFilter, P::Wave}}}, 5},
     }}};

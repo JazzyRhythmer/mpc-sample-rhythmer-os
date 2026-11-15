@@ -35,6 +35,17 @@
     "firmware/src/eng_sample.c": "70d4c312630d00ec7e2f535fb6c9a3d546f45d70b24deb9e84f37577567aac11",
     "firmware/src/preset_bank.h": "c1c6ecc849f788fcbbd75b6cef21e60a305138b04faa8a2fd47afd289270ff0c",
     "firmware/src/presets.c": "3c5e276bb0f298537e209a6cca85eebd522bd5733247574b97ba5e8956b7b51a",
-    "tools/gen_tables.py": "055bc5945479587fcae6f8c41cea7f35b984150b9ac66faea935ff67b2ffa85c"
+    "tools/gen_tables.py": "055bc5945479587fcae6f8c41cea7f35b984150b9ac66faea935ff67b2ffa85c",
+    "firmware/src/params.c": "b114e6d1f3ee2dffe4cf0a1cd101865a2a90f13c13efc78860ab2dab57326cbd",
+    "firmware/src/lfo.c": "281f86a6fa94dd0ef981ca8597ae44ac5b0458c6494df8eef534c228a57ff2f9",
+    "firmware/src/lfo_tables.h": "05cd80c280b93a6868d63e9daacad3740d7ce8b480d5b31027867d822fc2cd6c",
+    "firmware/src/filter.c": "7269bc35b9af2a922f770539c51adde131fd33bf3ee297c7ba7ef5141aab84b4",
+    "firmware/src/reson.c": "2a7011cd7ef013a3bedce8925056ec0aea447f9bf0f975eadb578f76827b8ca2",
+    "firmware/src/reson_tables.h": "dc55e48ef2fdbc14c45ce5fa1023b981ef94c4bc7df06bc919d6952e8bc1ed3b",
+    "firmware/src/insert.c": "2bd105a27f82a0ad4def01ac9ee227ea3a1f5fdb0a92748756dab3fe5ed4779a",
+    "firmware/src/fx.c": "3e1dbc83412da57a2174beb98c6609b54ca33f821dc90bf3b4ec206ce7e88733",
+    "firmware/src/perform.c": "6dc05a2276dfb7cc6a74469c3cb43d866188c194053a6873756a9ac9ec2f6e64",
+    "firmware/src/slicer.c": "cf41d8b1625f44ae91aeb2ac59c4ecdd0c66495e4cc834c25fc9eabeef363915",
+    "firmware/src/drum_core.c": "96027002bc609f479a454e7e5cc17a88822c39d6d1bba5ace2c8723540e8b048"
   }
 }

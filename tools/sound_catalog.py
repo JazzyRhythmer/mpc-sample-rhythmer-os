@@ -8,6 +8,7 @@ import json
 
 from edit_metadata import enrich
 import presentation_metadata as presentation
+import quick_metadata
 import design_metadata
 from rhythmer_presets import programs as own_programs
 from original_banks import elixir_kits,hortator_presets,mono2k_models,mono2k_library
@@ -179,10 +180,15 @@ def generate():
         if not drum and program_file.is_file():
             programs=json.loads(program_file.read_text()).get(so,[])
             if programs:sounds=[dict(name=name,program=i,note=60) for i,name in enumerate(programs)]
+        if port and port.name=='move-plaits':
+            table=json.loads((port/'model-controls.json').read_text());models=params[0]['options']
+            for bank,names in enumerate(table['fm_banks']):
+                sounds.extend(dict(name=models[bank+2]+' / '+name.strip(),note=60,native_setup=[['engine',str(bank+2)]],native_key='harmonics',native_value=str((i+.5)/(32*1.02)),origin='Original embedded Plaits 6-Op bank') for i,name in enumerate(names))
         if port and port.name=='fm1-prophet':sounds=[dict(x,note=60) for x in own_programs('prophet',params)]
         entry = dict(folder=folder.name, library=so, name=xml.attrib.get('name',folder.name), drums=bool(drum), voices=drum,
                      sounds=sounds, kit_names=[k['name'] for k in engine_kits],parameters=[dict(index=i,key=p.get('key',''),name=p.get('name',''),category=p.get('category',''),options=p.get('options',[]),type=p.get('type',''),unit=p.get('unit',''),minimum=p.get('min',0),maximum=p.get('max',len(p.get('options',[]))-1)) for i,p in enumerate(params)])
         entry['preset_parameters']=[i for i,p in enumerate(params) if p.get('name','').strip().lower() in ('factory program','factory preset','sound recipe','patch recipe') or any(sound.get('native_key')==p.get('key') for sound in sounds)]
+        if port and port.name=='move-plaits':entry['preset_parameters']=[i for i in entry['preset_parameters'] if i!=1]
         if port and port.name=='fm1-hortator':
             entry['preset_parameters'].extend([0,89,90]);entry['native_pitch_parameter']=89;entry['lane_preset_key']='p90'
         if not drum:
@@ -222,6 +228,7 @@ def generate():
         entry["kit_only"]=entry["folder"] in json.loads((ROOT/'config/kit-only-engines.json').read_text())["folders"]
         if port:enrich(entry,port,contract)
         presentation.enrich(entry,port,params)
+        quick_metadata.enrich(entry)
         source_names=json.loads((ROOT/'config/original-engine-names.json').read_text())['engines']
         original=next((n['original_name'] for n in source_names if n['port']==(port.name if port else 'sophie' if entry['library']=='sophie.so' else '')),entry['name'])
         if port and port.name=='fm1-kwasub-kit':entry['variant']='Drum mode'
@@ -295,7 +302,10 @@ def generate():
     presets=[k for k in presets if k['name'] in selected['kit_presets'] or k['name'] in elixir_names]
     assert len(registry)==25 and len(presets)==len(selected['kit_presets'])
     result = dict(schema=2,engines=registry,kits=presets)
-    for entry in registry:design_metadata.enrich(entry)
+    for entry in registry:
+        quick_metadata.enrich(entry)
+        design_metadata.enrich(entry)
+        design_metadata.original_panel_order(entry)
     target=ROOT/'config/sound-catalog.json'
     target.write_text(json.dumps(result,indent=2)+'\n')
     print(len(registry),'engines;',len(presets),'kit presets')

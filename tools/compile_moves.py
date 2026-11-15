@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Compile the common native API adapter, keeping each original DSP unchanged."""
 import json
-import os
 from pathlib import Path
 import shutil
 import re
@@ -11,7 +10,7 @@ import xml.etree.ElementTree as ET
 import importlib.util
 
 ROOT=Path(__file__).resolve().parents[1]
-WORK=Path(os.environ.get('RHYTHMER_BUILD_ROOT','/Volumes/SSD/Development/BuildCache/rhythmer-os'))
+WORK=Path('/Volumes/SSD/Development/BuildCache/rhythmer-os')
 MV=ROOT/'vendor/mpc-vst-plugins'
 
 
@@ -19,6 +18,8 @@ def compile_wrapper(port,cfg,ident):
     sp.run([sys.executable,str(MV/'tools/gen_vst.py'),str(port/'vst.json')],check=True)
     out=port/'build'
     wrapper=(MV/'wrapper/vst2_wrap.c').read_text().replace('char chunk[8192];','char chunk[262144];')
+    from wrapper_repairs import repair
+    wrapper=repair(wrapper)
     # A bounded host extension exposes original native selectors omitted from
     # chain_params. Existing parameter indices/chunk layout stay unchanged.
     wrapper=wrapper.replace('    case effGetChunk: {','''    case 0x47720001: {

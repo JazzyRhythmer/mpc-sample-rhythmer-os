@@ -1,0 +1,788 @@
+[
+  {
+    "key": "p117",
+    "panel": "EDIT 1",
+    "family": 0,
+    "order": 72
+  },
+  {
+    "key": "p118",
+    "panel": "EDIT 1",
+    "family": 0,
+    "order": 73
+  },
+  {
+    "key": "p119",
+    "panel": "EDIT 1",
+    "family": 0,
+    "order": 74
+  },
+  {
+    "key": "p120",
+    "panel": "EDIT 1",
+    "family": 0,
+    "order": 75
+  },
+  {
+    "key": "p121",
+    "panel": "EDIT 2",
+    "family": 0,
+    "order": 76
+  },
+  {
+    "key": "p122",
+    "panel": "EDIT 2",
+    "family": 0,
+    "order": 77
+  },
+  {
+    "key": "p123",
+    "panel": "EDIT 2",
+    "family": 0,
+    "order": 78
+  },
+  {
+    "key": "p124",
+    "panel": "EDIT 2",
+    "family": 0,
+    "order": 79
+  },
+  {
+    "key": "p125",
+    "panel": "P5 OSC A",
+    "family": 0,
+    "order": 92
+  },
+  {
+    "key": "p128",
+    "panel": "P5 OSC A",
+    "family": 0,
+    "order": 93
+  },
+  {
+    "key": "p129",
+    "panel": "P5 OSC A",
+    "family": 0,
+    "order": 94
+  },
+  {
+    "key": "p133",
+    "panel": "P5 OSC A",
+    "family": 0,
+    "order": 95
+  },
+  {
+    "key": "p126",
+    "panel": "P5 OSC B",
+    "family": 0,
+    "order": 96
+  },
+  {
+    "key": "p127",
+    "panel": "P5 OSC B",
+    "family": 0,
+    "order": 97
+  },
+  {
+    "key": "p134",
+    "panel": "P5 OSC B",
+    "family": 0,
+    "order": 98
+  },
+  {
+    "key": "p137",
+    "panel": "P5 OSC B",
+    "family": 0,
+    "order": 99
+  },
+  {
+    "key": "p130",
+    "panel": "P5 B WAVES",
+    "family": 0,
+    "order": 100
+  },
+  {
+    "key": "p131",
+    "panel": "P5 B WAVES",
+    "family": 0,
+    "order": 101
+  },
+  {
+    "key": "p132",
+    "panel": "P5 B WAVES",
+    "family": 0,
+    "order": 102
+  },
+  {
+    "key": "p136",
+    "panel": "P5 B WAVES",
+    "family": 0,
+    "order": 103
+  },
+  {
+    "key": "p139",
+    "panel": "P5 MIXER",
+    "family": 0,
+    "order": 104
+  },
+  {
+    "key": "p140",
+    "panel": "P5 MIXER",
+    "family": 0,
+    "order": 105
+  },
+  {
+    "key": "p141",
+    "panel": "P5 MIXER",
+    "family": 0,
+    "order": 106
+  },
+  {
+    "key": "p135",
+    "panel": "P5 MIXER",
+    "family": 0,
+    "order": 107
+  },
+  {
+    "key": "p142",
+    "panel": "P5 FILTER",
+    "family": 0,
+    "order": 108
+  },
+  {
+    "key": "p143",
+    "panel": "P5 FILTER",
+    "family": 0,
+    "order": 109
+  },
+  {
+    "key": "p144",
+    "panel": "P5 FILTER",
+    "family": 0,
+    "order": 110
+  },
+  {
+    "key": "p145",
+    "panel": "P5 FILTER",
+    "family": 0,
+    "order": 111
+  },
+  {
+    "key": "p168",
+    "panel": "P5 FLT ENV",
+    "family": 0,
+    "order": 112
+  },
+  {
+    "key": "p170",
+    "panel": "P5 FLT ENV",
+    "family": 0,
+    "order": 113
+  },
+  {
+    "key": "p172",
+    "panel": "P5 FLT ENV",
+    "family": 0,
+    "order": 114
+  },
+  {
+    "key": "p174",
+    "panel": "P5 FLT ENV",
+    "family": 0,
+    "order": 115
+  },
+  {
+    "key": "p169",
+    "panel": "P5 AMP ENV",
+    "family": 0,
+    "order": 116
+  },
+  {
+    "key": "p171",
+    "panel": "P5 AMP ENV",
+    "family": 0,
+    "order": 117
+  },
+  {
+    "key": "p173",
+    "panel": "P5 AMP ENV",
+    "family": 0,
+    "order": 118
+  },
+  {
+    "key": "p175",
+    "panel": "P5 AMP ENV",
+    "family": 0,
+    "order": 119
+  },
+  {
+    "key": "p165",
+    "panel": "P5 ENV MOD",
+    "family": 0,
+    "order": 120
+  },
+  {
+    "key": "p166",
+    "panel": "P5 ENV MOD",
+    "family": 0,
+    "order": 121
+  },
+  {
+    "key": "p167",
+    "panel": "P5 ENV MOD",
+    "family": 0,
+    "order": 122
+  },
+  {
+    "key": "p176",
+    "panel": "P5 ENV MOD",
+    "family": 0,
+    "order": 123
+  },
+  {
+    "key": "p157",
+    "panel": "P5 POLYMOD",
+    "family": 0,
+    "order": 124
+  },
+  {
+    "key": "p158",
+    "panel": "P5 POLYMOD",
+    "family": 0,
+    "order": 125
+  },
+  {
+    "key": "p159",
+    "panel": "P5 POLYMOD",
+    "family": 0,
+    "order": 126
+  },
+  {
+    "key": "p160",
+    "panel": "P5 POLYMOD",
+    "family": 0,
+    "order": 127
+  },
+  {
+    "key": "p161",
+    "panel": "P5 MOD FLT",
+    "family": 0,
+    "order": 128
+  },
+  {
+    "key": "p162",
+    "panel": "P5 MOD FLT",
+    "family": 0,
+    "order": 129
+  },
+  {
+    "key": "p163",
+    "panel": "P5 MOD FLT",
+    "family": 0,
+    "order": 130
+  },
+  {
+    "key": "p164",
+    "panel": "P5 MOD FLT",
+    "family": 0,
+    "order": 131
+  },
+  {
+    "key": "p146",
+    "panel": "P5 LFO",
+    "family": 0,
+    "order": 132
+  },
+  {
+    "key": "p148",
+    "panel": "P5 LFO",
+    "family": 0,
+    "order": 133
+  },
+  {
+    "key": "p149",
+    "panel": "P5 LFO",
+    "family": 0,
+    "order": 134
+  },
+  {
+    "key": "p150",
+    "panel": "P5 LFO",
+    "family": 0,
+    "order": 135
+  },
+  {
+    "key": "p147",
+    "panel": "P5 WHEEL",
+    "family": 0,
+    "order": 136
+  },
+  {
+    "key": "p151",
+    "panel": "P5 WHEEL",
+    "family": 0,
+    "order": 137
+  },
+  {
+    "key": "p152",
+    "panel": "P5 WHEEL",
+    "family": 0,
+    "order": 138
+  },
+  {
+    "key": "p153",
+    "panel": "P5 WHEEL",
+    "family": 0,
+    "order": 139
+  },
+  {
+    "key": "p154",
+    "panel": "P5 WHEEL 2",
+    "family": 0,
+    "order": 140
+  },
+  {
+    "key": "p155",
+    "panel": "P5 WHEEL 2",
+    "family": 0,
+    "order": 141
+  },
+  {
+    "key": "p156",
+    "panel": "P5 WHEEL 2",
+    "family": 0,
+    "order": 142
+  },
+  {
+    "key": "p138",
+    "panel": "P5 WHEEL 2",
+    "family": 0,
+    "order": 143
+  },
+  {
+    "key": "p177",
+    "panel": "P5 UNISON",
+    "family": 0,
+    "order": 144
+  },
+  {
+    "key": "p178",
+    "panel": "P5 UNISON",
+    "family": 0,
+    "order": 145
+  },
+  {
+    "key": "p179",
+    "panel": "P5 UNISON",
+    "family": 0,
+    "order": 146
+  },
+  {
+    "key": "p181",
+    "panel": "P5 UNISON",
+    "family": 0,
+    "order": 147
+  },
+  {
+    "key": "p180",
+    "panel": "P5 BEND",
+    "family": 0,
+    "order": 148
+  },
+  {
+    "key": "p85",
+    "panel": "LANES",
+    "family": 0,
+    "order": 412
+  },
+  {
+    "key": "p86",
+    "panel": "LANES",
+    "family": 0,
+    "order": 413
+  },
+  {
+    "key": "p87",
+    "panel": "LANES",
+    "family": 0,
+    "order": 414
+  },
+  {
+    "key": "p88",
+    "panel": "LANES",
+    "family": 0,
+    "order": 415
+  },
+  {
+    "key": "p89",
+    "panel": "LANES 2",
+    "family": 0,
+    "order": 416
+  },
+  {
+    "key": "p90",
+    "panel": "LANES 2",
+    "family": 0,
+    "order": 417
+  },
+  {
+    "key": "p91",
+    "panel": "LANES 2",
+    "family": 0,
+    "order": 418
+  },
+  {
+    "key": "p92",
+    "panel": "LANES 2",
+    "family": 0,
+    "order": 419
+  },
+  {
+    "key": "p38",
+    "panel": "VOICE",
+    "family": 0,
+    "order": 420
+  },
+  {
+    "key": "p39",
+    "panel": "VOICE",
+    "family": 0,
+    "order": 421
+  },
+  {
+    "key": "p42",
+    "panel": "VOICE",
+    "family": 0,
+    "order": 422
+  },
+  {
+    "key": "p43",
+    "panel": "VOICE",
+    "family": 0,
+    "order": 423
+  },
+  {
+    "key": "p44",
+    "panel": "VOICE 2",
+    "family": 0,
+    "order": 424
+  },
+  {
+    "key": "p45",
+    "panel": "VOICE 2",
+    "family": 0,
+    "order": 425
+  },
+  {
+    "key": "p40",
+    "panel": "VOICE 2",
+    "family": 0,
+    "order": 426
+  },
+  {
+    "key": "p41",
+    "panel": "VOICE 2",
+    "family": 0,
+    "order": 427
+  },
+  {
+    "key": "p96",
+    "panel": "VOICE 3",
+    "family": 0,
+    "order": 428
+  },
+  {
+    "key": "p2",
+    "panel": "ENV",
+    "family": 1,
+    "order": 32
+  },
+  {
+    "key": "p3",
+    "panel": "ENV",
+    "family": 1,
+    "order": 33
+  },
+  {
+    "key": "p4",
+    "panel": "ENV",
+    "family": 1,
+    "order": 34
+  },
+  {
+    "key": "p5",
+    "panel": "ENV",
+    "family": 1,
+    "order": 35
+  },
+  {
+    "key": "p6",
+    "panel": "ENV DEST",
+    "family": 1,
+    "order": 36
+  },
+  {
+    "key": "p7",
+    "panel": "ENV DEST",
+    "family": 1,
+    "order": 37
+  },
+  {
+    "key": "p8",
+    "panel": "ENV DEST",
+    "family": 1,
+    "order": 38
+  },
+  {
+    "key": "p10",
+    "panel": "LFO",
+    "family": 2,
+    "order": 40
+  },
+  {
+    "key": "p11",
+    "panel": "LFO",
+    "family": 2,
+    "order": 41
+  },
+  {
+    "key": "p12",
+    "panel": "LFO",
+    "family": 2,
+    "order": 42
+  },
+  {
+    "key": "p13",
+    "panel": "LFO",
+    "family": 2,
+    "order": 43
+  },
+  {
+    "key": "p93",
+    "panel": "LFO 2",
+    "family": 2,
+    "order": 44
+  },
+  {
+    "key": "p94",
+    "panel": "LFO 2",
+    "family": 2,
+    "order": 45
+  },
+  {
+    "key": "p95",
+    "panel": "LFO 2",
+    "family": 2,
+    "order": 46
+  },
+  {
+    "key": "p14",
+    "panel": "LFO DEST",
+    "family": 2,
+    "order": 48
+  },
+  {
+    "key": "p15",
+    "panel": "LFO DEST",
+    "family": 2,
+    "order": 49
+  },
+  {
+    "key": "p16",
+    "panel": "LFO DEST",
+    "family": 2,
+    "order": 50
+  },
+  {
+    "key": "p17",
+    "panel": "LFO DEST",
+    "family": 2,
+    "order": 51
+  },
+  {
+    "key": "p50",
+    "panel": "MOD",
+    "family": 2,
+    "order": 52
+  },
+  {
+    "key": "p51",
+    "panel": "MOD",
+    "family": 2,
+    "order": 54
+  },
+  {
+    "key": "p52",
+    "panel": "MOD",
+    "family": 2,
+    "order": 55
+  },
+  {
+    "key": "p97",
+    "panel": "FX",
+    "family": 3,
+    "order": 0
+  },
+  {
+    "key": "p98",
+    "panel": "FX",
+    "family": 3,
+    "order": 3
+  },
+  {
+    "key": "p98",
+    "panel": "FX 1",
+    "family": 3,
+    "order": 4
+  },
+  {
+    "key": "p99",
+    "panel": "FX 1",
+    "family": 3,
+    "order": 5
+  },
+  {
+    "key": "p100",
+    "panel": "FX 1",
+    "family": 3,
+    "order": 6
+  },
+  {
+    "key": "p112",
+    "panel": "FX 1",
+    "family": 3,
+    "order": 7
+  },
+  {
+    "key": "p102",
+    "panel": "FX 2",
+    "family": 3,
+    "order": 8
+  },
+  {
+    "key": "p103",
+    "panel": "FX 2",
+    "family": 3,
+    "order": 9
+  },
+  {
+    "key": "p104",
+    "panel": "FX 2",
+    "family": 3,
+    "order": 10
+  },
+  {
+    "key": "p113",
+    "panel": "FX 2",
+    "family": 3,
+    "order": 11
+  },
+  {
+    "key": "p106",
+    "panel": "FX 3",
+    "family": 3,
+    "order": 12
+  },
+  {
+    "key": "p107",
+    "panel": "FX 3",
+    "family": 3,
+    "order": 13
+  },
+  {
+    "key": "p108",
+    "panel": "FX 3",
+    "family": 3,
+    "order": 14
+  },
+  {
+    "key": "p114",
+    "panel": "FX 3",
+    "family": 3,
+    "order": 15
+  },
+  {
+    "key": "p186",
+    "panel": "SHARED",
+    "family": 3,
+    "order": 16
+  },
+  {
+    "key": "p187",
+    "panel": "SHARED",
+    "family": 3,
+    "order": 19
+  },
+  {
+    "key": "p187",
+    "panel": "SEND FX 1",
+    "family": 3,
+    "order": 20
+  },
+  {
+    "key": "p188",
+    "panel": "SEND FX 1",
+    "family": 3,
+    "order": 21
+  },
+  {
+    "key": "p189",
+    "panel": "SEND FX 1",
+    "family": 3,
+    "order": 22
+  },
+  {
+    "key": "p190",
+    "panel": "SEND FX 1",
+    "family": 3,
+    "order": 23
+  },
+  {
+    "key": "p192",
+    "panel": "SEND FX 2",
+    "family": 3,
+    "order": 24
+  },
+  {
+    "key": "p193",
+    "panel": "SEND FX 2",
+    "family": 3,
+    "order": 25
+  },
+  {
+    "key": "p194",
+    "panel": "SEND FX 2",
+    "family": 3,
+    "order": 26
+  },
+  {
+    "key": "p195",
+    "panel": "SEND FX 2",
+    "family": 3,
+    "order": 27
+  },
+  {
+    "key": "p197",
+    "panel": "SEND FX 3",
+    "family": 3,
+    "order": 28
+  },
+  {
+    "key": "p198",
+    "panel": "SEND FX 3",
+    "family": 3,
+    "order": 29
+  },
+  {
+    "key": "p199",
+    "panel": "SEND FX 3",
+    "family": 3,
+    "order": 30
+  },
+  {
+    "key": "p200",
+    "panel": "SEND FX 3",
+    "family": 3,
+    "order": 31
+  }
+]

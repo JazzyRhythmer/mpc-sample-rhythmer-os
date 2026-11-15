@@ -1,6 +1,6 @@
 # First-release engine inventory
 
-0.4.0-beta.1 contains **20 plugin-picker entries**. This is the applied release selection. Original names are retained.
+0.4.0-beta.3 contains **20 plugin-picker entries**. This is the applied release selection. Original names are retained.
 
 Rhythmer Kit, Acid Engine, Break Engine, Sophie, Elixir, Aphex, FM-106, FMini-1, CS-1, OberVave, K-WASUB, Hera, Braids, Plaits, Hortator, MONO2K, Prophet, S1Vave, Dexed, Guru-600
 

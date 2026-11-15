@@ -17,12 +17,15 @@ static void load_factory(unsigned k){
 static int native_count(void){return 2+P_COUNT;}
 static const char *native_name(int i){return i==P_COUNT+1?"Factory Sound":i?pinfo(0,i-1)->name:"Machine";}
 static int native_min(int i){(void)i;return 0;}
-static int native_max(int i){return i==P_COUNT+1?LIB_N-1:i?127:sizeof machines-1;}
+static int native_max(int i){return i==P_COUNT+1?LIB_N-1:i&&pinfo(0,i-1)->kind==K_DEST?P_COUNT:i?127:sizeof machines-1;}
 static int native_value(int i){return i==P_COUNT+1?(int)factory_sound:i?PAT(cur_pat)->kit[0][i-1]:(int)selected;}
 static void native_control(int i,int v){
     if(i==P_COUNT+1){load_factory((unsigned)v);return;}
     if(!i){selected=(unsigned)v;PAT(cur_pat)->machine[0]=machines[v];kit_init(PAT(cur_pat),0,machines[v]);machine_reset(0,machines[v]);m_cpy(trk[0].eff,PAT(cur_pat)->kit[0],P_COUNT);}
-    else{PAT(cur_pat)->kit[0][i-1]=(uint8_t)v;trk[0].eff[i-1]=(uint8_t)v;}
+    else{unsigned p=(unsigned)i-1;
+        /* This host instance owns one sound, not the source's six-track kit. */
+        for(unsigned l=0;l<3;l++)if(p==P_LFO+8*l+L_TRCK)v=trck_enc(0);
+        PAT(cur_pat)->kit[0][p]=(uint8_t)v;trk[0].eff[p]=(uint8_t)v;}
 }
 static void native_init(void){
     m2k_init(1);cur_pat=16;sq.playing=0;PAT(cur_pat)->mute=(uint8_t)(M2K_TMASK&~1u);
@@ -47,5 +50,15 @@ static void native_state_set(const char* state){
     unsigned values[P_COUNT+2];for(unsigned j=0;j<P_COUNT+2;j++){char text[3],*end;memcpy(text,state+5+j*2,2);text[2]=0;values[j]=(unsigned)strtoul(text,&end,16);if(*end)return;}
     if(values[0]>=sizeof machines||values[1]>=LIB_N)return;for(unsigned j=2;j<P_COUNT+2;j++)if(values[j]>127)return;
     native_control(0,(int)values[0]);factory_sound=values[1];for(unsigned j=0;j<P_COUNT;j++)native_control(1+j,(int)values[2+j]);
+}
+#define NATIVE_TEMPO 1
+static void native_tempo(float bpm){unsigned value=(unsigned)(bpm<30?30:bpm>285?285:bpm)-30;if(G()[G_TMPO]!=value){PAT(cur_pat)->glob[G_TMPO]=(uint8_t)value;seq_tempo();}}
+#define NATIVE_DISPLAY 1
+static int native_display(int i,char *out,int capacity){
+    if(i<=0||i>P_COUNT)return snprintf(out,(size_t)capacity,"%d",native_value(i));
+    const pi_t *info=pinfo(0,i-1);int v=native_value(i);
+    if(info->kind==K_DEST)return snprintf(out,(size_t)capacity,"%s",v?pinfo(0,v-1)->name:"Off");
+    char value[192]={0};const char *unit="";fmt(info,0,v,value,&unit);
+    return snprintf(out,(size_t)capacity,"%s%s%s",value,unit[0]?" ":"",unit);
 }
 #include "fm1_facade.h"

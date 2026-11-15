@@ -4,6 +4,7 @@
 #include "rhythmer/plugin/rate_bridge.h"
 #include "rhythmer/plugin/design_pages.h"
 #include "rhythmer/plugin/vst2_instance.h"
+#include "rhythmer/plugin/kit_filter.h"
 #include <atomic>
 #include <array>
 #include <condition_variable>
@@ -16,7 +17,7 @@
 namespace rhythmer {
 using namespace juce;
 namespace {
-constexpr int pads=64, controls=1024, base=6;
+constexpr int pads=64, controls=1024;
 var object() {return var(new DynamicObject());}
 void put(var& v,const Identifier& key,const var& value){v.getDynamicObject()->setProperty(key,value);}
 var get(const var& v,const Identifier& key){return v.getProperty(key,{});}
@@ -49,13 +50,15 @@ struct Graph {
     std::array<std::vector<int>,pads> orders,ordinals;
     std::array<std::vector<String>,pads> names;
     std::array<bool,pads> edited{};
+    KitFilterValues kit_filter{{100,0,0}},kit_filter_defaults{{100,0,0}};
+    uint64_t filter_epoch=0;bool filter_edited=false;
 };
 struct Request {int kind,index;float value=0;std::vector<uint8_t> bytes;uint32_t revision=0;Request(int k=0,int i=0,float v=0):kind(k),index(i),value(v){}};
 
 class Rack final:public AudioPluginInstance {
 public:
     Rack(var c,int s,SoundLoader l,double r,int b):AudioPluginInstance(BusesProperties().withOutput("Output",AudioChannelSet::stereo(),true)),
-        catalog(std::move(c)),single(s),loader(std::move(l)),rate(r),block(b){
+        catalog(std::move(c)),single(s),base(s<0||output_filter_engine(text(engine(s),"name"))?9:6),loader(std::move(l)),rate(r),block(b){
         auto directory=text(catalog,"user_directory");
         if(directory.isNotEmpty()) {
             String folder=single<0?String():File::createLegalFileName(text(engine(single),"folder"));
@@ -66,6 +69,7 @@ public:
             if(single>=0&&folder!=old_folder)legacy_directories.push_back(File(directory).getChildFile("Sounds/"+old_folder));
             for(int i=0;i<64;++i)if(user_file(i).existsAsFile())saved_slots.push_back(i);
         }
+        if(base==9)kit_filter=std::make_unique<KitFilterStage>();
         if(single>=0){auto g=std::make_unique<Graph>();g->routes[0]=load(single,0);g->notes[0]=g->routes[0]->source_note;g->orders[0]=g->routes[0]->parameter_order;g->ordinals[0]=g->routes[0]->parameter_ordinals;g->names[0]=g->routes[0]->parameter_names;publish(std::move(g));}
         else load_kit(0);
         if(!active.load())throw std::runtime_error("No sound graph");
@@ -91,14 +95,15 @@ public:
     void changeProgramName(int,const String&) override{}
     void setCurrentProgram(int i) override{if(i>=0&&i<getNumPrograms()){enqueue({0,i});flush();if(single<0)change(0,0);}}
     bool drum_names(DrumVoices& result){std::lock_guard<std::mutex> guard(lock);if(single>=0)return false;auto* g=active.load();if(!g)return true;for(int i=0;i<pads;++i)if(auto c=g->routes[size_t(i)]){auto name=sound_name(c->engine,g->sounds[size_t(i)]).fromLastOccurrenceOf(" / ",false,false);if(name.isEmpty())name=sound_name(c->engine,g->sounds[size_t(i)]);std::snprintf(result.names[size_t(i)].data(),result.names[size_t(i)].size(),"%s",name.toRawUTF8());}return true;}
-    String preset_name(){std::lock_guard<std::mutex> guard(lock);auto* g=active.load();if(!g)return {};String name=user_label.isNotEmpty()?user_label:single<0?text(at(get(catalog,"kits"),g->kit),"name"):sound_name(single,g->sounds[0]);if(single>=0&&user_label.isNotEmpty())name+=" / "+sound_name(single,g->sounds[0]);if(single<0)if(auto c=g->routes[size_t(focus)])name+=" / Pad "+String(focus+1)+": "+sound_name(c->engine,g->sounds[size_t(focus)]).fromLastOccurrenceOf(" / ",false,false);if(g->edited[size_t(single<0?focus:0)])name+=" *";return name;}
+    String preset_name(){std::lock_guard<std::mutex> guard(lock);auto* g=active.load();if(!g)return {};String name=user_label.isNotEmpty()?user_label:single<0?text(at(get(catalog,"kits"),g->kit),"name"):sound_name(single,g->sounds[0]);if(single>=0&&user_label.isNotEmpty())name+=" / "+sound_name(single,g->sounds[0]);if(single<0)if(auto c=g->routes[size_t(focus)])name+=" / Pad "+String(focus+1)+": "+sound_name(c->engine,g->sounds[size_t(focus)]).fromLastOccurrenceOf(" / ",false,false);if(g->edited[size_t(single<0?focus:0)]||(kit_filter&&g->filter_edited))name+=" *";return name;}
     uint32_t revision(){std::lock_guard<std::mutex> guard(lock);return layout_revision;}
     bool design_pages(PluginPanel& out){
-        std::lock_guard<std::mutex> guard(lock);auto c=focused();if(!c)return false;
-        auto source=text(engine(c->engine),"name");auto variant=text(engine(c->engine),"variant");if(variant.isNotEmpty())source+=" / "+variant;
+        std::lock_guard<std::mutex> guard(lock);auto c=focused();if(!c&&single>=0)return false;
+        auto source=c?text(engine(c->engine),"name"):String("Empty");auto variant=c?text(engine(c->engine),"variant"):String();if(variant.isNotEmpty())source+=" / "+variant;
         std::snprintf(out.design_source,sizeof out.design_source,"%s",source.toRawUTF8());
         if(design_cache_revision!=layout_revision){
-            std::vector<PluginDesignControl> list;const auto& order=g_order();auto metadata=get(engine(c->engine),"parameters");
+            std::vector<PluginDesignControl> list;if(kit_filter)for(int i=6;i<9;++i)list.push_back({i,-100,single<0?"KIT FILTER":"OUTPUT FILTER"});
+            const auto& order=g_order();auto metadata=c?get(engine(c->engine),"parameters"):var();
             for(unsigned i=0;i<order.size();++i){auto p=at(metadata,order[i]);auto group=text(p,"edit_group");int rank=number(p,"edit_group_order",700);
                 // Hortator models reuse eight slots for different functions.
                 // Classify their current native names, never a stale kit label.
@@ -120,6 +125,21 @@ public:
         if(design_cache.size()>out.design_pages.size())return false;
         out.design_count=uint16_t(design_cache.size());std::copy(design_cache.begin(),design_cache.end(),out.design_pages.begin());return out.design_count>0;
     }
+    std::array<int,3> quick_parameters(){
+        std::lock_guard<std::mutex> guard(lock);std::array<int,3> out{{-1,-1,-1}};auto c=focused();if(single<0)return {{6,7,8}};if(kit_filter){out[0]=6;out[1]=7;}if(!c)return out;
+        const auto& order=g_order();auto metadata=get(engine(c->engine),"parameters");auto preferred=get(engine(c->engine),"quick_controls");
+        auto used=[&](int shown){return std::find(out.begin(),out.end(),shown)!=out.end();};
+        // The original Hortator ACID model exposes its own filter before the
+        // additional per-voice insert filter. Scope this to source core slots.
+        auto family=text(engine(c->engine),"name");if(family=="Hortator"||family=="Acid Engine"){
+            for(unsigned j=0;j<order.size();++j)if(order[j]>0&&order[j]<89){auto name=c->synth->getParameters()[order[j]]->getName(64).fromLastOccurrenceOf(" ",false,false).toUpperCase();int slot=name=="CUTOF"||name=="CUTOFF"?0:name=="RESO"||name=="RESONANCE"?1:name=="ENVMD"?2:-1;if(slot>=0)out[size_t(slot)]=base+int(j);}
+        }
+        for(int slot=0;slot<3;++slot){if(out[size_t(slot)]>=0)continue;auto candidates=at(preferred,slot);for(int k=0;k<size(candidates)&&out[size_t(slot)]<0;++k)for(unsigned j=0;j<order.size();++j)if(text(at(metadata,order[j]),"key")==at(candidates,k).toString()&&!used(base+int(j))){out[size_t(slot)]=base+int(j);break;}}
+        for(int slot=0;slot<3;++slot)if(out[size_t(slot)]<0)for(unsigned j=0;j<order.size();++j){int shown=base+int(j);if(!used(shown)){out[size_t(slot)]=shown;break;}}
+        return out;
+    }
+    int source_begin()const{return base;}
+    bool kit_filter_index(int i)const{return base==9&&i>=6&&i<9;}
     int focused_pad(){std::lock_guard<std::mutex> guard(lock);return single<0?focus:-1;}
     int count() {std::lock_guard<std::mutex> guard(lock);auto c=focused();return base+(c?std::min(controls,int(g_order().size())):0);}
     void getStateInformation(MemoryBlock& result) override{
@@ -129,6 +149,7 @@ public:
         std::lock_guard<std::mutex> guard(lock);
         auto* g=active.load();if(!g)return;
         var root=object();put(root,"schema",2);put(root,"user_label",user_label);put(root,"user_slot",selected_user_slot);put(root,"single",single);put(root,"single_engine",single<0?String():text(engine(single),"folder"));put(root,"pad",focus);put(root,"kit",g->kit);
+        if(kit_filter){Array<var> values,defaults;for(int i=0;i<3;++i){values.add(int(g->kit_filter[size_t(i)]));defaults.add(int(g->kit_filter_defaults[size_t(i)]));}put(root,"kit_filter",values);put(root,"kit_filter_defaults",defaults);put(root,"kit_filter_edited",g->filter_edited);}
         Array<var> children,routes;std::vector<Child*> seen;
         for(const auto& c:g->routes){
             if(!c){routes.add(-1);continue;}
@@ -136,7 +157,7 @@ public:
             if(found==seen.end()){
                 seen.push_back(c.get());var row=object();put(row,"engine",text(engine(c->engine),"folder"));put(row,"sound",c->sound);
                 MemoryBlock chunk;c->synth->getStateInformation(chunk);put(row,"state",chunk.toBase64Encoding());
-                Array<var> values;for(auto* p:c->synth->getParameters())values.add(p->getValue());put(row,"values",values);children.add(row);
+                Array<var> values;for(auto* p:c->synth->getParameters())values.add(p->getValue());put(row,"values",values);Array<var> defaults;for(float value:c->defaults)defaults.add(value);put(row,"reset_defaults",defaults);children.add(row);
             }
             var route=object();put(route,"child",id);put(route,"sound",g->sounds[size_t(&c-g->routes.data())]);put(route,"note",g->notes[size_t(&c-g->routes.data())]);put(route,"edited",g->edited[size_t(&c-g->routes.data())]);routes.add(route);
         }
@@ -157,7 +178,7 @@ public:
             int cursor=0;
             for(const auto item:input){int pos=std::clamp(item.samplePosition,0,output.getNumSamples());
                 if(pos>cursor)render(*g,output,cursor,pos-cursor);
-                cursor=pos;const auto msg=item.getMessage();
+                cursor=pos;const auto msg=item.getMessage();if(kit_filter&&msg.isAllSoundOff())kit_filter->silence();
                 if(msg.isNoteOnOrOff()){
                     int note=msg.getNoteNumber();int slot=single<0?note-36:0;
                     if(slot>=0&&slot<pads)if(auto c=g->routes[size_t(slot)]){
@@ -180,7 +201,7 @@ public:
         }
         input.clear();hazard.store(nullptr,std::memory_order_seq_cst);
     }
-    String parameter_name(int i){std::lock_guard<std::mutex> guard(lock);if(i==3)return "Save slot";if(i==4)return single<0?"Save Kit":"Save Sound";if(i==5)return "Status";if(i==0)return single<0?"Pad":"Sound";if(i==1)return single<0?"P"+String(focus+1).paddedLeft('0',2)+" Engine":"Pitch reference";if(i==2)return single<0?"P"+String(focus+1).paddedLeft('0',2)+" Sound":"Pitch mode";auto c=focused();int p=i-base;String name=c&&p>=0&&p<int(g_order().size())?c->synth->getParameters()[g_order()[size_t(p)]]->getName(64):String();
+    String parameter_name(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){static const char* names[]{"KIT CUTOFF","KIT RESONANCE","KIT FILTER TYPE"};return single<0?String(names[i-6]):String(names[i-6]).replace("KIT ","OUTPUT ");}if(i==3)return "Save slot";if(i==4)return single<0?"Save Kit":"Save Sound";if(i==5)return "Status";if(i==0)return single<0?"Pad":"Sound";if(i==1)return single<0?"P"+String(focus+1).paddedLeft('0',2)+" Engine":"Pitch reference";if(i==2)return single<0?"P"+String(focus+1).paddedLeft('0',2)+" Sound":"Pitch mode";auto c=focused();int p=i-base;String name=c&&p>=0&&p<int(g_order().size())?c->synth->getParameters()[g_order()[size_t(p)]]->getName(64):String();
         if(c&&p>=0&&p<int(g_order().size())){auto metadata=at(get(engine(c->engine),"parameters"),g_order()[size_t(p)]);auto label=text(metadata,"edit_name");if(label.isNotEmpty())name=label;auto dynamic=get(metadata,"dynamic_labels");int selector=number(metadata,"dynamic_selector",-1);if(dynamic.isArray()&&selector>=0&&selector<c->synth->getParameters().size())name=at(dynamic,std::clamp(int(std::lround(c->synth->getParameters()[selector]->getValue()*(size(dynamic)-1))),0,size(dynamic)-1)).toString();}
         if(c&&(c->drums||get(engine(c->engine),"voice_parameters").isObject())){int reference_note=single<0?active.load()->notes[size_t(focus)]:c->source_note;if(reference_note==60&&number(engine(c->engine),"native_pitch_parameter",-1)>=0)reference_note=36;auto voice=get(engine(c->engine),"voices");for(int n=0;n<size(voice);++n)if(number(at(voice,n),"note")==reference_note||number(at(voice,n),"note")==int(get(get(engine(c->engine),"control_notes"),String(reference_note)))){auto prefix=text(at(voice,n),"name")+" ";if(name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}String prefix="Pad "+String(reference_note-35)+" ";if(name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}
         if(c){auto prefix=text(engine(c->engine),"strip_voice_prefix");if(prefix.isNotEmpty()&&name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}
@@ -195,16 +216,20 @@ public:
         if(p>=0){auto* g=active.load();const auto& ordinals=g->ordinals[size_t(single<0?focus:0)];if(p<int(ordinals.size())&&ordinals[size_t(p)]>0)name+=" ("+String(ordinals[size_t(p)])+")";}
         if(c&&p>=0&&p<int(g_order().size())){auto category=text(at(get(engine(c->engine),"parameters"),g_order()[size_t(p)]),"category");if(c->drums){const int source=single<0?active.load()->notes[size_t(focus)]-35:c->source_note-35;for(const auto& prefix:{"Pad "+String(source),"Pad"+String(source),"Voice "+String(source),"V"+String(source),"S"+String(source)})if(category.equalsIgnoreCase(prefix))category.clear();else if(category.startsWithIgnoreCase(prefix+" "))category=category.substring(prefix.length()+1);}
             if(single<0&&(category.equalsIgnoreCase("Master")||category.equalsIgnoreCase("General")||category.equalsIgnoreCase("FX")||category.equalsIgnoreCase("Global FX")||category.equalsIgnoreCase("EQ")||category.equalsIgnoreCase("Delay")||category.equalsIgnoreCase("Reverb")||category.equalsIgnoreCase("Output")))category="Source "+category;
-            if(category.isNotEmpty()&&!name.equalsIgnoreCase(category)&&!(name=="Sound model"&&category.equalsIgnoreCase("Model"))&&!name.startsWithIgnoreCase(category+" "))name=category+" "+name;}
+            if(category.isNotEmpty()&&!name.equalsIgnoreCase(category)&&!(name=="Sound model"&&category.equalsIgnoreCase("Model"))&&!name.startsWithIgnoreCase(category+" ")){bool joined=false;for(int start=0;start<category.length();++start)if(start==0||category[start-1]==' '){auto suffix=category.substring(start);if(name.equalsIgnoreCase(suffix)||name.startsWithIgnoreCase(suffix+" ")){name=category.substring(0,start)+name;joined=true;break;}}if(!joined)name=category+" "+name;}}
         return single<0&&name.isNotEmpty()?"P"+String(focus+1).paddedLeft('0',2)+" "+name:name;}
-    float parameter_value(int i){std::lock_guard<std::mutex> guard(lock);auto c=focused();if(i==3)return save_slot/63.0f;if(i==4||i==5)return 0;if(i==0)return single<0?focus/63.0f:current_program()/float(std::max(1,factory_count()+int(saved_slots.size())-1));if(i==1)return single<0&&c?c->engine/float(std::max(1,size(get(catalog,"engines"))-1)):0;if(i==2)return single<0&&c?selection_index(c->engine,current_sound())/float(std::max(1,selection_count(c->engine)-1)):0;int p=i-base;if(!c||p<0||p>=int(g_order().size()))return 0;int index=g_order()[size_t(p)];float value=c->synth->getParameters()[index]->getValue();auto meta=at(get(engine(c->engine),"parameters"),index);auto choices=get(meta,"option_indices");if(size(choices)>1){int source=int(std::lround(value*(size(get(meta,"options"))-1)));for(int n=0;n<size(choices);++n)if(int(at(choices,n))==source)return n/float(size(choices)-1);return 0;}return value;}
-    String parameter_text(int i){std::lock_guard<std::mutex> guard(lock);auto c=focused();if(i==3)return String(save_slot+1);if(i==4)return "Turn to SAVE";if(i==5)return busy?"Working...":(last_error.isEmpty()?"Ready":last_error);if(i==0)return single<0?String(focus+1):(user_label.isNotEmpty()?user_label:c?sound_name(c->engine,current_sound()):"Empty");if(i==1)return single<0?(c?text(engine(c->engine),"name")+(text(engine(c->engine),"variant").isNotEmpty()?" / "+text(engine(c->engine),"variant"):String()):"Empty"):"C4 / MIDI 60";if(i==2)return single<0?(c?sound_name(c->engine,current_sound()):"Empty"):(c&&c->drums?"Pitch + Length":"Key Pitch");int p=i-base;if(!c||p<0||p>=int(g_order().size()))return {};int index=g_order()[size_t(p)];auto* param=c->synth->getParameters()[index];auto options=get(at(get(engine(c->engine),"parameters"),index),"options");if(size(options)>0)return at(options,std::clamp(int(std::lround(param->getValue()*(size(options)-1))),0,size(options)-1)).toString();auto value=param->getText(param->getValue(),96);auto meta=at(get(engine(c->engine),"parameters"),index);auto unit=param->getLabel().trim();if(unit.isEmpty())unit=text(meta,"unit");
+    float parameter_value(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){auto* g=active.load();return g?g->kit_filter[size_t(i-6)]/float(i==8?2:100):0;}auto c=focused();if(i==3)return save_slot/63.0f;if(i==4||i==5)return 0;if(i==0)return single<0?focus/63.0f:current_program()/float(std::max(1,factory_count()+int(saved_slots.size())-1));if(i==1)return single<0&&c?c->engine/float(std::max(1,size(get(catalog,"engines"))-1)):0;if(i==2)return single<0&&c?selection_index(c->engine,current_sound())/float(std::max(1,selection_count(c->engine)-1)):0;int p=i-base;if(!c||p<0||p>=int(g_order().size()))return 0;int index=g_order()[size_t(p)];float value=c->synth->getParameters()[index]->getValue();auto meta=at(get(engine(c->engine),"parameters"),index);auto choices=get(meta,"option_indices");if(size(choices)>1){int source=int(std::lround(value*(size(get(meta,"options"))-1)));for(int n=0;n<size(choices);++n)if(int(at(choices,n))==source)return n/float(size(choices)-1);return 0;}return value;}
+    String parameter_text(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){auto* g=active.load();if(!g)return {};if(i==8){static const char* types[]{"LP","BP","HP"};return types[g->kit_filter[2]];}return String(g->kit_filter[size_t(i-6)])+" %";}auto c=focused();if(i==3)return String(save_slot+1);if(i==4)return "Turn to SAVE";if(i==5)return busy?"Working...":(last_error.isEmpty()?"Ready":last_error);if(i==0)return single<0?String(focus+1):(user_label.isNotEmpty()?user_label:c?sound_name(c->engine,current_sound()):"Empty");if(i==1)return single<0?(c?text(engine(c->engine),"name")+(text(engine(c->engine),"variant").isNotEmpty()?" / "+text(engine(c->engine),"variant"):String()):"Empty"):"C4 / MIDI 60";if(i==2)return single<0?(c?sound_name(c->engine,current_sound()):"Empty"):(c&&c->drums?"Pitch + Length":"Key Pitch");int p=i-base;if(!c||p<0||p>=int(g_order().size()))return {};int index=g_order()[size_t(p)];auto* param=c->synth->getParameters()[index];if(bool(get(at(get(engine(c->engine),"parameters"),index),"display_percentage")))return String(param->getValue()*100,0)+" %";auto options=get(at(get(engine(c->engine),"parameters"),index),"options");if(size(options)>0)return at(options,std::clamp(int(std::lround(param->getValue()*(size(options)-1))),0,size(options)-1)).toString();auto value=param->getText(param->getValue(),96);auto meta=at(get(engine(c->engine),"parameters"),index);auto unit=param->getLabel().trim();if(unit.isEmpty())unit=text(meta,"unit");
         if(unit.isNotEmpty()&&!value.containsIgnoreCase(unit)&&value.trim().containsOnly("+-0123456789.eE ")){if(unit=="%"&&double(get(meta,"maximum"))<=1.0&&double(get(meta,"minimum"))>=0.0)value=String(value.getDoubleValue()*100.0,1);value+=" "+unit;}
         if(value.startsWithIgnoreCase("Pad ")){auto tail=value.substring(4);int space=tail.indexOfChar(' ');if(space>0&&tail.substring(0,space).containsOnly("0123456789"))value=(single<0?"P"+String(focus+1).paddedLeft('0',2)+" ":String())+tail.substring(space+1);}return value;}
     void change(int i,float value,uint32_t expected=0){if(!std::isfinite(value))return;value=std::clamp(value,0.0f,1.0f);if((single>=0&&(i==1||i==2))||i==5)return;if(i==4){if(value>=0.5f)enqueue({5,0});return;}if(single<0&&i==0){enqueue({1,0,value});flush();return;}if(single>=0&&i==0){enqueue({0,int(std::lround(value*(getNumPrograms()-1)))});return;}Request request{1,i,value};request.revision=expected;enqueue(std::move(request));}
 private:
+    static bool output_filter_engine(const String& name){
+        return name=="Dexed"||name=="DRUM-X"||name=="Plaits"||name=="CS-1"||name=="MONO2K";
+    }
     int parameter_steps(int i){
         std::lock_guard<std::mutex> guard(lock);auto c=focused();
+        if(kit_filter_index(i))return i==8?3:101;
         if(i==0)return single<0?64:factory_count()+int(saved_slots.size());
         if(i==1)return single<0?size(get(catalog,"engines")):0;
         if(i==2)return single<0&&c?selection_count(c->engine):0;
@@ -217,7 +242,7 @@ private:
     }
     var at_meta(const Child& c,int index)const{return at(get(engine(c.engine),"parameters"),index);}
     float parameter_default(int i){
-        std::lock_guard<std::mutex> guard(lock);auto c=focused();int p=i-base;
+        std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){auto* g=active.load();return g?g->kit_filter_defaults[size_t(i-6)]/float(i==8?2:100):0;}auto c=focused();int p=i-base;
         if(!c||p<0||p>=int(g_order().size()))return 0;
         int index=g_order()[size_t(p)];float value=index<int(c->defaults.size())?c->defaults[size_t(index)]:c->synth->getParameters()[index]->getDefaultValue();
         auto meta=at_meta(*c,index);auto choices=get(meta,"option_indices");
@@ -302,6 +327,12 @@ private:
             bool local=voice>0&&(key.startsWith(prefix)||name.startsWithIgnoreCase("Pad "+String(voice)+" "));
             (local?first:rest).push_back(i);
         }
+        auto sound_order=[&](int a,int b){
+            auto ma=at(metadata,a),mb=at(metadata,b);
+            return number(ma,"native_ui_order",number(ma,"edit_group_order",1000))<number(mb,"native_ui_order",number(mb,"edit_group_order",1000));
+        };
+        std::stable_sort(first.begin(),first.end(),sound_order);
+        std::stable_sort(rest.begin(),rest.end(),sound_order);
         first.insert(first.end(),rest.begin(),rest.end());c.parameter_order=std::move(first);
         if(c.parameter_order.size()>controls)throw std::runtime_error("Engine exceeds sound control capacity");
         // Resolve algorithm-dependent duplicates on the worker once, not by
@@ -344,16 +375,17 @@ private:
                 if(single>=0&&c.drums)c.pitch.render(left.data(),right.data(),unsigned(n),play);else play(left.data(),right.data(),unsigned(n));
                 if(c.silenced)return;
                 for(int i=0;i<n;++i){output.addSample(0,start+offset+i,left[size_t(i)]);if(output.getNumChannels()>1)output.addSample(1,start+offset+i,right[size_t(i)]);}
-            });
+             });
+            if(kit_filter){if(output.getNumChannels()>1)kit_filter->process(g.kit_filter,g.filter_epoch,output.getWritePointer(0,start+offset),output.getWritePointer(1,start+offset),unsigned(n));else{std::array<float,128> right{};std::copy_n(output.getReadPointer(0,start+offset),n,right.data());kit_filter->process(g.kit_filter,g.filter_epoch,output.getWritePointer(0,start+offset),right.data(),unsigned(n));}}
         }
     }
-    void publish(std::unique_ptr<Graph> g){std::lock_guard<std::mutex> guard(lock);auto* raw=g.get();auto* before=active.load();const size_t slot=size_t(single<0?focus:0);
+    void publish(std::unique_ptr<Graph> g){std::lock_guard<std::mutex> guard(lock);auto* raw=g.get();if(kit_filter&&raw->filter_epoch==0)raw->filter_epoch=++filter_sequence;auto* before=active.load();const size_t slot=size_t(single<0?focus:0);
         if(!before||before->routes[slot]==nullptr||raw->routes[slot]==nullptr||before->routes[slot]->engine!=raw->routes[slot]->engine||before->sounds[slot]!=raw->sounds[slot]||before->notes[slot]!=raw->notes[slot]||before->orders[slot]!=raw->orders[slot]||before->names[slot]!=raw->names[slot])++layout_revision;
         graphs.push_back(std::move(g));active.store(raw,std::memory_order_seq_cst);collect();}
     void collect(){auto* playing=hazard.load(std::memory_order_seq_cst);auto* now=active.load();graphs.erase(std::remove_if(graphs.begin(),graphs.end(),[&](const auto& g){return g.get()!=now&&g.get()!=playing;}),graphs.end());}
     void load_kit(int index){
         auto kit=at(get(catalog,"kits"),index);if(kit.isVoid())throw std::runtime_error("Unknown kit");
-        auto g=std::make_unique<Graph>();g->kit=index;
+        auto g=std::make_unique<Graph>();g->kit=index;g->filter_epoch=++filter_sequence;
         auto routes=get(kit,"routes");for(int i=0;i<std::min(pads,size(routes));++i){auto r=at(routes,i);int e=number(r,"engine",-1),s=number(r,"sound");
             // A factory kit uses one original instance, preserving its choke
             // groups and voice allocation. An edited pad forks only on demand.
@@ -378,6 +410,7 @@ private:
         publish(std::move(g));
     }
     void enqueue(Request r){std::lock_guard<std::mutex> guard(lock);if(stopping)return;
+        if(kit_filter_index(r.index))r.revision=0;
         if(r.kind==1&&r.index!=0&&r.revision&&r.revision!=layout_revision)return;
         if(r.kind==1&&(r.index==1||r.index==2||r.index>=base))r.revision=layout_revision;
         if(r.kind==1&&!jobs.empty()&&jobs.back().kind==1&&jobs.back().index==r.index&&jobs.back().revision==r.revision)jobs.back()=std::move(r);
@@ -385,7 +418,7 @@ private:
         wake.notify_all();
     }
     void flush(){std::unique_lock<std::mutex> guard(lock);done.wait(guard,[&]{return jobs.empty()&&!busy;});}
-    void restore(const Request& r){
+    void restore(const Request& r,bool user_preset=false){
         auto root=JSON::parse(String::fromUTF8(reinterpret_cast<const char*>(r.bytes.data()),int(r.bytes.size())));
         if(number(root,"schema")!=2){if(single>=0){auto* g=active.load();g->routes[0]->synth->setStateInformation(r.bytes.data(),int(r.bytes.size()));initial(*g->routes[0]);return;}throw std::runtime_error("Unsupported sound state");}
         if((get(root,"single_engine").isVoid()&&number(root,"single",-2)!=single)||(!get(root,"single_engine").isVoid()&&canonical(text(root,"single_engine"))!=(single<0?String():text(engine(single),"folder"))))throw std::runtime_error("Sound state type mismatch");
@@ -393,9 +426,12 @@ private:
         std::vector<std::shared_ptr<Child>> loaded;
         for(int i=0;i<size(rows);++i){auto row=at(rows,i);int e=-1;for(int j=0;j<size(get(catalog,"engines"));++j)if(text(engine(j),"folder")==canonical(text(row,"engine")))e=j;if(e<0)throw std::runtime_error("Missing sound engine");
             auto c=load(e,number(row,"sound"));MemoryBlock chunk;if(!chunk.fromBase64Encoding(text(row,"state")))throw std::runtime_error("Invalid engine state");c->synth->setStateInformation(chunk.getData(),int(chunk.getSize()));initial(*c);pitch_policy(*c);
-            auto values=get(row,"values");if(size(values)!=c->synth->getParameters().size())throw std::runtime_error("Engine controls changed");for(int j=0;j<size(values);++j){float v=float(at(values,j));if(!std::isfinite(v))throw std::runtime_error("Invalid control value");}order(*c);loaded.push_back(c);
+            auto values=get(row,"values");if(size(values)!=c->synth->getParameters().size())throw std::runtime_error("Engine controls changed");for(int j=0;j<size(values);++j){float v=float(at(values,j));if(!std::isfinite(v))throw std::runtime_error("Invalid control value");bool selector=false;for(int n=0;n<size(get(engine(e),"preset_parameters"));++n)selector|=int(at(get(engine(e),"preset_parameters"),n))==j;auto* parameter=c->synth->getParameters()[j];if(!selector&&v>=0&&v<=1&&parameter->isAutomatable()&&std::abs(parameter->getValue()-v)>.000001f)parameter->setValue(v);}auto defaults=user_preset?values:get(row,"reset_defaults");if(defaults.isArray()){if(size(defaults)!=int(c->defaults.size()))throw std::runtime_error("Invalid reset defaults");for(int j=0;j<size(defaults);++j){float value=float(at(defaults,j));if(!std::isfinite(value))throw std::runtime_error("Invalid reset default");c->defaults[size_t(j)]=value;}}order(*c);loaded.push_back(c);
         }
-        auto g=std::make_unique<Graph>();g->kit=number(root,"kit");for(int i=0;i<pads;++i){auto route=at(routes,i);int id=route.isObject()?number(route,"child",-1):int(route);if(id<0)continue;if(id>=int(loaded.size()))throw std::runtime_error("Invalid pad route");g->routes[size_t(i)]=loaded[size_t(id)];g->sounds[size_t(i)]=number(route,"sound");g->notes[size_t(i)]=number(route,"note",60);g->edited[size_t(i)]=bool(get(route,"edited"));if(g->notes[size_t(i)]<0||g->notes[size_t(i)]>127||g->sounds[size_t(i)]<0||g->sounds[size_t(i)]>=sound_count(loaded[size_t(id)]->engine))throw std::runtime_error("Invalid saved sound route");auto& c=*loaded[size_t(id)];int source=c.source_note,old_sound=c.sound;c.sound=g->sounds[size_t(i)];c.source_note=g->notes[size_t(i)];order(c);g->orders[size_t(i)]=c.parameter_order;g->ordinals[size_t(i)]=c.parameter_ordinals;g->names[size_t(i)]=c.parameter_names;c.source_note=source;c.sound=old_sound;}
+        auto g=std::make_unique<Graph>();g->kit=number(root,"kit");g->filter_epoch=++filter_sequence;
+        if(kit_filter){auto values=get(root,"kit_filter"),defaults=get(root,"kit_filter_defaults");if(!values.isVoid()){if(size(values)!=3)throw std::runtime_error("Invalid kit filter");for(int i=0;i<3;++i){int value=int(at(values,i));if(value<0||value>(i==2?2:100))throw std::runtime_error("Invalid kit filter value");g->kit_filter[size_t(i)]=int16_t(value);}}
+            g->kit_filter_defaults=user_preset?g->kit_filter:KitFilterValues{{100,0,0}};if(!user_preset&&defaults.isArray()){if(size(defaults)!=3)throw std::runtime_error("Invalid kit filter reset baseline");for(int i=0;i<3;++i){int value=int(at(defaults,i));if(value<0||value>(i==2?2:100))throw std::runtime_error("Invalid kit filter default");g->kit_filter_defaults[size_t(i)]=int16_t(value);}}g->filter_edited=!user_preset&&bool(get(root,"kit_filter_edited"));}
+        for(int i=0;i<pads;++i){auto route=at(routes,i);int id=route.isObject()?number(route,"child",-1):int(route);if(id<0)continue;if(id>=int(loaded.size()))throw std::runtime_error("Invalid pad route");g->routes[size_t(i)]=loaded[size_t(id)];g->sounds[size_t(i)]=number(route,"sound");g->notes[size_t(i)]=number(route,"note",60);g->edited[size_t(i)]=bool(get(route,"edited"));if(g->notes[size_t(i)]<0||g->notes[size_t(i)]>127||g->sounds[size_t(i)]<0||g->sounds[size_t(i)]>=sound_count(loaded[size_t(id)]->engine))throw std::runtime_error("Invalid saved sound route");auto& c=*loaded[size_t(id)];int source=c.source_note,old_sound=c.sound;c.sound=g->sounds[size_t(i)];c.source_note=g->notes[size_t(i)];order(c);g->orders[size_t(i)]=c.parameter_order;g->ordinals[size_t(i)]=c.parameter_ordinals;g->names[size_t(i)]=c.parameter_names;c.source_note=source;c.sound=old_sound;}
         if(single>=0&&!g->routes[0])throw std::runtime_error("Missing single sound");
         {std::lock_guard<std::mutex> guard(lock);user_label=text(root,"user_label");selected_user_slot=std::clamp(number(root,"user_slot",user_label.startsWith(single<0?"User Kit ":"User Sound ")?user_label.getTrailingIntValue()-1:-1),-1,63);if(selected_user_slot>=0)save_slot=selected_user_slot;focus=std::clamp(number(root,"pad"),0,pads-1);}
         publish(std::move(g));
@@ -404,7 +440,8 @@ private:
         for(;;){Request r;
             {std::unique_lock<std::mutex> guard(lock);wake.wait_for(guard,std::chrono::milliseconds(25),[&]{return stopping||!jobs.empty();});if(stopping)return;if(jobs.empty()){collect();continue;}r=std::move(jobs.front());jobs.pop_front();busy=true;}
             bool stale=false;{std::lock_guard<std::mutex> guard(lock);stale=r.kind==1&&(r.index==1||r.index==2||r.index>=base)&&r.revision!=layout_revision;}
-            if(stale){{std::lock_guard<std::mutex> guard(lock);busy=false;}done.notify_all();continue;}
+            const bool unchanged=r.kind==1&&r.index>=6&&std::abs(parameter_value(r.index)-r.value)<.000001f;
+            if(stale||unchanged){{std::lock_guard<std::mutex> guard(lock);busy=false;}done.notify_all();continue;}
             try{
                 // Graph creation and original state/file operations are worker
                 // work. The audio callback only reads a published graph.
@@ -412,17 +449,18 @@ private:
                     if(user_directory==File())throw std::runtime_error("No preset storage");
                     {std::lock_guard<std::mutex> guard(lock);user_label=(single<0?"User Kit ":"User Sound ")+String(save_slot+1).paddedLeft('0',2);selected_user_slot=save_slot;}
                     MemoryBlock state;write_state(state);auto file=user_file(save_slot,true);if(file.getParentDirectory().createDirectory().failed()||!file.replaceWithData(state.getData(),state.getSize()))throw std::runtime_error("Could not save preset");
-                    std::lock_guard<std::mutex> guard(lock);if(std::find(saved_slots.begin(),saved_slots.end(),save_slot)==saved_slots.end()){saved_slots.push_back(save_slot);std::sort(saved_slots.begin(),saved_slots.end());}
+                    std::lock_guard<std::mutex> guard(lock);if(kit_filter){active.load()->kit_filter_defaults=active.load()->kit_filter;active.load()->filter_edited=false;}each(*active.load(),[](Child& child){child.defaults.clear();for(auto* parameter:child.synth->getParameters())child.defaults.push_back(parameter->getValue());});if(std::find(saved_slots.begin(),saved_slots.end(),save_slot)==saved_slots.end()){saved_slots.push_back(save_slot);std::sort(saved_slots.begin(),saved_slots.end());}
                 }
                 else if(r.kind==0&&r.index>=factory_count()){
                     int slot=-1;{std::lock_guard<std::mutex> guard(lock);int n=r.index-factory_count();if(n<int(saved_slots.size()))slot=saved_slots[size_t(n)];}
                     if(slot<0){throw std::runtime_error("Unknown user preset");}
-                    MemoryBlock state;if(user_file(slot).getSize()>32*1024*1024||!user_file(slot).loadFileAsData(state))throw std::runtime_error("Could not read preset");Request restored{4,0};restored.bytes.assign(static_cast<const uint8_t*>(state.getData()),static_cast<const uint8_t*>(state.getData())+state.getSize());restore(restored);{std::lock_guard<std::mutex> guard(lock);selected_user_slot=save_slot=slot;user_label=(single<0?"User Kit ":"User Sound ")+String(slot+1).paddedLeft('0',2);}
+                    MemoryBlock state;if(user_file(slot).getSize()>32*1024*1024||!user_file(slot).loadFileAsData(state))throw std::runtime_error("Could not read preset");Request restored{4,0};restored.bytes.assign(static_cast<const uint8_t*>(state.getData()),static_cast<const uint8_t*>(state.getData())+state.getSize());restore(restored,true);{std::lock_guard<std::mutex> guard(lock);selected_user_slot=save_slot=slot;user_label=(single<0?"User Kit ":"User Sound ")+String(slot+1).paddedLeft('0',2);}
                 }
                 else if(r.kind==0){{std::lock_guard<std::mutex> guard(lock);user_label.clear();selected_user_slot=-1;}if(single<0)load_kit(r.index);else{auto g=std::make_unique<Graph>();g->routes[0]=load(single,selection(single,r.index));g->sounds[0]=selection(single,r.index);g->notes[0]=g->routes[0]->source_note;g->orders[0]=g->routes[0]->parameter_order;g->ordinals[0]=g->routes[0]->parameter_ordinals;g->names[0]=g->routes[0]->parameter_names;publish(std::move(g));}}
                 else if(r.kind==4)restore(r);
                 else {
                     if(r.index==3){std::lock_guard<std::mutex> guard(lock);save_slot=std::clamp(int(std::lround(r.value*63)),0,63);}
+                    else if(kit_filter_index(r.index)){auto g=std::make_unique<Graph>(*active.load());g->kit_filter[size_t(r.index-6)]=int16_t(std::lround(r.value*(r.index==8?2:100)));g->filter_edited=g->kit_filter!=g->kit_filter_defaults;publish(std::move(g));}
                     else if(single<0&&r.index==0){
                         std::shared_ptr<Child> c;int note=60;
                         {std::lock_guard<std::mutex> guard(lock);int next=std::clamp(int(std::lround(r.value*63)),0,63);if(next!=focus)++layout_revision;focus=next;auto* g=active.load();c=g->routes[size_t(focus)];note=g->notes[size_t(focus)];}
@@ -438,7 +476,7 @@ private:
                             auto meta=at(get(engine(current->engine),"parameters"),parameter);auto choices=get(meta,"option_indices");float native_value=r.value;
                             if(size(choices)>1)native_value=float(int(at(choices,std::clamp(int(std::lround(r.value*(size(choices)-1))),0,size(choices)-1))))/std::max(1,size(get(meta,"options"))-1);
                             current->synth->getParameters()[parameter]->setValue(native_value);g->edited[size_t(slot)]=true;
-                            if(number(engine(current->engine),"native_pitch_parameter",-1)>=0&&parameter>0&&parameter<89&&(parameter-1)%11==0){current=load(current->engine,g->sounds[size_t(slot)],current.get());g->routes[size_t(slot)]=current;if(single>=0)g->notes[size_t(slot)]=current->source_note;}
+                            if(number(engine(current->engine),"native_pitch_parameter",-1)>=0&&parameter>0&&parameter<89&&(parameter-1)%11==0){current=load(current->engine,g->sounds[size_t(slot)],current.get());g->routes[size_t(slot)]=current;g->notes[size_t(slot)]=current->source_note;}
                             int saved_note=current->source_note,saved_sound=current->sound;current->source_note=g->notes[size_t(slot)];current->sound=g->sounds[size_t(slot)];order(*current);g->orders[size_t(slot)]=current->parameter_order;g->ordinals[size_t(slot)]=current->parameter_ordinals;g->names[size_t(slot)]=current->parameter_names;current->source_note=saved_note;current->sound=saved_sound;
                         }}
                         publish(std::move(g));
@@ -451,7 +489,8 @@ private:
     }
     String user_label;File user_directory;std::vector<File> legacy_directories;std::vector<int> saved_slots;int save_slot=0,selected_user_slot=-1;
     uint32_t design_cache_revision=0;std::vector<PluginDesignPage> design_cache;
-    var catalog;uint32_t layout_revision=1;int single,focus=0;SoundLoader loader;double rate;int block;
+    var catalog;uint32_t layout_revision=1;int single,focus=0;const int base;SoundLoader loader;double rate;int block;
+    std::unique_ptr<KitFilterStage> kit_filter;uint64_t filter_sequence=0;
     std::atomic<Graph*> active{nullptr};std::atomic<Graph*> hazard{nullptr};std::vector<std::unique_ptr<Graph>> graphs;
     std::mutex lock;std::condition_variable wake,done;std::deque<Request> jobs;bool stopping=false,busy=false;std::thread worker;String last_error;
 };
@@ -466,3 +505,9 @@ int sound_rack_focus(AudioPluginInstance* p){if(auto* r=dynamic_cast<Rack*>(p))r
 void sound_rack_set_parameter_checked(AudioPluginInstance* p,int index,float value,uint32_t revision){if(auto* r=dynamic_cast<Rack*>(p))r->change(index,value,revision);}
 bool is_sound_rack(AudioPluginInstance* p){return dynamic_cast<Rack*>(p)!=nullptr;}
 }
+
+namespace rhythmer { std::array<int,3> sound_rack_quick_parameters(AudioPluginInstance* p){if(auto* r=dynamic_cast<Rack*>(p))return r->quick_parameters();return {{-1,-1,-1}};} }
+
+namespace rhythmer {int sound_rack_source_parameter_begin(AudioPluginInstance* p){if(auto* r=dynamic_cast<Rack*>(p))return r->source_begin();return 0;}}
+
+namespace rhythmer {juce::String sound_rack_source_name(AudioPluginInstance* p){if(auto* r=dynamic_cast<Rack*>(p);r&&r->focused_pad()>=0)return r->parameter_text(1);return {};}}

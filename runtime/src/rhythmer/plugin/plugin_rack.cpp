@@ -446,6 +446,8 @@ void PluginRack::sync(const Project& project, uint32_t asleep) {
             auto& entry = entries[e];
             entry.transport = project.plugins[e].transport;
             if (entry.live) entry.live->transport.store(entry.transport, std::memory_order_relaxed);
+            entry.preset = project.plugins[e].preset;
+            if (entry.live && entry.live->program < 0) entry.live->program = program_keyed(entry.live->programs, entry.preset);
             std::string want = project.plugins[e].used() && referenced(project, e) ? project.plugins[e].path : "";
             int32_t id = want.empty() ? 0 : project.plugins[e].id;
             // Freeze plan F2d: used only by deep-frozen tracks, it sleeps (plugin/plugin_sleep.h).
@@ -608,12 +610,14 @@ void PluginRack::panel(unsigned entry, unsigned row, PluginPanel& out) const {
         return;
     }
     out.instrument = h->instrument;
+    const auto snapshot_revision=sound_rack_revision(h->instance.get());
     const int sound_controls=sound_rack_parameter_count(h->instance.get());
     if(sound_controls>=0) {h->shown.resize(size_t(sound_controls));std::iota(h->shown.begin(),h->shown.end(),0);}
     put(out.preset,sizeof(out.preset),sound_rack_preset_name(h->instance.get()).toStdString());
     if(!out.preset[0]&&h->instance->getNumPrograms()>0)put(out.preset,sizeof(out.preset),h->instance->getProgramName(h->instance->getCurrentProgram()).toStdString());
-    out.layout_revision=sound_rack_revision(h->instance.get());
+    out.layout_revision=snapshot_revision;
     out.focused_pad=int16_t(sound_rack_focus(h->instance.get()));
+    put(out.design_source,sizeof(out.design_source),sound_rack_source_name(h->instance.get()).toStdString());
     out.qlinks = h->qlinks;
     out.rows = uint16_t((h->shown.size() + 2) / 3);
     out.row = uint16_t(out.rows ? std::min<unsigned>(row, out.rows - 1u) : 0);
@@ -622,7 +626,7 @@ void PluginRack::panel(unsigned entry, unsigned row, PluginPanel& out) const {
     const auto& params = h->instance->getParameters();
     auto read = [&](size_t at, PluginPanelParam& card) {
         auto* p = params[h->shown[at]];
-        card.used = true;
+        card.used = true; card.shown=int16_t(at);
         std::string name = p->getName(int(sizeof(card.name) - 1)).trim().toStdString();
         put(card.name, sizeof(card.name), h->nam ? nam_card_name(name) : name);
         float v = p->getValue();
@@ -632,16 +636,30 @@ void PluginRack::panel(unsigned entry, unsigned row, PluginPanel& out) const {
         int steps = p->getNumSteps();
         card.steps = uint16_t(steps > 1 && steps < plugin_param_max ? steps : 0);
     };
+    auto quick=sound_rack_quick_parameters(h->instance.get());
+    if(sound_controls<0){
+        const std::array<std::vector<std::string>,3> preferred{{{"cutoff","filter cutoff","vcf cutoff","lpf cut"},{"resonance","filter resonance","vcf reso","lpf peak"},{"filter env","vcf env","timbre","tone","output level","volume"}}};
+        for(unsigned k=0;k<3;++k)for(const auto& wanted:preferred[k]){int found=-1,count=0;for(unsigned at=0;at<h->shown.size();++at)if(params[h->shown[at]]->getName(64).trim().toLowerCase().toStdString()==wanted){found=int(at);++count;}if(count==1&&std::find(quick.begin(),quick.end(),found)==quick.end()){quick[k]=found;break;}}
+        for(unsigned k=0;k<3;++k)if(quick[k]<0)for(unsigned at=0;at<h->shown.size();++at)if(std::find(quick.begin(),quick.end(),int(at))==quick.end()){quick[k]=int(at);break;}
+    }
+    for(unsigned k=0;k<3;++k)if(quick[k]>=0&&unsigned(quick[k])<h->shown.size())read(unsigned(quick[k]),out.quick[k]);
     for (unsigned k = 0; k < 3; ++k) {
         size_t at = size_t(out.row) * 3 + k;
         if (at >= h->shown.size()) break;
         read(at, out.params[k]);
     }
     out.window_first = uint16_t((out.row > 0 ? out.row - 1u : 0u) * 3u);
+    if(sound_controls>=0&&out.row>=2)out.window_first=std::max<uint16_t>(6,out.window_first);
     for (unsigned k = 0; k < out.window.size(); ++k) {
         size_t at = size_t(out.window_first) + k;
         if (at >= h->shown.size()) break;
         read(at, out.window[k]);
+    }
+    if(sound_controls>=0&&sound_rack_revision(h->instance.get())!=snapshot_revision){
+        // Never publish a mixed old-pad/new-pad header and control snapshot.
+        // A fresh complete snapshot arrives on the next ordinary UI tick.
+        out.params={};out.quick={};out.window={};out.rows=0;out.programs=0;
+        out.focused_pad=-1;out.design_source[0]=0;out.layout_revision=0;out.status=PluginStatus::Loading;
     }
 }
 
@@ -667,7 +685,7 @@ PluginPrograms PluginRack::programs(unsigned entry) const {
     if (!e.live || e.status != PluginStatus::Ready) return out;
     if(is_sound_rack(e.live->instance.get())&&e.live->programs.size()!=size_t(e.live->instance->getNumPrograms()))e.live->programs=named_programs(*e.live->instance);
     out.list = e.live->programs;
-    out.current = is_sound_rack(e.live->instance.get())?e.live->instance->getCurrentProgram():e.live->program;
+    out.current = e.live->switching?e.live->program:is_sound_rack(e.live->instance.get())?e.live->instance->getCurrentProgram():e.live->program;
     out.loading = e.live->switching;
     out.finding = e.live->finding;
     return out;
@@ -682,6 +700,7 @@ void PluginRack::select_program(unsigned entry, int program) {
         if (!e.live || e.status != PluginStatus::Ready) return;
         e.live->program = program;
         e.live->switching = true;
+        for (const auto& p : e.live->programs) if (p.index == program) { e.preset = program_key(p); break; }
         job.generation = e.generation;
     }
     push(std::move(job));
@@ -703,7 +722,7 @@ void PluginRack::switch_program(unsigned entry, uint32_t generation, int program
         instance = e.live->instance.get(); // freed only on this thread, so it outlives the switch
     }
     if (program >= 0 && program < instance->getNumPrograms()) {
-        if (instance->getCurrentProgram() == program && instance->getNumPrograms() > 1 && !dynamic_cast<ClapInstance*>(instance)) {
+        if (instance->getCurrentProgram() == program && instance->getNumPrograms() > 1 && !dynamic_cast<ClapInstance*>(instance) && !is_sound_rack(instance)) {
             instance->setCurrentProgram(program == 0 ? 1 : 0);
             std::this_thread::sleep_for(std::chrono::milliseconds(150));
         }
@@ -1093,6 +1112,7 @@ void PluginRack::load(const Job& job) {
             handles.push_back(std::move(handle));
             if (entry.live) retiring.push_back(entry.live);
             raw->transport.store(entry.transport, std::memory_order_relaxed); // before the audio thread first runs it
+            raw->program = program_keyed(raw->programs, entry.preset); // its state already plays it: the name only
             entry.live = raw;
             entry.status = PluginStatus::Ready;
             entry.file.instrument = is_instrument ? 1 : 0;
@@ -1131,6 +1151,8 @@ void PluginRack::find_presets(unsigned entry, uint32_t generation) {
         if (e.generation == generation && e.live && e.live->instance.get() == clap) {
             e.live->programs = PluginProgramList(std::move(list));
             e.live->finding = false;
+            if (e.live->program < 0) e.live->program = program_keyed(e.live->programs, e.preset); // as at opening
+
         }
     }
     changed();

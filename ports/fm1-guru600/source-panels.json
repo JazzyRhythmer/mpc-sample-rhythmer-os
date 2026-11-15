@@ -1,0 +1,506 @@
+[
+  {
+    "key": "p72",
+    "panel": "POLY MOD",
+    "family": 0,
+    "order": 68
+  },
+  {
+    "key": "p73",
+    "panel": "POLY MOD",
+    "family": 0,
+    "order": 69
+  },
+  {
+    "key": "p74",
+    "panel": "POLY MOD",
+    "family": 0,
+    "order": 70
+  },
+  {
+    "key": "p109",
+    "panel": "EDIT 1",
+    "family": 0,
+    "order": 72
+  },
+  {
+    "key": "p110",
+    "panel": "EDIT 1",
+    "family": 0,
+    "order": 73
+  },
+  {
+    "key": "p111",
+    "panel": "EDIT 1",
+    "family": 0,
+    "order": 74
+  },
+  {
+    "key": "p112",
+    "panel": "EDIT 1",
+    "family": 0,
+    "order": 75
+  },
+  {
+    "key": "p67",
+    "panel": "OSC 2",
+    "family": 0,
+    "order": 76
+  },
+  {
+    "key": "p68",
+    "panel": "OSC 2",
+    "family": 0,
+    "order": 77
+  },
+  {
+    "key": "p69",
+    "panel": "OSC 2",
+    "family": 0,
+    "order": 78
+  },
+  {
+    "key": "p70",
+    "panel": "OSC 2",
+    "family": 0,
+    "order": 79
+  },
+  {
+    "key": "p115",
+    "panel": "MIXER",
+    "family": 0,
+    "order": 80
+  },
+  {
+    "key": "p39",
+    "panel": "MIXER",
+    "family": 0,
+    "order": 81
+  },
+  {
+    "key": "p38",
+    "panel": "MIXER",
+    "family": 0,
+    "order": 82
+  },
+  {
+    "key": "p113",
+    "panel": "FILTER",
+    "family": 0,
+    "order": 84
+  },
+  {
+    "key": "p114",
+    "panel": "FILTER",
+    "family": 0,
+    "order": 85
+  },
+  {
+    "key": "p116",
+    "panel": "FILTER",
+    "family": 0,
+    "order": 86
+  },
+  {
+    "key": "p75",
+    "panel": "FILTER",
+    "family": 0,
+    "order": 87
+  },
+  {
+    "key": "p62",
+    "panel": "FLT ENV",
+    "family": 0,
+    "order": 92
+  },
+  {
+    "key": "p63",
+    "panel": "FLT ENV",
+    "family": 0,
+    "order": 93
+  },
+  {
+    "key": "p64",
+    "panel": "FLT ENV",
+    "family": 0,
+    "order": 94
+  },
+  {
+    "key": "p65",
+    "panel": "FLT ENV",
+    "family": 0,
+    "order": 95
+  },
+  {
+    "key": "p77",
+    "panel": "EXTRAS",
+    "family": 0,
+    "order": 96
+  },
+  {
+    "key": "p61",
+    "panel": "EXTRAS",
+    "family": 0,
+    "order": 97
+  },
+  {
+    "key": "p58",
+    "panel": "EXTRAS",
+    "family": 0,
+    "order": 98
+  },
+  {
+    "key": "p45",
+    "panel": "EXTRAS",
+    "family": 0,
+    "order": 99
+  },
+  {
+    "key": "p38",
+    "panel": "VOICE",
+    "family": 0,
+    "order": 152
+  },
+  {
+    "key": "p39",
+    "panel": "VOICE",
+    "family": 0,
+    "order": 153
+  },
+  {
+    "key": "p42",
+    "panel": "VOICE",
+    "family": 0,
+    "order": 154
+  },
+  {
+    "key": "p43",
+    "panel": "VOICE",
+    "family": 0,
+    "order": 155
+  },
+  {
+    "key": "p44",
+    "panel": "VOICE 2",
+    "family": 0,
+    "order": 156
+  },
+  {
+    "key": "p45",
+    "panel": "VOICE 2",
+    "family": 0,
+    "order": 157
+  },
+  {
+    "key": "p40",
+    "panel": "VOICE 2",
+    "family": 0,
+    "order": 158
+  },
+  {
+    "key": "p41",
+    "panel": "VOICE 2",
+    "family": 0,
+    "order": 159
+  },
+  {
+    "key": "p96",
+    "panel": "VOICE 3",
+    "family": 0,
+    "order": 160
+  },
+  {
+    "key": "p2",
+    "panel": "ENV",
+    "family": 1,
+    "order": 0
+  },
+  {
+    "key": "p3",
+    "panel": "ENV",
+    "family": 1,
+    "order": 1
+  },
+  {
+    "key": "p4",
+    "panel": "ENV",
+    "family": 1,
+    "order": 2
+  },
+  {
+    "key": "p5",
+    "panel": "ENV",
+    "family": 1,
+    "order": 3
+  },
+  {
+    "key": "p6",
+    "panel": "ENV DEST",
+    "family": 1,
+    "order": 4
+  },
+  {
+    "key": "p7",
+    "panel": "ENV DEST",
+    "family": 1,
+    "order": 5
+  },
+  {
+    "key": "p8",
+    "panel": "ENV DEST",
+    "family": 1,
+    "order": 6
+  },
+  {
+    "key": "p103",
+    "panel": "ENV DEST",
+    "family": 1,
+    "order": 7
+  },
+  {
+    "key": "p10",
+    "panel": "LFO",
+    "family": 2,
+    "order": 8
+  },
+  {
+    "key": "p11",
+    "panel": "LFO",
+    "family": 2,
+    "order": 9
+  },
+  {
+    "key": "p12",
+    "panel": "LFO",
+    "family": 2,
+    "order": 10
+  },
+  {
+    "key": "p13",
+    "panel": "LFO",
+    "family": 2,
+    "order": 11
+  },
+  {
+    "key": "p92",
+    "panel": "LFO 2",
+    "family": 2,
+    "order": 12
+  },
+  {
+    "key": "p93",
+    "panel": "LFO 2",
+    "family": 2,
+    "order": 13
+  },
+  {
+    "key": "p94",
+    "panel": "LFO 2",
+    "family": 2,
+    "order": 14
+  },
+  {
+    "key": "p14",
+    "panel": "LFO DEST",
+    "family": 2,
+    "order": 16
+  },
+  {
+    "key": "p15",
+    "panel": "LFO DEST",
+    "family": 2,
+    "order": 17
+  },
+  {
+    "key": "p16",
+    "panel": "LFO DEST",
+    "family": 2,
+    "order": 18
+  },
+  {
+    "key": "p17",
+    "panel": "LFO DEST",
+    "family": 2,
+    "order": 19
+  },
+  {
+    "key": "p50",
+    "panel": "MOD",
+    "family": 2,
+    "order": 21
+  },
+  {
+    "key": "p51",
+    "panel": "MOD",
+    "family": 2,
+    "order": 22
+  },
+  {
+    "key": "p52",
+    "panel": "MOD",
+    "family": 2,
+    "order": 23
+  },
+  {
+    "key": "p34",
+    "panel": "FX",
+    "family": 3,
+    "order": 24
+  },
+  {
+    "key": "p35",
+    "panel": "FX",
+    "family": 3,
+    "order": 25
+  },
+  {
+    "key": "p36",
+    "panel": "FX",
+    "family": 3,
+    "order": 26
+  },
+  {
+    "key": "p37",
+    "panel": "FX",
+    "family": 3,
+    "order": 27
+  },
+  {
+    "key": "p46",
+    "panel": "SLICER",
+    "family": 3,
+    "order": 28
+  },
+  {
+    "key": "p47",
+    "panel": "SLICER",
+    "family": 3,
+    "order": 29
+  },
+  {
+    "key": "p48",
+    "panel": "SLICER",
+    "family": 3,
+    "order": 30
+  },
+  {
+    "key": "p49",
+    "panel": "SLICER",
+    "family": 3,
+    "order": 31
+  },
+  {
+    "key": "p97",
+    "panel": "INSERT",
+    "family": 3,
+    "order": 32
+  },
+  {
+    "key": "p98",
+    "panel": "INSERT",
+    "family": 3,
+    "order": 33
+  },
+  {
+    "key": "p99",
+    "panel": "INSERT",
+    "family": 3,
+    "order": 34
+  },
+  {
+    "key": "p100",
+    "panel": "INSERT",
+    "family": 3,
+    "order": 35
+  },
+  {
+    "key": "p101",
+    "panel": "INSERT 2",
+    "family": 3,
+    "order": 36
+  },
+  {
+    "key": "p104",
+    "panel": "INSERT B",
+    "family": 3,
+    "order": 40
+  },
+  {
+    "key": "p105",
+    "panel": "INSERT B",
+    "family": 3,
+    "order": 41
+  },
+  {
+    "key": "p106",
+    "panel": "INSERT B",
+    "family": 3,
+    "order": 42
+  },
+  {
+    "key": "p107",
+    "panel": "INSERT B",
+    "family": 3,
+    "order": 43
+  },
+  {
+    "key": "p108",
+    "panel": "INSERT B 2",
+    "family": 3,
+    "order": 44
+  },
+  {
+    "key": "p117",
+    "panel": "DLY",
+    "family": 3,
+    "order": 48
+  },
+  {
+    "key": "p118",
+    "panel": "DLY",
+    "family": 3,
+    "order": 49
+  },
+  {
+    "key": "p119",
+    "panel": "DLY",
+    "family": 3,
+    "order": 50
+  },
+  {
+    "key": "p120",
+    "panel": "DLY",
+    "family": 3,
+    "order": 51
+  },
+  {
+    "key": "p125",
+    "panel": "REVERB",
+    "family": 3,
+    "order": 52
+  },
+  {
+    "key": "p121",
+    "panel": "REVERB",
+    "family": 3,
+    "order": 53
+  },
+  {
+    "key": "p122",
+    "panel": "REVERB",
+    "family": 3,
+    "order": 54
+  },
+  {
+    "key": "p123",
+    "panel": "CHORUS",
+    "family": 3,
+    "order": 56
+  },
+  {
+    "key": "p124",
+    "panel": "CHORUS",
+    "family": 3,
+    "order": 57
+  }
+]

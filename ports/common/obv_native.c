@@ -60,4 +60,13 @@ static void native_audio(int16_t *out,int frames){
         ++cursor;
     }
 }
+#define NATIVE_TEMPO 1
+static void native_tempo(float bpm){ctl_tempo=(unsigned)(bpm<40?40:bpm>240?240:bpm);ctl_ext_quarter=0;}
+#if FM1_S1
+#include "s1vave_display.h"
+#else
+#include "obervave_display.h"
+#endif
+#define NATIVE_DISPLAY 1
+static int native_display(int i,char *out,int capacity){if(!i)return snprintf(out,capacity,"%d",native_value(i));char value[64]={0};param_value(value,(unsigned)i-1,(unsigned)native_value(i));return snprintf(out,capacity,"%s",value);}
 #include "fm1_facade.h"

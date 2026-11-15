@@ -133,7 +133,7 @@
 +Press SEQ for PATTERNS. Hold SHIFT and press B3 GEN. Select GENERATE SONG to assign a kit and three instruments to tracks 1–4, 5–8, 9–12 or 13–16. GEN SETUP changes the target or chooses MIDI-only tracks. GENERATE TRACK keeps the selected instrument. Turn the seed to reproduce a pattern. BACK returns from Acid/Break to GEN, then PATTERNS.
  
 -## 1. Install
-+EDIT opens the engine main page. B3 edits the sound or selected kit pad. The wheel moves functional pages; PAGES shows a map. SHIFT+B3 toggles plug-in TRANSPORT. Double-tap STOP cuts all audio.
++Stage B1 shows PRESETS with the engine artwork and its real filter or representative sound controls; B1 again opens EDIT. B2 opens PERFORM (DJ FILTER / ECHO / SPACE), then ARP / CHORD. Rhythmer Kit has its own whole-kit filter, saved with its presets; KIT labels mean all pads and P11 labels mean pad 11. Sample Kit / Break land on SOUND with their existing whole-track filter, followed by TRIM. The encoder or −/+ moves native parameter rows; K1–K3 edit the highlighted controls. In Edit, B3 opens SAVE (Rhythmer Kit cycles SOURCE / SAVE / EDIT). SHIFT+B3 toggles plug-in TRANSPORT. Double-tap STOP cuts all audio.
  
 -You need:
 +New plug-ins go in Rhythmer/Plugins on the card. Existing top-level Plugins remain readable. Use the device page or Files over USB at http://rhythmer.local. Firmware updates must be signed Rhythmer OS releases.
@@ -462,12 +462,15 @@
 +The project persists SONG GROUP as an optional GNGP project section; older projects default to T1-4. Groups route the same four original roles by relative position, so T5, T9 or T13 can be the kit. Generate/Mutate Song affect only the selected group's current patterns and, on Generate, instruments. Single-track Generate/Mutate and engine-specific Acid/Break ignore SONG GROUP. The original project's shared root, scale and tempo behavior remains: full Generate Song still applies them globally, with Undo/Redo.
 --- /dev/null
 +++ b/docs/guide/install.md
-@@ -0,0 +1,54 @@
-+# Rhythmer OS 0.4.0-beta.1 — 실기기 검증용 베타
+@@ -0,0 +1,65 @@
++# Rhythmer OS 0.4.0-beta.3 — 실기기 검증용 베타
++
++beta.2 → beta.3은 플러그인과 카탈로그도 바뀌므로 전체 SD.zip을 사용한다. UPDATE.zip은 앱만 바꾸며 이 수정 전체를 설치하지 않는다. SD_CARD_GUIDE.md의 전원 종료·백업·전체 파일 복사 절차를 따른다.
++
 +
 +개발자: **jazzy rhythmer**. Instagram: https://www.instagram.com/jazzyrhythmer/ · YouTube: https://www.youtube.com/@jazzyrhythmer
 +
-+빌드·오프라인 검증 후 사용자가 실기기에서 테스트하는 베타다. 기기 설치·물리 조작·청취·latency는 현재 미검증으로 표시한다. 설치나 공개 업로드를 자동 실행하지 않는다. 검증 후 배포는 사용자가 진행한다.
++빌드·오프라인 검증 후 사용자가 실기기에서 테스트하는 베타다. 기기 설치·물리 조작·청취·latency는 현재 미검증으로 표시한다. 이 안내는 공개 베타 설치용이며, 기기 설치는 소유자가 직접 진행한다. 설치 전 프로젝트·샘플·카드 내용을 백업한다.
 +
 +## 파일 구조
 +
@@ -481,11 +484,13 @@
 +
 +## 악기와 Rhythmer Kit
 +
-+플러그인 목록 맨 위의 Rhythmer Kit을 선택하면 PRESETS에서 36개 킷을 바꿀 수 있다. 모든 킷의 1–16번 패드가 채워져 있다. MAIN에서 인코더/−/+로 SOURCE 페이지로 이동하면 K1 Pad / K2 Engine / K3 Sound로 선택한 패드만 바꾼다. 실제 패드를 눌러 편집 대상을 선택할 수도 있다. 킷에 따라 B–D bank에 추가 음색이 있다. Hortator MD 추가 6종의 원본 사운드 구성은 HORTATOR_KITS_KO.md를 참고한다.
++빈 트랙에서는 인코더를 돌려 PLUG-IN / KIT / MIDI 계열의 카드를 선택한 뒤 Push로 연다. 기본 7개 카드 중 원하는 유형을 선택할 수 있다. B2는 Sample Kit, B3는 MIDI 바로가기다. 플러그인 브라우저에서 취소하면 같은 빈 트랙으로 돌아온다.
++
++플러그인 목록 맨 위의 Rhythmer Kit을 선택하면 PRESETS에서 36개 킷을 바꿀 수 있다. 모든 킷의 1–16번 패드가 채워져 있다. EDIT에서 B3 PAD SOURCE를 열면 K1 Pad / K2 Engine / K3 Sound로 선택한 패드만 바꾼다. B3 SAVE는 저장 화면, 그다음 B3 EDIT는 사운드 편집 화면으로 이동한다. 실제 패드를 눌러 편집 대상을 선택할 수도 있다. 킷에 따라 B–D bank에 추가 음색이 있다. Hortator MD 추가 6종의 원본 사운드 구성은 HORTATOR_KITS_KO.md를 참고한다.
 +
 +개별 엔진은 한 트랙에서 한 음색을 연주한다. Keys의 Chromatic 또는 Scale을 선택한다. 멜로디 엔진의 원래 MIDI/폴리포니를 유지하며, 드럼 단일 음색은 C4 기준 Tape 피치로 연주한다. 드럼의 길이와 기존 꼬리도 함께 피치 변환된다.
 +
-+Stage/Keys에서 Push → Edit, B2 PRESETS → 인코더로 선택 → Push로 로드한다. 현재 프리셋 이름은 Edit 상단에도 표시된다. 인코더/−/+로 기능별 페이지를 이동하고 Push로 A/B 줄을 선택해 K1–K3으로 편집한다. B3 PAGES에서 원하는 페이지로 바로 이동한다. MAIN의 SAVE 페이지에서 Save slot과 Save Sound / Save Kit으로 사용자 프리셋을 저장한다. 저장된 항목은 PRESETS의 User Sound / User Kit에 추가된다. 동일 슬롯에 저장하면 해당 슬롯을 교체한다.
++Stage PRESETS에서 엔진·프리셋 이름과 애니메이션을 보고, EDIT에서 소리를 편집한다. B2 PRESETS에서 인코더로 선택하고 Push/LOAD로 로드한다. 현재 프리셋 이름은 EDIT 상단에도 표시된다. 인코더/−/+로 3개씩 이동하며, 6줄 목록 중 K1–K3 표시가 있는 줄을 해당 노브로 조절한다. EDIT 현재/전체 표시로 위치를 확인한다. 일반 악기는 B3 SAVE에서 Save slot과 Save Sound로, 킷은 PAD SOURCE 다음 SAVE에서 Save slot과 Save Kit으로 저장한다. 저장된 항목은 PRESETS의 User Sound / User Kit에 추가된다. 동일 슬롯에 저장하면 해당 슬롯을 교체한다.
 +
 +프로젝트 저장은 전체 킷의 패드별 엔진·음색·편집 파라미터를 보존한다. 사용자 프리셋은 Rhythmer/Presets에 저장한다. 베타 업데이트 시 autorun과 Rhythmer/Plugins/RHYTHMER - Rhythmer Kit을 포함해 패키지 전체를 복사한다. 자세한 단계는 SOUND_KIT_GUIDE.md를 참고한다.
 +
@@ -505,9 +510,9 @@
 +
 +필수 크레딧: Based on Melodee by Kerem Kiliç (Ellic Studio), AGPL-3.0-only, and sample-base. Original notices and source attribution are retained.
 +
-+GEN의 트랙 범위·악기 자동 배정·MIDI 전용 모드와 1–4마디 Break 자동 준비는 [GEN_WORKFLOW.md](gen.md)를 참고하세요.
++GEN의 트랙 범위·악기 자동 배정·MIDI 전용 모드와 1–4마디 Break 자동 준비는 [GEN_WORKFLOW.md](GEN_WORKFLOW.md)를 참고하세요.
 +
-+Beta.4: sound fixes and preset coverage. Stop twice within 400 ms cuts all audio; the next note or Play resumes.
++[Sound and preset verification](VERIFICATION.md). Stop twice within 400 ms cuts all audio; the next note or Play resumes.
 +
 +
 +## 0.4 기반으로 업데이트
@@ -517,39 +522,61 @@
 +이후 호환 Rhythmer 0.4 빌드에서는 서명된 UPDATE ZIP을 카드 최상위에 놓거나 USB 기기 페이지로 전송합니다. 저장 후 설치를 선택하면 이전 실행 폴더를 autorun/rhythmer.prev에 보존하고 재시작합니다. 시작 확인 실패 시 이전 버전으로 복구하는 원본 절차를 사용합니다. UPDATE는 플러그인·킷 데이터 교체용이 아닙니다. 이 데이터가 바뀐 릴리스는 전체 SD 패키지 안내를 따릅니다. Melodee 정식 ZIP은 Rhythmer OS 업데이트로 수락하지 않습니다.
 +
 +복구는 기기 전원을 끈 뒤 카드를 분리하고 autorun 폴더를 카드 밖에 보관하면 기존 stock 앱으로 부팅됩니다. 이전 베타로 돌아갈 때는 백업한 autorun과 해당 베타의 플러그인 폴더를 복원합니다. 128패턴·Freeze가 포함된 새 프로젝트는 복사본으로 보관하고 이전 베타에서 덮어쓰지 마세요.
++
++## 다운로드 선택과 안내
++
++첫 설치와 이번 0.4 전환에는 **SD.zip** 전체 패키지를 사용한다. **UPDATE.zip**은 호환 Rhythmer 설치의 실행 앱만 업데이트하며 플러그인이나 킷을 포함하지 않는다. SOURCE / MOVE-SOURCE / SUPPORT-SOURCE는 재빌드를 위한 소스 배포물로 SD 설치 파일이 아니다. 배포 페이지의 버전과 `.sha256` 값을 다운로드 파일과 대조한다.
++
++이 프로젝트는 AKAI Professional 또는 inMusic이 승인하거나 지원하는 공식 펌웨어가 아니다. MPC Sample 명칭과 로고의 권리는 각 권리자에게 있다. 소프트웨어는 각 라이선스에 따라 무보증으로 제공된다. 테스트 범위·알려진 한계는 VERIFICATION.md를 확인한다. 제조사 펌웨어를 덮어쓰는 설치가 아니라 SD launcher를 사용하는 방식이다.
 --- /dev/null
 +++ b/docs/guide/rhythmer.md
-@@ -0,0 +1,179 @@
+@@ -0,0 +1,167 @@
 +# Rhythmer OS 사용 설명서
 +
-+웹사이트 게재용 초안 · 대상 버전 0.4.0-beta.1
++웹사이트 게재용 초안 · 대상 버전 0.4.0-beta.3
 +
-+Rhythmer OS는 MPC Sample에서 샘플, 신스, 드럼킷과 시퀀서를 사용하는 음악 제작 환경입니다. 개발자는 **jazzy rhythmer**입니다. 현재 베타는 오프라인 검증을 마쳤으며 실기기 조작·청취·성능 검증은 진행 전입니다. 아래 버튼 설명은 현재 구현을 기준으로 작성했습니다.
++Rhythmer OS는 MPC Sample에서 샘플, 신스, 드럼킷과 시퀀서를 사용하는 음악 제작 환경입니다. 개발자는 **jazzy rhythmer**입니다. 실기기 조작·청취·성능은 별도 베타 검증 대상입니다. 아래 버튼 설명은 현재 구현을 기준으로 작성했습니다.
 +
 +## 1. 소리 선택하기
 +
 +### Sample Kit — 샘플과 MPC 킷
 +
-+기존 샘플러 방식입니다. Samples에서 WAV를 패드에 넣거나, 지원되는 MPC `.xpm`·`.xty` 드럼 프로그램을 선택하고 Push로 킷을 로드합니다. MPC Sample `.xpj` 프로젝트에서는 `Load kit (no patterns)`로 킷만 가져올 수도 있습니다. 샘플과 관련 데이터 폴더를 함께 보관하세요. 모든 MPC 효과와 설정이 완전히 재현되는 것은 아닙니다.
++기존 샘플러 방식입니다. Samples에서 WAV·MP3·FLAC·Ogg Vorbis·AIFF를 패드에 넣거나, 지원되는 MPC `.xpm`·`.xty` 드럼 프로그램을 선택하고 Push로 킷을 로드합니다. MPC Sample `.xpj` 프로젝트에서는 `Load kit (no patterns)`로 킷만 가져올 수도 있습니다. 샘플과 관련 데이터 폴더를 함께 보관하세요. 모든 MPC 효과와 설정이 완전히 재현되는 것은 아닙니다.
 +
 +### 개별 엔진 — 한 트랙에 한 음색
 +
 +플러그인 목록에서 엔진을 선택합니다. Keys에서 Chromatic 또는 Scale과 원하는 루트·스케일을 설정합니다. 패드는 선택한 한 음색을 음높이에 맞춰 연주합니다. 드럼 엔진도 개별 엔진으로 선택하면 하나의 드럼 음색을 연주하며, C4를 기준으로 Tape 피치가 적용됩니다. 이 경우 길이와 기존 잔향도 함께 변합니다.
 +
-+Stage/Keys에서 Push로 엔진 메인을 열고, B2 PRESETS에서 인코더로 음색을 고른 뒤 Push로 로드합니다. 현재 프리셋 이름은 메인과 편집 상단에 표시됩니다. 메인에서 B3 EDIT SOUND 또는 Push로 상세 편집에 들어가고, 인코더 또는 −/+로 기능별 페이지를 이동하고 Push로 A/B 줄을 선택해 K1–K3으로 조절합니다. B3 PAGES에서 원하는 기능으로 바로 이동합니다.
++Stage의 B1 첫 화면은 **PRESETS**입니다. 엔진명·현재 프리셋·입력에 반응하는 그래픽을 함께 보여 줍니다. 인코더로 프리셋을 탐색하고 Push로 전체 목록을 엽니다. 목록에서는 인코더 또는 K1으로 선택하고 Push / B3 LOAD로 적용하며, B1 BACK으로 돌아갑니다. 프리셋이 없는 외부 플러그인은 같은 첫 화면이 PLUG-IN으로 표시됩니다.
++
++Stage의 B1을 다시 눌러 **EDIT**로 이동합니다. 인코더 또는 −/+로 세 파라미터씩 이동하고 K1–K3으로 강조된 세 줄을 조절합니다. 화면에 앞뒤 제어까지 최대 여섯 줄을 표시합니다. 별도 Edit 화면도 같은 사운드 목록을 사용합니다. 원본 제어는 음색·필터·ENV·LFO·변조·FX 맥락을 이름 앞에 표시합니다. `EDIT 5/30`은 현재 조절할 세 값이 전체 30묶음 중 다섯 번째라는 뜻입니다. SOURCE와 SAVE 관리는 사운드 제어와 분리돼 있습니다.
++
++PRESETS 하단은 해당 엔진의 실제 주 필터·레조넌스와 대표 음색 제어입니다. EDIT의 같은 값과 연동됩니다. Dexed·DRUM-X·Plaits·CS-1·MONO2K는 추가된 출력 전체 필터의 OUTPUT CUTOFF / OUTPUT RESONANCE를 표시합니다. 원본의 모델별 음색 제어와 CS-1 Brightness, MONO2K Filter Base/Width는 EDIT에 그대로 남습니다. 추가 필터와 원본 필터는 별개이며 이름으로 구분합니다.
++
++**B2 PERFORM → ARP → CHORD**로 넘깁니다. PERFORM의 **DJ FILTER / ECHO / SPACE**는 OS가 각 플러그인 트랙에 제공하는 연주 효과입니다. DJ FILTER는 출력에 거는 LP/HP 스윕이며 엔진 컷오프와 다릅니다. ECHO는 템포 동기 딜레이, SPACE는 리버브의 입력 송신량입니다. 0%로 내려도 이미 발생한 잔향은 남고, STOP 더블탭은 내부·공통 효과의 잔향도 끊습니다. 엔진 내부 FX, 공용 SEND A–D, 트랙 인서트와 각각 별도이며 동시에 켜면 처리가 겹칩니다. 설정은 트랙/프로젝트에 저장되고, 프리셋 변경 시 자동으로 초기화되지 않습니다. 첫 화면의 PERFORM ON은 저장된 공통 연주 효과량이 켜져 있음을 알립니다. **B3 MIX → SENDS → FX**는 기존 위치입니다.
 +
 +### Rhythmer Kit — 여러 엔진을 하나의 드럼킷으로
 +
 +플러그인 목록 맨 위의 **Rhythmer Kit**을 선택합니다. PRESETS에서 36개 킷을 바꿀 수 있습니다. 모든 킷의 1–16번 패드가 채워져 있습니다. Hortator MD 추가 6종과 패드별 원본 사운드는 HORTATOR_KITS_KO.md에 정리했습니다.
 +
-+메인의 SOURCE 페이지는 `Pad / Engine / Sound`입니다.
++첫 화면의 **KIT CUTOFF / KIT RESONANCE**는 Rhythmer Kit 엔진 내부의 전체 필터이며 모든 패드에 적용됩니다. K3은 트랙 음량입니다. EDIT 첫 묶음의 **KIT FILTER TYPE**에서 LP / BP / HP를 고릅니다. 컷오프·레조넌스는 첫 화면과 동일한 값입니다. 전체 필터는 트랙 인서트 슬롯을 쓰지 않으며 킷 프리셋과 프로젝트에 저장됩니다. 공장 킷의 기본값은 원래 소리를 그대로 통과시킵니다.
++
++그 뒤의 **P01 … / P11 …** 항목은 선택 패드의 원본 엔진 제어입니다. KIT 항목은 전체 킷, P번호 항목은 해당 패드이므로 구분하여 조정하세요. 다른 패드를 눌러도 전체 필터 값은 유지됩니다. SAVE KIT에는 전체 필터와 패드별 소리가 함께 저장됩니다.
++
++Edit 화면의 B3 **PAD SOURCE**를 열면 `Pad / Engine / Sound`가 나옵니다. B3은 SOURCE → SAVE → EDIT 순서로 전환합니다.
 +
 +1. 패드를 누르거나 Pad를 돌려 편집할 패드를 선택합니다.
 +2. Engine으로 그 패드의 엔진을 선택합니다.
 +3. Sound로 해당 엔진의 음색을 선택합니다.
-+4. B3 EDIT PAD 또는 Push로 선택 패드의 상세 편집에 들어갑니다.
++4. B3으로 EDIT에 돌아와 선택 패드의 실제 소리를 편집합니다. 목록과 K1–K3 카드의 P11 같은 표시는 실제 선택한 패드 번호입니다.
 +
 +PRESETS는 킷 전체를, Engine / Sound는 선택한 패드만 바꿉니다. 독립적으로 교체·편집한 패드는 추가 엔진 인스턴스를 사용할 수 있으므로 무거운 엔진을 여러 패드에 사용할 때는 실기기 부하를 확인하세요.
++
++### Sample Kit / Break / MIDI 입력
++
++기존 Sample Kit과 Break의 첫 **SOUND** 화면은 샘플러의 전체 필터·레조넌스·킷 음량을 조절합니다. B1을 넘기면 TRIM / LAYERS / TUNE / AMP ENV로 이어집니다. 직접 Trim을 여는 단축 동작은 그대로 Trim으로 들어갑니다. 전체 타입은 B3의 KIT FILT, 개별 패드 필터는 FILTER에서 설정하며 새 인서트를 자동 추가하지 않습니다.
++
++MIDI 출력에는 오디오 필터를 붙이지 않습니다. 입력은 독립 IN 엔진이 아니라 Input Config의 INPUT FX 또는 MIDI 트랙의 Audio In / Monitor를 사용합니다. 모니터링 오디오는 해당 트랙의 기존 인서트·센드 경로를 사용하며 이번 변경으로 필터를 자동 추가하지 않습니다.
 +
 +## 2. GEN으로 패턴 만들기
 +
@@ -603,7 +630,7 @@
 +
 +## 5. 저장과 다시 열기
 +
-+MAIN의 SAVE 페이지에서 Save slot을 1–64 중 선택하고 Save Sound 또는 Save Kit을 실행합니다. Status가 Ready가 될 때까지 기다립니다. 저장한 항목은 PRESETS의 User Sound / User Kit으로 나타납니다. 같은 슬롯에 저장하면 이전 항목을 교체합니다.
++Edit 화면의 B3 SAVE에서 Save slot을 1–64 중 선택하고 Save Sound 또는 Save Kit을 실행합니다. Status가 Ready가 될 때까지 기다립니다. 저장한 항목은 PRESETS의 User Sound / User Kit으로 나타납니다. 같은 슬롯에 저장하면 이전 항목을 교체합니다.
 +
 +프로젝트 저장은 패턴과 플러그인·킷 상태를 보존합니다. 사용자 프리셋은 SD의 `Rhythmer/Presets`에 저장됩니다. 사용한 샘플, Plugins와 관련 데이터 폴더도 함께 보관하세요.
 +
@@ -611,11 +638,10 @@
 +
 +**GEN을 실행해도 소리가 없어요.** MIDI ONLY에서는 음색이 자동 배정되지 않습니다. 트랙에 악기가 로드됐는지, 그룹 내 역할과 맞는지, 현재 패턴과 믹서 음량이 올바른지 확인하세요.
 +
-+**킥 대신 다른 소리가 나요.** Sample Kit의 첫 여덟 패드 배치를 확인하세요. 개별 엔진은 선택한 한 음색만 연주합니다. 여러 드럼 음색을 한 트랙에서 쓰려면 Rhythmer Kit 또는 Sample Kit을 선택하세요.
++**킥 대신 다른 소리가 나요.** Sample Kit의 패드 번호와 각 패드에 배정된 샘플을 확인하세요. 개별 엔진은 선택한 한 음색만 연주합니다. 여러 드럼 음색을 한 트랙에서 쓰려면 Rhythmer Kit 또는 Sample Kit을 선택하세요.
 +
 +**Break가 박자에서 밀려요.** 입력한 Source Bars가 원본 4/4 루프 길이와 맞는지 확인하세요. 16개 조각은 원본 전체의 균등 구간입니다. STRAIGHT로 원래 순서를 재생해 정렬을 점검합니다.
 +
-+**이전 베타의 드럼 프로젝트가 다르게 들려요.** beta.1에서 개별 드럼 플러그인에 여러 노트를 사용한 프로젝트는 beta.2에서 한 음색의 피치로 해석됩니다. 원본 프로젝트를 보관하고 Rhythmer Kit으로 다시 구성한 뒤 새 이름으로 저장하세요.
 +
 +## 크레딧과 채널
 +
@@ -623,85 +649,58 @@
 +
 +Based on **Melodee by Kerem Kiliç (Ellic Studio)** and sample-base, AGPL-3.0-only. 각 엔진의 원저작권·라이선스·출처 고지는 배포물에 유지됩니다.
 +
-+Beta.4: [sound fixes and preset coverage](SOUND_FIXES_BETA4.md). Stop twice within 400 ms cuts all audio; the next note or Play resumes.
 +
-+## Beta.4 악기 선택과 편집
++## 빈 트랙에서 시작하기
 +
-+- 플러그인 목록 최상단의 Rhythmer Kit은 여러 드럼 사운드를 패드별로 배치한다. 개별 엔진은 한 음색을 크로매틱/스케일로 연주한다.
-+- Acid Engine은 Hortator ACID 전용 뷰다. Break Engine을 선택하면 샘플 브라우저가 열리며, 루프와 원본 길이 1–4바를 지정하면 16찹과 템포 싱크를 준비한다.
-+- 개별 드럼 엔진을 새로 고르면 패드 시작 옥타브를 C4(기본 C키에서 MIDI 60)로 맞춘다. 구형 플러그인 트랙의 Drums/기본 옥타브 2 조합은 Scale/C4로 보정하며, 명시적으로 설정한 크로매틱/스케일 옥타브는 유지한다.
-+- Hortator는 킷별 음색 48개와 원본 합성 모델 44개를 제공한다. ACID, MD TRX/EFM 등을 Sound/Presets에서 고를 수 있다.
-+- 킷 편집 파라미터의 P01/P02는 실제 선택한 패드 번호다. Model 값은 숫자 대신 실제 모델명으로 보인다. 전체 프로그램을 바꾸는 원본의 중복 노브는 숨기고 Sound/Presets 선택을 사용한다.
-+- Stop을 400ms 이내에 두 번 누르면 모든 오디오를 끊는다. 새 노트 또는 Play로 다시 소리를 낼 수 있다.
++프로젝트를 열면 원래의 선택 트랙을 유지합니다. 빈 트랙은 **PLUG-IN / SAMPLE KIT / MIDI** 선택 화면을 보여 줍니다. 인코더를 돌려 종류를 선택하고 Push로 엽니다. 플러그인은 목록에서 악기를 선택할 때 실제 트랙이 만들어집니다. 킷은 빈 패드, 카드의 샘플, 입력 녹음을 선택할 수 있고 MIDI는 출력 포트를 선택할 수 있습니다. B2 SAMPLE KIT / B3 MIDI는 빠른 진입입니다. PAD BANK를 누른 채 패드로 트랙을 선택합니다.
 +
-+## Beta.4 GEN 개편
++## 저장과 편집 범위
 +
-+8개 역할을 8트랙에 나누던 자동 생성 방식은 종료했습니다. [GEN_WORKFLOW.md](GEN_WORKFLOW.md)의 4트랙 원본 GEN이 현재 동작입니다. T1 Rhythmer Kit, T2–4 악기·프리셋·MIDI를 원본 FM-1 시드 로직으로 만듭니다. MIDI ONLY 범위 1–16과 한 트랙 지정은 유지합니다. Break/Acid 전용 화면은 해당 엔진에서만 표시하고 Back은 GEN 메인으로 돌아옵니다. Acid Engine은 Hortator ACID입니다.
++개별 엔진의 B3은 SAVE / EDIT를 전환합니다. Rhythmer Kit은 SOURCE / SAVE / EDIT를 전환합니다. Save Sound / Save Kit은 사운드 디자인과 패드 구성을 저장하고, 프로젝트 저장은 패턴·트랙 믹서·FX·모듈레이션도 함께 보존합니다. 프로젝트를 다시 열면 선택한 프리셋 이름도 복원합니다. ERASE + 해당 노브는 불러온 사운드의 그 값을 초기화합니다. 일반 플러그인 내부 노브의 편집은 프로젝트 공통 Undo 대상이 아니며, GEN·Acid·Break 작업의 Undo/Redo와 구분해야 합니다. STOP을 400 ms 이내에 두 번 누르면 모든 오디오를 끊으며 다음 노트 또는 PLAY로 다시 연주합니다.
 +
++## LFO와 MOD
 +
-+### 킷 편집 범위와 트랙 묶음 선택
++EDIT의 LFO·변조 슬롯은 원본 엔진 자체 기능입니다. 엔진마다 제공하는 제어가 다릅니다. `LFO Settings`는 같은 LFO의 Sync·Trigger·Polarity 설정이며 LFO가 하나 더 생긴다는 뜻이 아닙니다. Sophie 등 내부 LFO가 없는 원본에는 임의의 내부 LFO를 추가해 표시하지 않습니다.
 +
-+Rhythmer Kit의 EDIT PAD는 누른 패드의 소리만 편집합니다. B3 PAGES는 기능별 페이지 목록입니다. 모든 패드의 레벨·팬·Send A는 MAIN MIX에서 조절합니다. 킷 공용 믹서 값은 프로젝트에 저장됩니다. `Save Kit`에는 패드별 엔진·사운드 디자인이 저장됩니다. 소리 이름 뒤 `*`는 값을 수정했다는 표시입니다.
++프로젝트 공통 MOD에서는 마지막으로 돌린 **Motion 지원 제어**를 ADD로 연결합니다. PERFORM의 DJ FILTER / ECHO / SPACE, 트랙 믹서·FX 등을 LFO·Envelope Follower·Macro로 움직일 수 있습니다. PRESETS의 엔진 필터와 Rhythmer Kit 내부 전체 필터를 포함한 플러그인 내부 임의 파라미터는 원본 Melodee의 Motion 타깃에 포함되지 않습니다. 내부 노브를 돌린 뒤 ADD하면 이전의 다른 타깃을 잘못 추가하지 않고 안내를 표시합니다. 엔진 내부 LFO 또는 공통 FX의 MOD를 사용하세요. 변조 범위는 해당 노브에 표시된 범위 안에서 적용됩니다.
 +
-+GEN SETUP에서 `T1–T4`, `T5–T8`, `T9–T12`, `T13–T16` 행을 고르고 SELECT를 누릅니다. 첫 트랙은 킷, 나머지 셋은 악기를 받습니다. MIDI ONLY의 FROM/TO는 별도 범위이며 같은 번호를 지정하면 한 트랙에만 생성됩니다.
++## 패드 색상과 흑백 화면
 +
-+### 엔진 메인 화면
++Sample Kit의 COLOUR는 **실제 패드 조명 색상**을 지정합니다. 화면은 흑백을 유지하며 색상 이름·패드 번호·선택 테두리로 구분합니다. MPC 킷에서 읽은 RGB 값과 실제 조명, 프로젝트 저장 값은 유지합니다. 이 기능은 native Sample Kit의 기능입니다. Rhythmer Kit은 플러그인 트랙이며 자체 패드 엔진·사운드 편집을 사용합니다.
 +
-+플러그인을 열면 공통 메인 화면이 먼저 표시됩니다. 원본 엔진명과 현재 프리셋, Rhythmer Kit의 선택 패드를 확인할 수 있습니다. 휠 또는 −/+로 공통 조절 페이지를 넘깁니다.
++## Break Manipulator와 Acid 상세
 +
-+1. MIX: 트랙 Level / Pan / Send A
-+2. SENDS: 트랙 Send B / C / D
-+3. SOURCE: 선택 패드·엔진·사운드 또는 개별 엔진의 사운드 선택
-+4. SAVE: 저장 슬롯 / Save Kit 또는 Save Sound / 상태
++[Break/Acid 사용 안내](BREAK_ACID_GUIDE_KO.md)에 BRK PERF, 19개 연주 명령·녹음·재생·A/B/Return, Acid 설정·Seed·Tie와 진입·복귀 경로를 정리했습니다. 루프가 없는 Break 트랙의 Stage에서 Push로 다시 샘플을 고를 수 있습니다.
 +
-+B2는 프리셋 목록, B3 또는 Push는 EDIT PAD / EDIT SOUND입니다. 편집에서 B1 MAIN 또는 Back을 누르면 메인으로 돌아옵니다. Rhythmer Kit의 세부 편집은 누른 패드를 따라갑니다. 일반 악기는 모든 패드가 같은 사운드를 크로매틱 또는 스케일로 연주합니다. 별도로 설치한 일반 VST는 공통 믹스·센드 두 페이지와 원래 파라미터 편집을 사용합니다.
++## Melodee 0.2.0 기반 기능
 +
-+흑백 픽셀 애니메이션은 기존 트랙 음량과 눌린 음에 반응합니다. 킷의 막대는 입력 반응 그래픽이며 패드별 독립 음량 미터를 뜻하지 않습니다. 소리가 멈추면 움직임도 멈춥니다. 공통 믹서 값은 프로젝트에, 사운드 디자인은 Save Sound / Save Kit에 저장됩니다.
-+
-+
-+### 엔진 MAIN 화면
-+
-+엔진을 열면 MAIN에서 시작합니다. 인코더 또는 −/+로 MIX → SENDS → SOURCE → SAVE를 넘깁니다. B3/Push로 소리 편집에 들어가고 B1/Back으로 MAIN에 돌아옵니다. B2 PRESETS는 개별 엔진의 소리 또는 Rhythmer Kit 전체를 바꿉니다. 킷의 개별 패드는 MAIN → SOURCE에서 Pad / Engine / Sound로 교체합니다. 뱅크와 패드 번호는 함께 표시됩니다.
-+
-+Default는 호스트의 초기 상태이며 원본 Init과 구분됩니다. Dexed는 같은 음색이 반복된 슬롯을 숨겨 고유 FM 음색 8개와 Default를 제공합니다. 킷별·엔진별 프리셋 대조 및 현재 검증 범위는 FINAL_UI_AUDIT.md와 VERIFICATION.md를 참고하세요.
-+
-+프리셋 목록에서는 인코더로 고른 뒤 Push 또는 B3 LOAD로 불러옵니다. Break에 아직 루프가 없으면 Browse Sample부터 선택됩니다. Aphex 드론 4종은 긴 발음 전 지연을 제거해 패드·짧은 시퀀스에서도 발음되도록 조정했습니다.
-+
-+단일 소리의 Pitch mode에서 Key Pitch는 악기의 음높이 제어, Pitch + Length는 음높이와 재생 길이가 함께 바뀌는 타악기 재생을 뜻합니다. C4 / MIDI 60은 타악기 원래 속도의 기준입니다.
-+
-+### 기능별 편집 페이지와 현재 위치
-+
-+편집 상단의 `FILTER 2/3 · 08/24`는 Filter의 두 번째 페이지이며 전체 24페이지 중 8번째라는 뜻입니다. 전체 위치 막대도 함께 표시됩니다. 한 페이지의 최대 여섯 파라미터는 A/B 두 줄이며, 밝은 줄의 세 값을 아래 큰 노브 카드에서 조정합니다. 인코더·−/+는 페이지, Push는 A/B 줄, B3 PAGES는 페이지 바로 가기입니다. 목록에서 Back은 선택을 취소하고, 편집에서 Back은 MAIN으로 돌아옵니다.
-+
-+킷에서는 패드 번호·해당 엔진·사운드가 함께 표시됩니다. 다른 패드를 누르면 해당 패드의 항목으로 바뀝니다. 빈 패드에서는 MAIN SOURCE에서 엔진·사운드를 넣으라는 안내가 나옵니다. B2 KIT PRESETS는 킷 전체를 바꾸므로, 한 패드의 소리만 바꾸려면 MAIN SOURCE를 사용합니다. 프리셋 목록의 K1은 위치 선택이며 소리 파라미터를 편집하지 않습니다.
-+
-+## Break Manipulator와 Acid의 상세 조작
-+
-+새 Break 연주 화면, 명령 녹음·편집, LOOP/CHOP과 Acid의 세 설정 페이지·Seed·Tie는 [Break/Acid 사용 안내](BREAK_ACID_GUIDE_KO.md)를 참고한다.
-+
-+
-+## 0.4.0: Melodee 0.2.0 기반 변경
-+
-+- SEQ 홈은 **PATTERNS**입니다. 트랙별 128개 패턴을 A–H 뱅크에서 선택합니다. Step 편집은 **STEP EDIT**를 사용합니다.
-+- **Shift+B3 GEN**으로 생성 화면을 엽니다. 생성 화면에서 패드는 현재 악기를 연주하며 패턴을 바꾸지 않습니다. 하위 화면의 BACK은 GEN으로, GEN의 BACK은 PATTERNS로 돌아갑니다.
-+- 플러그인 편집 화면의 **Shift+B3 TRANSPORT**는 엔진 내부 시퀀서에 Play/Stop을 전달할지 정합니다. EDIT/PAGES 버튼은 기존처럼 사용합니다.
-+- Erase+노브는 Rhythmer 악기의 해당 파라미터를 불러온 원본 프리셋 값으로 초기화합니다. Shift+인코더의 미세 조정은 선택형 값에서 한 항목씩 이동합니다.
-+- 새 플러그인은 **Rhythmer/Plugins**에 넣습니다. 기존 최상위 Plugins 경로도 읽습니다. VST2/3 외에 호환되는 Linux ARM64 LV2/CLAP 플러그인을 지원하며, 외부 플러그인은 Rhythmer Kit 내부 엔진으로 자동 추가되지 않습니다.
-+- 원본 Sample Kit의 패드별 Send A–D를 지원합니다. Rhythmer Kit은 기존 트랙 공용 Send를 사용합니다.
-+- Freeze/Deep Freeze, USB 화면 미러링, 파일 전송, 오디오 형식 확장은 새 기반의 기능입니다. USB 연결 후 **http://rhythmer.local**에서 기기 페이지와 파일을 엽니다. 실제 기기의 USB·네트워크·성능 검증은 별도입니다.
-+- 자동 업데이트는 Rhythmer OS 서명 파일만 수락합니다. 0.3 베타에서 처음 넘어올 때는 전체 SD ZIP을 수동 복사합니다. UPDATE ZIP은 이후 호환되는 Rhythmer 0.4 빌드의 실행 파일만 교체하고 프로젝트·플러그인을 보존합니다.
-+
-+Deep Freeze로 메모리에서 내려간 악기는 편집 화면에 DEEP FROZEN으로 표시합니다. UNFREEZE를 선택하면 원래 사운드를 다시 불러온 후 편집합니다. Freeze 중에는 프리셋·TRANSPORT 변경도 먼저 Unfreeze를 요청합니다. 폴더형 프리셋에서 K1 JUMP는 현재 폴더의 목록 범위 안에서 이동합니다.
-+
++- SEQ 홈은 PATTERNS입니다. 트랙마다 128개 패턴을 A–H 뱅크에서 선택합니다. Step 편집은 STEP EDIT를 사용합니다.
++- Shift+B3 GEN의 하위 화면 BACK은 GEN으로, GEN의 BACK은 PATTERNS로 돌아갑니다.
++- 플러그인 Edit의 Shift+B3 TRANSPORT는 플러그인에 PLAY·STOP을 전달할지 설정합니다.
++- 새 플러그인은 `Rhythmer/Plugins`에 넣습니다. 호환 Linux ARM64 VST2·VST3·CLAP·LV2를 지원합니다. 외부 플러그인이 Rhythmer Kit의 내부 소스로 자동 추가되지는 않습니다.
++- Native Sample Kit은 패드별 SEND A–D를 사용하며 Rhythmer Kit은 트랙 공용 SEND를 사용합니다.
++- Freeze는 패턴을 오디오로 출력해 재생하고 Deep Freeze는 플러그인을 메모리에서도 내립니다. DEEP FROZEN 트랙은 UNFREEZE 후 편집합니다.
++- USB-C 연결 후 `http://rhythmer.local`에서 Files·업데이트·플러그인 업로드·매뉴얼을 엽니다. 기기 USB·네트워크·성능은 실기기 검증 대상입니다.
++- Settings → SCREEN의 Screen mirror는 USB 카메라로 화면을 보냅니다. 기준 릴리스의 선택 해상도는 320×240, 640×480, 1280×720, 1280×960, 프레임률은 30/60 fps입니다. 실제 달성률은 기기·연결에 따라 확인해야 합니다.
++- 초기 전체 설치는 SD ZIP을 수동 복사합니다. 이후 UPDATE ZIP은 서명된 Rhythmer OS 파일만 받으며 실행 파일을 교체하고 프로젝트·플러그인을 보존합니다.
 +
 +## Rhythmer 자체 프리셋
 +
 +Prophet은 원본 Init 1개와 jazzy rhythmer가 제작한 새 사운드 15개를 제공합니다. Elixir는 원본 Initkit과 자체 킷 Dry Circuit, Warm Machine, Bright Logic, Soft Pulse를 제공합니다. Elixir의 개별 악기 목록에서는 킷별 7개 보이스를 선택하고, Rhythmer Kit에서는 패드 1–16을 채운 전체 킷을 선택합니다. 네 자체 킷의 킥은 짧은 피치 어택과 드라이브, 충분한 저역 몸통을 갖도록 조정했습니다.
 +
 +Sequential의 외부 Prophet 뱅크와 Erica/Hrtl 외부 Elixir 뱅크는 배포본에 포함하지 않습니다. 이들의 재배포 허가 범위가 확인되지 않았기 때문이며, 개인 사용 금지 판정을 뜻하지 않습니다. 원본 Init과 자체 프리셋은 구분해 표시합니다.
++
++
++### 추가 출력 필터 — Dexed·DRUM-X·Plaits·CS-1·MONO2K
++
++이 다섯 엔진의 PRESETS 첫 두 노브는 **OUTPUT CUTOFF / OUTPUT RESONANCE**입니다. EDIT의 첫 세 줄에서 같은 컷오프·레조넌스와 **OUTPUT FILTER TYPE (LP/BP/HP)**을 조절합니다. OUTPUT FILTER는 이 제어 묶음의 이름이며 별도의 메뉴 버튼이 아닙니다. 세 번째 노브에는 원본의 대표 음색 파라미터가 남습니다.
++
++추가 필터는 엔진의 원래 합성·내장 이펙트 뒤, OS PERFORM·트랙 인서트·센드 앞에서 출력 전체를 처리합니다. 인서트 슬롯이나 버스는 사용하지 않습니다. 기본값은 Cutoff 100%, Resonance 0%, LP이며 이 조합에서는 원본 오디오를 그대로 통과합니다. 원본 프리셋을 선택하면 이 중립값으로 시작하고, Save Sound와 프로젝트 저장에는 추가 필터 설정도 포함됩니다. 원본 필터·ENV·LFO·FX 설정은 변경하지 않습니다. Rhythmer Kit 안에서는 패드 원본의 필터와 별도로 킷 자체의 KIT FILTER가 전체 합산 출력을 처리합니다.
++
++킷 패드 EDIT 제목은 `P11 / CS-1 / 사운드명`처럼 선택 패드·실제 엔진·소리를 표시합니다. 킷 전체 필터 행은 `킷 이름 / ALL PADS`를 표시합니다. 패드 소스를 교체해도 킷 프리셋 이름을 현재 소스 엔진으로 오해하지 않도록 구분합니다.
 --- /dev/null
 +++ b/src/rhythmer/edit_preview.inc
-@@ -0,0 +1,59 @@
+@@ -0,0 +1,67 @@
 +// SPDX-License-Identifier: AGPL-3.0-only
 +// Render every inspected state; capture_rows only reduces duplicate PNG writes.
 +#include "rhythmer/pages/performance_art.inc"
@@ -713,33 +712,41 @@
 +        auto item=data[engine],parameters=item["parameters"];
 +        auto s=std::make_unique<Snapshot>();shell.snapshot(*s,100000);s->ui=UiState{};s->now=100000;s->ui.page=PageId::Edit;s->ui.track=0;s->ui.edit_page[0]=bool(item["home"])?0:1;s->meters[0]=float(item["meter"]);s->now=uint32_t(int(item.getProperty("at",100000)));
 +        s->project.tracks[0].last_note=uint8_t(int(item.getProperty("note",60)));s->held_keys.fill(-1);if(bool(item["held"]))s->held_keys[0]=s->project.tracks[0].last_note;
-+        s->project.tracks[0].engine=EngineKind::Plugin;s->project.tracks[0].plugin=0;
++        s->project.tracks[0].engine=EngineKind::Plugin;s->project.tracks[0].params.fill(0);if(bool(item["performance_active"]))s->project.tracks[0].params[1]=35;s->project.tracks[0].plugin=0;
 +        auto name=item["engine"].toString();s->project.tracks[0].set_name(name.toRawUTF8());std::snprintf(s->project.plugins[0].name,sizeof s->project.plugins[0].name,"%s",name.toRawUTF8());
 +        auto& panel=s->ui.plugin_panel;panel.layout_revision=1;panel.focused_pad=int16_t(int(item.getProperty("focused_pad",-1)));panel.entry=0;panel.status=PluginStatus::Ready;panel.instrument=true;panel.rows=uint16_t((parameters.size()+2)/3);panel.programs=uint16_t(item["programs"].size());
 +        std::snprintf(panel.name,sizeof panel.name,"%s",name.toRawUTF8());
++        std::snprintf(panel.design_source,sizeof panel.design_source,"%s",item["design_source"].toString().toRawUTF8());
 +        std::snprintf(panel.preset,sizeof panel.preset,"%s",item["programs"][0].toString().toRawUTF8());
-+        const bool browser=bool(item["preset_browser"]),art=bool(item["art_only"]);
-+        auto pages=item["design_pages"];
-+        const bool design=!browser&&!art&&!bool(item["home"])&&pages.isArray();
-+        if(design){std::snprintf(panel.design_source,sizeof panel.design_source,"%s",item["design_source"].toString().toRawUTF8());panel.design=true;panel.design_count=uint16_t(pages.size());for(int i=0;i<pages.size();++i){auto v=pages[i];auto& p=panel.design_pages[size_t(i)];std::snprintf(p.title,sizeof p.title,"%s",v["title"].toString().toRawUTF8());p.part=uint16_t(int(v["part"]));p.parts=uint16_t(int(v["parts"]));for(int n=0;n<6;++n)p.shown[size_t(n)]=int16_t(int(v["shown"][n]));}}
++        const bool browser=bool(item["preset_browser"]),art=bool(item["art_only"]),stage=bool(item["stage_presets"])||bool(item["home"]);
++        const bool source=bool(item["source_view"]),save=bool(item["save_view"]);
++        if(stage){s->ui.page=PageId::Stage;s->ui.stage_group[0]=bool(item["perform_view"])?1:0;s->ui.stage_sub[0]=0;}
++        if(browser||stage){s->ui.presets_entry=0;s->presets.entry=0;std::vector<PluginProgram> programs;for(int i=0;i<item["programs"].size();++i)programs.push_back({i,item["programs"][i].toString().toStdString(),{}});s->presets.list=PluginProgramList(std::move(programs));s->presets.current=0;}
 +        if(browser){s->ui.page=PageId::PluginPresets;s->ui.presets_back=PageId::Edit;s->ui.presets_entry=0;s->presets.entry=0;std::vector<PluginProgram> programs;for(int i=0;i<item["programs"].size();++i)programs.push_back({i,item["programs"][i].toString().toStdString(),{}});s->presets.list=PluginProgramList(std::move(programs));}
-+        for(unsigned row=0;row<(browser?unsigned(item["programs"].size()):art?1u:bool(item["home"])?4u:design?std::max(1u,bool(item["page_map"])?unsigned(panel.design_count):unsigned(panel.design_count)*2):panel.rows);++row){
-+            if(browser){s->ui.presets_cursor=uint16_t(row);s->presets.current=int(row);}
-+            panel.row=uint16_t(row);s->ui.edit_row[0]=uint8_t(row);if(bool(item["home"]))panel.row=row==3?1:0;panel.window_first=uint16_t((panel.row?panel.row-1:0)*3);panel.params={};panel.window={};
++        unsigned first=browser||stage||art||source||save?0u:2u;
++        unsigned end=browser||(stage&&bool(item["stage_all_presets"]))?unsigned(item["programs"].size()):stage||art||source||save?1u:std::max(3u,unsigned(panel.rows));
++        for(unsigned row=first;row<end;++row){
++            if(browser||stage){
++                unsigned chosen=browser||bool(item["stage_all_presets"])?row:unsigned(int(item.getProperty("selected_program",0)));
++                s->ui.presets_cursor=uint16_t(chosen);s->presets.current=int(chosen);
++                std::snprintf(panel.preset,sizeof panel.preset,"%s",item["programs"][int(chosen)].toString().toRawUTF8());
++            }
++            panel.row=uint16_t(save?1:source?0:row);s->ui.edit_row[0]=save?2:source?1:0;panel.window_first=uint16_t((panel.row?panel.row-1:0)*3);if(panel.row>=2)panel.window_first=std::max<uint16_t>(6,panel.window_first);panel.params={};panel.window={};
 +            auto read=[&](int index,PluginPanelParam& p){if(index<0||index>=parameters.size())return;auto v=parameters[index];p.used=true;p.shown=int16_t(index);std::snprintf(p.name,sizeof p.name,"%s",v["name"].toString().toRawUTF8());std::snprintf(p.text,sizeof p.text,"%s",v["text"].toString().toRawUTF8());p.value=int16_t(std::lround(float(v["value"])*plugin_param_max));};
 +            for(unsigned n=0;n<3;n++)read(int(panel.row*3+n),panel.params[n]);
++            auto quick=item["quick"];if(stage&&item["preset_quick"].isArray())quick=item["preset_quick"][int(row)];panel.quick={};
++            for(int n=0;n<std::min(3,quick.size());++n){auto v=quick[n];auto& card=panel.quick[size_t(n)];card.used=true;card.shown=int16_t(int(v["shown"]));std::snprintf(card.name,sizeof card.name,"%s",v["name"].toString().toRawUTF8());std::snprintf(card.text,sizeof card.text,"%s",v["text"].toString().toRawUTF8());card.value=int16_t(std::lround(float(v["value"])*plugin_param_max));card.initial=int16_t(std::lround(float(v["initial"])*plugin_param_max));}
++            if(stage&&!bool(item["perform_view"])&&panel.focused_pad>=0){auto bindings=page_bindings(s->project,s->ui,s->pattern);for(unsigned n=0;n<2;++n){if(bindings[n].kind!=Binding::Kind::PluginParam||int(plugin_binding_shown(bindings[n].id))!=6+int(n))return 37;ui::KnobCard card;describe_card(*s,bindings[n],card);if(card.value!=panel.quick[n].text)return 38;}if(bindings[2].kind!=Binding::Kind::Level)return 39;}
++            if(stage&&!bool(item["perform_view"])&&panel.focused_pad<0){auto bindings=page_bindings(s->project,s->ui,s->pattern);for(unsigned n=0;n<3;++n){if(!panel.quick[n].used||bindings[n].kind!=Binding::Kind::PluginParam||int(plugin_binding_shown(bindings[n].id))!=panel.quick[n].shown)return 35;ui::KnobCard card;describe_card(*s,bindings[n],card);if(card.value!=panel.quick[n].text)return 36;}}
++
 +            for(unsigned n=0;n<6;n++)read(int(panel.window_first+n),panel.window[n]);
-+            if(design){
-+                panel.params={};panel.window={};s->ui.map_open=bool(item["page_map"]);s->ui.map_cursor=uint8_t(row);
-+                panel.design_page=uint16_t(s->ui.map_open?0:row/2);panel.design_half=uint8_t(row%2);
-+                if(panel.design_count){const auto& p=panel.design_pages[panel.design_page];if(p.shown[3]<0)panel.design_half=0;
-+                    for(unsigned n=0;n<6;++n)read(p.shown[n],panel.window[n]);
-+                    for(unsigned n=0;n<3;++n)panel.params[n]=panel.window[panel.design_half*3+n];
-+                }
++            if(!browser&&!art&&!stage){
 +                auto bindings=page_bindings(s->project,s->ui,s->pattern);
-+                for(unsigned n=0;n<3;++n){if(s->ui.map_open){if(bindings[n].kind!=Binding::Kind::None)return 31;}
-+                    else if(panel.params[n].used){if(bindings[n].kind!=Binding::Kind::PluginParam||int(plugin_binding_shown(bindings[n].id))!=panel.params[n].shown)return 32;ui::KnobCard card;describe_card(*s,bindings[n],card);if(card.value!=panel.params[n].text||card.label!=juce::String(n+1))return 33;}
-+                    else if(bindings[n].kind!=Binding::Kind::None)return 34;
++                for(unsigned n=0;n<3;++n){
++                    if(panel.params[n].used){
++                        if(bindings[n].kind!=Binding::Kind::PluginParam||int(plugin_binding_shown(bindings[n].id))!=panel.params[n].shown)return 32;
++                        ui::KnobCard card;describe_card(*s,bindings[n],card);if(card.value!=panel.params[n].text)return 33;
++                    }else if(bindings[n].kind!=Binding::Kind::None)return 34;
 +                }
 +            }
 +            for(int scale:{1,2}){
@@ -981,6 +988,49 @@
      bool running = false;
      uint32_t tick_now = 0;
      double until_tick = 0; // samples until the next tick
+--- a/src/rhythmer/engine/engine_info.cpp
++++ b/src/rhythmer/engine/engine_info.cpp
+@@ -18,8 +18,8 @@
+     static const char* const follow_hows[] {"Beats", "Tones", "Tape"};
+     static const char* const pitch_hows[] {"Speed", "Stretch"};
+     static const ParamInfo kit_params[] {
+-        {"TUNE", -24, 24, 0, Format::Semitones, nullptr}, {"FILTER", 0, 100, 100, Format::Percent, nullptr},
+-        {"RESO", 0, 100, 10, Format::Percent, nullptr}, {"DECAY", 0, 100, 100, Format::Percent, nullptr},
++        {"TUNE", -24, 24, 0, Format::Semitones, nullptr}, {"KIT CUTOFF", 0, 100, 100, Format::Percent, nullptr},
++        {"KIT RESO", 0, 100, 10, Format::Percent, nullptr}, {"DECAY", 0, 100, 100, Format::Percent, nullptr},
+         {"KIT VOL", 0, 127, 100, Format::Level, nullptr},
+         {"TYPE", 0, 2, 0, Format::Choice, filter_types}, {"FOLLOW", 0, 1, 0, Format::Switch, nullptr},
+         {"CLOUD", 0, 1, 0, Format::Switch, nullptr}, {"POSITION", 0, 100, 38, Format::Percent, nullptr},
+@@ -90,8 +90,8 @@
+     // SENDS, FX (engine_info.h, stage_mix).
+     static const StageGroups plugin_stage {{{
+         {{{{"PRESETS", StageKind::PluginSound, StagePicture::PluginSound}, {"EDIT", StageKind::PluginEdit, StagePicture::PluginEdit}}}, 2},
+-        {{{stage_arp, stage_chord}}, 2},
+-        {{{stage_mix, stage_sends, stage_fx}}, 3},
++        {{{{"PERFORM", StageKind::PluginPerform, StagePicture::Bars},stage_arp,stage_chord}}, 3},
++        {{{stage_mix,stage_sends,stage_fx}}, 3},
+     }}};
+     // Its parameters are PRESETS' three performance knobs (engine/macros.h): each slot's value, whose card, range
+     // and lane name follow the slot's kind (macro_param()), then each slot's kind (0: the slot's default).
+@@ -116,7 +116,7 @@
+     // A kit, on the last pad hit: B1 the sample (trim, layers, tune, its envelope), B2 how it plays (as
+     // the sampler pages, shell/sampler_map.h) and the pad's colour, B3 where it goes (mix, sends) and its filters.
+     static const StageGroups kit {{{
+-        {{{{"TRIM", K::Trim, P::Wave}, {"LAYERS", K::Layers, P::Wave}, {"TUNE", K::Tune, P::Wave}, {"AMP ENV", K::AmpEnv, P::Wave}}}, 4},
++        {{{{"SOUND", K::Params, P::Wave, {{sampler::Filter, sampler::Resonance, sampler::Level}}}, {"TRIM", K::Trim, P::Wave}, {"LAYERS", K::Layers, P::Wave}, {"TUNE", K::Tune, P::Wave}, {"AMP ENV", K::AmpEnv, P::Wave}}}, 5},
+         {{{{"PLAY", K::Play, P::Wave}, {"COLOUR", K::Colour, P::Colours}, {"FOLLOW", K::Follow, P::Wave}, {"CLOUD", K::Cloud, P::Wave}}}, 4},
+         {{{{"MIX", K::PadMix, P::Wave}, stage_sends, {"FILTER", K::Filter, P::Wave}, {"FILT ENV", K::FiltEnv, P::Wave}, {"KIT FILT", K::KitFilter, P::Wave}}}, 5},
+     }}};
+--- a/src/rhythmer/engine/engine_info.h
++++ b/src/rhythmer/engine/engine_info.h
+@@ -76,6 +76,7 @@
+     PluginEdit,        // a PLUGIN track's own parameters, three a row; the wheel moves the rows
+     OpenEdit,          // a button that opens the Edit page instead of a Stage page (a MIDI track's B3: its every page)
+     NewSynth, NewKit, NewMidi,                         // an empty track: what it becomes (Push)
++    PluginPerform, // retained OS DJ FILTER / ECHO / SPACE, separate from native sound design
+ };
+ // What the picture over the knobs draws.
+ enum class StagePicture : uint8_t {
 --- /dev/null
 +++ b/src/rhythmer/engine/jungle_state.inc
 @@ -0,0 +1,852 @@
@@ -1836,6 +1886,28 @@
 +
 +};
 +}
+--- a/src/rhythmer/engine/macros.cpp
++++ b/src/rhythmer/engine/macros.cpp
+@@ -8,7 +8,7 @@
+ namespace rhythmer {
+ 
+ const ParamInfo& macro_param(MacroKind kind) {
+-    static const ParamInfo filter {"FILTER", -100, 100, 0, Format::Sweep};
++    static const ParamInfo filter {"DJ FILTER", -100, 100, 0, Format::Sweep};
+     static const ParamInfo echo {"ECHO", 0, 100, 0, Format::Percent};
+     static const ParamInfo space {"SPACE", 0, 100, 0, Format::Percent};
+     switch (kind) {
+--- a/src/rhythmer/engine/plugin_engine.h
++++ b/src/rhythmer/engine/plugin_engine.h
+@@ -48,7 +48,7 @@
+         runner->midi(0xb0, 64, 0);  // sustain up
+         runner->midi(0xb0, 123, 0); // all notes off
+     }
+-    void silence() override { if (runner) runner->silence(); }
++    void silence() override { if (runner) runner->silence(); macros.release(); } // hard stop: discard performance-effect tails too
+     // The track's parameters are its performance knobs (plugin_track); a plug-in's own are the rack's to set.
+     void set_param(int id, int value) override {
+         if (id < 0 || id >= plugin_track::Count) return;
 --- a/src/rhythmer/engine/sampler.cpp
 +++ b/src/rhythmer/engine/sampler.cpp
 @@ -18,6 +18,7 @@
@@ -2585,7 +2657,7 @@
      EngineKind engine = EngineKind::None;
      uint16_t preset = 0;
      char name[name_length] {};
-@@ -344,6 +349,7 @@
+@@ -344,16 +349,21 @@
  // state (what the plug-in saves of itself) travels beside the project, in the
  // file's PLUG section and the rack (plugin/plugin_rack.h), not in here.
  struct PluginRef {
@@ -2593,7 +2665,13 @@
      char path[plugin_path_length] {}; // a .vst3 bundle, a VST2 .so, or an Open MPC plug-in folder; empty: free
      int32_t id = 0;                   // which plug-in of a bundle holding several (its JUCE unique id); 0: its first
      char name[40] {};                 // as the picker named it, for the cards while it is not open
-@@ -354,6 +360,7 @@
+     // TRANSPORT: it hears Play and Stop. Off, it is always told the song is stopped (still the tempo and the place),
+     // so a plug-in with a sequencer of its own plays only the notes it is sent.
+     bool transport = true;
++    // PRESETS: the preset picked last, as "folder/name" ("" none), so its name shows again once the project is opened.
++    // Its sound comes back with the plug-in's state; this only finds the row for it.
++    char preset[128] {};
+     bool used() const { return path[0] != 0; }
  };
  
  struct Project {
@@ -2611,7 +2689,15 @@
  #include "rhythmer/model/fader.h"
  #include "rhythmer/model/pad_params.h"
  #include "rhythmer/model/scales.h"
-@@ -679,6 +680,16 @@
+@@ -647,6 +648,7 @@
+         w.out.insert(w.out.end(), state.begin(), state.end());
+         w.u32(uint32_t(ref.id)); w.text(ref.name); // after the state: which plug-in of a bundle, and its name
+         w.u8(ref.transport ? 1 : 0);              // and TRANSPORT (without it: on)
++        w.text(ref.preset);                       // and the preset picked last (without it: none)
+         w.end(at);
+     }
+     for (unsigned t = 0; t < track_count; ++t) { // a track's own MIDI channel (parity phase 9)
+@@ -679,6 +681,16 @@
          w.u8(n); w.text(s.path); w.text(s.name);
          w.end(at);
      }
@@ -2628,7 +2714,7 @@
      if (prints)
          for (const auto& p : prints->records) { // freeze plan F2a: a print, its file in "<project> Prints"
              at = w.begin("PRNT");
-@@ -728,6 +739,23 @@
+@@ -728,6 +740,23 @@
              project->tempo = uint16_t(std::clamp<unsigned>(r.u16(), 300, 3000));
              project->swing = uint8_t(std::clamp<unsigned>(r.u8(), 50, 75));
              project->root = uint8_t(r.u8() % 12); project->scale = uint8_t(r.u8());
@@ -2652,6 +2738,14 @@
          } else if (name == "TRAK") {
              unsigned t = r.u8();
              if (t >= track_count) continue;
+@@ -1152,6 +1181,7 @@
+             plugin_states[e] = std::move(state);
+             if (!r.done()) { project->plugins[e].id = int32_t(r.u32()); r.text(project->plugins[e].name, sizeof(project->plugins[e].name)); }
+             if (!r.done()) project->plugins[e].transport = r.u8() != 0;
++            if (!r.done()) r.text(project->plugins[e].preset, sizeof(project->plugins[e].preset));
+         } else if (name == "MIDC") { // a track's own MIDI channel; without it none
+             unsigned t = r.u8(), channel = r.u8();
+             if (r.ok && t < track_count) project->tracks[t].midi_channel = uint8_t(channel <= 16 ? channel : 0);
 --- /dev/null
 +++ b/src/rhythmer/pages/break_performance.inc
 @@ -0,0 +1,40 @@
@@ -2742,6 +2836,15 @@
      case Kind::Param: {
          const auto& p = track_param_info(track.engine, track.params, unsigned(b.id));
          auto shown = show(p, b.value);
+@@ -164,7 +179,7 @@
+         if (track.engine == EngineKind::Sampler && b.id == sampler::Level) c.label = "KIT VOLUME";
+         break;
+     }
+-    case Kind::Level: c.label = "LEVEL"; c.value = juce::String(b.value); break;
++    case Kind::Level: c.label = s.ui.page==PageId::Stage&&s.ui.plugin_panel.focused_pad>=0&&track.engine==EngineKind::Plugin?"TRACK LEVEL":"LEVEL"; c.value = juce::String(b.value); break;
+     case Kind::Pan:
+         c.label = "PAN"; c.bipolar = true;
+         c.value = b.value == 0 ? juce::String("C") : (b.value < 0 ? "L" : "R") + juce::String(std::abs(b.value));
 @@ -218,7 +233,15 @@
      case Kind::EuclidHits: c.label = "HITS"; c.value = juce::String(b.value); c.unit = "of " + juce::String(b.max); break; // generators (roadmap P1)
      case Kind::EuclidSteps: c.label = "STEPS"; c.value = juce::String(b.value); break;
@@ -2768,26 +2871,30 @@
          break;
      case Kind::ProjectJump:
          c.label = "JUMP"; c.value = juce::String(b.value + 1); c.unit = "/ " + juce::String(b.max + 1);
-@@ -558,13 +581,17 @@
+@@ -558,12 +581,20 @@
          break;
      }
      case Kind::PluginParam: { // as the shell last read it from the plug-in (plugin/plugin_panel.h)
 -        const auto& card = s.ui.plugin_panel.params[plugin_binding_shown(b.id) % 3];
 +        const auto& panel=s.ui.plugin_panel;unsigned slot=plugin_binding_shown(b.id)%3;
 +        if(panel.design)for(unsigned k=0;k<3;++k)if(panel.params[k].used&&panel.params[k].shown==int(plugin_binding_shown(b.id))){slot=k;break;}
-+        const auto& card=panel.params[slot];
++        const auto* quick=plugin_card(panel,b.id);const bool front=s.ui.page==PageId::Stage&&stage_page_now(s.ui,s.track(),false).kind==StageKind::PluginSound;
++        const auto& card=front&&quick?*quick:panel.params[slot];
          // Its name as the plug-in gives it (capitals, else mixed case, else over two lines: ui/knobs.cpp); its number
          // where it has none.
-         auto name = juce::String::fromUTF8(card.name).trim();
+-        auto name = juce::String::fromUTF8(card.name).trim();
++        auto name = juce::String::fromUTF8(card.name).trim().replace("Velocity Sensitivity","Velocity Sens.");
          c.label = name.isEmpty() ? juce::String(plugin_binding_shown(b.id) + 1) : name.toUpperCase();
 -        if (name.isNotEmpty()) c.label_mixed = name;
-+        if(panel.design)c.label=juce::String(slot+1);
-+        else if (name.isNotEmpty()) c.label_mixed = name;
++        if(front){c.label=name.toUpperCase();c.label_mixed=name;}
++        else if(panel.design)c.label=juce::String(slot+1);
++        else if(name.startsWithIgnoreCase("KIT ")){c.label="KIT / K"+juce::String(slot+1);}
++        else if(panel.layout_revision&&panel.row>=2){
++            c.label=(panel.focused_pad>=0?juce::String("P")+juce::String(panel.focused_pad+1).paddedLeft('0',2)+" / ":juce::String())+"K"+juce::String(slot+1);
++        }else if(name.isNotEmpty())c.label_mixed=name;
          c.value = juce::String::fromUTF8(card.text);
-+        if(!panel.design&&s.ui.plugin_panel.preset[0]&&(juce::String::fromUTF8(card.name)=="Sound"||juce::String::fromUTF8(card.name).endsWith(" Sound"))&&c.value.length()>16)c.value="NAME ABOVE";
          c.fill = std::clamp(b.value / float(plugin_param_max), 0.0f, 1.0f);
          break;
-     }
 --- a/src/rhythmer/pages/common.h
 +++ b/src/rhythmer/pages/common.h
 @@ -13,6 +13,7 @@
@@ -2813,12 +2920,12 @@
  #include <algorithm>
  #include <cmath>
  #include <complex>
-@@ -149,21 +151,44 @@
+@@ -149,21 +151,45 @@
      }
  }
  
 +#include "rhythmer/pages/plugin_home.inc"
-+#include "rhythmer/pages/plugin_design.inc"
++
 +#include "rhythmer/pages/break_performance.inc"
 +
  void draw(Paint& p, const Snapshot& s) {
@@ -2840,6 +2947,7 @@
          bool ours = panel.entry == s.track().plugin;
          if (ours && panel.status == PluginStatus::Ready) // the share of each audio block it takes
              h.left.push_back(pill(Icon::Chip, juce::String(panel.load / 10) + " %", panel.load > 700 ? colour::amber : colour::mid));
++        if(panel.layout_revision&&panel.row>=2)h.left.push_back(pill("EDIT "+juce::String(panel.row-1)+"/"+juce::String(std::max(1,int(panel.rows)-2)),c));
          h.right.push_back(tag_of(s, s.ui.track));
 -        bool presets = ours && panel.programs > 0, chosen = s.track().plugin < max_plugins;
 -        SoftKeys keys {{"PLUG-INS", presets ? "PRESETS" : "", chosen ? "TRANSPORT" : ""}, -1, c};
@@ -2847,11 +2955,11 @@
 -        frame(p, s, keys, h);
 +        bool presets = ours && panel.programs > 0;
 +        bool kit=ours&&juce::String(panel.name)=="Rhythmer Kit";
-+        bool home=s.ui.edit_page[s.ui.track]==0;
++        bool home=false;
 +        if(s.ui.shift){SoftKeys k{{"", "", "TRANSPORT"},-1,c};k.toggles=4;k.lit=s.track().plugin<max_plugins&&s.project.plugins[s.track().plugin].transport?4:0;frame(p,s,k,h);}
-+        else frame(p,s,{{home?"PLUG-INS":s.ui.map_open?"BACK":"MAIN",s.ui.map_open?"":presets?(kit?"KIT PRESETS":"PRESETS"):"",home?(kit?"EDIT PAD":"EDIT SOUND"):(panel.design?(s.ui.map_open?"SELECT":panel.design_count?"PAGES":""):kit?(s.ui.kit_common?"PAD EDIT":"KIT MIX"):"")},-1,c},h);
++        else frame(p,s,{{"PLUG-INS",presets?(kit?"KIT PRESETS":"PRESETS"):"",panel.layout_revision?(s.ui.edit_row[s.ui.track]?(kit&&s.ui.edit_row[s.ui.track]==1?"SAVE":"EDIT"):kit?"PAD SOURCE":"SAVE"):""},-1,c},h);
 +        if(home&&ours&&panel.status==PluginStatus::Ready){plugin_home(p,s,panel,kit);return;}
-+        if(!home&&ours&&panel.design){plugin_design(p,s);return;}
++        if(ours&&panel.design){draw_plugin_view(p,s,s.track().plugin,zone::picture_y);return;}
 +        if(kit&&s.ui.kit_common){
 +            p.text("KIT MIX",zone::pad,zone::picture_y+12,zone::width-2*zone::pad,24,caps_text(colour::text),juce::Justification::centred);
 +            p.text("ALL PADS / ALL BANKS",zone::pad,zone::picture_y+44,zone::width-2*zone::pad,20,plain(colour::sec,type::body),juce::Justification::centred);
@@ -2862,7 +2970,7 @@
          if (s.track().plugin >= max_plugins) { // none yet: B1 picks one from the card
              icon(p, Icon::Plug, zone::width / 2.0f - 14, zone::picture_y + 40, 28, colour::dim, 1.4f);
              p.text("NONE", 0, zone::picture_y + 76, zone::width, 14, caps_text(colour::dim), juce::Justification::centred);
-@@ -184,7 +209,8 @@
+@@ -184,7 +210,8 @@
      unsigned count = edit_page_count(info);
      const auto& before = edit_page_at(info, index + count - 1);
      const auto& after = edit_page_at(info, index + 1);
@@ -2872,7 +2980,7 @@
      if (page.picture == Picture::Mod && !s.ui.map_open) {
          unsigned used = 0;
          for (const auto& r : s.track().mods) used += r.used();
-@@ -210,7 +236,29 @@
+@@ -210,7 +237,21 @@
  unsigned page_count(Context& c) { return std::max(edit_page_count(engine_info(c.track().engine)), 1u); }
  
  void soft(Context& c, int key) {
@@ -2885,33 +2993,19 @@
      if (c.track().engine == EngineKind::Plugin) {
 +        if(c.deep(c.ui.track)){if(key==0)c.back();if(key==2)c.ask_unfreeze(c.ui.track);return;}
 +        if(c.ui.shift&&key==2){c.ui.shift_used=true;c.toggle_plugin_transport(c.track().plugin);return;}
-+        if(key==0&&c.ui.edit_page[c.ui.track]){c.back();return;}
-+        if(c.ui.edit_page[c.ui.track]&&c.ui.plugin_panel.design&&key==2){
-+            if(!c.ui.plugin_panel.design_count)return;
-+            if(c.ui.map_open){c.ui.plugin_design_page[c.track().plugin]=c.ui.map_cursor;c.ui.plugin_design_half[c.track().plugin]=0;c.ui.map_open=false;c.refresh_plugin_panel(c.track().plugin);}
-+            else {c.ui.map_open=true;c.ui.map_cursor=uint8_t(c.ui.plugin_panel.design_page);}return;
++        if(key==2&&c.ui.plugin_panel.layout_revision){
++            const bool kit=std::string(c.ui.plugin_panel.name)=="Rhythmer Kit";
++            c.ui.edit_row[c.ui.track]=kit?uint8_t((c.ui.edit_row[c.ui.track]+1)%3):uint8_t(c.ui.edit_row[c.ui.track]?0:2);
++            if(!c.ui.edit_row[c.ui.track])c.ui.plugin_row[c.track().plugin]=2;
++            c.refresh_plugin_panel(c.track().plugin);return;
 +        }
-+        if(c.ui.map_open)return;
-+        if(key==2&&!c.ui.edit_page[c.ui.track]){
-+            c.ui.edit_page[c.ui.track]=1;c.ui.kit_common=false;c.ui.map_open=false;
-+            if(c.track().plugin<max_plugins){c.ui.plugin_design_page[c.track().plugin]=0;c.ui.plugin_design_half[c.track().plugin]=0;c.ui.plugin_panel.design=false;}
-+            if(c.track().plugin<max_plugins){c.ui.plugin_row[c.track().plugin]=std::min<unsigned>(c.ui.plugin_panel.layout_revision?2:0,c.ui.plugin_panel.rows?c.ui.plugin_panel.rows-1:0);if(c.plugins)c.refresh_plugin_panel(c.track().plugin);}
-+            c.plugin_panel_at=0;return;
-+        }
-+        if(key==2)return;
          if (key == 0) c.open_plugin_picker(UiState::PluginTarget::Instrument);
          if (key == 1 && c.ui.plugin_panel.entry == c.track().plugin && c.ui.plugin_panel.programs > 0) c.open_plugin_presets(c.track().plugin);
          if (key == 2) c.toggle_plugin_transport(c.track().plugin);
-@@ -232,17 +280,31 @@
+@@ -232,17 +273,26 @@
  
  // A PLUGIN track's rows of parameters (the panel knows how many).
  void plugin_rows(Context& c, int delta) {
-+    if(!c.ui.edit_page[c.ui.track]){
-+        const int count=c.ui.plugin_panel.layout_revision?4:2;
-+        c.ui.edit_row[c.ui.track]=uint8_t((int(c.ui.edit_row[c.ui.track])+delta%count+count)%count);
-+        if(c.track().plugin<max_plugins){auto& row=c.ui.plugin_row[c.track().plugin];row=c.ui.edit_row[c.ui.track]==3?1:0;if(c.plugins)c.plugins->panel(c.track().plugin,row,c.ui.plugin_panel);}
-+        c.plugin_panel_at=0;return;
-+    }
 +    if(c.ui.plugin_panel.design){
 +        auto& panel=c.ui.plugin_panel;unsigned entry=c.track().plugin;if(entry>=max_plugins||!panel.design_count)return;
 +        if(c.ui.map_open)c.ui.map_cursor=uint8_t(std::clamp<int>(int(c.ui.map_cursor)+delta,0,panel.design_count-1));
@@ -2921,9 +3015,11 @@
      unsigned entry = c.track().plugin;
      if (entry >= max_plugins || c.ui.plugin_panel.entry != entry || !c.ui.plugin_panel.rows) return;
      auto& row = c.ui.plugin_row[entry];
-     row = uint16_t(std::clamp<int>(row + delta, 0, c.ui.plugin_panel.rows - 1));
+-    row = uint16_t(std::clamp<int>(row + delta, 0, c.ui.plugin_panel.rows - 1));
++    c.ui.edit_row[c.ui.track]=0;
++    row = uint16_t(std::clamp<int>(row + delta,c.ui.plugin_panel.layout_revision?2:0,c.ui.plugin_panel.rows-1));
      c.ui.plugin_panel.row = row;
-+    if(c.plugins)c.plugins->panel(entry,row,c.ui.plugin_panel);
++    if(c.plugins)c.refresh_plugin_panel(entry);
      c.plugin_panel_at = 0; // its cards again at once
  }
  
@@ -2934,7 +3030,7 @@
      if (c.track().engine == EngineKind::Plugin) { plugin_rows(c, delta); return; }
      const auto& info = engine_info(c.track().engine);
      if (!info.page_count) return;
-@@ -256,6 +318,12 @@
+@@ -256,6 +306,12 @@
  }
  
  void push(Context& c) {
@@ -2947,7 +3043,7 @@
      const auto& info = engine_info(c.track().engine);
      if (!info.page_count) return;
      unsigned t = c.ui.track;
-@@ -283,6 +351,6 @@
+@@ -283,6 +339,6 @@
  }
  } // namespace
  
@@ -3304,10 +3400,10 @@
 +}
 --- /dev/null
 +++ b/src/rhythmer/pages/plugin_home.inc
-@@ -0,0 +1,18 @@
+@@ -0,0 +1,14 @@
 +// SPDX-License-Identifier: AGPL-3.0-only
 +#include "rhythmer/pages/performance_art.inc"
-+void plugin_home(Paint& p,const Snapshot& s,const PluginPanel& panel,bool kit) {
++void plugin_home(Paint& p,const Snapshot& s,const PluginPanel& panel,bool /*kit*/) {
 +    const auto name=juce::String::fromUTF8(panel.name);
 +    const float x=zone::pad,w=zone::width-2*zone::pad,top=zone::picture_y;
 +    auto preset=juce::String::fromUTF8(panel.preset);if(preset.isEmpty())preset=panel.status==PluginStatus::Loading?"Loading...":"Choose a preset";
@@ -3316,12 +3412,8 @@
 +    p.fill(x-2,top,std::min(w+4,p.width(name,title)+8),23,colour::bg.withAlpha(.94f));p.text(name,x,top+1,w,21,title);
 +    auto preset_style=plain(colour::sec,type::small);auto lines=p.wrap(preset,preset_style,w,2);
 +    for(int i=0;i<lines.size();i++){float yy=top+24+i*13;p.fill(x-2,yy,std::min(w+4,p.width(lines[i],preset_style)+8),13,colour::bg.withAlpha(.94f));p.text(lines[i],x,yy,w,13,preset_style);}
-+    const int count=panel.layout_revision?4:2,row=s.ui.edit_row[s.ui.track]%count;
-+    const char* groups[]{"MIX","SENDS B / C / D","SOURCE","SAVE"};
-+    const int focus=panel.focused_pad>=0?panel.focused_pad:int(s.track().last_pad);
-+    auto scope=kit?"BANK "+juce::String::charToString(char('A'+focus/16))+" / P"+juce::String(focus+1):s.track().layout==PadLayout::Chromatic?juce::String("CHROMATIC"):juce::String("SCALE");
-+    auto label=scope+"   "+juce::String(row+1)+"/"+juce::String(count)+"  "+(row==2&&kit?"PAD SOURCE":row==3?(kit?"SAVE KIT":"SAVE SOUND"):groups[row]);
-+    p.fill(0,top+128,zone::width,16,colour::bg);p.text(label,x,top+130,w,13,plain(colour::sec,type::small));
++    // Retired layout/page-group caption: keep the footer band clear.
++    p.fill(0,top+128,zone::width,16,colour::bg);
 +}
 --- a/src/rhythmer/pages/plugin_presets_page.cpp
 +++ b/src/rhythmer/pages/plugin_presets_page.cpp
@@ -3344,33 +3436,52 @@
  
 --- a/src/rhythmer/pages/plugin_view.cpp
 +++ b/src/rhythmer/pages/plugin_view.cpp
-@@ -55,7 +55,15 @@
+@@ -55,25 +55,41 @@
          return;
      }
      // Six rows: the three in hand raised on one panel, ticked in their knobs' colours.
 -    constexpr float row_h = 23;
+-    unsigned hand = panel.row * 3u;
 +    if(panel.preset[0]) {
 +        auto style=plain(colour::text,type::body,Weight::SemiBold);
-+        auto lines=p.wrap(juce::String::fromUTF8(panel.preset),style,w-12,3);
++        auto caption=juce::String::fromUTF8(panel.preset);if(panel.focused_pad>=0&&panel.row==2){const bool modified=caption.endsWith(" *");caption=caption.upToFirstOccurrenceOf(" / Pad ",false,false)+" / ALL PADS"+(modified?" *":"");}
++        else if(panel.focused_pad>=0&&panel.row>=3){
++            auto sound=caption.fromFirstOccurrenceOf(" / Pad ",false,false).fromFirstOccurrenceOf(": ",false,false);
++            auto source=juce::String::fromUTF8(panel.design_source);if(source.isEmpty())source="Empty";
++            caption="P"+juce::String(panel.focused_pad+1).paddedLeft('0',2)+" / "+source;
++            if(sound.isNotEmpty())caption+=" / "+sound;
++        }
++        auto lines=p.wrap(caption,style,w-12,3);
 +        const float height=lines.size()*14.0f+2;
 +        p.fill(x,top,w,height,colour::surf);
 +        for(int i=0;i<lines.size();++i)p.text(lines[i],x+6,top+i*14,w-12,14,style);
 +        top+=height+2;
 +    }
 +    const float row_h = panel.preset[0]?std::min(23.0f,(zone::picture_y+zone::picture_h-top-2)/6.0f):23.0f;
-     unsigned hand = panel.row * 3u;
++    unsigned hand = panel.design?unsigned(panel.design_half)*3u:panel.row*3u;
      int first_hand = -1;
-     for (unsigned k = 0; k < panel.window.size(); ++k) if (panel.window_first + k == hand) { first_hand = int(k); break; }
-@@ -70,10 +78,10 @@
-         p.text(juce::String(at + 1), x + 6, y, 22, row_h, plain(colour::dim, type::small, Weight::SemiBold), juce::Justification::centredRight);
+-    for (unsigned k = 0; k < panel.window.size(); ++k) if (panel.window_first + k == hand) { first_hand = int(k); break; }
++    for (unsigned k = 0; k < panel.window.size(); ++k) if ((panel.design?k:panel.window_first+k) == hand) { first_hand = int(k); break; }
+     if (first_hand >= 0) p.fill(x, top + 2 + first_hand * row_h, w, 3 * row_h, colour::panel, 3);
+     for (unsigned k = 0; k < panel.window.size(); ++k) {
+         const auto& param = panel.window[k];
+         if (!param.used) continue;
+-        unsigned at = panel.window_first + k;
++        unsigned at = panel.design?k:panel.window_first+k;
+         bool held = at >= hand && at < hand + 3;
+         float y = top + 2 + k * row_h;
+         if (held) p.fill(x + 4, y + 5, 2.5f, row_h - 10, knob_shade(s.ui.track, at - hand), 1);
+-        p.text(juce::String(at + 1), x + 6, y, 22, row_h, plain(colour::dim, type::small, Weight::SemiBold), juce::Justification::centredRight);
++        p.text(held?juce::String("K")+juce::String(at-hand+1):juce::String(at+1), x + 6, y, 22, row_h, plain(colour::dim, type::small, Weight::SemiBold), juce::Justification::centredRight);
          juce::String name = juce::String::fromUTF8(param.name), value = juce::String::fromUTF8(param.text);
          auto value_style = plain(colour::mid, type::body, Weight::SemiBold);
 -        float vw = held ? 0 : p.width(value, value_style) + 10;
-+        float vw = held ? 0 : std::min(w*0.55f,p.width(value, value_style) + 10);
++        float vw = held ? 0 : std::min(w*0.35f,p.width(value, value_style) + 10);
          auto name_style = plain(held ? colour::text : colour::mid, type::body, held ? Weight::Medium : Weight::Regular);
++        if(!held&&(p.width(name,plain(colour::mid,type::floor))>w-42-vw||p.width(value,plain(colour::mid,type::floor,Weight::SemiBold))>vw-10))vw=0;
          p.text(name, x + 34, y, w - 42 - vw, row_h, p.fit(name, name_style, w - 42 - vw, type::floor));
 -        if (!held) p.text(value, x + w - 8 - vw + 10, y, vw - 10, row_h, value_style, juce::Justification::centredRight);
-+        if (!held) p.text(value, x + w - 8 - vw + 10, y, vw - 10, row_h, p.fit(value,value_style,vw-10,type::floor), juce::Justification::centredRight);
++        if (!held&&vw>0) p.text(value, x + w - 8 - vw + 10, y, vw - 10, row_h, p.fit(value,value_style,vw-10,type::floor), juce::Justification::centredRight);
      }
  }
  
@@ -3404,6 +3515,21 @@
              if (pad < 0 || (key - int(ui.roll_key)) % 2) continue;
              p.text(juce::String(pad % 16 + 1), 0, top + r * row_h - 2, gutter - 4, row_h + 3,
                     plain(key == int(ui.roll_key) ? c : colour::dim, type::small, Weight::SemiBold), juce::Justification::centredRight);
+--- a/src/rhythmer/pages/sampler_common.cpp
++++ b/src/rhythmer/pages/sampler_common.cpp
+@@ -80,7 +80,11 @@
+ 
+ juce::Colour pad_colour(const Snapshot& s, unsigned kit) {
+     uint32_t own = s.track().pads[kit % sampler_pads].colour;
+-    return own ? juce::Colour(0xFF000000u | own) : colour_of(s);
++    if (!own) return colour_of(s);
++    // Preserve the imported RGB value and real pad lights; the screen alone
++    // uses a neutral tone. COLOUR also names the hue for a monochrome display.
++    float light=juce::Colour(0xFF000000u|own).getPerceivedBrightness();
++    return juce::Colour::fromFloatRGBA(light,light,light,1.0f);
+ }
+ 
+ juce::Colour ink_on(juce::Colour fill) { return fill.getPerceivedBrightness() > 0.55f ? ui::colour::bg : ui::colour::text; }
 --- a/src/rhythmer/pages/samples_page.cpp
 +++ b/src/rhythmer/pages/samples_page.cpp
 @@ -44,11 +44,12 @@
@@ -3472,7 +3598,23 @@
  }
 --- a/src/rhythmer/pages/stage_page.cpp
 +++ b/src/rhythmer/pages/stage_page.cpp
-@@ -39,6 +39,7 @@
+@@ -16,6 +16,7 @@
+ // Shift + Push is Back.
+ // The pads play the track; on a kit the pad played is the pad edited.
+ #include "rhythmer/engine/arp.h"
++#include "rhythmer/engine/macros.h"
+ #include "rhythmer/engine/dsp.h"
+ #include "rhythmer/engine/effect_info.h"
+ #include "rhythmer/engine/midi_engine.h"
+@@ -26,6 +27,7 @@
+ #include "rhythmer/shell/key_pick.h"
+ #include "rhythmer/shell/meter_lights.h"
+ #include "rhythmer/shell/new_track.h"
++#include "rhythmer/shell/pad_colour.h"
+ #include "rhythmer/shell/sound_list.h"
+ #include "rhythmer/shell/print_engine.h"
+ #include "rhythmer/shell/stage_map.h"
+@@ -39,6 +41,7 @@
  #include <vector>
  
  namespace rhythmer {
@@ -3480,7 +3622,7 @@
  namespace {
  using namespace ui;
  
-@@ -277,7 +278,7 @@
+@@ -277,7 +280,7 @@
      const bool pad_view = t.engine == EngineKind::Sampler && !s.ui.shift;
      const auto& pad = t.pads[t.last_pad % sampler_pads];
      auto send_of = [&](unsigned b) { return pad_view ? (pad.used() ? pad.sends[b] : 0) : m.sends[b]; };
@@ -3489,7 +3631,7 @@
      if (pad_view && title.isEmpty()) { char label[4]; pad_label(t.last_pad % sampler_pads, label); title = label; } // an empty pad: its place
      p.text(title, px, top + 4, 140, 20, p.fit(title, plain(colour::text, type::list, Weight::SemiBold), 140, type::floor));
      float mx = px + 4, my = top + 36, mh = zone::picture_h - 44;
-@@ -587,6 +588,7 @@
+@@ -587,6 +590,7 @@
      auto x_of = [&](float at) { return wx + (at - from) / (to - from) * ww; };
      p.g.saveState();
      p.g.reduceClipRegion(juce::Rectangle<int>(int(wx), int(wy) - 3, int(ww + 1), int(wh + 6)));
@@ -3497,6 +3639,159 @@
      float sx = x_of(region_from), ex = x_of(region_to);
      p.fill(sx, wy, ex - sx, wh, c.withAlpha(0.12f));
      // The pad as it is heard: a head a voice, the newest with its wake (not on Cloud, whose grains are the picture).
+@@ -793,18 +797,24 @@
+     p.fill(0, zone::picture_y, zone::width, zone::height - zone::picture_y, colour::bg); // the knob strip too: no pots here
+     juce::String channel = juce::String::fromUTF8("MIDI \xc2\xb7 CH ") + juce::String(std::clamp<int>(s.ui.new_channel, 1, 16));
+     std::vector<CarouselCard> cards(new_choice_count);
+-    cards[size_t(NewChoice::Plugin)] = {Icon::Plug, "SYNTH", "Plugin", "VST CLAP LV2"};
+-    cards[size_t(NewChoice::Kit)] = {Icon::Pads, "KIT", "Empty", "NO SAMPLES"};
++    cards[size_t(NewChoice::Plugin)] = {Icon::Plug, "PLUG-IN", "Synth", "VST CLAP LV2"};
++    cards[size_t(NewChoice::Kit)] = {Icon::Pads, "KIT", "Empty", "EMPTY PADS"};
+     cards[size_t(NewChoice::Samples)] = {Icon::Folder, "KIT", "Card", "SAMPLES"};
+     cards[size_t(NewChoice::Record)] = {Icon::Mic, "KIT", "Input", "RECORD"};
+     cards[size_t(NewChoice::MidiOut)] = {Icon::Din, "MIDI", "Out jack", channel};
+     cards[size_t(NewChoice::MidiUsb)] = {Icon::Din, "MIDI", "USB-C", channel};
+     cards[size_t(NewChoice::MidiAllUsb)] = {Icon::Din, "MIDI", "All USB", channel};
+-    carousel(p, cards, new_pick_shown(s.ui, s.now), colour_of(s), zone::picture_y + 8, zone::height - zone::picture_y - 12);
++    p.text("PLUG-IN / SAMPLE KIT / MIDI", zone::pad, zone::picture_y + 4, zone::width - 2 * zone::pad, 16, caps_text(colour::sec, type::small), juce::Justification::centred);
++    carousel(p, cards, new_pick_shown(s.ui, s.now), colour_of(s), zone::picture_y + 24, zone::height - zone::picture_y - 52);
++    p.text("TURN TO CHOOSE / PUSH TO LOAD", zone::pad, zone::height - 23, zone::width - 2 * zone::pad, 16, plain(colour::sec, type::small), juce::Justification::centred);
+ }
+ 
+ void bars_picture(Paint& p, const Snapshot& s, const StagePage& page, bool shift_row, float y0 = top) {
+     std::vector<Row> list;
++    if(page.kind==StageKind::PluginPerform){
++        for(unsigned n=0;n<3;++n){const auto& t=s.track();const auto& pi=track_param_info(t.engine,t.params,n);auto shown=show(pi,t.params[n]);list.push_back({pi.label,{},juce::String(shown.value)+(shown.unit.empty()?"":" "+juce::String(shown.unit)),gauge_of(pi,t.params[n]),bipolar(pi),knob_shade(s.ui.track,n)});}
++        rows(p,"TRACK PERFORMANCE",list,96,y0,bottom);return;
++    }
+     const auto& ids = shift_row ? page.shift : page.params;
+     for (unsigned n = 0; n < 3; ++n) if (ids[n] >= 0) list.push_back(param_row(s, ids[n], n, !shift_row));
+     if (list.empty()) return;
+@@ -817,7 +827,8 @@
+ void colours_picture(Paint& p, const Snapshot& s) {
+     const auto& t = s.track();
+     const unsigned bank = t.bank % sampler_banks;
+-    constexpr float gap = 4, y0 = top + 4, w = (pw - 3 * gap) / 4, h = (bottom - top - 8 - 3 * gap) / 4;
++    constexpr float gap = 4, y0 = top + 18, w = (pw - 3 * gap) / 4, h = (bottom - top - 22 - 3 * gap) / 4;
++    p.text("PAD LIGHT COLOURS", px, top, pw, 13, caps_text(colour::sec));
+     for (unsigned n = 0; n < 16; ++n) {
+         const unsigned kit = bank * 16 + n, row = 3 - n / 4, column = n % 4;
+         const float x = px + column * (w + gap), y = y0 + row * (h + gap);
+@@ -827,6 +838,9 @@
+         if (kit == t.last_pad) p.ring(x - 2, y - 2, w + 4, h + 4, colour::text, 5, 2);
+         char label[4]; pad_label(kit, label);
+         auto name = used ? pad_name(s, kit, true) : juce::String(label);
++        const int choice=colour_choice(t.pads[kit].colour);
++        auto hue=juce::String(!used?"EMPTY":choice==colour_track?"TRACK":choice==colour_own?"CUSTOM":ui::track_colour_names[size_t(choice-1)]);
++        p.text(juce::String(label)+" "+hue,x+3,y+1,w-6,11,p.fit(juce::String(label)+" "+hue,plain(ink_on(fill),type::floor),w-6,type::floor));
+         auto style = plain(used ? ink_on(fill) : colour::dim, type::small, Weight::SemiBold);
+         p.text(name, x + 5, y + h - 15, w - 10, 13, p.fit(name, style, w - 10, type::floor));
+     }
+@@ -890,6 +904,7 @@
+ 
+ ui::SoftKeys stage_keys(const Snapshot& s) {
+     const auto& t = s.track();
++    if(!t.used())return SoftKeys{{"BACK","SAMPLE KIT","MIDI"},-1,colour_of(s)};
+     const auto& g = stage_groups(t.engine);
+     const bool instrument = instrument_pad(s);
+     auto at = stage_at(s.ui, t, instrument);
+@@ -930,9 +945,12 @@
+     const auto& t = s.track();
+     const auto& panel = s.ui.plugin_panel;
+     if (!plugin_ready(s)) { draw_plugin_view(p, s, t.plugin, top); return; }
++    const bool artwork = panel.layout_revision && performance_kind(plugin_name(s,t.plugin)) < 20;
++    if (artwork) performance_art(p, s, plugin_name(s, t.plugin), juce::String::fromUTF8(panel.preset),
++                                px + 4, top + 43, pw - 8, bottom - top - 65, int(t.last_pad), 1.0f, true);
+     auto poster_at = [&](const juce::String& name, juce::Colour colour) {
+-        auto poster = p.fit(name, plain(colour, 30, Weight::SemiBold), pw - 12, type::title);
+-        p.text(name, px + 4, top + 14, pw - 12, 36, poster);
++        auto poster = p.fit(name, plain(colour, artwork ? 22 : 30, Weight::SemiBold), pw - 12, artwork ? type::floor : type::title);
++        p.text(name, px + 4, top + (artwork ? 0 : 14), pw - 12, artwork ? 25 : 36, poster);
+     };
+     juce::String format = juce::String::fromUTF8(panel.format);
+     if (!plugin_presets(s)) {
+@@ -949,16 +967,27 @@
+     auto name_of = [&](int n) { return juce::String::fromUTF8(list[size_t(n)].name.c_str()); };
+     if (at < 0) poster_at("No preset yet", colour::sec);
+     else poster_at(name_of(at), s.ui.preset_due ? colour::amber : colour::text);
+-    juce::String sub = plugin_name(s, t.plugin) + (format.isNotEmpty() ? dot + format : juce::String());
+-    p.text(sub, px + 6, top + 54, pw - 12, 16, p.fit(sub, plain(colour::sec, type::body), pw - 12, type::floor));
++    juce::String sub = plugin_name(s, t.plugin) + (panel.focused_pad>=0?dot+"ALL PADS":(format.isNotEmpty()?dot+format:juce::String()));
++    if(t.params[0]||t.params[1]||t.params[2])sub+=dot+"PERFORM ON";
++    p.text(sub, px + 6, top + (artwork ? 26 : 54), pw - 12, 16, p.fit(sub, plain(colour::sec, type::body), pw - 12, type::floor));
+     auto side = plain(colour::mid, type::body);
++    // The selected poster retains bank/name. Neighbour cues may omit a bank
++    // prefix when it cannot fit the half-width box at the readable floor.
++    auto neighbour = [&](int n) {
++        auto name=name_of(n);
++        if(p.width(name,plain(colour::mid,type::floor))>pw/2-20&&name.contains(" / "))
++            name=name.fromLastOccurrenceOf(" / ",false,false);
++        return name;
++    };
+     if (at > 0) {
++        auto name=neighbour(at-1);
+         icon(p, Icon::ChevronLeft, px, bottom - 16, 10, colour::dim, 1.6f);
+-        p.text(name_of(at - 1), px + 13, bottom - 19, pw / 2 - 20, 16, p.fit(name_of(at - 1), side, pw / 2 - 20, type::floor));
++        p.text(name, px + 13, bottom - 19, pw / 2 - 20, 16, p.fit(name, side, pw / 2 - 20, type::floor));
+     }
+     if (at + 1 < int(list.size())) {
++        auto name=neighbour(at+1);
+         icon(p, Icon::ChevronRight, px + pw - 10, bottom - 16, 10, colour::dim, 1.6f);
+-        p.text(name_of(at + 1), px + pw / 2, bottom - 19, pw / 2 - 13, 16, p.fit(name_of(at + 1), side, pw / 2 - 20, type::floor),
++        p.text(name, px + pw / 2, bottom - 19, pw / 2 - 13, 16, p.fit(name, side, pw / 2 - 20, type::floor),
+                juce::Justification::centredRight);
+     }
+ }
+@@ -999,7 +1028,7 @@
+         h.left.push_back(pill((at >= 0 ? juce::String(at + 1) : juce::String::fromUTF8("\xe2\x80\x93")) + " / " + juce::String(int(s.presets.list.size()))));
+     } else if (page.kind == StageKind::PluginEdit && plugin_ready(s)) { // the share of each audio block it takes, as Edit's
+         const auto& panel = s.ui.plugin_panel;
+-        h.left.push_back(pill(Icon::Chip, juce::String(panel.load / 10) + " %", panel.load > 700 ? colour::amber : colour::mid));
++        h.left.push_back(pill(panel.layout_revision&&panel.row>=2?juce::String("EDIT ")+juce::String(panel.row-1)+"/"+juce::String(std::max(1,int(panel.rows)-2)):juce::String(panel.load/10)+" %"));
+     } else if (page.kind == StageKind::Arp || page.kind == StageKind::Chord) { // on or off, as the LED on the MPC would say
+         bool on = page.kind == StageKind::Arp ? t.arp : t.chord;
+         h.left.push_back(pill(on ? Icon::Check : Icon::None, on ? "ON" : "OFF", on ? c : colour::mid));
+@@ -1025,11 +1054,16 @@
+     if (!t.used()) { // what it becomes: B1 CANCEL to the nearest track that is not empty
+         bool any = false;
+         for (const auto& other : s.project.tracks) any |= other.used();
+-        keys = SoftKeys {{any ? "CANCEL" : "", "", ""}, -1, c, {any ? KeyIcon::Back : KeyIcon::None, KeyIcon::None, KeyIcon::None}};
++        keys = SoftKeys {{any ? "BACK" : "", "SAMPLE KIT", "MIDI"}, -1, c, {any ? KeyIcon::Back : KeyIcon::None, KeyIcon::None, KeyIcon::None}};
+     }
+     frame(p, s, keys, h);
+     if (!t.used()) { new_track_picture(p, s); return; }
+     if (frozen) { frozen_picture(p, s); return; }
++    if(t.engine==EngineKind::Sampler&&t.break_bars&&page.kind==StageKind::Trim&&!t.pads[t.last_pad%sampler_pads].used()){
++        p.text("Break Engine",px,top,pw,23,plain(colour::text,type::title,Weight::SemiBold));
++        performance_art(p,s,"Break Engine","No loop",px,top+25,pw,bottom-top-50,-1,0.8f,true);
++        p.text("PUSH TO LOAD A LOOP",px,bottom-20,pw,18,caps_text(colour::text),juce::Justification::centred);return;
++    }
+     switch (page.picture) {
+     case StagePicture::Preset: preset_picture(p, s); break;
+     case StagePicture::Filter: filter_picture(p, s, page); break;
+@@ -1072,7 +1106,9 @@
+     }
+     c.stage_tick(UINT32_MAX); // a sound still waiting to load lands first
+     if (!c.track().used()) { // B1 CANCEL: the nearest track that is not empty, on the page this one was picked on
+-        if (key == 0) cancel_new_track(c);
++        if(key==0)cancel_new_track(c);
++        if(key==1)make_new_track(c,NewChoice::Kit);
++        if(key==2)make_new_track(c,NewChoice::MidiOut);
+         return;
+     }
+     if (stage_opens_edit(c.track(), unsigned(key))) { c.open(PageId::Edit); return; } // a MIDI track's B3 EDIT
+@@ -1104,7 +1140,10 @@
+ void push(Context& c) {
+     auto& t = c.track();
+     const auto& page = stage_page_now(c.ui, t, stage_instrument(c.project, t));
+-    if (!t.used()) { make_new_track(c, NewChoice(c.ui.new_pick % new_choice_count)); return; } // the card in the middle
++    if (!t.used()) { make_new_track(c,NewChoice(c.ui.new_pick % new_choice_count)); return; }
++    if(t.engine==EngineKind::Sampler&&t.break_bars&&!t.pads[t.last_pad%sampler_pads].used()){
++        c.ui.break_browse=true;c.ui.break_load_b=false;c.ui.break_track=c.ui.track;c.ui.break_bars=t.break_bars;c.project.gen8.bars=t.break_bars;c.open(PageId::Samples);c.notice("Choose loop A");return;
++    } // the card in the middle
+     if (page.kind == StageKind::Preset) { c.stage_tick(UINT32_MAX); c.open(PageId::Sounds); return; }
+     if (page.kind == StageKind::Fx && !t.fx.count()) { // nothing yet: the picker on the track's chain, to add the first
+         c.ui.fx_loop = -1;
 --- a/src/rhythmer/pages/step_edit_page.cpp
 +++ b/src/rhythmer/pages/step_edit_page.cpp
 @@ -252,6 +252,13 @@
@@ -3608,6 +3903,35 @@
 +    for(unsigned k=0;k<3;++k)out.params[k]=out.window[out.design_half*3+k];
 +    if(sound_rack_revision(h->instance.get())!=out.layout_revision){out.params={};out.window={};out.design=false;out.status=PluginStatus::Loading;}
 +}
+--- /dev/null
++++ b/src/rhythmer/plugin/kit_filter.h
+@@ -0,0 +1,26 @@
++// SPDX-License-Identifier: AGPL-3.0-only
++// Copyright (C) 2026 jazzy rhythmer
++#pragma once
++#include "rhythmer/engine/effects.h"
++#include <array>
++#include <cstdint>
++namespace rhythmer {
++using KitFilterValues=std::array<int16_t,3>;
++// The existing OS SVF, owned by an instrument or Kit engine. No insert slot, delay block,
++// external routing, allocation or lock is needed while audio runs.
++class KitFilterStage {
++public:
++    KitFilterStage(){filter.set_bypass(true);filter.set_kind(EffectKind::Filter,pool);}
++    void silence(){filter.clear();}
++    void process(const KitFilterValues& values,uint64_t generation,float* left,float* right,unsigned frames){
++        const bool open=values[0]==100&&values[1]==0&&values[2]==0;
++        const float rate=dsp::sample_rate();
++        if(generation!=epoch||rate!=last_rate){filter.set_bypass(open);filter.set_kind(EffectKind::Filter,pool);epoch=generation;last_rate=rate;last={{-1,-1,-1}};}
++        if(values!=last){filter.set_params({{values[0],values[1],values[2],0,0,0}});last=values;}
++        filter.set_bypass(open);filter.process(left,right,frames);
++    }
++private:
++    DelayPool pool{0};Effect filter;
++    KitFilterValues last{{-1,-1,-1}};uint64_t epoch=0;float last_rate=0;
++};
++}
 --- a/src/rhythmer/plugin/plugin_files.cpp
 +++ b/src/rhythmer/plugin/plugin_files.cpp
 @@ -163,6 +163,14 @@
@@ -3707,7 +4031,7 @@
      int16_t value = 0;  // 0..1000 of its range
      int16_t initial = 0; // its default, 0..1000 (Erase + pot)
      uint16_t steps = 0;  // the values it takes when fewer than plugin_param_max (Shift + wheel steps by one), else 0
-@@ -31,8 +38,16 @@
+@@ -31,14 +38,23 @@
      uint8_t entry = no_plugin;     // Project::plugins
      PluginStatus status = PluginStatus::None;
      bool instrument = false;
@@ -3724,9 +4048,33 @@
      char format[8] {};             // VST3, VST2, ARMV7
      char error[64] {};             // why it failed
      uint16_t row = 0, rows = 0;    // rows of three parameters
-@@ -99,6 +114,11 @@
+     uint16_t load = 0;             // the share of a block it takes, in tenths of a percent
+     uint16_t programs = 0;         // its named programs (presets), for PRESETS
+     std::array<PluginPanelParam, 3> params {};
++    std::array<PluginPanelParam, 3> quick {}; // source-authoritative PRESETS mirrors
+     // The six parameters around the row in hand, its own three among them (the row before, or at the top the row
+     // after), for the page's list; `window_first` the first one's place in the list of shown ones.
+     std::array<PluginPanelParam, 6> window {};
+@@ -69,6 +85,14 @@
+ private:
+     std::shared_ptr<const std::vector<PluginProgram>> items_;
+ };
++// A program's key as PluginRef::preset keeps it: "folder/name", or the name alone.
++inline std::string program_key(const PluginProgram& p) { return p.folder.empty() ? p.name : p.folder + "/" + p.name; }
++// The program with that key (its number in the plug-in), -1 none.
++inline int program_keyed(const PluginProgramList& list, const std::string& key) {
++    if (key.empty()) return -1;
++    for (const auto& p : list) if (program_key(p) == key) return p.index;
++    return -1;
++}
+ struct PluginPrograms {
+     uint8_t entry = no_plugin;
+     PluginProgramList list;
+@@ -98,7 +122,13 @@
+ constexpr unsigned plugin_binding_shown(int32_t id) { return unsigned(id) & 0xffff; }
  // The panel's card for a binding id, null when that parameter is not on K1-K3 now.
  inline const PluginPanelParam* plugin_card(const PluginPanel& panel, int32_t id) {
++    if(panel.entry==plugin_binding_entry(id))for(const auto& card:panel.quick)if(card.used&&card.shown==int(plugin_binding_shown(id)))return &card;
      unsigned shown = plugin_binding_shown(id);
 +    if(panel.design){
 +        if(panel.entry!=plugin_binding_entry(id))return nullptr;
@@ -3776,7 +4124,16 @@
      PluginClock clock;
      EffectClock now;           // the engine host's clock as this render found it
      uint64_t block_seen = ~uint64_t(0);
-@@ -466,6 +473,7 @@
+@@ -439,6 +446,8 @@
+             auto& entry = entries[e];
+             entry.transport = project.plugins[e].transport;
+             if (entry.live) entry.live->transport.store(entry.transport, std::memory_order_relaxed);
++            entry.preset = project.plugins[e].preset;
++            if (entry.live && entry.live->program < 0) entry.live->program = program_keyed(entry.live->programs, entry.preset);
+             std::string want = project.plugins[e].used() && referenced(project, e) ? project.plugins[e].path : "";
+             int32_t id = want.empty() ? 0 : project.plugins[e].id;
+             // Freeze plan F2d: used only by deep-frozen tracks, it sleeps (plugin/plugin_sleep.h).
+@@ -466,6 +475,7 @@
      for (auto& job : wanted) push(std::move(job));
  }
  
@@ -3784,7 +4141,7 @@
  void PluginRack::set_states(PluginStates states) {
      std::lock_guard<std::mutex> held(lock);
      for (unsigned e = 0; e < max_plugins; ++e) {
-@@ -574,6 +582,7 @@
+@@ -574,6 +584,7 @@
      if (entry >= max_plugins) return;
      out.entry = uint8_t(entry);
      std::lock_guard<std::mutex> held(lock);
@@ -3792,24 +4149,64 @@
      for (const auto& v : entries[entry].file.drums) {
          unsigned k = unsigned(v.key) - DrumVoices::first;
          if (v.key < DrumVoices::first || k >= DrumVoices::keys) continue;
-@@ -599,6 +608,12 @@
+@@ -599,6 +610,14 @@
          return;
      }
      out.instrument = h->instrument;
++    const auto snapshot_revision=sound_rack_revision(h->instance.get());
 +    const int sound_controls=sound_rack_parameter_count(h->instance.get());
 +    if(sound_controls>=0) {h->shown.resize(size_t(sound_controls));std::iota(h->shown.begin(),h->shown.end(),0);}
 +    put(out.preset,sizeof(out.preset),sound_rack_preset_name(h->instance.get()).toStdString());
 +    if(!out.preset[0]&&h->instance->getNumPrograms()>0)put(out.preset,sizeof(out.preset),h->instance->getProgramName(h->instance->getCurrentProgram()).toStdString());
-+    out.layout_revision=sound_rack_revision(h->instance.get());
++    out.layout_revision=snapshot_revision;
 +    out.focused_pad=int16_t(sound_rack_focus(h->instance.get()));
++    put(out.design_source,sizeof(out.design_source),sound_rack_source_name(h->instance.get()).toStdString());
      out.qlinks = h->qlinks;
      out.rows = uint16_t((h->shown.size() + 2) / 3);
      out.row = uint16_t(out.rows ? std::min<unsigned>(row, out.rows - 1u) : 0);
-@@ -630,14 +645,17 @@
+@@ -607,7 +626,7 @@
+     const auto& params = h->instance->getParameters();
+     auto read = [&](size_t at, PluginPanelParam& card) {
+         auto* p = params[h->shown[at]];
+-        card.used = true;
++        card.used = true; card.shown=int16_t(at);
+         std::string name = p->getName(int(sizeof(card.name) - 1)).trim().toStdString();
+         put(card.name, sizeof(card.name), h->nam ? nam_card_name(name) : name);
+         float v = p->getValue();
+@@ -617,27 +636,44 @@
+         int steps = p->getNumSteps();
+         card.steps = uint16_t(steps > 1 && steps < plugin_param_max ? steps : 0);
+     };
++    auto quick=sound_rack_quick_parameters(h->instance.get());
++    if(sound_controls<0){
++        const std::array<std::vector<std::string>,3> preferred{{{"cutoff","filter cutoff","vcf cutoff","lpf cut"},{"resonance","filter resonance","vcf reso","lpf peak"},{"filter env","vcf env","timbre","tone","output level","volume"}}};
++        for(unsigned k=0;k<3;++k)for(const auto& wanted:preferred[k]){int found=-1,count=0;for(unsigned at=0;at<h->shown.size();++at)if(params[h->shown[at]]->getName(64).trim().toLowerCase().toStdString()==wanted){found=int(at);++count;}if(count==1&&std::find(quick.begin(),quick.end(),found)==quick.end()){quick[k]=found;break;}}
++        for(unsigned k=0;k<3;++k)if(quick[k]<0)for(unsigned at=0;at<h->shown.size();++at)if(std::find(quick.begin(),quick.end(),int(at))==quick.end()){quick[k]=int(at);break;}
++    }
++    for(unsigned k=0;k<3;++k)if(quick[k]>=0&&unsigned(quick[k])<h->shown.size())read(unsigned(quick[k]),out.quick[k]);
+     for (unsigned k = 0; k < 3; ++k) {
+         size_t at = size_t(out.row) * 3 + k;
+         if (at >= h->shown.size()) break;
+         read(at, out.params[k]);
      }
- }
- 
+     out.window_first = uint16_t((out.row > 0 ? out.row - 1u : 0u) * 3u);
++    if(sound_controls>=0&&out.row>=2)out.window_first=std::max<uint16_t>(6,out.window_first);
+     for (unsigned k = 0; k < out.window.size(); ++k) {
+         size_t at = size_t(out.window_first) + k;
+         if (at >= h->shown.size()) break;
+         read(at, out.window[k]);
+     }
+-}
+-
 -void PluginRack::set_param(unsigned entry, unsigned shown_index, int value) {
++    if(sound_controls>=0&&sound_rack_revision(h->instance.get())!=snapshot_revision){
++        // Never publish a mixed old-pad/new-pad header and control snapshot.
++        // A fresh complete snapshot arrives on the next ordinary UI tick.
++        out.params={};out.quick={};out.window={};out.rows=0;out.programs=0;
++        out.focused_pad=-1;out.design_source[0]=0;out.layout_revision=0;out.status=PluginStatus::Loading;
++    }
++}
++
 +#include "rhythmer/plugin/design_panel.inc"
 +
 +void PluginRack::set_param(unsigned entry, unsigned shown_index, int value, uint32_t revision) {
@@ -3825,18 +4222,35 @@
  }
  
  PluginPrograms PluginRack::programs(unsigned entry) const {
-@@ -647,8 +665,9 @@
+@@ -647,8 +683,9 @@
      std::lock_guard<std::mutex> held(lock);
      const auto& e = entries[entry];
      if (!e.live || e.status != PluginStatus::Ready) return out;
 +    if(is_sound_rack(e.live->instance.get())&&e.live->programs.size()!=size_t(e.live->instance->getNumPrograms()))e.live->programs=named_programs(*e.live->instance);
      out.list = e.live->programs;
 -    out.current = e.live->program;
-+    out.current = is_sound_rack(e.live->instance.get())?e.live->instance->getCurrentProgram():e.live->program;
++    out.current = e.live->switching?e.live->program:is_sound_rack(e.live->instance.get())?e.live->instance->getCurrentProgram():e.live->program;
      out.loading = e.live->switching;
      out.finding = e.live->finding;
      return out;
-@@ -744,6 +763,7 @@
+@@ -663,6 +700,7 @@
+         if (!e.live || e.status != PluginStatus::Ready) return;
+         e.live->program = program;
+         e.live->switching = true;
++        for (const auto& p : e.live->programs) if (p.index == program) { e.preset = program_key(p); break; }
+         job.generation = e.generation;
+     }
+     push(std::move(job));
+@@ -684,7 +722,7 @@
+         instance = e.live->instance.get(); // freed only on this thread, so it outlives the switch
+     }
+     if (program >= 0 && program < instance->getNumPrograms()) {
+-        if (instance->getCurrentProgram() == program && instance->getNumPrograms() > 1 && !dynamic_cast<ClapInstance*>(instance)) {
++        if (instance->getCurrentProgram() == program && instance->getNumPrograms() > 1 && !dynamic_cast<ClapInstance*>(instance) && !is_sound_rack(instance)) {
+             instance->setCurrentProgram(program == 0 ? 1 : 0);
+             std::this_thread::sleep_for(std::chrono::milliseconds(150));
+         }
+@@ -744,6 +782,7 @@
      push(std::move(job));
  }
  
@@ -3844,7 +4258,7 @@
  PluginRack::View PluginRack::view() const {
      std::lock_guard<std::mutex> held(lock);
      return shown;
-@@ -860,6 +880,7 @@
+@@ -860,6 +899,7 @@
  PluginRack::Known PluginRack::probe(const PluginFile& file) {
      Known found;
      found.path = file.path;
@@ -3852,7 +4266,7 @@
      int8_t kind = -1;
      std::string error;
      fs::path stage = stage_root() / (stage_tag + "probe-" + std::to_string(++stage_count));
-@@ -935,6 +956,7 @@
+@@ -935,6 +975,7 @@
      // A path relative to the card's top (a track Rhythmer's own synth was), or one in the card's old top-level
      // Plugins folder: on the card in now, in Rhythmer/Plugins.
      std::string path = card_plugin_path(top, job.path);
@@ -3860,7 +4274,7 @@
      auto file = describe_plugin(path);
      std::vector<uint8_t> state;
      {
-@@ -969,8 +991,35 @@
+@@ -969,8 +1010,35 @@
      double device_rate = job.rate > 0 ? job.rate : 44100.0;
      double rate = file.fixed_rate ? double(file.fixed_rate) : device_rate; // what the plug-in itself runs at
      int block = int(EngineHost::block);
@@ -3898,7 +4312,7 @@
          juce::OwnedArray<juce::PluginDescription> types;
          auto host = juce_types(file.format, staged_path(file, stage), types);
          const juce::PluginDescription* chosen = types.isEmpty() ? nullptr : types[0];
-@@ -1014,7 +1063,7 @@
+@@ -1014,7 +1082,7 @@
      handle->format = file.format;
      handle->programs = named_programs(*handle->instance);
      handle->finding = file.format == PluginFormat::Clap; // looked for once it plays: find_presets()
@@ -3907,6 +4321,23 @@
          auto order = qlink_order(file.path);
          if (!order.empty()) {
              std::vector<int> ordered;
+@@ -1044,6 +1112,7 @@
+             handles.push_back(std::move(handle));
+             if (entry.live) retiring.push_back(entry.live);
+             raw->transport.store(entry.transport, std::memory_order_relaxed); // before the audio thread first runs it
++            raw->program = program_keyed(raw->programs, entry.preset); // its state already plays it: the name only
+             entry.live = raw;
+             entry.status = PluginStatus::Ready;
+             entry.file.instrument = is_instrument ? 1 : 0;
+@@ -1082,6 +1151,8 @@
+         if (e.generation == generation && e.live && e.live->instance.get() == clap) {
+             e.live->programs = PluginProgramList(std::move(list));
+             e.live->finding = false;
++            if (e.live->program < 0) e.live->program = program_keyed(e.live->programs, e.preset); // as at opening
++
+         }
+     }
+     changed();
 --- a/src/rhythmer/plugin/plugin_rack.h
 +++ b/src/rhythmer/plugin/plugin_rack.h
 @@ -64,6 +64,7 @@
@@ -3935,15 +4366,24 @@
      unsigned changes() const { return change_count.load(std::memory_order_acquire); } // the view or a status moved
      // For `status`: each entry in use as entry:state:name:format:load (tenths of a percent), comma separated.
      std::string summary() const;
+@@ -114,6 +117,7 @@
+     struct Entry : PluginPlan {           // its bookkeeping (plugin/plugin_sleep.h), and:
+         PluginHandle* live = nullptr;     // offered to the host (owned in `handles`)
+         bool transport = true;            // the project's TRANSPORT for it (PluginRef::transport), for the next one too
++        std::string preset;               // the preset picked last (PluginRef::preset), named again when it reopens
+         std::string error;
+         PluginFile file;
+     };
 --- /dev/null
 +++ b/src/rhythmer/plugin/sound_rack.cpp
-@@ -0,0 +1,468 @@
+@@ -0,0 +1,513 @@
 +// SPDX-License-Identifier: AGPL-3.0-only
 +// Copyright (C) 2026 jazzy rhythmer
 +#include "rhythmer/plugin/sound_rack.h"
 +#include "rhythmer/plugin/rate_bridge.h"
 +#include "rhythmer/plugin/design_pages.h"
 +#include "rhythmer/plugin/vst2_instance.h"
++#include "rhythmer/plugin/kit_filter.h"
 +#include <atomic>
 +#include <array>
 +#include <condition_variable>
@@ -3956,7 +4396,7 @@
 +namespace rhythmer {
 +using namespace juce;
 +namespace {
-+constexpr int pads=64, controls=1024, base=6;
++constexpr int pads=64, controls=1024;
 +var object() {return var(new DynamicObject());}
 +void put(var& v,const Identifier& key,const var& value){v.getDynamicObject()->setProperty(key,value);}
 +var get(const var& v,const Identifier& key){return v.getProperty(key,{});}
@@ -3989,13 +4429,15 @@
 +    std::array<std::vector<int>,pads> orders,ordinals;
 +    std::array<std::vector<String>,pads> names;
 +    std::array<bool,pads> edited{};
++    KitFilterValues kit_filter{{100,0,0}},kit_filter_defaults{{100,0,0}};
++    uint64_t filter_epoch=0;bool filter_edited=false;
 +};
 +struct Request {int kind,index;float value=0;std::vector<uint8_t> bytes;uint32_t revision=0;Request(int k=0,int i=0,float v=0):kind(k),index(i),value(v){}};
 +
 +class Rack final:public AudioPluginInstance {
 +public:
 +    Rack(var c,int s,SoundLoader l,double r,int b):AudioPluginInstance(BusesProperties().withOutput("Output",AudioChannelSet::stereo(),true)),
-+        catalog(std::move(c)),single(s),loader(std::move(l)),rate(r),block(b){
++        catalog(std::move(c)),single(s),base(s<0||output_filter_engine(text(engine(s),"name"))?9:6),loader(std::move(l)),rate(r),block(b){
 +        auto directory=text(catalog,"user_directory");
 +        if(directory.isNotEmpty()) {
 +            String folder=single<0?String():File::createLegalFileName(text(engine(single),"folder"));
@@ -4006,6 +4448,7 @@
 +            if(single>=0&&folder!=old_folder)legacy_directories.push_back(File(directory).getChildFile("Sounds/"+old_folder));
 +            for(int i=0;i<64;++i)if(user_file(i).existsAsFile())saved_slots.push_back(i);
 +        }
++        if(base==9)kit_filter=std::make_unique<KitFilterStage>();
 +        if(single>=0){auto g=std::make_unique<Graph>();g->routes[0]=load(single,0);g->notes[0]=g->routes[0]->source_note;g->orders[0]=g->routes[0]->parameter_order;g->ordinals[0]=g->routes[0]->parameter_ordinals;g->names[0]=g->routes[0]->parameter_names;publish(std::move(g));}
 +        else load_kit(0);
 +        if(!active.load())throw std::runtime_error("No sound graph");
@@ -4031,14 +4474,15 @@
 +    void changeProgramName(int,const String&) override{}
 +    void setCurrentProgram(int i) override{if(i>=0&&i<getNumPrograms()){enqueue({0,i});flush();if(single<0)change(0,0);}}
 +    bool drum_names(DrumVoices& result){std::lock_guard<std::mutex> guard(lock);if(single>=0)return false;auto* g=active.load();if(!g)return true;for(int i=0;i<pads;++i)if(auto c=g->routes[size_t(i)]){auto name=sound_name(c->engine,g->sounds[size_t(i)]).fromLastOccurrenceOf(" / ",false,false);if(name.isEmpty())name=sound_name(c->engine,g->sounds[size_t(i)]);std::snprintf(result.names[size_t(i)].data(),result.names[size_t(i)].size(),"%s",name.toRawUTF8());}return true;}
-+    String preset_name(){std::lock_guard<std::mutex> guard(lock);auto* g=active.load();if(!g)return {};String name=user_label.isNotEmpty()?user_label:single<0?text(at(get(catalog,"kits"),g->kit),"name"):sound_name(single,g->sounds[0]);if(single>=0&&user_label.isNotEmpty())name+=" / "+sound_name(single,g->sounds[0]);if(single<0)if(auto c=g->routes[size_t(focus)])name+=" / Pad "+String(focus+1)+": "+sound_name(c->engine,g->sounds[size_t(focus)]).fromLastOccurrenceOf(" / ",false,false);if(g->edited[size_t(single<0?focus:0)])name+=" *";return name;}
++    String preset_name(){std::lock_guard<std::mutex> guard(lock);auto* g=active.load();if(!g)return {};String name=user_label.isNotEmpty()?user_label:single<0?text(at(get(catalog,"kits"),g->kit),"name"):sound_name(single,g->sounds[0]);if(single>=0&&user_label.isNotEmpty())name+=" / "+sound_name(single,g->sounds[0]);if(single<0)if(auto c=g->routes[size_t(focus)])name+=" / Pad "+String(focus+1)+": "+sound_name(c->engine,g->sounds[size_t(focus)]).fromLastOccurrenceOf(" / ",false,false);if(g->edited[size_t(single<0?focus:0)]||(kit_filter&&g->filter_edited))name+=" *";return name;}
 +    uint32_t revision(){std::lock_guard<std::mutex> guard(lock);return layout_revision;}
 +    bool design_pages(PluginPanel& out){
-+        std::lock_guard<std::mutex> guard(lock);auto c=focused();if(!c)return false;
-+        auto source=text(engine(c->engine),"name");auto variant=text(engine(c->engine),"variant");if(variant.isNotEmpty())source+=" / "+variant;
++        std::lock_guard<std::mutex> guard(lock);auto c=focused();if(!c&&single>=0)return false;
++        auto source=c?text(engine(c->engine),"name"):String("Empty");auto variant=c?text(engine(c->engine),"variant"):String();if(variant.isNotEmpty())source+=" / "+variant;
 +        std::snprintf(out.design_source,sizeof out.design_source,"%s",source.toRawUTF8());
 +        if(design_cache_revision!=layout_revision){
-+            std::vector<PluginDesignControl> list;const auto& order=g_order();auto metadata=get(engine(c->engine),"parameters");
++            std::vector<PluginDesignControl> list;if(kit_filter)for(int i=6;i<9;++i)list.push_back({i,-100,single<0?"KIT FILTER":"OUTPUT FILTER"});
++            const auto& order=g_order();auto metadata=c?get(engine(c->engine),"parameters"):var();
 +            for(unsigned i=0;i<order.size();++i){auto p=at(metadata,order[i]);auto group=text(p,"edit_group");int rank=number(p,"edit_group_order",700);
 +                // Hortator models reuse eight slots for different functions.
 +                // Classify their current native names, never a stale kit label.
@@ -4060,6 +4504,21 @@
 +        if(design_cache.size()>out.design_pages.size())return false;
 +        out.design_count=uint16_t(design_cache.size());std::copy(design_cache.begin(),design_cache.end(),out.design_pages.begin());return out.design_count>0;
 +    }
++    std::array<int,3> quick_parameters(){
++        std::lock_guard<std::mutex> guard(lock);std::array<int,3> out{{-1,-1,-1}};auto c=focused();if(single<0)return {{6,7,8}};if(kit_filter){out[0]=6;out[1]=7;}if(!c)return out;
++        const auto& order=g_order();auto metadata=get(engine(c->engine),"parameters");auto preferred=get(engine(c->engine),"quick_controls");
++        auto used=[&](int shown){return std::find(out.begin(),out.end(),shown)!=out.end();};
++        // The original Hortator ACID model exposes its own filter before the
++        // additional per-voice insert filter. Scope this to source core slots.
++        auto family=text(engine(c->engine),"name");if(family=="Hortator"||family=="Acid Engine"){
++            for(unsigned j=0;j<order.size();++j)if(order[j]>0&&order[j]<89){auto name=c->synth->getParameters()[order[j]]->getName(64).fromLastOccurrenceOf(" ",false,false).toUpperCase();int slot=name=="CUTOF"||name=="CUTOFF"?0:name=="RESO"||name=="RESONANCE"?1:name=="ENVMD"?2:-1;if(slot>=0)out[size_t(slot)]=base+int(j);}
++        }
++        for(int slot=0;slot<3;++slot){if(out[size_t(slot)]>=0)continue;auto candidates=at(preferred,slot);for(int k=0;k<size(candidates)&&out[size_t(slot)]<0;++k)for(unsigned j=0;j<order.size();++j)if(text(at(metadata,order[j]),"key")==at(candidates,k).toString()&&!used(base+int(j))){out[size_t(slot)]=base+int(j);break;}}
++        for(int slot=0;slot<3;++slot)if(out[size_t(slot)]<0)for(unsigned j=0;j<order.size();++j){int shown=base+int(j);if(!used(shown)){out[size_t(slot)]=shown;break;}}
++        return out;
++    }
++    int source_begin()const{return base;}
++    bool kit_filter_index(int i)const{return base==9&&i>=6&&i<9;}
 +    int focused_pad(){std::lock_guard<std::mutex> guard(lock);return single<0?focus:-1;}
 +    int count() {std::lock_guard<std::mutex> guard(lock);auto c=focused();return base+(c?std::min(controls,int(g_order().size())):0);}
 +    void getStateInformation(MemoryBlock& result) override{
@@ -4069,6 +4528,7 @@
 +        std::lock_guard<std::mutex> guard(lock);
 +        auto* g=active.load();if(!g)return;
 +        var root=object();put(root,"schema",2);put(root,"user_label",user_label);put(root,"user_slot",selected_user_slot);put(root,"single",single);put(root,"single_engine",single<0?String():text(engine(single),"folder"));put(root,"pad",focus);put(root,"kit",g->kit);
++        if(kit_filter){Array<var> values,defaults;for(int i=0;i<3;++i){values.add(int(g->kit_filter[size_t(i)]));defaults.add(int(g->kit_filter_defaults[size_t(i)]));}put(root,"kit_filter",values);put(root,"kit_filter_defaults",defaults);put(root,"kit_filter_edited",g->filter_edited);}
 +        Array<var> children,routes;std::vector<Child*> seen;
 +        for(const auto& c:g->routes){
 +            if(!c){routes.add(-1);continue;}
@@ -4076,7 +4536,7 @@
 +            if(found==seen.end()){
 +                seen.push_back(c.get());var row=object();put(row,"engine",text(engine(c->engine),"folder"));put(row,"sound",c->sound);
 +                MemoryBlock chunk;c->synth->getStateInformation(chunk);put(row,"state",chunk.toBase64Encoding());
-+                Array<var> values;for(auto* p:c->synth->getParameters())values.add(p->getValue());put(row,"values",values);children.add(row);
++                Array<var> values;for(auto* p:c->synth->getParameters())values.add(p->getValue());put(row,"values",values);Array<var> defaults;for(float value:c->defaults)defaults.add(value);put(row,"reset_defaults",defaults);children.add(row);
 +            }
 +            var route=object();put(route,"child",id);put(route,"sound",g->sounds[size_t(&c-g->routes.data())]);put(route,"note",g->notes[size_t(&c-g->routes.data())]);put(route,"edited",g->edited[size_t(&c-g->routes.data())]);routes.add(route);
 +        }
@@ -4097,7 +4557,7 @@
 +            int cursor=0;
 +            for(const auto item:input){int pos=std::clamp(item.samplePosition,0,output.getNumSamples());
 +                if(pos>cursor)render(*g,output,cursor,pos-cursor);
-+                cursor=pos;const auto msg=item.getMessage();
++                cursor=pos;const auto msg=item.getMessage();if(kit_filter&&msg.isAllSoundOff())kit_filter->silence();
 +                if(msg.isNoteOnOrOff()){
 +                    int note=msg.getNoteNumber();int slot=single<0?note-36:0;
 +                    if(slot>=0&&slot<pads)if(auto c=g->routes[size_t(slot)]){
@@ -4120,7 +4580,7 @@
 +        }
 +        input.clear();hazard.store(nullptr,std::memory_order_seq_cst);
 +    }
-+    String parameter_name(int i){std::lock_guard<std::mutex> guard(lock);if(i==3)return "Save slot";if(i==4)return single<0?"Save Kit":"Save Sound";if(i==5)return "Status";if(i==0)return single<0?"Pad":"Sound";if(i==1)return single<0?"P"+String(focus+1).paddedLeft('0',2)+" Engine":"Pitch reference";if(i==2)return single<0?"P"+String(focus+1).paddedLeft('0',2)+" Sound":"Pitch mode";auto c=focused();int p=i-base;String name=c&&p>=0&&p<int(g_order().size())?c->synth->getParameters()[g_order()[size_t(p)]]->getName(64):String();
++    String parameter_name(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){static const char* names[]{"KIT CUTOFF","KIT RESONANCE","KIT FILTER TYPE"};return single<0?String(names[i-6]):String(names[i-6]).replace("KIT ","OUTPUT ");}if(i==3)return "Save slot";if(i==4)return single<0?"Save Kit":"Save Sound";if(i==5)return "Status";if(i==0)return single<0?"Pad":"Sound";if(i==1)return single<0?"P"+String(focus+1).paddedLeft('0',2)+" Engine":"Pitch reference";if(i==2)return single<0?"P"+String(focus+1).paddedLeft('0',2)+" Sound":"Pitch mode";auto c=focused();int p=i-base;String name=c&&p>=0&&p<int(g_order().size())?c->synth->getParameters()[g_order()[size_t(p)]]->getName(64):String();
 +        if(c&&p>=0&&p<int(g_order().size())){auto metadata=at(get(engine(c->engine),"parameters"),g_order()[size_t(p)]);auto label=text(metadata,"edit_name");if(label.isNotEmpty())name=label;auto dynamic=get(metadata,"dynamic_labels");int selector=number(metadata,"dynamic_selector",-1);if(dynamic.isArray()&&selector>=0&&selector<c->synth->getParameters().size())name=at(dynamic,std::clamp(int(std::lround(c->synth->getParameters()[selector]->getValue()*(size(dynamic)-1))),0,size(dynamic)-1)).toString();}
 +        if(c&&(c->drums||get(engine(c->engine),"voice_parameters").isObject())){int reference_note=single<0?active.load()->notes[size_t(focus)]:c->source_note;if(reference_note==60&&number(engine(c->engine),"native_pitch_parameter",-1)>=0)reference_note=36;auto voice=get(engine(c->engine),"voices");for(int n=0;n<size(voice);++n)if(number(at(voice,n),"note")==reference_note||number(at(voice,n),"note")==int(get(get(engine(c->engine),"control_notes"),String(reference_note)))){auto prefix=text(at(voice,n),"name")+" ";if(name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}String prefix="Pad "+String(reference_note-35)+" ";if(name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}
 +        if(c){auto prefix=text(engine(c->engine),"strip_voice_prefix");if(prefix.isNotEmpty()&&name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}
@@ -4135,16 +4595,20 @@
 +        if(p>=0){auto* g=active.load();const auto& ordinals=g->ordinals[size_t(single<0?focus:0)];if(p<int(ordinals.size())&&ordinals[size_t(p)]>0)name+=" ("+String(ordinals[size_t(p)])+")";}
 +        if(c&&p>=0&&p<int(g_order().size())){auto category=text(at(get(engine(c->engine),"parameters"),g_order()[size_t(p)]),"category");if(c->drums){const int source=single<0?active.load()->notes[size_t(focus)]-35:c->source_note-35;for(const auto& prefix:{"Pad "+String(source),"Pad"+String(source),"Voice "+String(source),"V"+String(source),"S"+String(source)})if(category.equalsIgnoreCase(prefix))category.clear();else if(category.startsWithIgnoreCase(prefix+" "))category=category.substring(prefix.length()+1);}
 +            if(single<0&&(category.equalsIgnoreCase("Master")||category.equalsIgnoreCase("General")||category.equalsIgnoreCase("FX")||category.equalsIgnoreCase("Global FX")||category.equalsIgnoreCase("EQ")||category.equalsIgnoreCase("Delay")||category.equalsIgnoreCase("Reverb")||category.equalsIgnoreCase("Output")))category="Source "+category;
-+            if(category.isNotEmpty()&&!name.equalsIgnoreCase(category)&&!(name=="Sound model"&&category.equalsIgnoreCase("Model"))&&!name.startsWithIgnoreCase(category+" "))name=category+" "+name;}
++            if(category.isNotEmpty()&&!name.equalsIgnoreCase(category)&&!(name=="Sound model"&&category.equalsIgnoreCase("Model"))&&!name.startsWithIgnoreCase(category+" ")){bool joined=false;for(int start=0;start<category.length();++start)if(start==0||category[start-1]==' '){auto suffix=category.substring(start);if(name.equalsIgnoreCase(suffix)||name.startsWithIgnoreCase(suffix+" ")){name=category.substring(0,start)+name;joined=true;break;}}if(!joined)name=category+" "+name;}}
 +        return single<0&&name.isNotEmpty()?"P"+String(focus+1).paddedLeft('0',2)+" "+name:name;}
-+    float parameter_value(int i){std::lock_guard<std::mutex> guard(lock);auto c=focused();if(i==3)return save_slot/63.0f;if(i==4||i==5)return 0;if(i==0)return single<0?focus/63.0f:current_program()/float(std::max(1,factory_count()+int(saved_slots.size())-1));if(i==1)return single<0&&c?c->engine/float(std::max(1,size(get(catalog,"engines"))-1)):0;if(i==2)return single<0&&c?selection_index(c->engine,current_sound())/float(std::max(1,selection_count(c->engine)-1)):0;int p=i-base;if(!c||p<0||p>=int(g_order().size()))return 0;int index=g_order()[size_t(p)];float value=c->synth->getParameters()[index]->getValue();auto meta=at(get(engine(c->engine),"parameters"),index);auto choices=get(meta,"option_indices");if(size(choices)>1){int source=int(std::lround(value*(size(get(meta,"options"))-1)));for(int n=0;n<size(choices);++n)if(int(at(choices,n))==source)return n/float(size(choices)-1);return 0;}return value;}
-+    String parameter_text(int i){std::lock_guard<std::mutex> guard(lock);auto c=focused();if(i==3)return String(save_slot+1);if(i==4)return "Turn to SAVE";if(i==5)return busy?"Working...":(last_error.isEmpty()?"Ready":last_error);if(i==0)return single<0?String(focus+1):(user_label.isNotEmpty()?user_label:c?sound_name(c->engine,current_sound()):"Empty");if(i==1)return single<0?(c?text(engine(c->engine),"name")+(text(engine(c->engine),"variant").isNotEmpty()?" / "+text(engine(c->engine),"variant"):String()):"Empty"):"C4 / MIDI 60";if(i==2)return single<0?(c?sound_name(c->engine,current_sound()):"Empty"):(c&&c->drums?"Pitch + Length":"Key Pitch");int p=i-base;if(!c||p<0||p>=int(g_order().size()))return {};int index=g_order()[size_t(p)];auto* param=c->synth->getParameters()[index];auto options=get(at(get(engine(c->engine),"parameters"),index),"options");if(size(options)>0)return at(options,std::clamp(int(std::lround(param->getValue()*(size(options)-1))),0,size(options)-1)).toString();auto value=param->getText(param->getValue(),96);auto meta=at(get(engine(c->engine),"parameters"),index);auto unit=param->getLabel().trim();if(unit.isEmpty())unit=text(meta,"unit");
++    float parameter_value(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){auto* g=active.load();return g?g->kit_filter[size_t(i-6)]/float(i==8?2:100):0;}auto c=focused();if(i==3)return save_slot/63.0f;if(i==4||i==5)return 0;if(i==0)return single<0?focus/63.0f:current_program()/float(std::max(1,factory_count()+int(saved_slots.size())-1));if(i==1)return single<0&&c?c->engine/float(std::max(1,size(get(catalog,"engines"))-1)):0;if(i==2)return single<0&&c?selection_index(c->engine,current_sound())/float(std::max(1,selection_count(c->engine)-1)):0;int p=i-base;if(!c||p<0||p>=int(g_order().size()))return 0;int index=g_order()[size_t(p)];float value=c->synth->getParameters()[index]->getValue();auto meta=at(get(engine(c->engine),"parameters"),index);auto choices=get(meta,"option_indices");if(size(choices)>1){int source=int(std::lround(value*(size(get(meta,"options"))-1)));for(int n=0;n<size(choices);++n)if(int(at(choices,n))==source)return n/float(size(choices)-1);return 0;}return value;}
++    String parameter_text(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){auto* g=active.load();if(!g)return {};if(i==8){static const char* types[]{"LP","BP","HP"};return types[g->kit_filter[2]];}return String(g->kit_filter[size_t(i-6)])+" %";}auto c=focused();if(i==3)return String(save_slot+1);if(i==4)return "Turn to SAVE";if(i==5)return busy?"Working...":(last_error.isEmpty()?"Ready":last_error);if(i==0)return single<0?String(focus+1):(user_label.isNotEmpty()?user_label:c?sound_name(c->engine,current_sound()):"Empty");if(i==1)return single<0?(c?text(engine(c->engine),"name")+(text(engine(c->engine),"variant").isNotEmpty()?" / "+text(engine(c->engine),"variant"):String()):"Empty"):"C4 / MIDI 60";if(i==2)return single<0?(c?sound_name(c->engine,current_sound()):"Empty"):(c&&c->drums?"Pitch + Length":"Key Pitch");int p=i-base;if(!c||p<0||p>=int(g_order().size()))return {};int index=g_order()[size_t(p)];auto* param=c->synth->getParameters()[index];if(bool(get(at(get(engine(c->engine),"parameters"),index),"display_percentage")))return String(param->getValue()*100,0)+" %";auto options=get(at(get(engine(c->engine),"parameters"),index),"options");if(size(options)>0)return at(options,std::clamp(int(std::lround(param->getValue()*(size(options)-1))),0,size(options)-1)).toString();auto value=param->getText(param->getValue(),96);auto meta=at(get(engine(c->engine),"parameters"),index);auto unit=param->getLabel().trim();if(unit.isEmpty())unit=text(meta,"unit");
 +        if(unit.isNotEmpty()&&!value.containsIgnoreCase(unit)&&value.trim().containsOnly("+-0123456789.eE ")){if(unit=="%"&&double(get(meta,"maximum"))<=1.0&&double(get(meta,"minimum"))>=0.0)value=String(value.getDoubleValue()*100.0,1);value+=" "+unit;}
 +        if(value.startsWithIgnoreCase("Pad ")){auto tail=value.substring(4);int space=tail.indexOfChar(' ');if(space>0&&tail.substring(0,space).containsOnly("0123456789"))value=(single<0?"P"+String(focus+1).paddedLeft('0',2)+" ":String())+tail.substring(space+1);}return value;}
 +    void change(int i,float value,uint32_t expected=0){if(!std::isfinite(value))return;value=std::clamp(value,0.0f,1.0f);if((single>=0&&(i==1||i==2))||i==5)return;if(i==4){if(value>=0.5f)enqueue({5,0});return;}if(single<0&&i==0){enqueue({1,0,value});flush();return;}if(single>=0&&i==0){enqueue({0,int(std::lround(value*(getNumPrograms()-1)))});return;}Request request{1,i,value};request.revision=expected;enqueue(std::move(request));}
 +private:
++    static bool output_filter_engine(const String& name){
++        return name=="Dexed"||name=="DRUM-X"||name=="Plaits"||name=="CS-1"||name=="MONO2K";
++    }
 +    int parameter_steps(int i){
 +        std::lock_guard<std::mutex> guard(lock);auto c=focused();
++        if(kit_filter_index(i))return i==8?3:101;
 +        if(i==0)return single<0?64:factory_count()+int(saved_slots.size());
 +        if(i==1)return single<0?size(get(catalog,"engines")):0;
 +        if(i==2)return single<0&&c?selection_count(c->engine):0;
@@ -4157,7 +4621,7 @@
 +    }
 +    var at_meta(const Child& c,int index)const{return at(get(engine(c.engine),"parameters"),index);}
 +    float parameter_default(int i){
-+        std::lock_guard<std::mutex> guard(lock);auto c=focused();int p=i-base;
++        std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){auto* g=active.load();return g?g->kit_filter_defaults[size_t(i-6)]/float(i==8?2:100):0;}auto c=focused();int p=i-base;
 +        if(!c||p<0||p>=int(g_order().size()))return 0;
 +        int index=g_order()[size_t(p)];float value=index<int(c->defaults.size())?c->defaults[size_t(index)]:c->synth->getParameters()[index]->getDefaultValue();
 +        auto meta=at_meta(*c,index);auto choices=get(meta,"option_indices");
@@ -4242,6 +4706,12 @@
 +            bool local=voice>0&&(key.startsWith(prefix)||name.startsWithIgnoreCase("Pad "+String(voice)+" "));
 +            (local?first:rest).push_back(i);
 +        }
++        auto sound_order=[&](int a,int b){
++            auto ma=at(metadata,a),mb=at(metadata,b);
++            return number(ma,"native_ui_order",number(ma,"edit_group_order",1000))<number(mb,"native_ui_order",number(mb,"edit_group_order",1000));
++        };
++        std::stable_sort(first.begin(),first.end(),sound_order);
++        std::stable_sort(rest.begin(),rest.end(),sound_order);
 +        first.insert(first.end(),rest.begin(),rest.end());c.parameter_order=std::move(first);
 +        if(c.parameter_order.size()>controls)throw std::runtime_error("Engine exceeds sound control capacity");
 +        // Resolve algorithm-dependent duplicates on the worker once, not by
@@ -4284,16 +4754,17 @@
 +                if(single>=0&&c.drums)c.pitch.render(left.data(),right.data(),unsigned(n),play);else play(left.data(),right.data(),unsigned(n));
 +                if(c.silenced)return;
 +                for(int i=0;i<n;++i){output.addSample(0,start+offset+i,left[size_t(i)]);if(output.getNumChannels()>1)output.addSample(1,start+offset+i,right[size_t(i)]);}
-+            });
++             });
++            if(kit_filter){if(output.getNumChannels()>1)kit_filter->process(g.kit_filter,g.filter_epoch,output.getWritePointer(0,start+offset),output.getWritePointer(1,start+offset),unsigned(n));else{std::array<float,128> right{};std::copy_n(output.getReadPointer(0,start+offset),n,right.data());kit_filter->process(g.kit_filter,g.filter_epoch,output.getWritePointer(0,start+offset),right.data(),unsigned(n));}}
 +        }
 +    }
-+    void publish(std::unique_ptr<Graph> g){std::lock_guard<std::mutex> guard(lock);auto* raw=g.get();auto* before=active.load();const size_t slot=size_t(single<0?focus:0);
++    void publish(std::unique_ptr<Graph> g){std::lock_guard<std::mutex> guard(lock);auto* raw=g.get();if(kit_filter&&raw->filter_epoch==0)raw->filter_epoch=++filter_sequence;auto* before=active.load();const size_t slot=size_t(single<0?focus:0);
 +        if(!before||before->routes[slot]==nullptr||raw->routes[slot]==nullptr||before->routes[slot]->engine!=raw->routes[slot]->engine||before->sounds[slot]!=raw->sounds[slot]||before->notes[slot]!=raw->notes[slot]||before->orders[slot]!=raw->orders[slot]||before->names[slot]!=raw->names[slot])++layout_revision;
 +        graphs.push_back(std::move(g));active.store(raw,std::memory_order_seq_cst);collect();}
 +    void collect(){auto* playing=hazard.load(std::memory_order_seq_cst);auto* now=active.load();graphs.erase(std::remove_if(graphs.begin(),graphs.end(),[&](const auto& g){return g.get()!=now&&g.get()!=playing;}),graphs.end());}
 +    void load_kit(int index){
 +        auto kit=at(get(catalog,"kits"),index);if(kit.isVoid())throw std::runtime_error("Unknown kit");
-+        auto g=std::make_unique<Graph>();g->kit=index;
++        auto g=std::make_unique<Graph>();g->kit=index;g->filter_epoch=++filter_sequence;
 +        auto routes=get(kit,"routes");for(int i=0;i<std::min(pads,size(routes));++i){auto r=at(routes,i);int e=number(r,"engine",-1),s=number(r,"sound");
 +            // A factory kit uses one original instance, preserving its choke
 +            // groups and voice allocation. An edited pad forks only on demand.
@@ -4318,6 +4789,7 @@
 +        publish(std::move(g));
 +    }
 +    void enqueue(Request r){std::lock_guard<std::mutex> guard(lock);if(stopping)return;
++        if(kit_filter_index(r.index))r.revision=0;
 +        if(r.kind==1&&r.index!=0&&r.revision&&r.revision!=layout_revision)return;
 +        if(r.kind==1&&(r.index==1||r.index==2||r.index>=base))r.revision=layout_revision;
 +        if(r.kind==1&&!jobs.empty()&&jobs.back().kind==1&&jobs.back().index==r.index&&jobs.back().revision==r.revision)jobs.back()=std::move(r);
@@ -4325,7 +4797,7 @@
 +        wake.notify_all();
 +    }
 +    void flush(){std::unique_lock<std::mutex> guard(lock);done.wait(guard,[&]{return jobs.empty()&&!busy;});}
-+    void restore(const Request& r){
++    void restore(const Request& r,bool user_preset=false){
 +        auto root=JSON::parse(String::fromUTF8(reinterpret_cast<const char*>(r.bytes.data()),int(r.bytes.size())));
 +        if(number(root,"schema")!=2){if(single>=0){auto* g=active.load();g->routes[0]->synth->setStateInformation(r.bytes.data(),int(r.bytes.size()));initial(*g->routes[0]);return;}throw std::runtime_error("Unsupported sound state");}
 +        if((get(root,"single_engine").isVoid()&&number(root,"single",-2)!=single)||(!get(root,"single_engine").isVoid()&&canonical(text(root,"single_engine"))!=(single<0?String():text(engine(single),"folder"))))throw std::runtime_error("Sound state type mismatch");
@@ -4333,9 +4805,12 @@
 +        std::vector<std::shared_ptr<Child>> loaded;
 +        for(int i=0;i<size(rows);++i){auto row=at(rows,i);int e=-1;for(int j=0;j<size(get(catalog,"engines"));++j)if(text(engine(j),"folder")==canonical(text(row,"engine")))e=j;if(e<0)throw std::runtime_error("Missing sound engine");
 +            auto c=load(e,number(row,"sound"));MemoryBlock chunk;if(!chunk.fromBase64Encoding(text(row,"state")))throw std::runtime_error("Invalid engine state");c->synth->setStateInformation(chunk.getData(),int(chunk.getSize()));initial(*c);pitch_policy(*c);
-+            auto values=get(row,"values");if(size(values)!=c->synth->getParameters().size())throw std::runtime_error("Engine controls changed");for(int j=0;j<size(values);++j){float v=float(at(values,j));if(!std::isfinite(v))throw std::runtime_error("Invalid control value");}order(*c);loaded.push_back(c);
++            auto values=get(row,"values");if(size(values)!=c->synth->getParameters().size())throw std::runtime_error("Engine controls changed");for(int j=0;j<size(values);++j){float v=float(at(values,j));if(!std::isfinite(v))throw std::runtime_error("Invalid control value");bool selector=false;for(int n=0;n<size(get(engine(e),"preset_parameters"));++n)selector|=int(at(get(engine(e),"preset_parameters"),n))==j;auto* parameter=c->synth->getParameters()[j];if(!selector&&v>=0&&v<=1&&parameter->isAutomatable()&&std::abs(parameter->getValue()-v)>.000001f)parameter->setValue(v);}auto defaults=user_preset?values:get(row,"reset_defaults");if(defaults.isArray()){if(size(defaults)!=int(c->defaults.size()))throw std::runtime_error("Invalid reset defaults");for(int j=0;j<size(defaults);++j){float value=float(at(defaults,j));if(!std::isfinite(value))throw std::runtime_error("Invalid reset default");c->defaults[size_t(j)]=value;}}order(*c);loaded.push_back(c);
 +        }
-+        auto g=std::make_unique<Graph>();g->kit=number(root,"kit");for(int i=0;i<pads;++i){auto route=at(routes,i);int id=route.isObject()?number(route,"child",-1):int(route);if(id<0)continue;if(id>=int(loaded.size()))throw std::runtime_error("Invalid pad route");g->routes[size_t(i)]=loaded[size_t(id)];g->sounds[size_t(i)]=number(route,"sound");g->notes[size_t(i)]=number(route,"note",60);g->edited[size_t(i)]=bool(get(route,"edited"));if(g->notes[size_t(i)]<0||g->notes[size_t(i)]>127||g->sounds[size_t(i)]<0||g->sounds[size_t(i)]>=sound_count(loaded[size_t(id)]->engine))throw std::runtime_error("Invalid saved sound route");auto& c=*loaded[size_t(id)];int source=c.source_note,old_sound=c.sound;c.sound=g->sounds[size_t(i)];c.source_note=g->notes[size_t(i)];order(c);g->orders[size_t(i)]=c.parameter_order;g->ordinals[size_t(i)]=c.parameter_ordinals;g->names[size_t(i)]=c.parameter_names;c.source_note=source;c.sound=old_sound;}
++        auto g=std::make_unique<Graph>();g->kit=number(root,"kit");g->filter_epoch=++filter_sequence;
++        if(kit_filter){auto values=get(root,"kit_filter"),defaults=get(root,"kit_filter_defaults");if(!values.isVoid()){if(size(values)!=3)throw std::runtime_error("Invalid kit filter");for(int i=0;i<3;++i){int value=int(at(values,i));if(value<0||value>(i==2?2:100))throw std::runtime_error("Invalid kit filter value");g->kit_filter[size_t(i)]=int16_t(value);}}
++            g->kit_filter_defaults=user_preset?g->kit_filter:KitFilterValues{{100,0,0}};if(!user_preset&&defaults.isArray()){if(size(defaults)!=3)throw std::runtime_error("Invalid kit filter reset baseline");for(int i=0;i<3;++i){int value=int(at(defaults,i));if(value<0||value>(i==2?2:100))throw std::runtime_error("Invalid kit filter default");g->kit_filter_defaults[size_t(i)]=int16_t(value);}}g->filter_edited=!user_preset&&bool(get(root,"kit_filter_edited"));}
++        for(int i=0;i<pads;++i){auto route=at(routes,i);int id=route.isObject()?number(route,"child",-1):int(route);if(id<0)continue;if(id>=int(loaded.size()))throw std::runtime_error("Invalid pad route");g->routes[size_t(i)]=loaded[size_t(id)];g->sounds[size_t(i)]=number(route,"sound");g->notes[size_t(i)]=number(route,"note",60);g->edited[size_t(i)]=bool(get(route,"edited"));if(g->notes[size_t(i)]<0||g->notes[size_t(i)]>127||g->sounds[size_t(i)]<0||g->sounds[size_t(i)]>=sound_count(loaded[size_t(id)]->engine))throw std::runtime_error("Invalid saved sound route");auto& c=*loaded[size_t(id)];int source=c.source_note,old_sound=c.sound;c.sound=g->sounds[size_t(i)];c.source_note=g->notes[size_t(i)];order(c);g->orders[size_t(i)]=c.parameter_order;g->ordinals[size_t(i)]=c.parameter_ordinals;g->names[size_t(i)]=c.parameter_names;c.source_note=source;c.sound=old_sound;}
 +        if(single>=0&&!g->routes[0])throw std::runtime_error("Missing single sound");
 +        {std::lock_guard<std::mutex> guard(lock);user_label=text(root,"user_label");selected_user_slot=std::clamp(number(root,"user_slot",user_label.startsWith(single<0?"User Kit ":"User Sound ")?user_label.getTrailingIntValue()-1:-1),-1,63);if(selected_user_slot>=0)save_slot=selected_user_slot;focus=std::clamp(number(root,"pad"),0,pads-1);}
 +        publish(std::move(g));
@@ -4344,7 +4819,8 @@
 +        for(;;){Request r;
 +            {std::unique_lock<std::mutex> guard(lock);wake.wait_for(guard,std::chrono::milliseconds(25),[&]{return stopping||!jobs.empty();});if(stopping)return;if(jobs.empty()){collect();continue;}r=std::move(jobs.front());jobs.pop_front();busy=true;}
 +            bool stale=false;{std::lock_guard<std::mutex> guard(lock);stale=r.kind==1&&(r.index==1||r.index==2||r.index>=base)&&r.revision!=layout_revision;}
-+            if(stale){{std::lock_guard<std::mutex> guard(lock);busy=false;}done.notify_all();continue;}
++            const bool unchanged=r.kind==1&&r.index>=6&&std::abs(parameter_value(r.index)-r.value)<.000001f;
++            if(stale||unchanged){{std::lock_guard<std::mutex> guard(lock);busy=false;}done.notify_all();continue;}
 +            try{
 +                // Graph creation and original state/file operations are worker
 +                // work. The audio callback only reads a published graph.
@@ -4352,17 +4828,18 @@
 +                    if(user_directory==File())throw std::runtime_error("No preset storage");
 +                    {std::lock_guard<std::mutex> guard(lock);user_label=(single<0?"User Kit ":"User Sound ")+String(save_slot+1).paddedLeft('0',2);selected_user_slot=save_slot;}
 +                    MemoryBlock state;write_state(state);auto file=user_file(save_slot,true);if(file.getParentDirectory().createDirectory().failed()||!file.replaceWithData(state.getData(),state.getSize()))throw std::runtime_error("Could not save preset");
-+                    std::lock_guard<std::mutex> guard(lock);if(std::find(saved_slots.begin(),saved_slots.end(),save_slot)==saved_slots.end()){saved_slots.push_back(save_slot);std::sort(saved_slots.begin(),saved_slots.end());}
++                    std::lock_guard<std::mutex> guard(lock);if(kit_filter){active.load()->kit_filter_defaults=active.load()->kit_filter;active.load()->filter_edited=false;}each(*active.load(),[](Child& child){child.defaults.clear();for(auto* parameter:child.synth->getParameters())child.defaults.push_back(parameter->getValue());});if(std::find(saved_slots.begin(),saved_slots.end(),save_slot)==saved_slots.end()){saved_slots.push_back(save_slot);std::sort(saved_slots.begin(),saved_slots.end());}
 +                }
 +                else if(r.kind==0&&r.index>=factory_count()){
 +                    int slot=-1;{std::lock_guard<std::mutex> guard(lock);int n=r.index-factory_count();if(n<int(saved_slots.size()))slot=saved_slots[size_t(n)];}
 +                    if(slot<0){throw std::runtime_error("Unknown user preset");}
-+                    MemoryBlock state;if(user_file(slot).getSize()>32*1024*1024||!user_file(slot).loadFileAsData(state))throw std::runtime_error("Could not read preset");Request restored{4,0};restored.bytes.assign(static_cast<const uint8_t*>(state.getData()),static_cast<const uint8_t*>(state.getData())+state.getSize());restore(restored);{std::lock_guard<std::mutex> guard(lock);selected_user_slot=save_slot=slot;user_label=(single<0?"User Kit ":"User Sound ")+String(slot+1).paddedLeft('0',2);}
++                    MemoryBlock state;if(user_file(slot).getSize()>32*1024*1024||!user_file(slot).loadFileAsData(state))throw std::runtime_error("Could not read preset");Request restored{4,0};restored.bytes.assign(static_cast<const uint8_t*>(state.getData()),static_cast<const uint8_t*>(state.getData())+state.getSize());restore(restored,true);{std::lock_guard<std::mutex> guard(lock);selected_user_slot=save_slot=slot;user_label=(single<0?"User Kit ":"User Sound ")+String(slot+1).paddedLeft('0',2);}
 +                }
 +                else if(r.kind==0){{std::lock_guard<std::mutex> guard(lock);user_label.clear();selected_user_slot=-1;}if(single<0)load_kit(r.index);else{auto g=std::make_unique<Graph>();g->routes[0]=load(single,selection(single,r.index));g->sounds[0]=selection(single,r.index);g->notes[0]=g->routes[0]->source_note;g->orders[0]=g->routes[0]->parameter_order;g->ordinals[0]=g->routes[0]->parameter_ordinals;g->names[0]=g->routes[0]->parameter_names;publish(std::move(g));}}
 +                else if(r.kind==4)restore(r);
 +                else {
 +                    if(r.index==3){std::lock_guard<std::mutex> guard(lock);save_slot=std::clamp(int(std::lround(r.value*63)),0,63);}
++                    else if(kit_filter_index(r.index)){auto g=std::make_unique<Graph>(*active.load());g->kit_filter[size_t(r.index-6)]=int16_t(std::lround(r.value*(r.index==8?2:100)));g->filter_edited=g->kit_filter!=g->kit_filter_defaults;publish(std::move(g));}
 +                    else if(single<0&&r.index==0){
 +                        std::shared_ptr<Child> c;int note=60;
 +                        {std::lock_guard<std::mutex> guard(lock);int next=std::clamp(int(std::lround(r.value*63)),0,63);if(next!=focus)++layout_revision;focus=next;auto* g=active.load();c=g->routes[size_t(focus)];note=g->notes[size_t(focus)];}
@@ -4378,7 +4855,7 @@
 +                            auto meta=at(get(engine(current->engine),"parameters"),parameter);auto choices=get(meta,"option_indices");float native_value=r.value;
 +                            if(size(choices)>1)native_value=float(int(at(choices,std::clamp(int(std::lround(r.value*(size(choices)-1))),0,size(choices)-1))))/std::max(1,size(get(meta,"options"))-1);
 +                            current->synth->getParameters()[parameter]->setValue(native_value);g->edited[size_t(slot)]=true;
-+                            if(number(engine(current->engine),"native_pitch_parameter",-1)>=0&&parameter>0&&parameter<89&&(parameter-1)%11==0){current=load(current->engine,g->sounds[size_t(slot)],current.get());g->routes[size_t(slot)]=current;if(single>=0)g->notes[size_t(slot)]=current->source_note;}
++                            if(number(engine(current->engine),"native_pitch_parameter",-1)>=0&&parameter>0&&parameter<89&&(parameter-1)%11==0){current=load(current->engine,g->sounds[size_t(slot)],current.get());g->routes[size_t(slot)]=current;g->notes[size_t(slot)]=current->source_note;}
 +                            int saved_note=current->source_note,saved_sound=current->sound;current->source_note=g->notes[size_t(slot)];current->sound=g->sounds[size_t(slot)];order(*current);g->orders[size_t(slot)]=current->parameter_order;g->ordinals[size_t(slot)]=current->parameter_ordinals;g->names[size_t(slot)]=current->parameter_names;current->source_note=saved_note;current->sound=saved_sound;
 +                        }}
 +                        publish(std::move(g));
@@ -4391,7 +4868,8 @@
 +    }
 +    String user_label;File user_directory;std::vector<File> legacy_directories;std::vector<int> saved_slots;int save_slot=0,selected_user_slot=-1;
 +    uint32_t design_cache_revision=0;std::vector<PluginDesignPage> design_cache;
-+    var catalog;uint32_t layout_revision=1;int single,focus=0;SoundLoader loader;double rate;int block;
++    var catalog;uint32_t layout_revision=1;int single,focus=0;const int base;SoundLoader loader;double rate;int block;
++    std::unique_ptr<KitFilterStage> kit_filter;uint64_t filter_sequence=0;
 +    std::atomic<Graph*> active{nullptr};std::atomic<Graph*> hazard{nullptr};std::vector<std::unique_ptr<Graph>> graphs;
 +    std::mutex lock;std::condition_variable wake,done;std::deque<Request> jobs;bool stopping=false,busy=false;std::thread worker;String last_error;
 +};
@@ -4406,9 +4884,15 @@
 +void sound_rack_set_parameter_checked(AudioPluginInstance* p,int index,float value,uint32_t revision){if(auto* r=dynamic_cast<Rack*>(p))r->change(index,value,revision);}
 +bool is_sound_rack(AudioPluginInstance* p){return dynamic_cast<Rack*>(p)!=nullptr;}
 +}
++
++namespace rhythmer { std::array<int,3> sound_rack_quick_parameters(AudioPluginInstance* p){if(auto* r=dynamic_cast<Rack*>(p))return r->quick_parameters();return {{-1,-1,-1}};} }
++
++namespace rhythmer {int sound_rack_source_parameter_begin(AudioPluginInstance* p){if(auto* r=dynamic_cast<Rack*>(p))return r->source_begin();return 0;}}
++
++namespace rhythmer {juce::String sound_rack_source_name(AudioPluginInstance* p){if(auto* r=dynamic_cast<Rack*>(p);r&&r->focused_pad()>=0)return r->parameter_text(1);return {};}}
 --- /dev/null
 +++ b/src/rhythmer/plugin/sound_rack.h
-@@ -0,0 +1,25 @@
+@@ -0,0 +1,28 @@
 +// SPDX-License-Identifier: AGPL-3.0-only
 +// Copyright (C) 2026 jazzy rhythmer
 +#pragma once
@@ -4426,11 +4910,14 @@
 +    int single_engine, SoundLoader loader, double rate, int block, juce::String& error);
 +// Used by the existing parameter pages: no fixed truncation of original controls.
 +int sound_rack_parameter_count(juce::AudioPluginInstance*);
++int sound_rack_source_parameter_begin(juce::AudioPluginInstance*);
 +bool sound_rack_design_pages(juce::AudioPluginInstance*,PluginPanel&);
++juce::String sound_rack_source_name(juce::AudioPluginInstance*);
 +juce::String sound_rack_preset_name(juce::AudioPluginInstance*);
 +bool sound_rack_drum_voices(juce::AudioPluginInstance*, DrumVoices&);
 +uint32_t sound_rack_revision(juce::AudioPluginInstance*);
 +int sound_rack_focus(juce::AudioPluginInstance*);
++std::array<int,3> sound_rack_quick_parameters(juce::AudioPluginInstance*);
 +void sound_rack_set_parameter_checked(juce::AudioPluginInstance*,int,float,uint32_t);
 +bool is_sound_rack(juce::AudioPluginInstance*);
 +}
@@ -4478,7 +4965,30 @@
      return out;
  }
  // Knob FX's row (Shift: its second), while the mode is on.
-@@ -754,8 +755,23 @@
+@@ -510,9 +511,19 @@
+         if (slot >= track.fx.count()) return {};
+         return effect_row(t * 64 + slot * 8, track.fx.slots[slot], shift_row ? 1 : 0);
+     }
+-    case SK::PluginSound: // the three performance knobs, the same on every plug-in (engine/macros.h)
+-        if (shift_row) return {};
+-        return {param(track, plugin_track::Macro1), param(track, plugin_track::Macro2), param(track, plugin_track::Macro3)};
++    case SK::PluginSound: {
++        if(shift_row){return {};}
++        const auto& panel=ui.plugin_panel;
++        if(panel.entry!=track.plugin||panel.status!=PluginStatus::Ready)return {};
++        if(panel.focused_pad>=0){
++            std::array<Binding,3> out{};for(unsigned k=0;k<2;++k)if(panel.quick[k].used)out[k]={Kind::PluginParam,plugin_binding(track.plugin,unsigned(panel.quick[k].shown)),0,plugin_param_max,panel.quick[k].value};
++            out[2]={Kind::Level,0,0,127,track.mix.level};return out;
++        }
++        std::array<Binding,3> out{};for(unsigned k=0;k<3;++k)if(panel.quick[k].used)out[k]={Kind::PluginParam,plugin_binding(track.plugin,unsigned(panel.quick[k].shown)),0,plugin_param_max,panel.quick[k].value};return out;
++    }
++    case SK::PluginPerform:
++        if(shift_row)return {};
++        return {param(track,plugin_track::Macro1),param(track,plugin_track::Macro2),param(track,plugin_track::Macro3)};
+     case SK::PluginEdit: // the plug-in's own row of three
+         if (shift_row) return {};
+         return plugin_cards(ui, track.plugin);
+@@ -754,8 +765,23 @@
          unsigned listed = sound_list(track, ui, list);
          return {Binding {Kind::Jump, 0, 0, int(std::max(listed, 1u)) - 1, std::min<int>(ui.sounds_cursor, int(listed) - 1)}, Binding {}, Binding {}};
      }
@@ -4503,7 +5013,7 @@
          if (track.engine == EngineKind::Plugin) return plugin_cards(ui, track.plugin);
          const auto& info = engine_info(track.engine);
          if (!info.page_count) return {};
-@@ -794,7 +810,22 @@
+@@ -794,7 +820,22 @@
          return {lane_binding(track, t, lanes[0]), lane_binding(track, t, lanes[1]), lane_binding(track, t, lanes[2])};
      }
      case PageId::Patterns: { // the pattern's cards; SCENE: the scene in view's tempo; FOLLOW: the pattern's follow action
@@ -4527,7 +5037,7 @@
          if (ui.patterns_cards == 1) {
              unsigned scene = track.pattern % pattern_count; // the selected track's pattern's column
              unsigned tempo = project.scenes[scene].tempo;
-@@ -965,7 +996,9 @@
+@@ -965,7 +1006,9 @@
      }
      case PageId::FlexBeat: // K1 One Shot / Loop, K3 mix (as on the MPC)
          return {Binding {Kind::FlexMode, 0, 0, 1, project.flex.mode}, Binding {}, Binding {Kind::FlexMix, 0, 0, 100, project.flex.mix}};
@@ -4628,12 +5138,12 @@
      auto fresh = std::make_unique<Project>();
      auto bank = std::make_unique<PatternBank>();
      starting_project(*fresh, *bank);
-@@ -213,6 +214,12 @@
+@@ -213,10 +214,16 @@
  }
  
  void Context::open(PageId page) {
 +    if(page==PageId::Edit&&track().engine==EngineKind::Plugin&&ui.page!=PageId::PluginPresets){
-+        ui.edit_page[ui.track]=0;ui.edit_row[ui.track]=0;ui.kit_common=false;
++        ui.edit_page[ui.track]=1;ui.edit_row[ui.track]=0;ui.kit_common=false;
 +        if(track().plugin<max_plugins){ui.plugin_row[track().plugin]=0;}plugin_panel_at=0;
 +    }
 +    if(page!=PageId::Samples)ui.break_browse=false;
@@ -4641,27 +5151,29 @@
      // A PLUGIN track's sounds are the plug-ins on the card (Sample Select, or Sounds from anywhere).
      if (page == PageId::Sounds && track().engine == EngineKind::Plugin && plugins) { open_plugin_picker(UiState::PluginTarget::Instrument); return; }
      if (page == PageId::Trim) { // Trim lives on Stage now: a kit's B1 TRIM (the sampler pages' B1 and Chop come here)
-@@ -255,6 +262,11 @@
+-        if (track().engine == EngineKind::Sampler) stage_go(ui, 0, 0);
++        if (track().engine == EngineKind::Sampler) stage_go(ui,EngineKind::Sampler,StageKind::Trim);
+         page = PageId::Stage;
+     }
+     if (page != ui.page) punch_release(); // a pad held over a page change would never let go
+@@ -255,6 +262,8 @@
  }
  
  void Context::back() {
 +    if(ui.page==PageId::Edit&&track().engine==EngineKind::Plugin&&ui.edit_page[ui.track]&&ui.map_open){ui.map_open=false;return;}
-+    if(ui.page==PageId::Edit&&track().engine==EngineKind::Plugin&&ui.edit_page[ui.track]){
-+        ui.edit_page[ui.track]=0;ui.kit_common=false;
-+        if(track().plugin<max_plugins){auto& row=ui.plugin_row[track().plugin];row=ui.edit_row[ui.track]==3?1:0;if(plugins)plugins->panel(track().plugin,row,ui.plugin_panel);}plugin_panel_at=0;return;
-+    }
++
      if (ui.sheet_open || ui.map_open || ui.picker_open || ui.move_open) { // a sheet, map or picker first
          ui.sheet_open = ui.map_open = ui.picker_open = ui.move_open = false;
          return;
-@@ -266,6 +278,7 @@
+@@ -266,6 +275,7 @@
      if (ui.page == PageId::Sounds) audition(-1);
      stage_tick(UINT32_MAX); // a sound still waiting to load lands on the track it was turned on
      ui.track = uint8_t(t % track_count);
-+    if(ui.page==PageId::Edit&&track().engine==EngineKind::Plugin){ui.edit_page[ui.track]=0;ui.edit_row[ui.track]=0;ui.kit_common=false;if(track().plugin<max_plugins)ui.plugin_row[track().plugin]=0;plugin_panel_at=0;}
++    if(ui.page==PageId::Edit&&track().engine==EngineKind::Plugin){ui.edit_page[ui.track]=1;ui.edit_row[ui.track]=0;ui.kit_common=false;if(track().plugin<max_plugins)ui.plugin_row[track().plugin]=0;plugin_panel_at=0;}
      ui.held_step = -1;
      if (ui.page == PageId::Sounds) ui.sounds_cursor = track().preset;
  }
-@@ -291,6 +304,7 @@
+@@ -291,6 +301,7 @@
  // engine; every press also goes into the ring Capture reads (roadmap P5).
  void Context::key(int k, int velocity, bool down, int cutoff) {
      auto& t = track();
@@ -4669,7 +5181,7 @@
      if (t.arp) {
          Command c {Type::ArpKey, ui.track, 0, uint16_t(k), int16_t(down ? velocity : 0)};
          c.position = uint32_t(cutoff + 1); // a 16 Levels Filter pad's cutoff, kept on its repeats
-@@ -356,6 +370,11 @@
+@@ -356,6 +367,11 @@
          return;
      }
      if (!t.used()) return;
@@ -4681,7 +5193,7 @@
      if (t.levels) { // 16 Levels on a synth: the last note on all sixteen, soft to loud or in pitch; Scale the key's notes
          auto level = levels_of(project, t, pad);
          ui.levels_hit = int8_t(pad); ui.levels_value = int16_t(level.shown);
-@@ -448,6 +467,7 @@
+@@ -448,6 +464,7 @@
  
  void Context::load_sound(unsigned t, EngineKind kind, unsigned sound) {
      auto& tr = project.tracks[t % track_count];
@@ -4689,7 +5201,7 @@
      bool engine_changed = tr.engine != kind;
      const auto& info = engine_info(kind);
      const UserSound* own = sound >= info.sound_count ? user_sound(kind, sound - info.sound_count) : nullptr;
-@@ -503,6 +523,9 @@
+@@ -503,6 +520,9 @@
      if (midi_binding(*this, b, value)) return; // roadmap P4: a MIDI track's device and SysEx file
      auto& t = track();
      switch (b.kind) {
@@ -4699,7 +5211,7 @@
      case Kind::Param:
          set_param(ui.track, b.id, value);
          if (t.engine != EngineKind::Midi || midi_track::is_cc(b.id) || b.id == midi_track::Bend) record_motion(b.id, value); // of a MIDI track's own, its slots and bend are lanes
-@@ -717,7 +740,7 @@
+@@ -717,7 +737,7 @@
      }
      case Kind::ChopZoom: ui.chop_zoom = uint8_t(value); ui.chop_focus = uint8_t(b.id % 2); ui.chop_view = {}; break;
      case Kind::FileJump: ui.files_cursor = uint16_t(value); break;
@@ -4708,7 +5220,7 @@
      case Kind::ProjectJump: ui.project_cursor = uint16_t(value); break;
      case Kind::ProjectSort: ui.project_sort = uint8_t(value); break;
      case Kind::PadFine: pad().fine = int8_t(value); send_pad(ui.track, t.last_pad); record_pad_motion(PadParam::Fine, value); break;
-@@ -800,7 +823,15 @@
+@@ -800,7 +820,15 @@
      case Kind::MarksRamp: roll_marks_ramp(*this, value); break;                               // Roll's Shift + K2, marked notes                             // Roll's Shift + K1
      case Kind::EuclidHits: case Kind::EuclidSteps: case Kind::EuclidRotate: set_euclid(b.kind, value); break;
      case Kind::TrackSpeed: set_speed(unsigned(b.id), value); break;
@@ -4725,7 +5237,7 @@
      case Kind::FollowAction: case Kind::FollowOther: case Kind::FollowAfter: case Kind::FollowChance: set_follow(b.kind, value); break; // roadmap P5
      case Kind::SceneTempo: set_scene_tempo(unsigned(b.id), value * 10); break; // Patterns' SCENE: below 30, none of its own
      case Kind::PrintTapPick: ui.print_sheet.tap = value ? PrintTap::PreFx : PrintTap::PostFx; break; // freeze plan F2c
-@@ -1384,6 +1415,7 @@
+@@ -1384,6 +1412,7 @@
  }
  
  void Context::apply_edit(const Edit& e, bool after) {
@@ -4733,7 +5245,7 @@
      if (e.pad >= 0) restore_pad(e.track, unsigned(e.pad), after ? e.pad_after : e.pad_before);
      if (after) for (const auto& [kit, value] : e.pads_after) restore_pad(e.track, kit, value);
      else for (auto p = e.pads_before.rbegin(); p != e.pads_before.rend(); ++p) restore_pad(e.track, p->first, p->second);
-@@ -1393,6 +1425,8 @@
+@@ -1393,6 +1422,8 @@
      if (song) restore_song(*song);
      const auto& motion = after ? e.motion_after : e.motion_before;
      if (motion) restore_motion(*motion);
@@ -4742,7 +5254,7 @@
      const auto& whole = after ? e.track_after : e.track_before;
      if (whole) restore_track(*this, e.track, *whole); // last: its pack carries the motion as restored
      if (e.swap_a >= 0) trade_tracks(*this, unsigned(e.swap_a), unsigned(e.swap_b)); // a move: the same swap again
-@@ -1412,6 +1446,7 @@
+@@ -1412,6 +1443,7 @@
          if (project.seq_tempo != m->per_pattern) { project.seq_tempo = m->per_pattern; send({Type::SeqTempo, 0, 0, ui.lead_pattern, int16_t(m->per_pattern)}); }
      }
      dirty = true;
@@ -4792,7 +5304,7 @@
 +#endif
 --- /dev/null
 +++ b/src/rhythmer/shell/gen8_check.h
-@@ -0,0 +1,285 @@
+@@ -0,0 +1,290 @@
 +// SPDX-License-Identifier: GPL-3.0-only
 +#pragma once
 +#include "rhythmer/model/project_file.h"
@@ -4807,6 +5319,7 @@
 +#include "rhythmer/pages/pages.h"
 +#include "rhythmer/shell/step_edit.h"
 +#include "rhythmer/shell/step_lane.h"
++#include "rhythmer/shell/stage_map.h"
 +#include "rhythmer/pages/common.h"
 +
 +namespace rhythmer {
@@ -4920,45 +5433,75 @@
 +        if(rack.status(entry)!=PluginStatus::Ready)return gen_failure(221,__LINE__);
 +        c.ui.plugin_panel.layout_revision=1;
 +        for(unsigned context=0;context<3;++context){
-+            c.ui.page=PageId::Edit;c.ui.edit_page[c.ui.track]=context==2?1:0;c.ui.edit_row[c.ui.track]=context==1?3:0;
++            c.ui.page=PageId::Edit;c.ui.edit_page[c.ui.track]=1;c.ui.edit_row[c.ui.track]=context==1?3:0;
 +            c.open_plugin_presets(entry);c.ui.presets_cursor=uint16_t(context+1);plugin_presets_page.soft(c,2);
 +            for(unsigned tries=0;tries<3000&&rack.programs(entry).loading;tries++)std::this_thread::sleep_for(std::chrono::milliseconds(10));
-+            if(rack.programs(entry).current!=int(context+1)||c.ui.plugin_row[entry]!=(context==2?2:context==1?1:0))return gen_failure(222,__LINE__);
-+            plugin_presets_page.soft(c,0);if(c.ui.page!=PageId::Edit||c.ui.edit_page[c.ui.track]!=(context==2?1:0)||c.ui.edit_row[c.ui.track]!=(context==1?3:0))return gen_failure(223,__LINE__);
++            if(rack.programs(entry).current!=int(context+1)||c.ui.plugin_row[entry]!=2)return gen_failure(222,__LINE__);
++            plugin_presets_page.soft(c,0);if(c.ui.page!=PageId::Edit||c.ui.edit_page[c.ui.track]!=1||c.ui.edit_row[c.ui.track]!=(context==1?3:0))return gen_failure(223,__LINE__);
 +        }
++        c.ui.track=15;c.project.tracks[15]={};c.ui.page=PageId::Stage;c.ui.new_pick=1;
++        stage_page.wheel(c,-1);if(c.ui.new_pick!=0)return gen_failure(245,__LINE__);
++        stage_page.push(c);if(c.ui.page!=PageId::Plugins||c.track().used())return gen_failure(243,__LINE__);
++        c.back();if(c.track().used())return gen_failure(244,__LINE__);
 +        unsigned design_sources=0,design_controls=0;
 +        for(const auto& file:available){if(file.name=="Break Engine")continue;
 +            std::fprintf(stderr,"GEN DESIGN load=%s\n",file.name.c_str());
 +            c.ui.track=9;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.ui.plugin_back=PageId::Edit;c.choose_plugin(file);entry=c.track().plugin;
 +            for(unsigned tries=0;tries<3000&&rack.status(entry)!=PluginStatus::Ready;tries++){std::this_thread::sleep_for(std::chrono::milliseconds(10));}
 +            if(rack.status(entry)!=PluginStatus::Ready){PluginPanel failed;rack.panel(entry,0,failed);std::fprintf(stderr,"GEN DESIGN failed=%s entry=%u status=%d error=%s notice=%s\n",file.name.c_str(),unsigned(entry),int(failed.status),failed.error,c.ui.notice);return gen_failure(230,__LINE__);}
-+            c.ui.page=PageId::Edit;c.ui.edit_page[c.ui.track]=0;c.refresh_plugin_panel(entry);edit_page.soft(c,2);
-+            if(!c.ui.plugin_panel.design||!c.ui.plugin_panel.design_count)return gen_failure(231,__LINE__);
-+            const auto before=rack.states()[entry];const auto pages=c.ui.plugin_panel.design_count;
-+            for(unsigned page=0;page<pages;++page){
-+                c.ui.plugin_design_page[entry]=uint16_t(page);c.ui.plugin_design_half[entry]=0;c.refresh_plugin_panel(entry);
-+                if(c.ui.plugin_panel.design_page!=page||c.ui.plugin_panel.design_count!=pages)return gen_failure(232,__LINE__);
-+                for(unsigned half=0;half<(c.ui.plugin_panel.design_pages[page].shown[3]>=0?2u:1u);++half){
-+                    c.ui.plugin_design_half[entry]=uint8_t(half);c.refresh_plugin_panel(entry);
-+                    auto bindings=page_bindings(c.project,c.ui,c.pattern());
-+                    for(unsigned k=0;k<3;++k){const auto p=c.ui.plugin_panel.params[k];if(!p.used){if(bindings[k].kind!=Binding::Kind::None)return gen_failure(233,__LINE__);continue;}
-+                        if(bindings[k].kind!=Binding::Kind::PluginParam||int(plugin_binding_shown(bindings[k].id))!=p.shown)return gen_failure(234,__LINE__);
-+                        ++design_controls;
-+                        auto snap=std::make_unique<Snapshot>();shell.snapshot(*snap,100000);ui::KnobCard card;describe_card(*snap,bindings[k],card);if(card.value!=p.text)return gen_failure(235,__LINE__);
-+                    }
++            c.ui.page=PageId::Edit;c.ui.edit_page[c.ui.track]=1;c.refresh_plugin_panel(entry);
++            if(c.ui.plugin_panel.layout_revision&&c.ui.plugin_panel.row<2)return gen_failure(231,__LINE__);
++            const auto before=rack.states()[entry];const auto rows=c.ui.plugin_panel.rows;
++            for(unsigned row=2;row<rows;++row){
++                c.ui.plugin_row[entry]=uint16_t(row);c.refresh_plugin_panel(entry);
++                auto bindings=page_bindings(c.project,c.ui,c.pattern());
++                for(unsigned k=0;k<3;++k)if(c.ui.plugin_panel.params[k].used){
++                    if(bindings[k].kind!=Binding::Kind::PluginParam||plugin_binding_shown(bindings[k].id)!=row*3+k)return gen_failure(234,__LINE__);
++                    ++design_controls;
 +                }
 +            }
-+            c.ui.plugin_design_half[entry]=0;c.refresh_plugin_panel(entry);auto prior=c.ui.plugin_panel.design_page;edit_page.soft(c,2);
-+            if(!c.ui.map_open)return gen_failure(236,__LINE__);
-+            auto bindings=page_bindings(c.project,c.ui,c.pattern());for(const auto& b:bindings)if(b.kind!=Binding::Kind::None)return gen_failure(237,__LINE__);
-+            edit_page.wheel(c,-1000);c.back();if(c.ui.map_open||c.ui.plugin_design_page[entry]!=prior||c.ui.edit_page[c.ui.track]!=1)return gen_failure(238,__LINE__);
-+            edit_page.soft(c,2);edit_page.wheel(c,-1000);edit_page.push(c);if(c.ui.map_open||c.ui.plugin_design_page[entry]!=0)return gen_failure(239,__LINE__);
++            c.ui.plugin_row[entry]=2;c.refresh_plugin_panel(entry);
++            edit_page.wheel(c,-1000);if(c.ui.plugin_row[entry]!=2)return gen_failure(239,__LINE__);
++            c.ui.page=PageId::Stage;c.ui.stage_group[c.ui.track]=0;c.ui.stage_sub[c.ui.track]=1;c.refresh_plugin_panel(entry);
++            if(c.ui.plugin_panel.design||c.ui.plugin_panel.row<2)return gen_failure(237,__LINE__);
++            c.ui.page=PageId::Edit;
++            const bool kit_mode=file.name=="Rhythmer Kit";
++            c.ui.edit_row[c.ui.track]=0;c.refresh_plugin_panel(entry);
++            for(unsigned step=0;step<(kit_mode?3u:2u);++step){
++                edit_page.soft(c,2);
++                unsigned mode=kit_mode?(step+1)%3:step?0:2;
++                if(c.ui.edit_row[c.ui.track]!=mode)return gen_failure(242,__LINE__);
++                unsigned row=mode==1?0:mode==2?1:2;
++                if(c.ui.plugin_panel.row!=row)return gen_failure(243,__LINE__);
++                auto mapped=page_bindings(c.project,c.ui,c.pattern());
++                for(unsigned k=0;k<3;++k)if(c.ui.plugin_panel.params[k].used&&
++                   (mapped[k].kind!=Binding::Kind::PluginParam||plugin_binding_shown(mapped[k].id)!=row*3+k))return gen_failure(244,__LINE__);
++            }
 +            if(rack.states()[entry]!=before)return gen_failure(240,__LINE__);
-+            c.open_plugin_presets(entry);bindings=page_bindings(c.project,c.ui,c.pattern());if(bindings[0].kind!=Binding::Kind::PluginJump||bindings[1].kind!=Binding::Kind::None||bindings[2].kind!=Binding::Kind::None)return gen_failure(241,__LINE__);
++            c.open_plugin_presets(entry);auto bindings=page_bindings(c.project,c.ui,c.pattern());if(bindings[0].kind!=Binding::Kind::PluginJump||bindings[1].kind!=Binding::Kind::None||bindings[2].kind!=Binding::Kind::None)return gen_failure(241,__LINE__);
 +            c.apply(bindings[0],1);if(c.ui.presets_cursor!=std::min<int>(1,bindings[0].max)||rack.states()[entry]!=before)return gen_failure(242,__LINE__);plugin_presets_page.soft(c,0);
++            // The first page and EDIT must operate the same source values,
++            // including the Kit engine's own global filter (never an insert).
++            for(unsigned quick=0;quick<(kit_mode?2u:3u);++quick){
++                c.ui.page=PageId::Stage;stage_go(c.ui,EngineKind::Plugin,StageKind::PluginSound);c.refresh_plugin_panel(entry);
++                auto front=page_bindings(c.project,c.ui,c.pattern());auto binding=front[quick];
++                if(binding.kind!=Binding::Kind::PluginParam)return gen_failure(250,__LINE__);
++                const int old=binding.value;const auto shown=plugin_binding_shown(binding.id);
++                c.apply(binding,old>800?old-100:old+100);c.close_gesture();rack.states();c.refresh_plugin_panel(entry);
++                auto updated=page_bindings(c.project,c.ui,c.pattern())[quick];
++                c.ui.page=PageId::Edit;c.ui.edit_page[c.ui.track]=1;c.ui.edit_row[c.ui.track]=0;c.ui.plugin_row[entry]=uint16_t(shown/3);c.refresh_plugin_panel(entry);
++                auto backend=page_bindings(c.project,c.ui,c.pattern());const auto slot=shown%3;
++                if(backend[slot].id!=binding.id||backend[slot].value!=updated.value){std::fprintf(stderr,"QUICK link engine=%s knob=%u front_id=%d back_id=%d front=%d back=%d\n",file.name.c_str(),quick,int(binding.id),int(backend[slot].id),updated.value,backend[slot].value);return gen_failure(251,__LINE__);}
++            }
++            // Plug-in native pots are not included in upstream's model-only
++            // Undo scopes. Restore the captured plug-in state explicitly;
++            // do not assert or advertise an Undo capability it does not have.
++            rack.set_gen_state(entry,before);rack.sync(c.project,c.plugins_asleep());
++            for(unsigned tries=0;tries<3000&&rack.status(entry)!=PluginStatus::Ready;++tries)std::this_thread::sleep_for(std::chrono::milliseconds(10));
++            if(rack.status(entry)!=PluginStatus::Ready||rack.states()[entry]!=before)return gen_failure(253,__LINE__);
 +            ++design_sources;
 +        }
-+        std::printf("RHYTHMER_DESIGN sources=%u mapped_controls=%u navigation_state=unchanged page_map=ok preset_browse=safe\n",design_sources,design_controls);
++        std::printf("RHYTHMER_DESIGN sources=%u mapped_controls=%u navigation_state=unchanged native_stage_edit=ok preset_browse=safe quick_front_edit=linked state_restore=exact\n",design_sources,design_controls);
 +        c.plugins=nullptr;
 +    }
 +    {auto snap=std::make_unique<Snapshot>();auto& t=snap->project.tracks[0];t.engine=EngineKind::Plugin;t.plugin=0;
@@ -4973,29 +5516,10 @@
 +     x.track().engine=EngineKind::Sampler;x.track().break_bars=2;x.load_sound(0,EngineKind::Sampler,0);if(x.track().break_bars)return gen_failure(68,__LINE__);
 +     x.track().engine=EngineKind::Midi;x.ui.gen8_mode=2;auto snap=std::make_unique<Snapshot>();s.snapshot(*snap,1);if(x.ui.gen8_mode!=0)return gen_failure(67,__LINE__);
 +    }
-+    // Every selected instrument has the same unambiguous landing/edit/back flow.
-+    for(const char* name:{"Rhythmer Kit","Acid Engine","Sophie","Aphex","CS-1","FM-106","FMini-1","S1Vave","K-WASUB","MONO2K","OberVave","Hortator","Elixir","Guru-600","Prophet","Dexed","Hera","Braids","Plaits","Break Engine"}){
-+        EngineHost h;Shell shell(h);auto& x=shell.context();auto& t=x.track();
-+        const bool br=std::strcmp(name,"Break Engine")==0,acid=std::strcmp(name,"Acid Engine")==0;
-+        t.engine=br?EngineKind::Sampler:EngineKind::Plugin;t.plugin=0;t.break_bars=br?2:0;std::snprintf(x.project.plugins[0].name,sizeof x.project.plugins[0].name,"%s",name);
-+        x.ui.page=PageId::Patterns;auto previous=x.pattern().events;
-+        x.ui.shift=true;patterns_page.soft(x,2);x.ui.shift=false;x.ui.sheet_row=4;patterns_page.soft(x,2);
-+        if(x.ui.gen8_mode!=(br?2:acid?4:1)||(br&&x.ui.sheet_row!=5))return gen_failure(210,__LINE__);
-+        patterns_page.soft(x,0);if(!x.ui.sheet_open||x.ui.gen8_mode||x.pattern().events!=previous)return gen_failure(211,__LINE__);
-+        patterns_page.soft(x,0);if(x.ui.sheet_open)return gen_failure(212,__LINE__);
-+        if(br){x.ui.sheet_open=true;x.ui.gen8_mode=2;x.ui.sheet_row=0;auto edits=x.edits.size();patterns_page.push(x);if(x.edits.size()!=edits||x.pattern().events!=previous||!std::strstr(x.ui.notice,"BROWSE SAMPLE"))return gen_failure(213,__LINE__);continue;}
-+        x.ui.plugin_panel.entry=0;x.ui.plugin_panel.layout_revision=1;x.ui.plugin_panel.rows=8;std::snprintf(x.ui.plugin_panel.name,sizeof x.ui.plugin_panel.name,"%s",name);
-+        x.open(PageId::Edit);
-+        for(unsigned row=0;row<4;++row){
-+            if(x.ui.edit_row[x.ui.track]!=row)return gen_failure(214,__LINE__);
-+            auto bindings=page_bindings(x.project,x.ui,x.pattern());
-+            if(row==0&&bindings[0].kind!=Binding::Kind::Level)return gen_failure(215,__LINE__);
-+            if(row==1&&(bindings[0].kind!=Binding::Kind::Send||bindings[0].id!=1||bindings[2].id!=3))return gen_failure(216,__LINE__);
-+            edit_page.wheel(x,1);
-+        }
-+        if(x.ui.edit_row[x.ui.track])return gen_failure(217,__LINE__);
-+        edit_page.push(x);if(x.ui.edit_page[x.ui.track]!=1||x.ui.plugin_row[0]!=2)return gen_failure(218,__LINE__);
-+        x.back();if(x.ui.page!=PageId::Edit||x.ui.edit_page[x.ui.track])return gen_failure(219,__LINE__);
++    // Native Edit starts at synthesis row two; Back returns to its caller.
++    {EngineHost h;Shell s(h);auto& x=s.context();x.track().engine=EngineKind::Plugin;x.track().plugin=0;x.ui.page=PageId::Stage;
++     x.open(PageId::Edit);if(x.ui.edit_page[x.ui.track]!=1)return gen_failure(215,__LINE__);
++     x.back();if(x.ui.page!=PageId::Stage)return gen_failure(219,__LINE__);
 +    }
 +    // Entry always starts at GEN; browser cancel and load bars are contextual.
 +    {EngineHost h;Shell s(h);auto& x=s.context();x.ui.page=PageId::Patterns;x.ui.sheet_open=false;x.ui.gen8_mode=4;x.ui.sheet_row=1;
@@ -5015,19 +5539,12 @@
 +    }
 +    {EngineHost h;Shell s(h);auto& x=s.context();x.ui.page=PageId::Edit;x.track().engine=EngineKind::Plugin;x.track().plugin=0;
 +     std::strcpy(x.project.plugins[0].name,"Rhythmer Kit");std::strcpy(x.ui.plugin_panel.name,"Rhythmer Kit");x.ui.plugin_panel.entry=0;x.ui.plugin_panel.layout_revision=1;
-+     x.ui.edit_page[x.ui.track]=0;x.ui.kit_common=false;
-+     auto main=page_bindings(x.project,x.ui,x.pattern());if(main[0].kind!=Binding::Kind::Level)return gen_failure(98,__LINE__);
-+     edit_page.wheel(x,1);auto sends=page_bindings(x.project,x.ui,x.pattern());if(sends[0].kind!=Binding::Kind::Send||sends[0].id!=1||sends[2].id!=3)return gen_failure(99,__LINE__);
-+     edit_page.soft(x,2);if(x.ui.edit_page[x.ui.track]!=1)return gen_failure(100,__LINE__);
-+     x.back();if(x.ui.edit_page[x.ui.track]||x.ui.page!=PageId::Edit)return gen_failure(101,__LINE__);
-+     edit_page.push(x);if(x.ui.edit_page[x.ui.track]!=1)return gen_failure(102,__LINE__);
-+     x.back();x.ui.edit_row[x.ui.track]=0;
-+     auto cards=page_bindings(x.project,x.ui,x.pattern());if(cards[0].kind!=Binding::Kind::Level||cards[1].kind!=Binding::Kind::Pan||cards[2].kind!=Binding::Kind::Send)return gen_failure(94,__LINE__);
-+     x.apply(cards[0],73);x.apply(cards[1],-11);x.apply(cards[2],24);
-+     if(x.track().mix.level!=73||x.track().mix.pan!=-11||x.track().mix.sends[0]!=24)return gen_failure(95,__LINE__);
-+     auto state=save_project(x.project,x.patterns);auto project=std::make_unique<Project>();auto patterns=std::make_unique<PatternBank>();
-+     if(!load_project(state,*project,*patterns).empty()||project->tracks[0].mix.level!=73||project->tracks[0].mix.pan!=-11||project->tracks[0].mix.sends[0]!=24)return gen_failure(96,__LINE__);
-+     if(x.ui.kit_common)return gen_failure(97,__LINE__);
++     x.ui.edit_page[x.ui.track]=1;x.ui.edit_row[x.ui.track]=0;
++     edit_page.soft(x,2);if(x.ui.edit_row[x.ui.track]!=1)return gen_failure(98,__LINE__);
++     edit_page.soft(x,2);if(x.ui.edit_row[x.ui.track]!=2)return gen_failure(99,__LINE__);
++     edit_page.soft(x,2);if(x.ui.edit_row[x.ui.track])return gen_failure(100,__LINE__);
++     std::strcpy(x.ui.plugin_panel.name,"Prophet");edit_page.soft(x,2);if(x.ui.edit_row[x.ui.track]!=2)return gen_failure(101,__LINE__);
++     edit_page.soft(x,2);if(x.ui.edit_row[x.ui.track])return gen_failure(102,__LINE__);
 +    }
 +    if(const char* card=std::getenv("RHYTHMER_GEN_CARD"))for(unsigned group=0;group<4;group++){
 +        EngineHost h;Shell s(h);auto& x=s.context();PluginRack rack(h);rack.set_card(card);x.plugins=&rack;
@@ -5414,6 +5931,26 @@
      update_tick();
      // Power was pressed: the Exit sheet opens (the service thread only counts presses).
      // The library found files or finished a sample: the lengths go into the project.
+--- a/src/rhythmer/shell/mod_jobs.cpp
++++ b/src/rhythmer/shell/mod_jobs.cpp
+@@ -32,6 +32,9 @@
+ 
+ void learn_lane(Context& c, const Binding& b) {
+     int lane = lane_of(c.project, c.ui.track, b);
++    // Upstream MOD targets are Motion lanes, not a plug-in's opaque parameter
++    // indices. Do not retain a previous track/FX target after such a gesture.
++    if (b.kind == Kind::PluginParam) { c.ui.learn_lane = -2; return; }
+     if (lane < 0) return;
+     c.ui.learn_lane = int16_t(lane);
+     c.ui.learn_track = uint8_t(c.ui.track % track_count);
+@@ -50,6 +53,7 @@
+ 
+ void mod_add(Context& c) {
+     auto& ui = c.ui;
++    if (ui.learn_lane == -2) { c.notice("Use engine LFO or track FX"); return; }
+     if (ui.learn_lane < 0) { c.notice("Turn a knob first"); return; }
+     unsigned t = ui.learn_track % track_count, param = lane_param(ui.learn_lane), pad = lane_pad(ui.learn_lane) % sampler_pads;
+     auto info = motion_param(c.project.tracks[t], ui.learn_lane, &c.project);
 --- a/src/rhythmer/shell/pad_context.h
 +++ b/src/rhythmer/shell/pad_context.h
 @@ -54,7 +54,7 @@
@@ -5440,7 +5977,12 @@
      if (file.folder || file.several()) { plugins->browse(file.path); ui.plugins_cursor = 0; return; } // a folder, or a bundle's plug-ins
      if (!file.loadable()) { notice(file.why.empty() ? "Not a plug-in for this MPC" : file.why); return; }
      bool instrument = ui.plugin_target == UiState::PluginTarget::Instrument;
-@@ -122,11 +128,12 @@
+@@ -118,15 +124,17 @@
+     std::snprintf(ref.path, plugin_path_length, "%s", file.path.c_str());
+     std::snprintf(ref.name, sizeof(ref.name), "%s", file.name.c_str());
+     ref.id = file.id;
++    if (!same) ref.preset[0] = 0;
+     if (same) plugins->reload(unsigned(entry)); // picked again: opened afresh (after it failed or stopped working)
      if (instrument) {
          unsigned t = ui.track % track_count;
          auto& tr = project.tracks[t];
@@ -5454,16 +5996,19 @@
          std::string name = file.name;
          std::transform(name.begin(), name.end(), name.begin(), [](unsigned char ch) { return char(std::toupper(ch)); });
          tr.set_name(name.c_str());
-@@ -150,14 +157,22 @@
+@@ -150,14 +158,25 @@
      open(ui.plugin_back);
  }
  
 +void Context::refresh_plugin_panel(unsigned entry){
 +    if(!plugins||entry>=max_plugins)return;
-+    const bool editing=(ui.page==PageId::Edit||(ui.page==PageId::PluginPresets&&ui.presets_back==PageId::Edit))&&track().engine==EngineKind::Plugin&&track().plugin==entry&&ui.edit_page[ui.track];
++    const bool editing=((ui.page==PageId::Stage&&stage_page_now(ui,track(),false).kind==StageKind::PluginEdit)||ui.page==PageId::Edit||(ui.page==PageId::PluginPresets&&ui.presets_back==PageId::Edit))&&track().engine==EngineKind::Plugin&&track().plugin==entry&&(ui.page==PageId::Stage||ui.edit_page[ui.track]);
 +    if(editing){
-+        ui.kit_common=false;plugins->edit_panel(entry,ui.plugin_design_page[entry],ui.plugin_design_half[entry],ui.plugin_panel);
-+        if(ui.plugin_panel.design){ui.plugin_design_page[entry]=ui.plugin_panel.design_page;ui.plugin_design_half[entry]=ui.plugin_panel.design_half;if(ui.map_open)ui.map_cursor=uint8_t(std::min<unsigned>(ui.map_cursor,ui.plugin_panel.design_count?ui.plugin_panel.design_count-1:0));}
++        auto row=std::max<unsigned>(2,ui.plugin_row[entry]);
++        if(ui.page==PageId::Edit&&ui.edit_row[ui.track])row=ui.edit_row[ui.track]==1?0:1;
++        plugins->panel(entry,row,ui.plugin_panel);ui.plugin_panel.design=false;
++        ui.plugin_row[entry]=ui.plugin_panel.row;
++        if(ui.plugin_panel.layout_revision&&row>=2)for(unsigned k=0;k<ui.plugin_panel.window.size();++k)if(ui.plugin_panel.window_first+k<6)ui.plugin_panel.window[k]={};
 +    }else {plugins->panel(entry,ui.plugin_row[entry],ui.plugin_panel);ui.plugin_row[entry]=ui.plugin_panel.row;}
 +    plugin_panel_at=0;
 +}
@@ -5482,7 +6027,7 @@
      dirty = true;
  }
  
-@@ -170,8 +185,21 @@
+@@ -170,8 +189,21 @@
  } // namespace
  
  // PRESETS opens where the preset picked last is: its folder, its row (plugin/preset_rows.h).
@@ -5504,7 +6049,7 @@
      auto& ref = project.plugins[entry];
      ref.transport = !ref.transport;
      dirty = true;
-@@ -191,14 +219,24 @@
+@@ -191,14 +223,26 @@
      ui.presets_back = ui.page;
      set_presets_folder(ui, place.folder);
      ui.presets_cursor = uint16_t(place.row);
@@ -5517,7 +6062,10 @@
 +    if(plugin_frozen_edit(ui.presets_entry))return;
      auto programs = plugins->programs(ui.presets_entry);
      if (index < 0 || size_t(index) >= programs.list.size()) return;
-     plugins->select_program(ui.presets_entry, programs.list[size_t(index)].index);
+-    plugins->select_program(ui.presets_entry, programs.list[size_t(index)].index);
++    const auto& picked=programs.list[size_t(index)];
++    plugins->select_program(ui.presets_entry,picked.index);
++    if(ui.presets_entry<max_plugins)std::snprintf(project.plugins[ui.presets_entry].preset,sizeof(project.plugins[0].preset),"%s",program_key(picked).c_str());
 +    ui.plugin_design_page[ui.presets_entry]=0;ui.plugin_design_half[ui.presets_entry]=0;ui.plugin_panel.design=false;
 +    if(std::string(project.plugins[ui.presets_entry].name)=="Rhythmer Kit"){
 +        ui.kit_common=false;
@@ -5529,7 +6077,7 @@
      dirty = true; // the plug-in's state, saved with the project, now holds it
  }
  
-@@ -214,6 +252,7 @@
+@@ -214,6 +258,7 @@
      if (into.size() >= ui.presets_folder.size()) { notice("Folder name too long"); return; }
      set_presets_folder(ui, into);
      ui.presets_cursor = 0;
@@ -5537,7 +6085,7 @@
      if (!row.current) return;
      auto in = preset_rows(programs.list, into, programs.current); // the preset picked last is in here: open on it
      for (size_t n = 0; n < in.size(); ++n)
-@@ -226,6 +265,7 @@
+@@ -226,6 +271,7 @@
      auto programs = plugins->programs(ui.presets_entry);
      ui.presets_cursor = uint16_t(preset_row_of_folder(programs.list, inside, programs.current));
      set_presets_folder(ui, preset_folder_up(inside));
@@ -5545,7 +6093,7 @@
  }
  
  int Context::plugin_in_focus() const {
-@@ -248,6 +288,11 @@
+@@ -248,6 +294,11 @@
          auto root = library->root();
          plugins->set_card(root.empty() ? std::string() : std::filesystem::path(root).parent_path().string());
      }
@@ -5557,7 +6105,7 @@
      split_shared_plugins();
      plugins->sync(project, plugins_asleep());
      if (ui.page == PageId::Plugins && plugins->changes() != plugin_view_seen) { // the picker's rows, and where going up lands
-@@ -266,8 +311,11 @@
+@@ -266,8 +317,11 @@
      }
      int entry = plugin_in_focus();
      if (entry < 0) { ui.plugin_panel = PluginPanel {}; return; }
@@ -5633,6 +6181,17 @@
      void button(SurfaceButton button, bool pressed);
      void press(SurfaceButton button, bool pressed); // button() inside its undo step (shell/undo_scope.h)
      void pot(unsigned index, int position, bool syncing);
+--- a/src/rhythmer/shell/stage_map.h
++++ b/src/rhythmer/shell/stage_map.h
+@@ -53,7 +53,7 @@
+     unsigned track = ui.track % track_count, group = ui.stage_group[track] % 3;
+     if (!stage_has(g, group) || stage_opens_edit(t, group)) group = 0; // left on a button with no Stage pages under it
+     unsigned sub = ui.stage_sub[track] % stage_count(g, group);
+-    if (stage_skips(g, group, sub, instrument)) sub = 0; // left on LAYERS: an instrument pad shows ZONES, a sample pad LAYERS again
++    if(stage_skips(g,group,sub,instrument)){do{sub=(sub+stage_count(g,group)-1)%stage_count(g,group);}while(stage_skips(g,group,sub,instrument));} // left on LAYERS: an instrument pad shows ZONES, a sample pad LAYERS again
+     return {group, sub};
+ }
+ 
 --- a/src/rhythmer/shell/step_edit.cpp
 +++ b/src/rhythmer/shell/step_edit.cpp
 @@ -1,3 +1,4 @@
@@ -7101,7 +7660,135 @@
 +}
 --- a/tests/rhythmer.cpp
 +++ b/tests/rhythmer.cpp
-@@ -7349,16 +7349,18 @@
+@@ -4,6 +4,7 @@
+ #include "rhythmer/engine/effects.h"
+ #include "rhythmer/engine/macros.h"
+ #include <sstream>
++#include <cstring>
+ #include <fstream>
+ #include <filesystem>
+ #include <functional>
+@@ -5574,7 +5575,7 @@
+     }
+     CHECK(stage_groups(EngineKind::Plugin).groups[0].pages[0].kind == StageKind::PluginSound);
+     CHECK(stage_groups(EngineKind::Plugin).groups[2].pages[0].kind == StageKind::Mix && stage_groups(EngineKind::Sampler).groups[2].pages[0].kind == StageKind::PadMix);
+-    CHECK(stage_groups(EngineKind::Sampler).groups[0].pages[0].kind == StageKind::Trim && stage_groups(EngineKind::Sampler).groups[1].count == 4);
++    CHECK(stage_groups(EngineKind::Sampler).groups[0].pages[0].kind == StageKind::Params && stage_groups(EngineKind::Sampler).groups[1].count == 4);
+     CHECK(stage_groups(EngineKind::None).groups[2].pages[0].kind == StageKind::NewMidi);
+ 
+     auto project = std::make_unique<Project>();
+@@ -5595,9 +5596,10 @@
+     CHECK(key() == "PRESETS");
+     stage_press(ui, project->tracks[0], 0, false); CHECK(key() == "EDIT");
+     stage_press(ui, project->tracks[0], 0, false); CHECK(key() == "PRESETS");
++    stage_press(ui, project->tracks[0], 1, false); CHECK(key() == "PERFORM");
+     stage_press(ui, project->tracks[0], 1, false); CHECK(key() == "ARP");
+     stage_press(ui, project->tracks[0], 1, false); CHECK(key() == "CHORD");
+-    ui.track = 1; CHECK(key() == "TRIM");
++    ui.track = 1; CHECK(key() == "SOUND");
+     stage_press(ui, project->tracks[1], 2, false); CHECK(key() == "MIX");
+     ui.track = 0; CHECK(key() == "CHORD");
+     stage_press(ui, project->tracks[0], 2, false); CHECK(key() == "MIX"); // another button: its first page
+@@ -5606,16 +5608,27 @@
+     stage_press(ui, project->tracks[0], 2, false); CHECK(key() == "MIX");
+     // PRESETS: the performance knobs, the plug-in open or not; EDIT: its own row of three once it is open (none
+     // before). No Shift row on either.
+-    CHECK(stage_go(ui, EngineKind::Plugin, StageKind::PluginSound) && cards(false)[0].kind == K::Param && !shift_bindings(*project, ui, pattern)[0].bound());
++    CHECK(stage_go(ui, EngineKind::Plugin, StageKind::PluginSound) && !cards(false)[0].bound() && !shift_bindings(*project, ui, pattern)[0].bound());
+     CHECK(stage_go(ui, EngineKind::Plugin, StageKind::PluginEdit) && !cards(false)[0].bound());
+     CHECK(stage_go(ui, EngineKind::Plugin, StageKind::PluginSound));
+     ui.plugin_panel.entry = project->tracks[0].plugin; ui.plugin_panel.status = PluginStatus::Ready; ui.plugin_panel.params[0].used = true;
+-    { // PRESETS: the three performance knobs, whatever the plug-in (engine/macros.h); a slot's kind 0 is its default
++    for(unsigned n=0;n<3;++n){auto& q=ui.plugin_panel.quick[n];q.used=true;q.shown=int16_t(6+n);q.value=int16_t(300+n);}
++    {auto q=cards(false);for(unsigned n=0;n<3;++n){CHECK(q[n].kind==K::PluginParam&&plugin_binding_shown(q[n].id)==6+n);CHECK(q[n].value==int(300+n));CHECK(plugin_card(ui.plugin_panel,q[n].id)==&ui.plugin_panel.quick[n]);}}
++    { // Whole-kit filter mirrors stay fixed as a different source pad is selected.
++        ui.plugin_panel.focused_pad=10;auto q=cards(false);
++        CHECK(q[0].kind==K::PluginParam&&plugin_binding_shown(q[0].id)==6);
++        CHECK(q[1].kind==K::PluginParam&&plugin_binding_shown(q[1].id)==7);
++        CHECK(q[2].kind==K::Level);
++        ui.plugin_panel.focused_pad=7;CHECK(cards(false)[0].id==q[0].id);
++        ui.plugin_panel.focused_pad=-1;
++    }
++    CHECK(stage_go(ui,EngineKind::Plugin,StageKind::PluginPerform));
++    { // PERFORM retains the three original track knobs; a slot's kind 0 is its default
+         auto knobs = cards(false);
+         CHECK(knobs[0].kind == K::Param && knobs[0].id == plugin_track::Macro1 && knobs[0].min == -100 && knobs[0].max == 100);
+         CHECK(knobs[1].id == plugin_track::Macro2 && knobs[1].min == 0 && knobs[2].id == plugin_track::Macro3 && knobs[2].max == 100);
+         auto& pt = project->tracks[0];
+-        CHECK(std::string(track_param_info(pt.engine, pt.params, 0).label) == "FILTER" &&
++        CHECK(std::string(track_param_info(pt.engine, pt.params, 0).label) == "DJ FILTER" &&
+               std::string(track_param_info(pt.engine, pt.params, 1).label) == "ECHO" && std::string(track_param_info(pt.engine, pt.params, 2).label) == "SPACE");
+         pt.params[plugin_track::Kind3] = int16_t(MacroKind::Echo); // a slot set to another kind: its card and lane follow
+         CHECK(std::string(track_param_info(pt.engine, pt.params, 2).label) == "ECHO" && lane_name(pt, plugin_track::Macro3) == "ECHO");
+@@ -5651,10 +5664,10 @@
+     ui.sends_bus = 3;
+     CHECK(cards(false)[0].value == 3 && cards(false)[1].id == 3 && cards(false)[2].id == 3);
+     // ARP: mode, rate, octaves; Shift + K1 gate, Shift + K3 hold.
+-    stage_go(ui, 1, 0);
++    stage_go(ui,EngineKind::Plugin,StageKind::Arp);
+     CHECK(cards(false)[0].kind == K::ArpMode && cards(false)[1].kind == K::ArpRate && cards(true)[0].kind == K::ArpGate && cards(true)[2].kind == K::ArpHold);
+     // CHORD: type, voicing, inversion; Shift + K1 chords on or off, Shift + K3 hold.
+-    stage_go(ui, 1, 1);
++    stage_go(ui,EngineKind::Plugin,StageKind::Chord);
+     CHECK(key() == "CHORD" && cards(false)[0].kind == K::ChordType && cards(false)[2].kind == K::ChordInvert);
+     CHECK(cards(true)[0].kind == K::ChordOn && cards(true)[2].kind == K::ArpHold);
+     // FX: nothing without effects; with one, its first row and (Shift) its second.
+@@ -5670,16 +5683,16 @@
+     ui.track = 1;
+     auto& kit = project->tracks[1];
+     kit.pads[5].sample = 0; project->samples[0].frames = 44100; kit.last_pad = 5;
+-    stage_go(ui, 0, 0);
++    stage_go(ui,EngineKind::Sampler,StageKind::Trim);
+     CHECK(cards(false)[0].kind == K::PadStart && cards(false)[1].kind == K::PadEnd && cards(false)[2].kind == K::PadLoopPoint);
+     CHECK(cards(true)[0].kind == K::TrimZoom);
+-    stage_go(ui, 0, 1); // LAYERS (roadmap P3): the layer in hand, its velocities; Shift + K1 how a hit picks
++    stage_go(ui,EngineKind::Sampler,StageKind::Layers); // LAYERS (roadmap P3): the layer in hand, its velocities; Shift + K1 how a hit picks
+     CHECK(key() == "LAYERS" && cards(false)[0].kind == K::LayerPick && cards(false)[1].kind == K::LayerLow && cards(true)[0].kind == K::LayerPlayMode);
+     stage_go(ui, 2, 0);
+     CHECK(key() == "MIX" && cards(false)[0].kind == K::PadLevel && cards(false)[1].kind == K::Param && cards(false)[1].id == sampler::Level && cards(false)[2].kind == K::PadPan);
+-    stage_go(ui, 0, 3);
++    stage_go(ui,EngineKind::Sampler,StageKind::AmpEnv);
+     CHECK(key() == "AMP ENV" && cards(false)[0].kind == K::PadAttack && cards(true)[1].kind == K::PadDecayFrom);
+-    stage_go(ui, 0, 2);
++    stage_go(ui,EngineKind::Sampler,StageKind::Tune);
+     CHECK(key() == "TUNE" && cards(false)[0].kind == K::PadPitch && cards(true)[2].kind == K::PadBeats);
+     stage_go(ui, 1, 0);
+     CHECK(key() == "PLAY" && cards(false)[0].kind == K::PadMono && cards(true)[1].kind == K::PadLink);
+@@ -5702,18 +5715,19 @@
+     project->samples[1].zones = 6; // read
+     kit.pads[7].sample = 1; kit.last_pad = 7;
+     CHECK(stage_instrument(*project, kit) && !stage_instrument(*project, project->tracks[0]));
+-    stage_go(ui, 0, 0);
++    stage_go(ui,EngineKind::Sampler,StageKind::Trim);
+     CHECK(cards(false)[0].kind == K::ZonePick);
+     stage_press(ui, kit, 0, true); CHECK(key() == "TUNE");
+     stage_press(ui, kit, 0, true); CHECK(key() == "AMP ENV");
++    stage_press(ui, kit, 0, true); CHECK(key() == "SOUND");
+     stage_press(ui, kit, 0, true); CHECK(key() == "TRIM");
+-    stage_go(ui, 0, 1);
+-    CHECK(stage_at(ui, kit, true).sub == 0 && key() == "TRIM" && cards(false)[0].kind == K::ZonePick);
++    stage_go(ui,EngineKind::Sampler,StageKind::Layers);
++    CHECK(stage_at(ui,kit,true).sub==stage_find(EngineKind::Sampler,StageKind::Trim).at.sub && key() == "TRIM" && cards(false)[0].kind == K::ZonePick);
+     stage_press(ui, kit, 0, true); CHECK(key() == "TUNE");
+-    stage_go(ui, 0, 1); kit.last_pad = 5;
++    stage_go(ui,EngineKind::Sampler,StageKind::Layers); kit.last_pad = 5;
+     CHECK(key() == "LAYERS" && cards(false)[0].kind == K::LayerPick);
+     const auto& kit_groups = stage_groups(EngineKind::Sampler);
+-    CHECK(stage_shown(kit_groups, 0, true) == 3 && stage_shown(kit_groups, 0, false) == 4 && stage_shown_at(kit_groups, 0, 2, true) == 1);
++    CHECK(stage_shown(kit_groups,0,true)==4&&stage_shown(kit_groups,0,false)==5&&stage_shown_at(kit_groups,0,stage_find(EngineKind::Sampler,StageKind::Tune).at.sub,true)==2);
+     kit.pads[7] = PadSound {}; project->samples[1] = SampleRef {};
+     stage_go(ui, 2, 4);
+     CHECK(key() == "KIT FILT" && cards(false)[0].id == sampler::Filter && cards(false)[2].id == sampler::FilterType);
+@@ -5788,7 +5802,7 @@
+     CHECK(cards(false)[0].kind == K::TrackPick && cards(false)[1].kind == K::Level && cards(false)[2].kind == K::Pan);
+ 
+     // Undo: Shift + B1 / B2 on a kit's TRIM (Loop Lock, Normalize) are the pad's; B1 alone on Stage keeps nothing.
+-    ui.page = PageId::Stage; ui.track = 1; stage_go(ui, 0, 0); kit.last_pad = 5;
++    ui.page=PageId::Stage;ui.track=1;stage_go(ui,EngineKind::Sampler,StageKind::Trim);kit.last_pad=5;
+     ui.shift = true;
+     CHECK(press_scope(*project, ui, SurfaceButton::TopLeft, false).kind == UndoScope::Kind::Pad);
+     CHECK(button_has_shift_job(*project, ui, SurfaceButton::TopMiddle, true));
+@@ -7349,16 +7363,18 @@
      host.set_parking(true);
      host.send({Command::Type::NoteOn, 0, 0, 60, 100}); // held: the fade is heard on it
      std::vector<float> heard;
@@ -7122,7 +7809,7 @@
      uint32_t serial = host.park();
      CHECK(serial != 0);
      host.send({Command::Type::Tempo, 0, 0, 0, 1337}); // after the Park: lands on the new project, after its build
-@@ -7367,11 +7369,11 @@
+@@ -7367,11 +7383,11 @@
      CHECK(parked && host.parks() == 1);
      auto pack = std::make_unique<ProjectPack>(*b, *bb);
      host.reload(*pack, false); // here, on the loader's thread
@@ -7136,7 +7823,23 @@
      stop = true;
      audio.join();
      CHECK(host.tempo_now() == 1337 && host.playing());
-@@ -10734,6 +10736,7 @@
+@@ -9007,6 +9023,7 @@
+         project->buses[0].fx.slots[0] = {plugin_effect_kind, false, {7, 0, 0, 0, 0, 0}};
+         project->master.slots[0] = {plugin_effect_kind, false, {9, 0, 0, 0, 0, 0}};
+         project->plugins[9].transport = false; // a plug-in with its own sequencer, played only by its notes
++        std::snprintf(project->plugins[5].preset, sizeof(project->plugins[5].preset), "Leads/Acid Line");
+         std::array<std::vector<uint8_t>, max_plugins> states;
+         states[5] = {1, 2, 3, 250};
+         auto data = save_project(*project, *bank, &states);
+@@ -9022,6 +9039,7 @@
+         CHECK(copy->master.slots[0].kind == plugin_effect_kind && copy->master.slots[0].params[0] == 9);
+         CHECK(plugin_used_by(*copy, 5) && plugin_used_by(*copy, 9) && !plugin_used_by(*copy, 4));
+         CHECK(!copy->plugins[9].transport && copy->plugins[5].transport && copy->plugins[7].transport);
++        CHECK(std::string(copy->plugins[5].preset) == "Leads/Acid Line" && copy->plugins[7].preset[0] == 0);
+         copy->tracks[2].engine = EngineKind::Midi; // the entry stays in the table but nothing plays it
+         CHECK(!plugin_used_by(*copy, 5));
+     }
+@@ -10734,6 +10752,7 @@
          ui.track = 3; ui.page = PageId::StepEdit; ui.step_cards = 3;
          auto cards = page_bindings(*project, ui, p, false);
          CHECK(cards[0].kind == Binding::Kind::EuclidHits && cards[0].value == 16 && cards[1].kind == Binding::Kind::EuclidSteps && cards[2].value == 3);
@@ -7144,6 +7847,33 @@
          ui.page = PageId::Patterns; ui.sheet_open = true; // Shift + B3 VARY on Patterns
          CHECK(page_bindings(*project, ui, p, false)[0].kind == Binding::Kind::VaryAmount);
      }
+@@ -13773,6 +13792,26 @@
+     std::fill(l.begin(), l.end(), 0.5f); std::fill(r.begin(), r.end(), 0.5f);
+     starved.process(l.data(), r.data(), 256);
+     CHECK(l[100] == 0.5f);
++
++    { // Hard stop discards the host performance tails, not just the native instrument's notes.
++        DelayPool local_pool(4);
++        ToneRunner tone;
++        PluginEngine plugin;
++        plugin.set_pool(&local_pool); plugin.attach(&tone);
++        plugin.set_param(plugin_track::Macro2, 100); plugin.set_param(plugin_track::Macro3, 100);
++        plugin.note_on(60, 110);
++        auto render = [&] { float left[128] {}, right[128] {}; plugin.render_stereo(left, right, 128); float energy = 0; for (float f : left) energy += f * f; return energy; };
++        for (unsigned b = 0; b < 40; ++b) render();
++        CHECK(local_pool.free_blocks() == 2);
++        plugin.silence();
++        CHECK(local_pool.free_blocks() == 4);
++        for (unsigned b = 0; b < 600; ++b) CHECK(render() == 0);
++        // Stored macro amounts survive the panic; the next note gets fresh effects, not an old tail.
++        plugin.note_on(60, 110);
++        CHECK(render() > 0 && local_pool.free_blocks() == 2);
++        plugin.silence();
++        CHECK(local_pool.free_blocks() == 4);
++    }
+ 
+     CHECK(macro_kind(0, 0) == MacroKind::Filter && macro_kind(0, 1) == MacroKind::Echo && macro_kind(0, 2) == MacroKind::Space &&
+           macro_kind(int(MacroKind::Space), 0) == MacroKind::Space && macro_kind(99, 1) == MacroKind::Echo);
 --- /dev/null
 +++ b/tests/test_break_acid.py
 @@ -0,0 +1,10 @@

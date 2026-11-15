@@ -16,6 +16,7 @@
 // Shift + Push is Back.
 // The pads play the track; on a kit the pad played is the pad edited.
 #include "rhythmer/engine/arp.h"
+#include "rhythmer/engine/macros.h"
 #include "rhythmer/engine/dsp.h"
 #include "rhythmer/engine/effect_info.h"
 #include "rhythmer/engine/midi_engine.h"
@@ -26,6 +27,7 @@
 #include "rhythmer/shell/key_pick.h"
 #include "rhythmer/shell/meter_lights.h"
 #include "rhythmer/shell/new_track.h"
+#include "rhythmer/shell/pad_colour.h"
 #include "rhythmer/shell/sound_list.h"
 #include "rhythmer/shell/print_engine.h"
 #include "rhythmer/shell/stage_map.h"
@@ -795,18 +797,24 @@ void new_track_picture(Paint& p, const Snapshot& s) {
     p.fill(0, zone::picture_y, zone::width, zone::height - zone::picture_y, colour::bg); // the knob strip too: no pots here
     juce::String channel = juce::String::fromUTF8("MIDI \xc2\xb7 CH ") + juce::String(std::clamp<int>(s.ui.new_channel, 1, 16));
     std::vector<CarouselCard> cards(new_choice_count);
-    cards[size_t(NewChoice::Plugin)] = {Icon::Plug, "SYNTH", "Plugin", "VST CLAP LV2"};
-    cards[size_t(NewChoice::Kit)] = {Icon::Pads, "KIT", "Empty", "NO SAMPLES"};
+    cards[size_t(NewChoice::Plugin)] = {Icon::Plug, "PLUG-IN", "Synth", "VST CLAP LV2"};
+    cards[size_t(NewChoice::Kit)] = {Icon::Pads, "KIT", "Empty", "EMPTY PADS"};
     cards[size_t(NewChoice::Samples)] = {Icon::Folder, "KIT", "Card", "SAMPLES"};
     cards[size_t(NewChoice::Record)] = {Icon::Mic, "KIT", "Input", "RECORD"};
     cards[size_t(NewChoice::MidiOut)] = {Icon::Din, "MIDI", "Out jack", channel};
     cards[size_t(NewChoice::MidiUsb)] = {Icon::Din, "MIDI", "USB-C", channel};
     cards[size_t(NewChoice::MidiAllUsb)] = {Icon::Din, "MIDI", "All USB", channel};
-    carousel(p, cards, new_pick_shown(s.ui, s.now), colour_of(s), zone::picture_y + 8, zone::height - zone::picture_y - 12);
+    p.text("PLUG-IN / SAMPLE KIT / MIDI", zone::pad, zone::picture_y + 4, zone::width - 2 * zone::pad, 16, caps_text(colour::sec, type::small), juce::Justification::centred);
+    carousel(p, cards, new_pick_shown(s.ui, s.now), colour_of(s), zone::picture_y + 24, zone::height - zone::picture_y - 52);
+    p.text("TURN TO CHOOSE / PUSH TO LOAD", zone::pad, zone::height - 23, zone::width - 2 * zone::pad, 16, plain(colour::sec, type::small), juce::Justification::centred);
 }
 
 void bars_picture(Paint& p, const Snapshot& s, const StagePage& page, bool shift_row, float y0 = top) {
     std::vector<Row> list;
+    if(page.kind==StageKind::PluginPerform){
+        for(unsigned n=0;n<3;++n){const auto& t=s.track();const auto& pi=track_param_info(t.engine,t.params,n);auto shown=show(pi,t.params[n]);list.push_back({pi.label,{},juce::String(shown.value)+(shown.unit.empty()?"":" "+juce::String(shown.unit)),gauge_of(pi,t.params[n]),bipolar(pi),knob_shade(s.ui.track,n)});}
+        rows(p,"TRACK PERFORMANCE",list,96,y0,bottom);return;
+    }
     const auto& ids = shift_row ? page.shift : page.params;
     for (unsigned n = 0; n < 3; ++n) if (ids[n] >= 0) list.push_back(param_row(s, ids[n], n, !shift_row));
     if (list.empty()) return;
@@ -819,7 +827,8 @@ void bars_picture(Paint& p, const Snapshot& s, const StagePage& page, bool shift
 void colours_picture(Paint& p, const Snapshot& s) {
     const auto& t = s.track();
     const unsigned bank = t.bank % sampler_banks;
-    constexpr float gap = 4, y0 = top + 4, w = (pw - 3 * gap) / 4, h = (bottom - top - 8 - 3 * gap) / 4;
+    constexpr float gap = 4, y0 = top + 18, w = (pw - 3 * gap) / 4, h = (bottom - top - 22 - 3 * gap) / 4;
+    p.text("PAD LIGHT COLOURS", px, top, pw, 13, caps_text(colour::sec));
     for (unsigned n = 0; n < 16; ++n) {
         const unsigned kit = bank * 16 + n, row = 3 - n / 4, column = n % 4;
         const float x = px + column * (w + gap), y = y0 + row * (h + gap);
@@ -829,6 +838,9 @@ void colours_picture(Paint& p, const Snapshot& s) {
         if (kit == t.last_pad) p.ring(x - 2, y - 2, w + 4, h + 4, colour::text, 5, 2);
         char label[4]; pad_label(kit, label);
         auto name = used ? pad_name(s, kit, true) : juce::String(label);
+        const int choice=colour_choice(t.pads[kit].colour);
+        auto hue=juce::String(!used?"EMPTY":choice==colour_track?"TRACK":choice==colour_own?"CUSTOM":ui::track_colour_names[size_t(choice-1)]);
+        p.text(juce::String(label)+" "+hue,x+3,y+1,w-6,11,p.fit(juce::String(label)+" "+hue,plain(ink_on(fill),type::floor),w-6,type::floor));
         auto style = plain(used ? ink_on(fill) : colour::dim, type::small, Weight::SemiBold);
         p.text(name, x + 5, y + h - 15, w - 10, 13, p.fit(name, style, w - 10, type::floor));
     }
@@ -892,6 +904,7 @@ bool plugin_has_presets(const Snapshot& s);
 
 ui::SoftKeys stage_keys(const Snapshot& s) {
     const auto& t = s.track();
+    if(!t.used())return SoftKeys{{"BACK","SAMPLE KIT","MIDI"},-1,colour_of(s)};
     const auto& g = stage_groups(t.engine);
     const bool instrument = instrument_pad(s);
     auto at = stage_at(s.ui, t, instrument);
@@ -932,9 +945,12 @@ void plugin_sound_picture(Paint& p, const Snapshot& s) {
     const auto& t = s.track();
     const auto& panel = s.ui.plugin_panel;
     if (!plugin_ready(s)) { draw_plugin_view(p, s, t.plugin, top); return; }
+    const bool artwork = panel.layout_revision && performance_kind(plugin_name(s,t.plugin)) < 20;
+    if (artwork) performance_art(p, s, plugin_name(s, t.plugin), juce::String::fromUTF8(panel.preset),
+                                px + 4, top + 43, pw - 8, bottom - top - 65, int(t.last_pad), 1.0f, true);
     auto poster_at = [&](const juce::String& name, juce::Colour colour) {
-        auto poster = p.fit(name, plain(colour, 30, Weight::SemiBold), pw - 12, type::title);
-        p.text(name, px + 4, top + 14, pw - 12, 36, poster);
+        auto poster = p.fit(name, plain(colour, artwork ? 22 : 30, Weight::SemiBold), pw - 12, artwork ? type::floor : type::title);
+        p.text(name, px + 4, top + (artwork ? 0 : 14), pw - 12, artwork ? 25 : 36, poster);
     };
     juce::String format = juce::String::fromUTF8(panel.format);
     if (!plugin_presets(s)) {
@@ -951,16 +967,27 @@ void plugin_sound_picture(Paint& p, const Snapshot& s) {
     auto name_of = [&](int n) { return juce::String::fromUTF8(list[size_t(n)].name.c_str()); };
     if (at < 0) poster_at("No preset yet", colour::sec);
     else poster_at(name_of(at), s.ui.preset_due ? colour::amber : colour::text);
-    juce::String sub = plugin_name(s, t.plugin) + (format.isNotEmpty() ? dot + format : juce::String());
-    p.text(sub, px + 6, top + 54, pw - 12, 16, p.fit(sub, plain(colour::sec, type::body), pw - 12, type::floor));
+    juce::String sub = plugin_name(s, t.plugin) + (panel.focused_pad>=0?dot+"ALL PADS":(format.isNotEmpty()?dot+format:juce::String()));
+    if(t.params[0]||t.params[1]||t.params[2])sub+=dot+"PERFORM ON";
+    p.text(sub, px + 6, top + (artwork ? 26 : 54), pw - 12, 16, p.fit(sub, plain(colour::sec, type::body), pw - 12, type::floor));
     auto side = plain(colour::mid, type::body);
+    // The selected poster retains bank/name. Neighbour cues may omit a bank
+    // prefix when it cannot fit the half-width box at the readable floor.
+    auto neighbour = [&](int n) {
+        auto name=name_of(n);
+        if(p.width(name,plain(colour::mid,type::floor))>pw/2-20&&name.contains(" / "))
+            name=name.fromLastOccurrenceOf(" / ",false,false);
+        return name;
+    };
     if (at > 0) {
+        auto name=neighbour(at-1);
         icon(p, Icon::ChevronLeft, px, bottom - 16, 10, colour::dim, 1.6f);
-        p.text(name_of(at - 1), px + 13, bottom - 19, pw / 2 - 20, 16, p.fit(name_of(at - 1), side, pw / 2 - 20, type::floor));
+        p.text(name, px + 13, bottom - 19, pw / 2 - 20, 16, p.fit(name, side, pw / 2 - 20, type::floor));
     }
     if (at + 1 < int(list.size())) {
+        auto name=neighbour(at+1);
         icon(p, Icon::ChevronRight, px + pw - 10, bottom - 16, 10, colour::dim, 1.6f);
-        p.text(name_of(at + 1), px + pw / 2, bottom - 19, pw / 2 - 13, 16, p.fit(name_of(at + 1), side, pw / 2 - 20, type::floor),
+        p.text(name, px + pw / 2, bottom - 19, pw / 2 - 13, 16, p.fit(name, side, pw / 2 - 20, type::floor),
                juce::Justification::centredRight);
     }
 }
@@ -1001,7 +1028,7 @@ void draw(Paint& p, const Snapshot& s) {
         h.left.push_back(pill((at >= 0 ? juce::String(at + 1) : juce::String::fromUTF8("\xe2\x80\x93")) + " / " + juce::String(int(s.presets.list.size()))));
     } else if (page.kind == StageKind::PluginEdit && plugin_ready(s)) { // the share of each audio block it takes, as Edit's
         const auto& panel = s.ui.plugin_panel;
-        h.left.push_back(pill(Icon::Chip, juce::String(panel.load / 10) + " %", panel.load > 700 ? colour::amber : colour::mid));
+        h.left.push_back(pill(panel.layout_revision&&panel.row>=2?juce::String("EDIT ")+juce::String(panel.row-1)+"/"+juce::String(std::max(1,int(panel.rows)-2)):juce::String(panel.load/10)+" %"));
     } else if (page.kind == StageKind::Arp || page.kind == StageKind::Chord) { // on or off, as the LED on the MPC would say
         bool on = page.kind == StageKind::Arp ? t.arp : t.chord;
         h.left.push_back(pill(on ? Icon::Check : Icon::None, on ? "ON" : "OFF", on ? c : colour::mid));
@@ -1027,11 +1054,16 @@ void draw(Paint& p, const Snapshot& s) {
     if (!t.used()) { // what it becomes: B1 CANCEL to the nearest track that is not empty
         bool any = false;
         for (const auto& other : s.project.tracks) any |= other.used();
-        keys = SoftKeys {{any ? "CANCEL" : "", "", ""}, -1, c, {any ? KeyIcon::Back : KeyIcon::None, KeyIcon::None, KeyIcon::None}};
+        keys = SoftKeys {{any ? "BACK" : "", "SAMPLE KIT", "MIDI"}, -1, c, {any ? KeyIcon::Back : KeyIcon::None, KeyIcon::None, KeyIcon::None}};
     }
     frame(p, s, keys, h);
     if (!t.used()) { new_track_picture(p, s); return; }
     if (frozen) { frozen_picture(p, s); return; }
+    if(t.engine==EngineKind::Sampler&&t.break_bars&&page.kind==StageKind::Trim&&!t.pads[t.last_pad%sampler_pads].used()){
+        p.text("Break Engine",px,top,pw,23,plain(colour::text,type::title,Weight::SemiBold));
+        performance_art(p,s,"Break Engine","No loop",px,top+25,pw,bottom-top-50,-1,0.8f,true);
+        p.text("PUSH TO LOAD A LOOP",px,bottom-20,pw,18,caps_text(colour::text),juce::Justification::centred);return;
+    }
     switch (page.picture) {
     case StagePicture::Preset: preset_picture(p, s); break;
     case StagePicture::Filter: filter_picture(p, s, page); break;
@@ -1074,7 +1106,9 @@ void soft(Context& c, int key) {
     }
     c.stage_tick(UINT32_MAX); // a sound still waiting to load lands first
     if (!c.track().used()) { // B1 CANCEL: the nearest track that is not empty, on the page this one was picked on
-        if (key == 0) cancel_new_track(c);
+        if(key==0)cancel_new_track(c);
+        if(key==1)make_new_track(c,NewChoice::Kit);
+        if(key==2)make_new_track(c,NewChoice::MidiOut);
         return;
     }
     if (stage_opens_edit(c.track(), unsigned(key))) { c.open(PageId::Edit); return; } // a MIDI track's B3 EDIT
@@ -1106,7 +1140,10 @@ void wheel(Context& c, int delta) {
 void push(Context& c) {
     auto& t = c.track();
     const auto& page = stage_page_now(c.ui, t, stage_instrument(c.project, t));
-    if (!t.used()) { make_new_track(c, NewChoice(c.ui.new_pick % new_choice_count)); return; } // the card in the middle
+    if (!t.used()) { make_new_track(c,NewChoice(c.ui.new_pick % new_choice_count)); return; }
+    if(t.engine==EngineKind::Sampler&&t.break_bars&&!t.pads[t.last_pad%sampler_pads].used()){
+        c.ui.break_browse=true;c.ui.break_load_b=false;c.ui.break_track=c.ui.track;c.ui.break_bars=t.break_bars;c.project.gen8.bars=t.break_bars;c.open(PageId::Samples);c.notice("Choose loop A");return;
+    } // the card in the middle
     if (page.kind == StageKind::Preset) { c.stage_tick(UINT32_MAX); c.open(PageId::Sounds); return; }
     if (page.kind == StageKind::Fx && !t.fx.count()) { // nothing yet: the picker on the track's chain, to add the first
         c.ui.fx_loop = -1;

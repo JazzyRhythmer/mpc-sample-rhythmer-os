@@ -32,6 +32,9 @@ int lane_of(const Project& project, unsigned t, const Binding& b) {
 
 void learn_lane(Context& c, const Binding& b) {
     int lane = lane_of(c.project, c.ui.track, b);
+    // Upstream MOD targets are Motion lanes, not a plug-in's opaque parameter
+    // indices. Do not retain a previous track/FX target after such a gesture.
+    if (b.kind == Kind::PluginParam) { c.ui.learn_lane = -2; return; }
     if (lane < 0) return;
     c.ui.learn_lane = int16_t(lane);
     c.ui.learn_track = uint8_t(c.ui.track % track_count);
@@ -50,6 +53,7 @@ void send_modulator(Context& c, unsigned n) {
 
 void mod_add(Context& c) {
     auto& ui = c.ui;
+    if (ui.learn_lane == -2) { c.notice("Use engine LFO or track FX"); return; }
     if (ui.learn_lane < 0) { c.notice("Turn a knob first"); return; }
     unsigned t = ui.learn_track % track_count, param = lane_param(ui.learn_lane), pad = lane_pad(ui.learn_lane) % sampler_pads;
     auto info = motion_param(c.project.tracks[t], ui.learn_lane, &c.project);

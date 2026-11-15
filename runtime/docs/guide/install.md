@@ -1,8 +1,11 @@
-# Rhythmer OS 0.4.0-beta.1 — 실기기 검증용 베타
+# Rhythmer OS 0.4.0-beta.3 — 실기기 검증용 베타
+
+beta.2 → beta.3은 플러그인과 카탈로그도 바뀌므로 전체 SD.zip을 사용한다. UPDATE.zip은 앱만 바꾸며 이 수정 전체를 설치하지 않는다. SD_CARD_GUIDE.md의 전원 종료·백업·전체 파일 복사 절차를 따른다.
+
 
 개발자: **jazzy rhythmer**. Instagram: https://www.instagram.com/jazzyrhythmer/ · YouTube: https://www.youtube.com/@jazzyrhythmer
 
-빌드·오프라인 검증 후 사용자가 실기기에서 테스트하는 베타다. 기기 설치·물리 조작·청취·latency는 현재 미검증으로 표시한다. 설치나 공개 업로드를 자동 실행하지 않는다. 검증 후 배포는 사용자가 진행한다.
+빌드·오프라인 검증 후 사용자가 실기기에서 테스트하는 베타다. 기기 설치·물리 조작·청취·latency는 현재 미검증으로 표시한다. 이 안내는 공개 베타 설치용이며, 기기 설치는 소유자가 직접 진행한다. 설치 전 프로젝트·샘플·카드 내용을 백업한다.
 
 ## 파일 구조
 
@@ -16,11 +19,13 @@
 
 ## 악기와 Rhythmer Kit
 
-플러그인 목록 맨 위의 Rhythmer Kit을 선택하면 PRESETS에서 36개 킷을 바꿀 수 있다. 모든 킷의 1–16번 패드가 채워져 있다. MAIN에서 인코더/−/+로 SOURCE 페이지로 이동하면 K1 Pad / K2 Engine / K3 Sound로 선택한 패드만 바꾼다. 실제 패드를 눌러 편집 대상을 선택할 수도 있다. 킷에 따라 B–D bank에 추가 음색이 있다. Hortator MD 추가 6종의 원본 사운드 구성은 HORTATOR_KITS_KO.md를 참고한다.
+빈 트랙에서는 인코더를 돌려 PLUG-IN / KIT / MIDI 계열의 카드를 선택한 뒤 Push로 연다. 기본 7개 카드 중 원하는 유형을 선택할 수 있다. B2는 Sample Kit, B3는 MIDI 바로가기다. 플러그인 브라우저에서 취소하면 같은 빈 트랙으로 돌아온다.
+
+플러그인 목록 맨 위의 Rhythmer Kit을 선택하면 PRESETS에서 36개 킷을 바꿀 수 있다. 모든 킷의 1–16번 패드가 채워져 있다. EDIT에서 B3 PAD SOURCE를 열면 K1 Pad / K2 Engine / K3 Sound로 선택한 패드만 바꾼다. B3 SAVE는 저장 화면, 그다음 B3 EDIT는 사운드 편집 화면으로 이동한다. 실제 패드를 눌러 편집 대상을 선택할 수도 있다. 킷에 따라 B–D bank에 추가 음색이 있다. Hortator MD 추가 6종의 원본 사운드 구성은 HORTATOR_KITS_KO.md를 참고한다.
 
 개별 엔진은 한 트랙에서 한 음색을 연주한다. Keys의 Chromatic 또는 Scale을 선택한다. 멜로디 엔진의 원래 MIDI/폴리포니를 유지하며, 드럼 단일 음색은 C4 기준 Tape 피치로 연주한다. 드럼의 길이와 기존 꼬리도 함께 피치 변환된다.
 
-Stage/Keys에서 Push → Edit, B2 PRESETS → 인코더로 선택 → Push로 로드한다. 현재 프리셋 이름은 Edit 상단에도 표시된다. 인코더/−/+로 기능별 페이지를 이동하고 Push로 A/B 줄을 선택해 K1–K3으로 편집한다. B3 PAGES에서 원하는 페이지로 바로 이동한다. MAIN의 SAVE 페이지에서 Save slot과 Save Sound / Save Kit으로 사용자 프리셋을 저장한다. 저장된 항목은 PRESETS의 User Sound / User Kit에 추가된다. 동일 슬롯에 저장하면 해당 슬롯을 교체한다.
+Stage PRESETS에서 엔진·프리셋 이름과 애니메이션을 보고, EDIT에서 소리를 편집한다. B2 PRESETS에서 인코더로 선택하고 Push/LOAD로 로드한다. 현재 프리셋 이름은 EDIT 상단에도 표시된다. 인코더/−/+로 3개씩 이동하며, 6줄 목록 중 K1–K3 표시가 있는 줄을 해당 노브로 조절한다. EDIT 현재/전체 표시로 위치를 확인한다. 일반 악기는 B3 SAVE에서 Save slot과 Save Sound로, 킷은 PAD SOURCE 다음 SAVE에서 Save slot과 Save Kit으로 저장한다. 저장된 항목은 PRESETS의 User Sound / User Kit에 추가된다. 동일 슬롯에 저장하면 해당 슬롯을 교체한다.
 
 프로젝트 저장은 전체 킷의 패드별 엔진·음색·편집 파라미터를 보존한다. 사용자 프리셋은 Rhythmer/Presets에 저장한다. 베타 업데이트 시 autorun과 Rhythmer/Plugins/RHYTHMER - Rhythmer Kit을 포함해 패키지 전체를 복사한다. 자세한 단계는 SOUND_KIT_GUIDE.md를 참고한다.
 
@@ -40,9 +45,9 @@ Linux ARM64 빌드와 offline host 검증은 기기 검증과 다르다. 많은 
 
 필수 크레딧: Based on Melodee by Kerem Kiliç (Ellic Studio), AGPL-3.0-only, and sample-base. Original notices and source attribution are retained.
 
-GEN의 트랙 범위·악기 자동 배정·MIDI 전용 모드와 1–4마디 Break 자동 준비는 [GEN_WORKFLOW.md](gen.md)를 참고하세요.
+GEN의 트랙 범위·악기 자동 배정·MIDI 전용 모드와 1–4마디 Break 자동 준비는 [GEN_WORKFLOW.md](GEN_WORKFLOW.md)를 참고하세요.
 
-Beta.4: sound fixes and preset coverage. Stop twice within 400 ms cuts all audio; the next note or Play resumes.
+[Sound and preset verification](VERIFICATION.md). Stop twice within 400 ms cuts all audio; the next note or Play resumes.
 
 
 ## 0.4 기반으로 업데이트
@@ -52,3 +57,9 @@ Beta.4: sound fixes and preset coverage. Stop twice within 400 ms cuts all audio
 이후 호환 Rhythmer 0.4 빌드에서는 서명된 UPDATE ZIP을 카드 최상위에 놓거나 USB 기기 페이지로 전송합니다. 저장 후 설치를 선택하면 이전 실행 폴더를 autorun/rhythmer.prev에 보존하고 재시작합니다. 시작 확인 실패 시 이전 버전으로 복구하는 원본 절차를 사용합니다. UPDATE는 플러그인·킷 데이터 교체용이 아닙니다. 이 데이터가 바뀐 릴리스는 전체 SD 패키지 안내를 따릅니다. Melodee 정식 ZIP은 Rhythmer OS 업데이트로 수락하지 않습니다.
 
 복구는 기기 전원을 끈 뒤 카드를 분리하고 autorun 폴더를 카드 밖에 보관하면 기존 stock 앱으로 부팅됩니다. 이전 베타로 돌아갈 때는 백업한 autorun과 해당 베타의 플러그인 폴더를 복원합니다. 128패턴·Freeze가 포함된 새 프로젝트는 복사본으로 보관하고 이전 베타에서 덮어쓰지 마세요.
+
+## 다운로드 선택과 안내
+
+첫 설치와 이번 0.4 전환에는 **SD.zip** 전체 패키지를 사용한다. **UPDATE.zip**은 호환 Rhythmer 설치의 실행 앱만 업데이트하며 플러그인이나 킷을 포함하지 않는다. SOURCE / MOVE-SOURCE / SUPPORT-SOURCE는 재빌드를 위한 소스 배포물로 SD 설치 파일이 아니다. 배포 페이지의 버전과 `.sha256` 값을 다운로드 파일과 대조한다.
+
+이 프로젝트는 AKAI Professional 또는 inMusic이 승인하거나 지원하는 공식 펌웨어가 아니다. MPC Sample 명칭과 로고의 권리는 각 권리자에게 있다. 소프트웨어는 각 라이선스에 따라 무보증으로 제공된다. 테스트 범위·알려진 한계는 VERIFICATION.md를 확인한다. 제조사 펌웨어를 덮어쓰는 설치가 아니라 SD launcher를 사용하는 방식이다.

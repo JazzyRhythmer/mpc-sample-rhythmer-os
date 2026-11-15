@@ -1,5 +1,5 @@
 """Source-backed labels and ownership; native keys, ranges and DSP stay intact."""
-import re
+import re,json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 WORDS={'PW':'Pulse Width','PWM_SPD':'PWM Rate','VCF_LV':'Filter Level','HP_CUT':'HP Cutoff','HP_RES':'HP Resonance','LP_CUT':'LP Cutoff','LP_RES':'LP Resonance','F_IL':'Filter Env Initial','F_AL':'Filter Env Attack Level','F_A':'Filter Env Attack','F_D':'Filter Env Decay','F_R':'Filter Env Release','V_A':'Amp Attack','V_D':'Amp Decay','V_S':'Amp Sustain','V_R':'Amp Release','IT_BRILL':'Velocity Brightness','IT_LEVEL':'Velocity Level','AT_BRILL':'Pressure Brightness','AT_LEVEL':'Pressure Level','SUB TYP':'Sub Type','NOI MOD':'Noise Mode','SQR LVL':'Square Level','SAW LVL':'Saw Level','SUB LVL':'Sub Level','PWIDTH':'Pulse Width','FDBK':'Feedback','FENV':'Filter Env','MENV':'Mod Env','VEL':'Velocity','TYP':'Type','DIV':'Division','DDIV':'Division','LVL':'Level','SDEC':'Sweep Decay','CLIP':'Clip','SWEEP':'Sweep','PUNCH':'Punch','NOISE':'Noise','SUB':'Sub','RANGE':'Range','RESO':'Resonance','SQR':'Square','ATK':'Attack','DEC':'Decay','SUS':'Sustain','REL':'Release','GLD':'Glide','DLY':'Delay','REV':'Reverb','CHO':'Chorus','AMT':'Amount','TRIG':'Trigger','SRC':'Source','DST':'Destination','VOL':'Volume','MOD':'Mod','OCT':'Octave','SEMI':'Semitone','ATT':'Attack','COMP':'Compressor','DIST':'Distortion','SAT':'Saturation','NDECAY':'Noise Decay','PMOD':'Pitch Mod','WAVE':'Wave'}
@@ -11,6 +11,9 @@ def readable(text):
 def arrays(source):
  return {name:re.findall(r'"([^"]*)"',body) for name,body in re.findall(r'static const char \*const (\w+)\[[^\]]*\]\s*=\s*\{(.*?)\};',source,re.S)}
 def prepare_parameters(name,params):
+ if name=='DRUM-X':
+  for p in params:
+   if p['key']=='hands':p['owner_notes']=[38] # original DV_CLAP only
  if name in ('6W6','8W8','9W9','CW-78'):
   families={}
   for p in params:
@@ -40,6 +43,21 @@ def enrich(entry,port,params):
    p['edit_name']=readable(label)
    p['category']='' if local else 'Source Reverb' if key.startswith('rev_') else 'Source Delay' if key.startswith('dly_') else 'Source Mixer'
    if not local and key.startswith(('rev_','dly_')):p['edit_name']=readable(label.split(' ',1)[1])
+ if port and port.name=='move-plaits':
+  table=json.loads((port/'model-controls.json').read_text())
+  for p in ps:
+   if p['key'] in ('harmonics','timbre','morph'):
+    p['category']='Model'
+    col=('harmonics','timbre','morph').index(p['key']);p['dynamic_selector']=0;p['dynamic_labels']=['-' if col==0 and 2<=n<=4 else r[col] for n,r in enumerate(table['labels'])]
+   if p['key'] in ('decay','attack'):p['category']='Envelope'
+   if p['key']=='fm_amount':p['dynamic_selector']=0;p['dynamic_labels']=['-' if 2<=n<=4 else 'FM Amount' for n in range(24)]
+ if port and port.name=='move-aphex':
+  for p in ps:
+   m=re.fullmatch(r'v([12])_(pitch|wave|pw|fine|level)',p['key'])
+   if m:
+    p['category']='VCO '+m[1]
+    p['edit_name']={'pitch':'Range','wave':'Wave','pw':'Pulse Width','fine':'Pitch Offset','level':'Level'}[m[2]]
+    if m[2]=='fine':p['unit']='st'
  if port and port.name=='sophie':
   for p in ps:
    p['edit_name']=re.sub(r'^Pad \d+\s+','',p['name']);p['category']=''
@@ -65,6 +83,20 @@ def enrich(entry,port,params):
     if len(options)==p['maximum']-p['minimum']+1:p['options']=options
     elif kind!='K_DDIV':raise AssertionError((port.name,p['key'],kind))
    p['edit_name']=readable(p.get('edit_name',p['name']))
+ if port and port.name=='fm1-s1vave':
+  source=(port/'original/obv_params.h').read_text();enum=source.split('enum {',1)[1].split('};',1)[0]
+  ids=re.findall(r'\bP_[A-Z0-9_]+\b',re.sub(r'/\*.*?\*/','',enum,flags=re.S))
+  comments=dict(re.findall(r'(P_\w+),\s*/\*\s*([^:*\n]+):',enum))
+  for p in ps[1:]:
+   code=ids[p['index']-1];label=comments.get(code)
+   family=1 if code in ('P_ATTACK','P_DECAY','P_SUSTAIN','P_RELEASE','P_AMP_MODE','P_ENV_TRG') else 2 if code.startswith(('P_LFO_','P_RISER_')) or code in ('P_MOD_DEPTH','P_OSC_BEND') else 3 if code.startswith(('P_DLY_','P_REV_','P_CHO_','P_FX_','P_PHASER_')) else 4 if code.startswith(('P_CHORD_','P_PORTA_')) or code in ('P_POLY_MODE','P_TRANSPOSE','P_VOLUME','P_SPREAD','P_DETUNE') else 0
+   p['native_ui_order']=family*10000+p['index']
+   if code=='P_DETUNE':p['unit']='ct'
+   if code=='P_LFO_MODE':p['options']=['Normal','Fast']
+   if code in ('P_TRANSPOSE','P_CHORD_KS2','P_CHORD_KS3','P_CHORD_KS4'):p['unit']='st'
+   if label:
+    label=label.strip().replace('LFO Sync to Tempo','LFO Tempo Sync').replace('OSC Pitch LFO Depth','LFO Pitch Depth').replace('Keyboard Follow','Key Follow').replace(' SW',' Enable').replace('Draw Switch','Draw Mode')
+    p['edit_name']=label
  if port and port.name=='fm1-kwasub':
   source=(port/'original/ksub_data.c').read_text();tables=arrays(source)
   body=source.split('static const char *const ENG_P[NENG][3] = {',1)[1].split('};',1)[0]
@@ -93,6 +125,12 @@ def enrich(entry,port,params):
     p['dynamic_labels']=[readable(models[i*3+col] if col<3 else extra[i]) for i in range(11)]
  if name=='TR-MPC':
   for p in ps:
+   key=p['key']
+   if key.endswith('_dist'):p['edit_name']='Master Distortion Type' if key=='fx_master_dist' else 'Distortion Type'
+   if key.endswith('_rev'):p['edit_name']='Reverb Send';p['display_percentage']=True
+   if key.endswith('_dly'):p['edit_name']='Delay Send';p['display_percentage']=True
+   if key.startswith('fx_'):p['edit_name']=readable(p.get('edit_name',p['name']))
+   if key in ('fx_comp','int_comp'):p['edit_name']='Compressor' if key=='fx_comp' else 'Internal Compressor'
    if p['key'].endswith('_fam'):p['edit_name']='Drum family'
    if p['key'].endswith('_src'):p['edit_name']='Voice type'
  for p in ps:
@@ -102,6 +140,16 @@ def enrich(entry,port,params):
    if p['name'] in ('Pulse On','Saw On','Sub On','Chorus I','Chorus II','Reverb On') and p['maximum']==1:p['options']=['Off','On']
  if port and port.name=='drumx':
   for p in ps:
+   match=re.fullmatch(r'l\d+_(?:(a|b)_)?(.+)',p['key'])
+   if match:
+    morph,field=match.groups();p['category']='Morph '+morph.upper() if morph else 'Voice'
+    p['edit_name']={'pmod':'Pitch Mod' if morph else 'Pitch Mode','color':'Tone'}.get(field,readable(field))
+   elif p['key']=='volume':p['category']='Source Output';p['edit_name']='Volume'
+   elif p['key'] not in ('kit','note_map'):p['category']='Macro';p['edit_name']=readable(p['name'])
+   if p['key']=='fm':p['edit_name']='FM Envelope Amount'
+   if p['key']=='tone_bp':p['edit_name']='Metal Band Pass'
+   if p['key']=='hands':p['edit_name']='Clap Hands Amount';p['display_percentage']=True
+   if p['key'].endswith(('_snap','_drive')) and p['maximum']==1:p['options']=['Off','On']
    if p['key'].endswith('_wave'):p['options']=['Sine','FM','Metal','Bell'] # DXW_* in drumx_voice.c
    if p['key'].endswith('_filter'):p['options']=['Low Pass','Band Pass','High Pass'] # DXF_*
    if p['key'].endswith('_pmod') and p['maximum']==3:p['options']=['Decay','Long','Noise','Sine'] # DXM_*

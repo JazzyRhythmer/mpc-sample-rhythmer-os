@@ -16,7 +16,7 @@ PORTS={
     's1vave':('S1Vave','obv_native.c','GS11',['firmware/src/obv_'+n+'.h' for n in ('dsp','params','fx','engine','patches')]+['firmware/gen/obv_tables.h']),
     'fm106':('FM-106','fm106_native.c','GF61',[str(p.relative_to(DEPOT/'fm106')) for p in (DEPOT/'fm106/firmware/src').glob('fm106_*.h')]),
     'hortator':('Hortator Kit','hortator_native.c','GHK1',
-        [str(p.relative_to(DEPOT/'hortator')) for p in (DEPOT/'hortator/firmware/src').glob('dm*') if p.is_file()]
+        [str(p.relative_to(DEPOT/'hortator')) for p in (DEPOT/'hortator/firmware/src').glob('dm*') if p.is_file()]+['firmware/src/'+n for n in ('params.c','lfo.c','lfo_tables.h','filter.c','reson.c','reson_tables.h','insert.c','fx.c','perform.c','slicer.c','drum_core.c')]
         +['firmware/src/core.h','firmware/src/dsp.c','firmware/src/phys_dsp.c','firmware/src/eng_sample.c','firmware/src/preset_bank.h','firmware/src/presets.c','tools/gen_tables.py']),
     'cs1':('CS-1','cs1_native.c','GCS1',['firmware/src/'+n for n in ('cs1_dsp.h','cs1_voice.h','cs1_fx.h','cs1.c')]
         +['firmware/gen/cs1_tables.h','firmware/gen/cs1_presets.h','firmware/gen/cs1_sounds_conv.h']),

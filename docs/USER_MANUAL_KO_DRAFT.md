@@ -1,33 +1,49 @@
 # Rhythmer OS 사용 설명서
 
-웹사이트 게재용 초안 · 대상 버전 0.4.0-beta.1
+웹사이트 게재용 초안 · 대상 버전 0.4.0-beta.3
 
-Rhythmer OS는 MPC Sample에서 샘플, 신스, 드럼킷과 시퀀서를 사용하는 음악 제작 환경입니다. 개발자는 **jazzy rhythmer**입니다. 현재 베타는 오프라인 검증을 마쳤으며 실기기 조작·청취·성능 검증은 진행 전입니다. 아래 버튼 설명은 현재 구현을 기준으로 작성했습니다.
+Rhythmer OS는 MPC Sample에서 샘플, 신스, 드럼킷과 시퀀서를 사용하는 음악 제작 환경입니다. 개발자는 **jazzy rhythmer**입니다. 실기기 조작·청취·성능은 별도 베타 검증 대상입니다. 아래 버튼 설명은 현재 구현을 기준으로 작성했습니다.
 
 ## 1. 소리 선택하기
 
 ### Sample Kit — 샘플과 MPC 킷
 
-기존 샘플러 방식입니다. Samples에서 WAV를 패드에 넣거나, 지원되는 MPC `.xpm`·`.xty` 드럼 프로그램을 선택하고 Push로 킷을 로드합니다. MPC Sample `.xpj` 프로젝트에서는 `Load kit (no patterns)`로 킷만 가져올 수도 있습니다. 샘플과 관련 데이터 폴더를 함께 보관하세요. 모든 MPC 효과와 설정이 완전히 재현되는 것은 아닙니다.
+기존 샘플러 방식입니다. Samples에서 WAV·MP3·FLAC·Ogg Vorbis·AIFF를 패드에 넣거나, 지원되는 MPC `.xpm`·`.xty` 드럼 프로그램을 선택하고 Push로 킷을 로드합니다. MPC Sample `.xpj` 프로젝트에서는 `Load kit (no patterns)`로 킷만 가져올 수도 있습니다. 샘플과 관련 데이터 폴더를 함께 보관하세요. 모든 MPC 효과와 설정이 완전히 재현되는 것은 아닙니다.
 
 ### 개별 엔진 — 한 트랙에 한 음색
 
 플러그인 목록에서 엔진을 선택합니다. Keys에서 Chromatic 또는 Scale과 원하는 루트·스케일을 설정합니다. 패드는 선택한 한 음색을 음높이에 맞춰 연주합니다. 드럼 엔진도 개별 엔진으로 선택하면 하나의 드럼 음색을 연주하며, C4를 기준으로 Tape 피치가 적용됩니다. 이 경우 길이와 기존 잔향도 함께 변합니다.
 
-Stage/Keys에서 Push로 엔진 메인을 열고, B2 PRESETS에서 인코더로 음색을 고른 뒤 Push로 로드합니다. 현재 프리셋 이름은 메인과 편집 상단에 표시됩니다. 메인에서 B3 EDIT SOUND 또는 Push로 상세 편집에 들어가고, 인코더 또는 −/+로 기능별 페이지를 이동하고 Push로 A/B 줄을 선택해 K1–K3으로 조절합니다. B3 PAGES에서 원하는 기능으로 바로 이동합니다.
+Stage의 B1 첫 화면은 **PRESETS**입니다. 엔진명·현재 프리셋·입력에 반응하는 그래픽을 함께 보여 줍니다. 인코더로 프리셋을 탐색하고 Push로 전체 목록을 엽니다. 목록에서는 인코더 또는 K1으로 선택하고 Push / B3 LOAD로 적용하며, B1 BACK으로 돌아갑니다. 프리셋이 없는 외부 플러그인은 같은 첫 화면이 PLUG-IN으로 표시됩니다.
+
+Stage의 B1을 다시 눌러 **EDIT**로 이동합니다. 인코더 또는 −/+로 세 파라미터씩 이동하고 K1–K3으로 강조된 세 줄을 조절합니다. 화면에 앞뒤 제어까지 최대 여섯 줄을 표시합니다. 별도 Edit 화면도 같은 사운드 목록을 사용합니다. 원본 제어는 음색·필터·ENV·LFO·변조·FX 맥락을 이름 앞에 표시합니다. `EDIT 5/30`은 현재 조절할 세 값이 전체 30묶음 중 다섯 번째라는 뜻입니다. SOURCE와 SAVE 관리는 사운드 제어와 분리돼 있습니다.
+
+PRESETS 하단은 해당 엔진의 실제 주 필터·레조넌스와 대표 음색 제어입니다. EDIT의 같은 값과 연동됩니다. Dexed·DRUM-X·Plaits·CS-1·MONO2K는 추가된 출력 전체 필터의 OUTPUT CUTOFF / OUTPUT RESONANCE를 표시합니다. 원본의 모델별 음색 제어와 CS-1 Brightness, MONO2K Filter Base/Width는 EDIT에 그대로 남습니다. 추가 필터와 원본 필터는 별개이며 이름으로 구분합니다.
+
+**B2 PERFORM → ARP → CHORD**로 넘깁니다. PERFORM의 **DJ FILTER / ECHO / SPACE**는 OS가 각 플러그인 트랙에 제공하는 연주 효과입니다. DJ FILTER는 출력에 거는 LP/HP 스윕이며 엔진 컷오프와 다릅니다. ECHO는 템포 동기 딜레이, SPACE는 리버브의 입력 송신량입니다. 0%로 내려도 이미 발생한 잔향은 남고, STOP 더블탭은 내부·공통 효과의 잔향도 끊습니다. 엔진 내부 FX, 공용 SEND A–D, 트랙 인서트와 각각 별도이며 동시에 켜면 처리가 겹칩니다. 설정은 트랙/프로젝트에 저장되고, 프리셋 변경 시 자동으로 초기화되지 않습니다. 첫 화면의 PERFORM ON은 저장된 공통 연주 효과량이 켜져 있음을 알립니다. **B3 MIX → SENDS → FX**는 기존 위치입니다.
 
 ### Rhythmer Kit — 여러 엔진을 하나의 드럼킷으로
 
 플러그인 목록 맨 위의 **Rhythmer Kit**을 선택합니다. PRESETS에서 36개 킷을 바꿀 수 있습니다. 모든 킷의 1–16번 패드가 채워져 있습니다. Hortator MD 추가 6종과 패드별 원본 사운드는 HORTATOR_KITS_KO.md에 정리했습니다.
 
-메인의 SOURCE 페이지는 `Pad / Engine / Sound`입니다.
+첫 화면의 **KIT CUTOFF / KIT RESONANCE**는 Rhythmer Kit 엔진 내부의 전체 필터이며 모든 패드에 적용됩니다. K3은 트랙 음량입니다. EDIT 첫 묶음의 **KIT FILTER TYPE**에서 LP / BP / HP를 고릅니다. 컷오프·레조넌스는 첫 화면과 동일한 값입니다. 전체 필터는 트랙 인서트 슬롯을 쓰지 않으며 킷 프리셋과 프로젝트에 저장됩니다. 공장 킷의 기본값은 원래 소리를 그대로 통과시킵니다.
+
+그 뒤의 **P01 … / P11 …** 항목은 선택 패드의 원본 엔진 제어입니다. KIT 항목은 전체 킷, P번호 항목은 해당 패드이므로 구분하여 조정하세요. 다른 패드를 눌러도 전체 필터 값은 유지됩니다. SAVE KIT에는 전체 필터와 패드별 소리가 함께 저장됩니다.
+
+Edit 화면의 B3 **PAD SOURCE**를 열면 `Pad / Engine / Sound`가 나옵니다. B3은 SOURCE → SAVE → EDIT 순서로 전환합니다.
 
 1. 패드를 누르거나 Pad를 돌려 편집할 패드를 선택합니다.
 2. Engine으로 그 패드의 엔진을 선택합니다.
 3. Sound로 해당 엔진의 음색을 선택합니다.
-4. B3 EDIT PAD 또는 Push로 선택 패드의 상세 편집에 들어갑니다.
+4. B3으로 EDIT에 돌아와 선택 패드의 실제 소리를 편집합니다. 목록과 K1–K3 카드의 P11 같은 표시는 실제 선택한 패드 번호입니다.
 
 PRESETS는 킷 전체를, Engine / Sound는 선택한 패드만 바꿉니다. 독립적으로 교체·편집한 패드는 추가 엔진 인스턴스를 사용할 수 있으므로 무거운 엔진을 여러 패드에 사용할 때는 실기기 부하를 확인하세요.
+
+### Sample Kit / Break / MIDI 입력
+
+기존 Sample Kit과 Break의 첫 **SOUND** 화면은 샘플러의 전체 필터·레조넌스·킷 음량을 조절합니다. B1을 넘기면 TRIM / LAYERS / TUNE / AMP ENV로 이어집니다. 직접 Trim을 여는 단축 동작은 그대로 Trim으로 들어갑니다. 전체 타입은 B3의 KIT FILT, 개별 패드 필터는 FILTER에서 설정하며 새 인서트를 자동 추가하지 않습니다.
+
+MIDI 출력에는 오디오 필터를 붙이지 않습니다. 입력은 독립 IN 엔진이 아니라 Input Config의 INPUT FX 또는 MIDI 트랙의 Audio In / Monitor를 사용합니다. 모니터링 오디오는 해당 트랙의 기존 인서트·센드 경로를 사용하며 이번 변경으로 필터를 자동 추가하지 않습니다.
 
 ## 2. GEN으로 패턴 만들기
 
@@ -81,7 +97,7 @@ BREAK는 입력한 마디 수와 파일 길이로 원본 BPM을 계산하고 균
 
 ## 5. 저장과 다시 열기
 
-MAIN의 SAVE 페이지에서 Save slot을 1–64 중 선택하고 Save Sound 또는 Save Kit을 실행합니다. Status가 Ready가 될 때까지 기다립니다. 저장한 항목은 PRESETS의 User Sound / User Kit으로 나타납니다. 같은 슬롯에 저장하면 이전 항목을 교체합니다.
+Edit 화면의 B3 SAVE에서 Save slot을 1–64 중 선택하고 Save Sound 또는 Save Kit을 실행합니다. Status가 Ready가 될 때까지 기다립니다. 저장한 항목은 PRESETS의 User Sound / User Kit으로 나타납니다. 같은 슬롯에 저장하면 이전 항목을 교체합니다.
 
 프로젝트 저장은 패턴과 플러그인·킷 상태를 보존합니다. 사용자 프리셋은 SD의 `Rhythmer/Presets`에 저장됩니다. 사용한 샘플, Plugins와 관련 데이터 폴더도 함께 보관하세요.
 
@@ -89,11 +105,10 @@ MAIN의 SAVE 페이지에서 Save slot을 1–64 중 선택하고 Save Sound 또
 
 **GEN을 실행해도 소리가 없어요.** MIDI ONLY에서는 음색이 자동 배정되지 않습니다. 트랙에 악기가 로드됐는지, 그룹 내 역할과 맞는지, 현재 패턴과 믹서 음량이 올바른지 확인하세요.
 
-**킥 대신 다른 소리가 나요.** Sample Kit의 첫 여덟 패드 배치를 확인하세요. 개별 엔진은 선택한 한 음색만 연주합니다. 여러 드럼 음색을 한 트랙에서 쓰려면 Rhythmer Kit 또는 Sample Kit을 선택하세요.
+**킥 대신 다른 소리가 나요.** Sample Kit의 패드 번호와 각 패드에 배정된 샘플을 확인하세요. 개별 엔진은 선택한 한 음색만 연주합니다. 여러 드럼 음색을 한 트랙에서 쓰려면 Rhythmer Kit 또는 Sample Kit을 선택하세요.
 
 **Break가 박자에서 밀려요.** 입력한 Source Bars가 원본 4/4 루프 길이와 맞는지 확인하세요. 16개 조각은 원본 전체의 균등 구간입니다. STRAIGHT로 원래 순서를 재생해 정렬을 점검합니다.
 
-**이전 베타의 드럼 프로젝트가 다르게 들려요.** beta.1에서 개별 드럼 플러그인에 여러 노트를 사용한 프로젝트는 beta.2에서 한 음색의 피치로 해석됩니다. 원본 프로젝트를 보관하고 Rhythmer Kit으로 다시 구성한 뒤 새 이름으로 저장하세요.
 
 ## 크레딧과 채널
 
@@ -101,79 +116,52 @@ Developed by **jazzy rhythmer** · [Instagram](https://www.instagram.com/jazzyrh
 
 Based on **Melodee by Kerem Kiliç (Ellic Studio)** and sample-base, AGPL-3.0-only. 각 엔진의 원저작권·라이선스·출처 고지는 배포물에 유지됩니다.
 
-Beta.4: [sound fixes and preset coverage](SOUND_FIXES_BETA4.md). Stop twice within 400 ms cuts all audio; the next note or Play resumes.
 
-## Beta.4 악기 선택과 편집
+## 빈 트랙에서 시작하기
 
-- 플러그인 목록 최상단의 Rhythmer Kit은 여러 드럼 사운드를 패드별로 배치한다. 개별 엔진은 한 음색을 크로매틱/스케일로 연주한다.
-- Acid Engine은 Hortator ACID 전용 뷰다. Break Engine을 선택하면 샘플 브라우저가 열리며, 루프와 원본 길이 1–4바를 지정하면 16찹과 템포 싱크를 준비한다.
-- 개별 드럼 엔진을 새로 고르면 패드 시작 옥타브를 C4(기본 C키에서 MIDI 60)로 맞춘다. 구형 플러그인 트랙의 Drums/기본 옥타브 2 조합은 Scale/C4로 보정하며, 명시적으로 설정한 크로매틱/스케일 옥타브는 유지한다.
-- Hortator는 킷별 음색 48개와 원본 합성 모델 44개를 제공한다. ACID, MD TRX/EFM 등을 Sound/Presets에서 고를 수 있다.
-- 킷 편집 파라미터의 P01/P02는 실제 선택한 패드 번호다. Model 값은 숫자 대신 실제 모델명으로 보인다. 전체 프로그램을 바꾸는 원본의 중복 노브는 숨기고 Sound/Presets 선택을 사용한다.
-- Stop을 400ms 이내에 두 번 누르면 모든 오디오를 끊는다. 새 노트 또는 Play로 다시 소리를 낼 수 있다.
+프로젝트를 열면 원래의 선택 트랙을 유지합니다. 빈 트랙은 **PLUG-IN / SAMPLE KIT / MIDI** 선택 화면을 보여 줍니다. 인코더를 돌려 종류를 선택하고 Push로 엽니다. 플러그인은 목록에서 악기를 선택할 때 실제 트랙이 만들어집니다. 킷은 빈 패드, 카드의 샘플, 입력 녹음을 선택할 수 있고 MIDI는 출력 포트를 선택할 수 있습니다. B2 SAMPLE KIT / B3 MIDI는 빠른 진입입니다. PAD BANK를 누른 채 패드로 트랙을 선택합니다.
 
-## Beta.4 GEN 개편
+## 저장과 편집 범위
 
-8개 역할을 8트랙에 나누던 자동 생성 방식은 종료했습니다. [GEN_WORKFLOW.md](GEN_WORKFLOW.md)의 4트랙 원본 GEN이 현재 동작입니다. T1 Rhythmer Kit, T2–4 악기·프리셋·MIDI를 원본 FM-1 시드 로직으로 만듭니다. MIDI ONLY 범위 1–16과 한 트랙 지정은 유지합니다. Break/Acid 전용 화면은 해당 엔진에서만 표시하고 Back은 GEN 메인으로 돌아옵니다. Acid Engine은 Hortator ACID입니다.
+개별 엔진의 B3은 SAVE / EDIT를 전환합니다. Rhythmer Kit은 SOURCE / SAVE / EDIT를 전환합니다. Save Sound / Save Kit은 사운드 디자인과 패드 구성을 저장하고, 프로젝트 저장은 패턴·트랙 믹서·FX·모듈레이션도 함께 보존합니다. 프로젝트를 다시 열면 선택한 프리셋 이름도 복원합니다. ERASE + 해당 노브는 불러온 사운드의 그 값을 초기화합니다. 일반 플러그인 내부 노브의 편집은 프로젝트 공통 Undo 대상이 아니며, GEN·Acid·Break 작업의 Undo/Redo와 구분해야 합니다. STOP을 400 ms 이내에 두 번 누르면 모든 오디오를 끊으며 다음 노트 또는 PLAY로 다시 연주합니다.
 
+## LFO와 MOD
 
-### 킷 편집 범위와 트랙 묶음 선택
+EDIT의 LFO·변조 슬롯은 원본 엔진 자체 기능입니다. 엔진마다 제공하는 제어가 다릅니다. `LFO Settings`는 같은 LFO의 Sync·Trigger·Polarity 설정이며 LFO가 하나 더 생긴다는 뜻이 아닙니다. Sophie 등 내부 LFO가 없는 원본에는 임의의 내부 LFO를 추가해 표시하지 않습니다.
 
-Rhythmer Kit의 EDIT PAD는 누른 패드의 소리만 편집합니다. B3 PAGES는 기능별 페이지 목록입니다. 모든 패드의 레벨·팬·Send A는 MAIN MIX에서 조절합니다. 킷 공용 믹서 값은 프로젝트에 저장됩니다. `Save Kit`에는 패드별 엔진·사운드 디자인이 저장됩니다. 소리 이름 뒤 `*`는 값을 수정했다는 표시입니다.
+프로젝트 공통 MOD에서는 마지막으로 돌린 **Motion 지원 제어**를 ADD로 연결합니다. PERFORM의 DJ FILTER / ECHO / SPACE, 트랙 믹서·FX 등을 LFO·Envelope Follower·Macro로 움직일 수 있습니다. PRESETS의 엔진 필터와 Rhythmer Kit 내부 전체 필터를 포함한 플러그인 내부 임의 파라미터는 원본 Melodee의 Motion 타깃에 포함되지 않습니다. 내부 노브를 돌린 뒤 ADD하면 이전의 다른 타깃을 잘못 추가하지 않고 안내를 표시합니다. 엔진 내부 LFO 또는 공통 FX의 MOD를 사용하세요. 변조 범위는 해당 노브에 표시된 범위 안에서 적용됩니다.
 
-GEN SETUP에서 `T1–T4`, `T5–T8`, `T9–T12`, `T13–T16` 행을 고르고 SELECT를 누릅니다. 첫 트랙은 킷, 나머지 셋은 악기를 받습니다. MIDI ONLY의 FROM/TO는 별도 범위이며 같은 번호를 지정하면 한 트랙에만 생성됩니다.
+## 패드 색상과 흑백 화면
 
-### 엔진 메인 화면
+Sample Kit의 COLOUR는 **실제 패드 조명 색상**을 지정합니다. 화면은 흑백을 유지하며 색상 이름·패드 번호·선택 테두리로 구분합니다. MPC 킷에서 읽은 RGB 값과 실제 조명, 프로젝트 저장 값은 유지합니다. 이 기능은 native Sample Kit의 기능입니다. Rhythmer Kit은 플러그인 트랙이며 자체 패드 엔진·사운드 편집을 사용합니다.
 
-플러그인을 열면 공통 메인 화면이 먼저 표시됩니다. 원본 엔진명과 현재 프리셋, Rhythmer Kit의 선택 패드를 확인할 수 있습니다. 휠 또는 −/+로 공통 조절 페이지를 넘깁니다.
+## Break Manipulator와 Acid 상세
 
-1. MIX: 트랙 Level / Pan / Send A
-2. SENDS: 트랙 Send B / C / D
-3. SOURCE: 선택 패드·엔진·사운드 또는 개별 엔진의 사운드 선택
-4. SAVE: 저장 슬롯 / Save Kit 또는 Save Sound / 상태
+[Break/Acid 사용 안내](BREAK_ACID_GUIDE_KO.md)에 BRK PERF, 19개 연주 명령·녹음·재생·A/B/Return, Acid 설정·Seed·Tie와 진입·복귀 경로를 정리했습니다. 루프가 없는 Break 트랙의 Stage에서 Push로 다시 샘플을 고를 수 있습니다.
 
-B2는 프리셋 목록, B3 또는 Push는 EDIT PAD / EDIT SOUND입니다. 편집에서 B1 MAIN 또는 Back을 누르면 메인으로 돌아옵니다. Rhythmer Kit의 세부 편집은 누른 패드를 따라갑니다. 일반 악기는 모든 패드가 같은 사운드를 크로매틱 또는 스케일로 연주합니다. 별도로 설치한 일반 VST는 공통 믹스·센드 두 페이지와 원래 파라미터 편집을 사용합니다.
+## Melodee 0.2.0 기반 기능
 
-흑백 픽셀 애니메이션은 기존 트랙 음량과 눌린 음에 반응합니다. 킷의 막대는 입력 반응 그래픽이며 패드별 독립 음량 미터를 뜻하지 않습니다. 소리가 멈추면 움직임도 멈춥니다. 공통 믹서 값은 프로젝트에, 사운드 디자인은 Save Sound / Save Kit에 저장됩니다.
-
-
-### 엔진 MAIN 화면
-
-엔진을 열면 MAIN에서 시작합니다. 인코더 또는 −/+로 MIX → SENDS → SOURCE → SAVE를 넘깁니다. B3/Push로 소리 편집에 들어가고 B1/Back으로 MAIN에 돌아옵니다. B2 PRESETS는 개별 엔진의 소리 또는 Rhythmer Kit 전체를 바꿉니다. 킷의 개별 패드는 MAIN → SOURCE에서 Pad / Engine / Sound로 교체합니다. 뱅크와 패드 번호는 함께 표시됩니다.
-
-Default는 호스트의 초기 상태이며 원본 Init과 구분됩니다. Dexed는 같은 음색이 반복된 슬롯을 숨겨 고유 FM 음색 8개와 Default를 제공합니다. 킷별·엔진별 프리셋 대조 및 현재 검증 범위는 FINAL_UI_AUDIT.md와 VERIFICATION.md를 참고하세요.
-
-프리셋 목록에서는 인코더로 고른 뒤 Push 또는 B3 LOAD로 불러옵니다. Break에 아직 루프가 없으면 Browse Sample부터 선택됩니다. Aphex 드론 4종은 긴 발음 전 지연을 제거해 패드·짧은 시퀀스에서도 발음되도록 조정했습니다.
-
-단일 소리의 Pitch mode에서 Key Pitch는 악기의 음높이 제어, Pitch + Length는 음높이와 재생 길이가 함께 바뀌는 타악기 재생을 뜻합니다. C4 / MIDI 60은 타악기 원래 속도의 기준입니다.
-
-### 기능별 편집 페이지와 현재 위치
-
-편집 상단의 `FILTER 2/3 · 08/24`는 Filter의 두 번째 페이지이며 전체 24페이지 중 8번째라는 뜻입니다. 전체 위치 막대도 함께 표시됩니다. 한 페이지의 최대 여섯 파라미터는 A/B 두 줄이며, 밝은 줄의 세 값을 아래 큰 노브 카드에서 조정합니다. 인코더·−/+는 페이지, Push는 A/B 줄, B3 PAGES는 페이지 바로 가기입니다. 목록에서 Back은 선택을 취소하고, 편집에서 Back은 MAIN으로 돌아옵니다.
-
-킷에서는 패드 번호·해당 엔진·사운드가 함께 표시됩니다. 다른 패드를 누르면 해당 패드의 항목으로 바뀝니다. 빈 패드에서는 MAIN SOURCE에서 엔진·사운드를 넣으라는 안내가 나옵니다. B2 KIT PRESETS는 킷 전체를 바꾸므로, 한 패드의 소리만 바꾸려면 MAIN SOURCE를 사용합니다. 프리셋 목록의 K1은 위치 선택이며 소리 파라미터를 편집하지 않습니다.
-
-## Break Manipulator와 Acid의 상세 조작
-
-새 Break 연주 화면, 명령 녹음·편집, LOOP/CHOP과 Acid의 세 설정 페이지·Seed·Tie는 [Break/Acid 사용 안내](BREAK_ACID_GUIDE_KO.md)를 참고한다.
-
-
-## 0.4.0: Melodee 0.2.0 기반 변경
-
-- SEQ 홈은 **PATTERNS**입니다. 트랙별 128개 패턴을 A–H 뱅크에서 선택합니다. Step 편집은 **STEP EDIT**를 사용합니다.
-- **Shift+B3 GEN**으로 생성 화면을 엽니다. 생성 화면에서 패드는 현재 악기를 연주하며 패턴을 바꾸지 않습니다. 하위 화면의 BACK은 GEN으로, GEN의 BACK은 PATTERNS로 돌아갑니다.
-- 플러그인 편집 화면의 **Shift+B3 TRANSPORT**는 엔진 내부 시퀀서에 Play/Stop을 전달할지 정합니다. EDIT/PAGES 버튼은 기존처럼 사용합니다.
-- Erase+노브는 Rhythmer 악기의 해당 파라미터를 불러온 원본 프리셋 값으로 초기화합니다. Shift+인코더의 미세 조정은 선택형 값에서 한 항목씩 이동합니다.
-- 새 플러그인은 **Rhythmer/Plugins**에 넣습니다. 기존 최상위 Plugins 경로도 읽습니다. VST2/3 외에 호환되는 Linux ARM64 LV2/CLAP 플러그인을 지원하며, 외부 플러그인은 Rhythmer Kit 내부 엔진으로 자동 추가되지 않습니다.
-- 원본 Sample Kit의 패드별 Send A–D를 지원합니다. Rhythmer Kit은 기존 트랙 공용 Send를 사용합니다.
-- Freeze/Deep Freeze, USB 화면 미러링, 파일 전송, 오디오 형식 확장은 새 기반의 기능입니다. USB 연결 후 **http://rhythmer.local**에서 기기 페이지와 파일을 엽니다. 실제 기기의 USB·네트워크·성능 검증은 별도입니다.
-- 자동 업데이트는 Rhythmer OS 서명 파일만 수락합니다. 0.3 베타에서 처음 넘어올 때는 전체 SD ZIP을 수동 복사합니다. UPDATE ZIP은 이후 호환되는 Rhythmer 0.4 빌드의 실행 파일만 교체하고 프로젝트·플러그인을 보존합니다.
-
-Deep Freeze로 메모리에서 내려간 악기는 편집 화면에 DEEP FROZEN으로 표시합니다. UNFREEZE를 선택하면 원래 사운드를 다시 불러온 후 편집합니다. Freeze 중에는 프리셋·TRANSPORT 변경도 먼저 Unfreeze를 요청합니다. 폴더형 프리셋에서 K1 JUMP는 현재 폴더의 목록 범위 안에서 이동합니다.
-
+- SEQ 홈은 PATTERNS입니다. 트랙마다 128개 패턴을 A–H 뱅크에서 선택합니다. Step 편집은 STEP EDIT를 사용합니다.
+- Shift+B3 GEN의 하위 화면 BACK은 GEN으로, GEN의 BACK은 PATTERNS로 돌아갑니다.
+- 플러그인 Edit의 Shift+B3 TRANSPORT는 플러그인에 PLAY·STOP을 전달할지 설정합니다.
+- 새 플러그인은 `Rhythmer/Plugins`에 넣습니다. 호환 Linux ARM64 VST2·VST3·CLAP·LV2를 지원합니다. 외부 플러그인이 Rhythmer Kit의 내부 소스로 자동 추가되지는 않습니다.
+- Native Sample Kit은 패드별 SEND A–D를 사용하며 Rhythmer Kit은 트랙 공용 SEND를 사용합니다.
+- Freeze는 패턴을 오디오로 출력해 재생하고 Deep Freeze는 플러그인을 메모리에서도 내립니다. DEEP FROZEN 트랙은 UNFREEZE 후 편집합니다.
+- USB-C 연결 후 `http://rhythmer.local`에서 Files·업데이트·플러그인 업로드·매뉴얼을 엽니다. 기기 USB·네트워크·성능은 실기기 검증 대상입니다.
+- Settings → SCREEN의 Screen mirror는 USB 카메라로 화면을 보냅니다. 기준 릴리스의 선택 해상도는 320×240, 640×480, 1280×720, 1280×960, 프레임률은 30/60 fps입니다. 실제 달성률은 기기·연결에 따라 확인해야 합니다.
+- 초기 전체 설치는 SD ZIP을 수동 복사합니다. 이후 UPDATE ZIP은 서명된 Rhythmer OS 파일만 받으며 실행 파일을 교체하고 프로젝트·플러그인을 보존합니다.
 
 ## Rhythmer 자체 프리셋
 
 Prophet은 원본 Init 1개와 jazzy rhythmer가 제작한 새 사운드 15개를 제공합니다. Elixir는 원본 Initkit과 자체 킷 Dry Circuit, Warm Machine, Bright Logic, Soft Pulse를 제공합니다. Elixir의 개별 악기 목록에서는 킷별 7개 보이스를 선택하고, Rhythmer Kit에서는 패드 1–16을 채운 전체 킷을 선택합니다. 네 자체 킷의 킥은 짧은 피치 어택과 드라이브, 충분한 저역 몸통을 갖도록 조정했습니다.
 
 Sequential의 외부 Prophet 뱅크와 Erica/Hrtl 외부 Elixir 뱅크는 배포본에 포함하지 않습니다. 이들의 재배포 허가 범위가 확인되지 않았기 때문이며, 개인 사용 금지 판정을 뜻하지 않습니다. 원본 Init과 자체 프리셋은 구분해 표시합니다.
+
+
+### 추가 출력 필터 — Dexed·DRUM-X·Plaits·CS-1·MONO2K
+
+이 다섯 엔진의 PRESETS 첫 두 노브는 **OUTPUT CUTOFF / OUTPUT RESONANCE**입니다. EDIT의 첫 세 줄에서 같은 컷오프·레조넌스와 **OUTPUT FILTER TYPE (LP/BP/HP)**을 조절합니다. OUTPUT FILTER는 이 제어 묶음의 이름이며 별도의 메뉴 버튼이 아닙니다. 세 번째 노브에는 원본의 대표 음색 파라미터가 남습니다.
+
+추가 필터는 엔진의 원래 합성·내장 이펙트 뒤, OS PERFORM·트랙 인서트·센드 앞에서 출력 전체를 처리합니다. 인서트 슬롯이나 버스는 사용하지 않습니다. 기본값은 Cutoff 100%, Resonance 0%, LP이며 이 조합에서는 원본 오디오를 그대로 통과합니다. 원본 프리셋을 선택하면 이 중립값으로 시작하고, Save Sound와 프로젝트 저장에는 추가 필터 설정도 포함됩니다. 원본 필터·ENV·LFO·FX 설정은 변경하지 않습니다. Rhythmer Kit 안에서는 패드 원본의 필터와 별도로 킷 자체의 KIT FILTER가 전체 합산 출력을 처리합니다.
+
+킷 패드 EDIT 제목은 `P11 / CS-1 / 사운드명`처럼 선택 패드·실제 엔진·소리를 표시합니다. 킷 전체 필터 행은 `킷 이름 / ALL PADS`를 표시합니다. 패드 소스를 교체해도 킷 프리셋 이름을 현재 소스 엔진으로 오해하지 않도록 구분합니다.

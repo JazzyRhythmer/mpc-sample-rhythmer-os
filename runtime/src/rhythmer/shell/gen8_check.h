@@ -12,6 +12,7 @@
 #include "rhythmer/pages/pages.h"
 #include "rhythmer/shell/step_edit.h"
 #include "rhythmer/shell/step_lane.h"
+#include "rhythmer/shell/stage_map.h"
 #include "rhythmer/pages/common.h"
 
 namespace rhythmer {
@@ -125,45 +126,75 @@ inline int gen8_shell_check() {
         if(rack.status(entry)!=PluginStatus::Ready)return gen_failure(221,__LINE__);
         c.ui.plugin_panel.layout_revision=1;
         for(unsigned context=0;context<3;++context){
-            c.ui.page=PageId::Edit;c.ui.edit_page[c.ui.track]=context==2?1:0;c.ui.edit_row[c.ui.track]=context==1?3:0;
+            c.ui.page=PageId::Edit;c.ui.edit_page[c.ui.track]=1;c.ui.edit_row[c.ui.track]=context==1?3:0;
             c.open_plugin_presets(entry);c.ui.presets_cursor=uint16_t(context+1);plugin_presets_page.soft(c,2);
             for(unsigned tries=0;tries<3000&&rack.programs(entry).loading;tries++)std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            if(rack.programs(entry).current!=int(context+1)||c.ui.plugin_row[entry]!=(context==2?2:context==1?1:0))return gen_failure(222,__LINE__);
-            plugin_presets_page.soft(c,0);if(c.ui.page!=PageId::Edit||c.ui.edit_page[c.ui.track]!=(context==2?1:0)||c.ui.edit_row[c.ui.track]!=(context==1?3:0))return gen_failure(223,__LINE__);
+            if(rack.programs(entry).current!=int(context+1)||c.ui.plugin_row[entry]!=2)return gen_failure(222,__LINE__);
+            plugin_presets_page.soft(c,0);if(c.ui.page!=PageId::Edit||c.ui.edit_page[c.ui.track]!=1||c.ui.edit_row[c.ui.track]!=(context==1?3:0))return gen_failure(223,__LINE__);
         }
+        c.ui.track=15;c.project.tracks[15]={};c.ui.page=PageId::Stage;c.ui.new_pick=1;
+        stage_page.wheel(c,-1);if(c.ui.new_pick!=0)return gen_failure(245,__LINE__);
+        stage_page.push(c);if(c.ui.page!=PageId::Plugins||c.track().used())return gen_failure(243,__LINE__);
+        c.back();if(c.track().used())return gen_failure(244,__LINE__);
         unsigned design_sources=0,design_controls=0;
         for(const auto& file:available){if(file.name=="Break Engine")continue;
             std::fprintf(stderr,"GEN DESIGN load=%s\n",file.name.c_str());
             c.ui.track=9;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.ui.plugin_back=PageId::Edit;c.choose_plugin(file);entry=c.track().plugin;
             for(unsigned tries=0;tries<3000&&rack.status(entry)!=PluginStatus::Ready;tries++){std::this_thread::sleep_for(std::chrono::milliseconds(10));}
             if(rack.status(entry)!=PluginStatus::Ready){PluginPanel failed;rack.panel(entry,0,failed);std::fprintf(stderr,"GEN DESIGN failed=%s entry=%u status=%d error=%s notice=%s\n",file.name.c_str(),unsigned(entry),int(failed.status),failed.error,c.ui.notice);return gen_failure(230,__LINE__);}
-            c.ui.page=PageId::Edit;c.ui.edit_page[c.ui.track]=0;c.refresh_plugin_panel(entry);edit_page.soft(c,2);
-            if(!c.ui.plugin_panel.design||!c.ui.plugin_panel.design_count)return gen_failure(231,__LINE__);
-            const auto before=rack.states()[entry];const auto pages=c.ui.plugin_panel.design_count;
-            for(unsigned page=0;page<pages;++page){
-                c.ui.plugin_design_page[entry]=uint16_t(page);c.ui.plugin_design_half[entry]=0;c.refresh_plugin_panel(entry);
-                if(c.ui.plugin_panel.design_page!=page||c.ui.plugin_panel.design_count!=pages)return gen_failure(232,__LINE__);
-                for(unsigned half=0;half<(c.ui.plugin_panel.design_pages[page].shown[3]>=0?2u:1u);++half){
-                    c.ui.plugin_design_half[entry]=uint8_t(half);c.refresh_plugin_panel(entry);
-                    auto bindings=page_bindings(c.project,c.ui,c.pattern());
-                    for(unsigned k=0;k<3;++k){const auto p=c.ui.plugin_panel.params[k];if(!p.used){if(bindings[k].kind!=Binding::Kind::None)return gen_failure(233,__LINE__);continue;}
-                        if(bindings[k].kind!=Binding::Kind::PluginParam||int(plugin_binding_shown(bindings[k].id))!=p.shown)return gen_failure(234,__LINE__);
-                        ++design_controls;
-                        auto snap=std::make_unique<Snapshot>();shell.snapshot(*snap,100000);ui::KnobCard card;describe_card(*snap,bindings[k],card);if(card.value!=p.text)return gen_failure(235,__LINE__);
-                    }
+            c.ui.page=PageId::Edit;c.ui.edit_page[c.ui.track]=1;c.refresh_plugin_panel(entry);
+            if(c.ui.plugin_panel.layout_revision&&c.ui.plugin_panel.row<2)return gen_failure(231,__LINE__);
+            const auto before=rack.states()[entry];const auto rows=c.ui.plugin_panel.rows;
+            for(unsigned row=2;row<rows;++row){
+                c.ui.plugin_row[entry]=uint16_t(row);c.refresh_plugin_panel(entry);
+                auto bindings=page_bindings(c.project,c.ui,c.pattern());
+                for(unsigned k=0;k<3;++k)if(c.ui.plugin_panel.params[k].used){
+                    if(bindings[k].kind!=Binding::Kind::PluginParam||plugin_binding_shown(bindings[k].id)!=row*3+k)return gen_failure(234,__LINE__);
+                    ++design_controls;
                 }
             }
-            c.ui.plugin_design_half[entry]=0;c.refresh_plugin_panel(entry);auto prior=c.ui.plugin_panel.design_page;edit_page.soft(c,2);
-            if(!c.ui.map_open)return gen_failure(236,__LINE__);
-            auto bindings=page_bindings(c.project,c.ui,c.pattern());for(const auto& b:bindings)if(b.kind!=Binding::Kind::None)return gen_failure(237,__LINE__);
-            edit_page.wheel(c,-1000);c.back();if(c.ui.map_open||c.ui.plugin_design_page[entry]!=prior||c.ui.edit_page[c.ui.track]!=1)return gen_failure(238,__LINE__);
-            edit_page.soft(c,2);edit_page.wheel(c,-1000);edit_page.push(c);if(c.ui.map_open||c.ui.plugin_design_page[entry]!=0)return gen_failure(239,__LINE__);
+            c.ui.plugin_row[entry]=2;c.refresh_plugin_panel(entry);
+            edit_page.wheel(c,-1000);if(c.ui.plugin_row[entry]!=2)return gen_failure(239,__LINE__);
+            c.ui.page=PageId::Stage;c.ui.stage_group[c.ui.track]=0;c.ui.stage_sub[c.ui.track]=1;c.refresh_plugin_panel(entry);
+            if(c.ui.plugin_panel.design||c.ui.plugin_panel.row<2)return gen_failure(237,__LINE__);
+            c.ui.page=PageId::Edit;
+            const bool kit_mode=file.name=="Rhythmer Kit";
+            c.ui.edit_row[c.ui.track]=0;c.refresh_plugin_panel(entry);
+            for(unsigned step=0;step<(kit_mode?3u:2u);++step){
+                edit_page.soft(c,2);
+                unsigned mode=kit_mode?(step+1)%3:step?0:2;
+                if(c.ui.edit_row[c.ui.track]!=mode)return gen_failure(242,__LINE__);
+                unsigned row=mode==1?0:mode==2?1:2;
+                if(c.ui.plugin_panel.row!=row)return gen_failure(243,__LINE__);
+                auto mapped=page_bindings(c.project,c.ui,c.pattern());
+                for(unsigned k=0;k<3;++k)if(c.ui.plugin_panel.params[k].used&&
+                   (mapped[k].kind!=Binding::Kind::PluginParam||plugin_binding_shown(mapped[k].id)!=row*3+k))return gen_failure(244,__LINE__);
+            }
             if(rack.states()[entry]!=before)return gen_failure(240,__LINE__);
-            c.open_plugin_presets(entry);bindings=page_bindings(c.project,c.ui,c.pattern());if(bindings[0].kind!=Binding::Kind::PluginJump||bindings[1].kind!=Binding::Kind::None||bindings[2].kind!=Binding::Kind::None)return gen_failure(241,__LINE__);
+            c.open_plugin_presets(entry);auto bindings=page_bindings(c.project,c.ui,c.pattern());if(bindings[0].kind!=Binding::Kind::PluginJump||bindings[1].kind!=Binding::Kind::None||bindings[2].kind!=Binding::Kind::None)return gen_failure(241,__LINE__);
             c.apply(bindings[0],1);if(c.ui.presets_cursor!=std::min<int>(1,bindings[0].max)||rack.states()[entry]!=before)return gen_failure(242,__LINE__);plugin_presets_page.soft(c,0);
+            // The first page and EDIT must operate the same source values,
+            // including the Kit engine's own global filter (never an insert).
+            for(unsigned quick=0;quick<(kit_mode?2u:3u);++quick){
+                c.ui.page=PageId::Stage;stage_go(c.ui,EngineKind::Plugin,StageKind::PluginSound);c.refresh_plugin_panel(entry);
+                auto front=page_bindings(c.project,c.ui,c.pattern());auto binding=front[quick];
+                if(binding.kind!=Binding::Kind::PluginParam)return gen_failure(250,__LINE__);
+                const int old=binding.value;const auto shown=plugin_binding_shown(binding.id);
+                c.apply(binding,old>800?old-100:old+100);c.close_gesture();rack.states();c.refresh_plugin_panel(entry);
+                auto updated=page_bindings(c.project,c.ui,c.pattern())[quick];
+                c.ui.page=PageId::Edit;c.ui.edit_page[c.ui.track]=1;c.ui.edit_row[c.ui.track]=0;c.ui.plugin_row[entry]=uint16_t(shown/3);c.refresh_plugin_panel(entry);
+                auto backend=page_bindings(c.project,c.ui,c.pattern());const auto slot=shown%3;
+                if(backend[slot].id!=binding.id||backend[slot].value!=updated.value){std::fprintf(stderr,"QUICK link engine=%s knob=%u front_id=%d back_id=%d front=%d back=%d\n",file.name.c_str(),quick,int(binding.id),int(backend[slot].id),updated.value,backend[slot].value);return gen_failure(251,__LINE__);}
+            }
+            // Plug-in native pots are not included in upstream's model-only
+            // Undo scopes. Restore the captured plug-in state explicitly;
+            // do not assert or advertise an Undo capability it does not have.
+            rack.set_gen_state(entry,before);rack.sync(c.project,c.plugins_asleep());
+            for(unsigned tries=0;tries<3000&&rack.status(entry)!=PluginStatus::Ready;++tries)std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            if(rack.status(entry)!=PluginStatus::Ready||rack.states()[entry]!=before)return gen_failure(253,__LINE__);
             ++design_sources;
         }
-        std::printf("RHYTHMER_DESIGN sources=%u mapped_controls=%u navigation_state=unchanged page_map=ok preset_browse=safe\n",design_sources,design_controls);
+        std::printf("RHYTHMER_DESIGN sources=%u mapped_controls=%u navigation_state=unchanged native_stage_edit=ok preset_browse=safe quick_front_edit=linked state_restore=exact\n",design_sources,design_controls);
         c.plugins=nullptr;
     }
     {auto snap=std::make_unique<Snapshot>();auto& t=snap->project.tracks[0];t.engine=EngineKind::Plugin;t.plugin=0;
@@ -178,29 +209,10 @@ inline int gen8_shell_check() {
      x.track().engine=EngineKind::Sampler;x.track().break_bars=2;x.load_sound(0,EngineKind::Sampler,0);if(x.track().break_bars)return gen_failure(68,__LINE__);
      x.track().engine=EngineKind::Midi;x.ui.gen8_mode=2;auto snap=std::make_unique<Snapshot>();s.snapshot(*snap,1);if(x.ui.gen8_mode!=0)return gen_failure(67,__LINE__);
     }
-    // Every selected instrument has the same unambiguous landing/edit/back flow.
-    for(const char* name:{"Rhythmer Kit","Acid Engine","Sophie","Aphex","CS-1","FM-106","FMini-1","S1Vave","K-WASUB","MONO2K","OberVave","Hortator","Elixir","Guru-600","Prophet","Dexed","Hera","Braids","Plaits","Break Engine"}){
-        EngineHost h;Shell shell(h);auto& x=shell.context();auto& t=x.track();
-        const bool br=std::strcmp(name,"Break Engine")==0,acid=std::strcmp(name,"Acid Engine")==0;
-        t.engine=br?EngineKind::Sampler:EngineKind::Plugin;t.plugin=0;t.break_bars=br?2:0;std::snprintf(x.project.plugins[0].name,sizeof x.project.plugins[0].name,"%s",name);
-        x.ui.page=PageId::Patterns;auto previous=x.pattern().events;
-        x.ui.shift=true;patterns_page.soft(x,2);x.ui.shift=false;x.ui.sheet_row=4;patterns_page.soft(x,2);
-        if(x.ui.gen8_mode!=(br?2:acid?4:1)||(br&&x.ui.sheet_row!=5))return gen_failure(210,__LINE__);
-        patterns_page.soft(x,0);if(!x.ui.sheet_open||x.ui.gen8_mode||x.pattern().events!=previous)return gen_failure(211,__LINE__);
-        patterns_page.soft(x,0);if(x.ui.sheet_open)return gen_failure(212,__LINE__);
-        if(br){x.ui.sheet_open=true;x.ui.gen8_mode=2;x.ui.sheet_row=0;auto edits=x.edits.size();patterns_page.push(x);if(x.edits.size()!=edits||x.pattern().events!=previous||!std::strstr(x.ui.notice,"BROWSE SAMPLE"))return gen_failure(213,__LINE__);continue;}
-        x.ui.plugin_panel.entry=0;x.ui.plugin_panel.layout_revision=1;x.ui.plugin_panel.rows=8;std::snprintf(x.ui.plugin_panel.name,sizeof x.ui.plugin_panel.name,"%s",name);
-        x.open(PageId::Edit);
-        for(unsigned row=0;row<4;++row){
-            if(x.ui.edit_row[x.ui.track]!=row)return gen_failure(214,__LINE__);
-            auto bindings=page_bindings(x.project,x.ui,x.pattern());
-            if(row==0&&bindings[0].kind!=Binding::Kind::Level)return gen_failure(215,__LINE__);
-            if(row==1&&(bindings[0].kind!=Binding::Kind::Send||bindings[0].id!=1||bindings[2].id!=3))return gen_failure(216,__LINE__);
-            edit_page.wheel(x,1);
-        }
-        if(x.ui.edit_row[x.ui.track])return gen_failure(217,__LINE__);
-        edit_page.push(x);if(x.ui.edit_page[x.ui.track]!=1||x.ui.plugin_row[0]!=2)return gen_failure(218,__LINE__);
-        x.back();if(x.ui.page!=PageId::Edit||x.ui.edit_page[x.ui.track])return gen_failure(219,__LINE__);
+    // Native Edit starts at synthesis row two; Back returns to its caller.
+    {EngineHost h;Shell s(h);auto& x=s.context();x.track().engine=EngineKind::Plugin;x.track().plugin=0;x.ui.page=PageId::Stage;
+     x.open(PageId::Edit);if(x.ui.edit_page[x.ui.track]!=1)return gen_failure(215,__LINE__);
+     x.back();if(x.ui.page!=PageId::Stage)return gen_failure(219,__LINE__);
     }
     // Entry always starts at GEN; browser cancel and load bars are contextual.
     {EngineHost h;Shell s(h);auto& x=s.context();x.ui.page=PageId::Patterns;x.ui.sheet_open=false;x.ui.gen8_mode=4;x.ui.sheet_row=1;
@@ -220,19 +232,12 @@ inline int gen8_shell_check() {
     }
     {EngineHost h;Shell s(h);auto& x=s.context();x.ui.page=PageId::Edit;x.track().engine=EngineKind::Plugin;x.track().plugin=0;
      std::strcpy(x.project.plugins[0].name,"Rhythmer Kit");std::strcpy(x.ui.plugin_panel.name,"Rhythmer Kit");x.ui.plugin_panel.entry=0;x.ui.plugin_panel.layout_revision=1;
-     x.ui.edit_page[x.ui.track]=0;x.ui.kit_common=false;
-     auto main=page_bindings(x.project,x.ui,x.pattern());if(main[0].kind!=Binding::Kind::Level)return gen_failure(98,__LINE__);
-     edit_page.wheel(x,1);auto sends=page_bindings(x.project,x.ui,x.pattern());if(sends[0].kind!=Binding::Kind::Send||sends[0].id!=1||sends[2].id!=3)return gen_failure(99,__LINE__);
-     edit_page.soft(x,2);if(x.ui.edit_page[x.ui.track]!=1)return gen_failure(100,__LINE__);
-     x.back();if(x.ui.edit_page[x.ui.track]||x.ui.page!=PageId::Edit)return gen_failure(101,__LINE__);
-     edit_page.push(x);if(x.ui.edit_page[x.ui.track]!=1)return gen_failure(102,__LINE__);
-     x.back();x.ui.edit_row[x.ui.track]=0;
-     auto cards=page_bindings(x.project,x.ui,x.pattern());if(cards[0].kind!=Binding::Kind::Level||cards[1].kind!=Binding::Kind::Pan||cards[2].kind!=Binding::Kind::Send)return gen_failure(94,__LINE__);
-     x.apply(cards[0],73);x.apply(cards[1],-11);x.apply(cards[2],24);
-     if(x.track().mix.level!=73||x.track().mix.pan!=-11||x.track().mix.sends[0]!=24)return gen_failure(95,__LINE__);
-     auto state=save_project(x.project,x.patterns);auto project=std::make_unique<Project>();auto patterns=std::make_unique<PatternBank>();
-     if(!load_project(state,*project,*patterns).empty()||project->tracks[0].mix.level!=73||project->tracks[0].mix.pan!=-11||project->tracks[0].mix.sends[0]!=24)return gen_failure(96,__LINE__);
-     if(x.ui.kit_common)return gen_failure(97,__LINE__);
+     x.ui.edit_page[x.ui.track]=1;x.ui.edit_row[x.ui.track]=0;
+     edit_page.soft(x,2);if(x.ui.edit_row[x.ui.track]!=1)return gen_failure(98,__LINE__);
+     edit_page.soft(x,2);if(x.ui.edit_row[x.ui.track]!=2)return gen_failure(99,__LINE__);
+     edit_page.soft(x,2);if(x.ui.edit_row[x.ui.track])return gen_failure(100,__LINE__);
+     std::strcpy(x.ui.plugin_panel.name,"Prophet");edit_page.soft(x,2);if(x.ui.edit_row[x.ui.track]!=2)return gen_failure(101,__LINE__);
+     edit_page.soft(x,2);if(x.ui.edit_row[x.ui.track])return gen_failure(102,__LINE__);
     }
     if(const char* card=std::getenv("RHYTHMER_GEN_CARD"))for(unsigned group=0;group<4;group++){
         EngineHost h;Shell s(h);auto& x=s.context();PluginRack rack(h);rack.set_card(card);x.plugins=&rack;

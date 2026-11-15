@@ -28,5 +28,13 @@ def check():
  assert {x['port'] for x in names['ports']}==set(p['active_ports'])
  assert {x['repository_slug'] for x in names['ports']}=={'mpc-sample-engine-ports'}
  assert len({x['source_directory'] for x in names['ports']})==19
+ version=(ROOT/'VERSION').read_text().strip()
+ for name in ('README.md','docs/SD_CARD_GUIDE.md','docs/USER_MANUAL_KO_DRAFT.md','docs/ENGINE_REGISTRY.md'):
+  text=(ROOT/name).read_text()
+  assert version in text,('Outdated document version',name)
+ for name in ('docs/SD_CARD_GUIDE.md','docs/USER_MANUAL_KO_DRAFT.md','docs/SOUND_KIT_GUIDE.md','docs/PARAMETER_PAGES.md'):
+  text=(ROOT/name).read_text()
+  for obsolete in ('B3 PAGES','MAIN에서 인코더','MAIN의 SAVE','Push로 A/B 줄'):
+   assert obsolete not in text,('Obsolete navigation instructions',name,obsolete)
  print('Selection OK: 20 picker entries, 25 source views,',len(c['kits']),'complete kits, 19 port variants / 18 names')
 if __name__=='__main__':check()

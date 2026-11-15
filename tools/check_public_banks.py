@@ -19,7 +19,7 @@ def check(archives=()):
     assert [s['name'] for s in byname['Prophet']['sounds']]==['INIT PROPHET']+[p['name'] for p in json.loads((ROOT/'config/rhythmer-factory-presets.json').read_text())['prophet']]
     assert len(byname['Elixir']['sounds'])==35 and sum(s['name'].startswith('Initkit / ') for s in byname['Elixir']['sounds'])==7
     assert byname['Elixir']['kit_names']==['Initkit']+[p['name'] for p in json.loads((ROOT/'config/rhythmer-factory-presets.json').read_text())['elixir']]
-    assert sum(len(e.get('selection',e['sounds'])) for e in c['engines'])==2563
+    assert sum(len(e.get('selection',e['sounds'])) for e in c['engines'])==2659
     assert len(c['kits'])==36
     assert [k['name'] for k in c['kits'] if k['name'].startswith('Elixir / ')]==['Elixir / '+n for n in byname['Elixir']['kit_names']]
     byfolder={e['folder']:e for e in c['engines']}
@@ -36,5 +36,5 @@ def check(archives=()):
                 assert hashlib.sha256(data).hexdigest() not in omitted,('Excluded bank in archive',path,name)
                 if re.search(r'(?:fm1-prophet|fm1-elixir)/original/assets/',name):
                     assert not name.lower().endswith(('.syx','.snd')),('Excluded asset path',name)
-    print('Public bank gate: 118 external assets absent; zero compiled factory banks; 2563 selections (2520 original + 43 newly authored) / 36 kits; GEN indices valid;',len(archives),'archives checked')
+    print('Public bank gate: 118 external assets absent; zero compiled factory banks; 2659 selections (2616 original + 43 newly authored) / 36 kits; GEN indices valid;',len(archives),'archives checked')
 if __name__=='__main__':check(sys.argv[1:])

@@ -76,6 +76,7 @@ enum class StageKind : uint8_t {
     PluginEdit,        // a PLUGIN track's own parameters, three a row; the wheel moves the rows
     OpenEdit,          // a button that opens the Edit page instead of a Stage page (a MIDI track's B3: its every page)
     NewSynth, NewKit, NewMidi,                         // an empty track: what it becomes (Push)
+    PluginPerform, // retained OS DJ FILTER / ECHO / SPACE, separate from native sound design
 };
 // What the picture over the knobs draws.
 enum class StagePicture : uint8_t {

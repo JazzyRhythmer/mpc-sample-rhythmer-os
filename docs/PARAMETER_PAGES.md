@@ -1,26 +1,18 @@
-# Rhythmer OS — functional edit pages
+# Native sound controls
 
-An instrument opens on MAIN. B3 EDIT SOUND / EDIT PAD or Push opens sound design. Existing native parameter IDs, values, preset selection, kit routes and saved engine chunks are retained; the pages provide a presentation map over those controls.
+Sound editing follows Melodee 0.2.0 PRESETS → EDIT. PRESETS combines the engine name, named sound and animation with source-authoritative primary filter or representative controls. B2 PERFORM holds the retained DJ FILTER / ECHO / SPACE, before ARP / CHORD. EDIT lists six controls with three active knob cards. Turn the encoder or use −/+ to move by three controls; EDIT current/total identifies the position. Labels retain source groups such as oscillator, filter, envelope, LFO and FX, ordered from the original sound panels.
 
-| Control | In sound design | In PAGES |
-|---|---|---|
-| Encoder, −/+ | Previous / next page, stops at either end | Move the page cursor |
-| Push | Select row A/B when the second row exists | Open the highlighted page |
-| K1–K3 | Edit the selected row's three controls | No sound edits |
-| B1 / Back | Return to MAIN | Cancel the list and keep the current page/row |
-| B2 | PRESETS; KIT PRESETS changes the whole kit | Not active |
-| B3 | PAGES | SELECT |
+K1–K3 change the highlighted row. The list displays full names; the cards display values and knob identities. In Rhythmer Kit, KIT CUTOFF / KIT RESONANCE / KIT FILTER TYPE are the engine-owned whole-kit filter and are saved with the Kit; subsequent P01–P16 rows identify the selected destination pad. Hit another pad to change the edit target. Shared factory voices are isolated on the first independent edit. Empty pads retain only the three whole-kit filter controls, with no stale source controls.
 
-The header always shows the functional page name and current/total page count. A group that spans multiple pages includes its own part count: FILTER 2/3 with 08/24 means the second Filter page, eighth page overall out of 24. A progress strip shows the overall position. PAGES lists the page numbers and names; the checkmark identifies the current edit page and the highlight identifies the page to open.
+B3 cycles SAVE / EDIT for an instrument and PAD SOURCE / SAVE / EDIT for Rhythmer Kit. PAD SOURCE is Pad / Engine / Sound. PRESETS changes the whole kit; PAD SOURCE changes only the focused pad. Host mix/sends use the mixer. The saved project retains these host values separately from the kit preset.
 
-Up to six controls appear as two aligned rows of three. The selected row is highlighted; the large knob cards show that row's exact values. Small gauges also show the other row's positions. A/B letters identify the row. Push does nothing when there is only one row. Names remain readable at the existing minimum font size; redundant channel/operator/pad prefixes are removed only inside the cells, where the page and scope already provide them.
+The source ENV/LFO matrices remain inside each instrument. Motion MOD controls common host targets; it does not automatically learn arbitrary internal plugin parameters. Source-specific sequencer/storage actions and packed patch bytes are hidden where they have no direct sound-design meaning. Native IDs and original presets stay stable.
 
-Only groups present in the current engine/model appear. OSC, FILTER, ENV, MOD, FX, MODEL and source-specific operator, channel or oscillator sections follow the available original controls. Large groups are split into six-control pages. Original advanced patch fields remain reachable in PATCH DATA; their native encoding/ranges are unchanged. Model changes rebuild the layout using the active controls. The current function is preserved when it still exists; otherwise the editor returns to a valid first page. Row B is cleared when the new page has no second row.
+Break retains its six-page BRK PERF flow. Sample Kit and MIDI use their native Melodee screens. See NATIVE_PLUGIN_WORKFLOW.md and USER_MANUAL_KO_DRAFT.md for current controls. Older functional-page/map screenshots are development history and do not describe this revision.
 
-Rhythmer Kit design shows the selected destination pad, its actual source engine and sound. Hitting another pad updates the target and layout. Only that pad's controls appear. Empty pads show MAIN > SOURCE instructions and expose no design knobs. Whole-kit Level/Pan/Send A remain on MAIN MIX, with Send B/C/D on MAIN SENDS. MAIN SOURCE still assigns Pad / Engine / Sound, while MAIN SAVE stores the complete kit. Track mixer values are saved with the project.
 
-PRESETS uses K1 or the encoder to browse, and Push or LOAD to apply. Browsing does not edit the sound behind the list. Returning restores the edit context; a newly loaded preset starts from its first design page, and a newly loaded kit also selects its first pad.
+### 추가 출력 필터 — Dexed·DRUM-X·Plaits·CS-1·MONO2K
 
-Break Engine uses its own six-page BRK PERF screen for chops, rolls, A/B sources, loop variation, grain/stretch and track mix. Native Sample Kit and MIDI retain their existing controls and page maps. See BREAK_ACID_GUIDE_KO.md for Break and Acid navigation.
+이 다섯 엔진의 PRESETS 첫 두 노브는 **OUTPUT CUTOFF / OUTPUT RESONANCE**입니다. EDIT의 첫 세 줄에서 같은 컷오프·레조넌스와 **OUTPUT FILTER TYPE (LP/BP/HP)**을 조절합니다. OUTPUT FILTER는 이 제어 묶음의 이름이며 별도의 메뉴 버튼이 아닙니다. 세 번째 노브에는 원본의 대표 음색 파라미터가 남습니다.
 
-The layout is cached on the control side until the focused sound/model changes. It adds no audio-thread work, allocation, file access or new audio lock. This does not certify the existing third-party DSP/wrappers or replace physical-device performance checks.
+추가 필터는 엔진의 원래 합성·내장 이펙트 뒤, OS PERFORM·트랙 인서트·센드 앞에서 출력 전체를 처리합니다. 인서트 슬롯이나 버스는 사용하지 않습니다. 기본값은 Cutoff 100%, Resonance 0%, LP이며 이 조합에서는 원본 오디오를 그대로 통과합니다. 원본 프리셋을 선택하면 이 중립값으로 시작하고, Save Sound와 프로젝트 저장에는 추가 필터 설정도 포함됩니다. 원본 필터·ENV·LFO·FX 설정은 변경하지 않습니다. Rhythmer Kit 안에서는 패드 원본의 필터와 별도로 킷 자체의 KIT FILTER가 전체 합산 출력을 처리합니다.

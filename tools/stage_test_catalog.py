@@ -16,6 +16,7 @@ def atomic_write(path,data):
 def stage():
     if not os.path.ismount('/Volumes/SSD'):raise RuntimeError('SSD is not mounted')
     data=(ROOT/'config/sound-catalog.json').read_bytes();catalog=json.loads(data)
+    atomic_write(WORK/'plaits-model-controls.json',(ROOT/'ports/move-plaits/model-controls.json').read_bytes())
     accepted={x['folder']:x['files'] for x in json.loads((ROOT/'config/native-engines.lock.json').read_text())}
     for relative in ('Plugins','Rhythmer/Plugins'):
         plugins=WORK/'sd-stage'/relative

@@ -26,5 +26,6 @@ def run():
   missing=[n for n,h in expected.items() if not (stage/'third_party'/n).is_file() or sha(stage/'third_party'/n)!=h]
   result.append(dict(id=port.name,source=pin.get('repo',pin.get('url')),revision=pin.get('commit',pin.get('revision')),notice_files=len(expected),missing_or_changed=missing,spdx_files=spdx,copyright_lines=sorted(copyrights)))
  out=dict(scope=str(len(result))+' native source trees and staged named legal texts; SPDX inventory is not a dependency-license clearance',license_audit_complete=False,ports=result,missing_notice_count=sum(len(x['missing_or_changed']) for x in result))
- target=ROOT/'artifacts/original-preset-audit/attribution-inventory.json';target.write_text(json.dumps(out,indent=2)+'\n');print(json.dumps(dict(ports=len(result),notice_files=sum(x['notice_files'] for x in result),missing=out['missing_notice_count'],spdx_files=sum(len(x['spdx_files']) for x in result))))
+ target=WORK/'attribution-inventory.json';target.write_text(json.dumps(out,indent=2)+'\n');print(json.dumps(dict(ports=len(result),notice_files=sum(x['notice_files'] for x in result),missing=out['missing_notice_count'],spdx_files=sum(len(x['spdx_files']) for x in result))))
+ assert not out['missing_notice_count'],'Required source notices missing or changed'
 if __name__=='__main__':run()

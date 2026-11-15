@@ -1,4 +1,7 @@
-# Rhythmer OS 0.4.0-beta.1 — 실기기 검증용 베타
+# Rhythmer OS 0.4.0-beta.3 — 실기기 검증용 베타
+
+**beta.2 → beta.3에는 전체 SD.zip을 사용하세요.** 이번 수정에는 앱뿐 아니라 플러그인 바이너리·파라미터 표시 정보·프리셋 카탈로그 변경이 포함됩니다. 아래 절차대로 전원을 끄고 백업한 뒤 `autorun`과 플러그인/킷 자료를 함께 갱신하세요. `UPDATE.zip`만 적용하면 이번 수정 전체가 설치되지 않습니다.
+
 
 개발자: **jazzy rhythmer**. Instagram: https://www.instagram.com/jazzyrhythmer/ · YouTube: https://www.youtube.com/@jazzyrhythmer
 
@@ -16,11 +19,13 @@
 
 ## 악기와 Rhythmer Kit
 
-플러그인 목록 맨 위의 Rhythmer Kit을 선택하면 PRESETS에서 36개 킷을 바꿀 수 있다. 모든 킷의 1–16번 패드가 채워져 있다. MAIN에서 인코더/−/+로 SOURCE 페이지로 이동하면 K1 Pad / K2 Engine / K3 Sound로 선택한 패드만 바꾼다. 실제 패드를 눌러 편집 대상을 선택할 수도 있다. 킷에 따라 B–D bank에 추가 음색이 있다. Hortator MD 추가 6종의 원본 사운드 구성은 HORTATOR_KITS_KO.md를 참고한다.
+빈 트랙에서는 인코더를 돌려 PLUG-IN / KIT / MIDI 계열의 카드를 선택한 뒤 Push로 연다. 기본 7개 카드 중 원하는 유형을 선택할 수 있다. B2는 Sample Kit, B3는 MIDI 바로가기다. 플러그인 브라우저에서 취소하면 같은 빈 트랙으로 돌아온다.
+
+플러그인 목록 맨 위의 Rhythmer Kit을 선택하면 PRESETS에서 36개 킷을 바꿀 수 있다. 모든 킷의 1–16번 패드가 채워져 있다. EDIT에서 B3 PAD SOURCE를 열면 K1 Pad / K2 Engine / K3 Sound로 선택한 패드만 바꾼다. B3 SAVE는 저장 화면, 그다음 B3 EDIT는 사운드 편집 화면으로 이동한다. 실제 패드를 눌러 편집 대상을 선택할 수도 있다. 킷에 따라 B–D bank에 추가 음색이 있다. Hortator MD 추가 6종의 원본 사운드 구성은 HORTATOR_KITS_KO.md를 참고한다.
 
 개별 엔진은 한 트랙에서 한 음색을 연주한다. Keys의 Chromatic 또는 Scale을 선택한다. 멜로디 엔진의 원래 MIDI/폴리포니를 유지하며, 드럼 단일 음색은 C4 기준 Tape 피치로 연주한다. 드럼의 길이와 기존 꼬리도 함께 피치 변환된다.
 
-Stage/Keys에서 Push → Edit, B2 PRESETS → 인코더로 선택 → Push로 로드한다. 현재 프리셋 이름은 Edit 상단에도 표시된다. 인코더/−/+로 기능별 페이지를 이동하고 Push로 A/B 줄을 선택해 K1–K3으로 편집한다. B3 PAGES에서 원하는 페이지로 바로 이동한다. MAIN의 SAVE 페이지에서 Save slot과 Save Sound / Save Kit으로 사용자 프리셋을 저장한다. 저장된 항목은 PRESETS의 User Sound / User Kit에 추가된다. 동일 슬롯에 저장하면 해당 슬롯을 교체한다.
+Stage PRESETS에서 엔진·프리셋 이름과 애니메이션을 보고, EDIT에서 소리를 편집한다. B2 PRESETS에서 인코더로 선택하고 Push/LOAD로 로드한다. 현재 프리셋 이름은 EDIT 상단에도 표시된다. 인코더/−/+로 3개씩 이동하며, 6줄 목록 중 K1–K3 표시가 있는 줄을 해당 노브로 조절한다. EDIT 현재/전체 표시로 위치를 확인한다. 일반 악기는 B3 SAVE에서 Save slot과 Save Sound로, 킷은 PAD SOURCE 다음 SAVE에서 Save slot과 Save Kit으로 저장한다. 저장된 항목은 PRESETS의 User Sound / User Kit에 추가된다. 동일 슬롯에 저장하면 해당 슬롯을 교체한다.
 
 프로젝트 저장은 전체 킷의 패드별 엔진·음색·편집 파라미터를 보존한다. 사용자 프리셋은 Rhythmer/Presets에 저장한다. 베타 업데이트 시 autorun과 Rhythmer/Plugins/RHYTHMER - Rhythmer Kit을 포함해 패키지 전체를 복사한다. 자세한 단계는 SOUND_KIT_GUIDE.md를 참고한다.
 

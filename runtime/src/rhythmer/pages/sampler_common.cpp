@@ -80,7 +80,11 @@ const PadSound& sampler_pad(const Snapshot& s) { return s.track().pads[s.track()
 
 juce::Colour pad_colour(const Snapshot& s, unsigned kit) {
     uint32_t own = s.track().pads[kit % sampler_pads].colour;
-    return own ? juce::Colour(0xFF000000u | own) : colour_of(s);
+    if (!own) return colour_of(s);
+    // Preserve the imported RGB value and real pad lights; the screen alone
+    // uses a neutral tone. COLOUR also names the hue for a monochrome display.
+    float light=juce::Colour(0xFF000000u|own).getPerceivedBrightness();
+    return juce::Colour::fromFloatRGBA(light,light,light,1.0f);
 }
 
 juce::Colour ink_on(juce::Colour fill) { return fill.getPerceivedBrightness() > 0.55f ? ui::colour::bg : ui::colour::text; }

@@ -54,6 +54,7 @@ struct PluginPanel {
     uint16_t load = 0;             // the share of a block it takes, in tenths of a percent
     uint16_t programs = 0;         // its named programs (presets), for PRESETS
     std::array<PluginPanelParam, 3> params {};
+    std::array<PluginPanelParam, 3> quick {}; // source-authoritative PRESETS mirrors
     // The six parameters around the row in hand, its own three among them (the row before, or at the top the row
     // after), for the page's list; `window_first` the first one's place in the list of shown ones.
     std::array<PluginPanelParam, 6> window {};
@@ -84,6 +85,14 @@ public:
 private:
     std::shared_ptr<const std::vector<PluginProgram>> items_;
 };
+// A program's key as PluginRef::preset keeps it: "folder/name", or the name alone.
+inline std::string program_key(const PluginProgram& p) { return p.folder.empty() ? p.name : p.folder + "/" + p.name; }
+// The program with that key (its number in the plug-in), -1 none.
+inline int program_keyed(const PluginProgramList& list, const std::string& key) {
+    if (key.empty()) return -1;
+    for (const auto& p : list) if (program_key(p) == key) return p.index;
+    return -1;
+}
 struct PluginPrograms {
     uint8_t entry = no_plugin;
     PluginProgramList list;
@@ -113,6 +122,7 @@ constexpr unsigned plugin_binding_entry(int32_t id) { return unsigned(id) >> 16;
 constexpr unsigned plugin_binding_shown(int32_t id) { return unsigned(id) & 0xffff; }
 // The panel's card for a binding id, null when that parameter is not on K1-K3 now.
 inline const PluginPanelParam* plugin_card(const PluginPanel& panel, int32_t id) {
+    if(panel.entry==plugin_binding_entry(id))for(const auto& card:panel.quick)if(card.used&&card.shown==int(plugin_binding_shown(id)))return &card;
     unsigned shown = plugin_binding_shown(id);
     if(panel.design){
         if(panel.entry!=plugin_binding_entry(id))return nullptr;

@@ -152,7 +152,7 @@ void page_map(Paint& p, const Snapshot& s, const EngineInfo& info) {
 }
 
 #include "rhythmer/pages/plugin_home.inc"
-#include "rhythmer/pages/plugin_design.inc"
+
 #include "rhythmer/pages/break_performance.inc"
 
 void draw(Paint& p, const Snapshot& s) {
@@ -174,14 +174,15 @@ void draw(Paint& p, const Snapshot& s) {
         bool ours = panel.entry == s.track().plugin;
         if (ours && panel.status == PluginStatus::Ready) // the share of each audio block it takes
             h.left.push_back(pill(Icon::Chip, juce::String(panel.load / 10) + " %", panel.load > 700 ? colour::amber : colour::mid));
+        if(panel.layout_revision&&panel.row>=2)h.left.push_back(pill("EDIT "+juce::String(panel.row-1)+"/"+juce::String(std::max(1,int(panel.rows)-2)),c));
         h.right.push_back(tag_of(s, s.ui.track));
         bool presets = ours && panel.programs > 0;
         bool kit=ours&&juce::String(panel.name)=="Rhythmer Kit";
-        bool home=s.ui.edit_page[s.ui.track]==0;
+        bool home=false;
         if(s.ui.shift){SoftKeys k{{"", "", "TRANSPORT"},-1,c};k.toggles=4;k.lit=s.track().plugin<max_plugins&&s.project.plugins[s.track().plugin].transport?4:0;frame(p,s,k,h);}
-        else frame(p,s,{{home?"PLUG-INS":s.ui.map_open?"BACK":"MAIN",s.ui.map_open?"":presets?(kit?"KIT PRESETS":"PRESETS"):"",home?(kit?"EDIT PAD":"EDIT SOUND"):(panel.design?(s.ui.map_open?"SELECT":panel.design_count?"PAGES":""):kit?(s.ui.kit_common?"PAD EDIT":"KIT MIX"):"")},-1,c},h);
+        else frame(p,s,{{"PLUG-INS",presets?(kit?"KIT PRESETS":"PRESETS"):"",panel.layout_revision?(s.ui.edit_row[s.ui.track]?(kit&&s.ui.edit_row[s.ui.track]==1?"SAVE":"EDIT"):kit?"PAD SOURCE":"SAVE"):""},-1,c},h);
         if(home&&ours&&panel.status==PluginStatus::Ready){plugin_home(p,s,panel,kit);return;}
-        if(!home&&ours&&panel.design){plugin_design(p,s);return;}
+        if(ours&&panel.design){draw_plugin_view(p,s,s.track().plugin,zone::picture_y);return;}
         if(kit&&s.ui.kit_common){
             p.text("KIT MIX",zone::pad,zone::picture_y+12,zone::width-2*zone::pad,24,caps_text(colour::text),juce::Justification::centred);
             p.text("ALL PADS / ALL BANKS",zone::pad,zone::picture_y+44,zone::width-2*zone::pad,20,plain(colour::sec,type::body),juce::Justification::centred);
@@ -245,20 +246,12 @@ void soft(Context& c, int key) {
     if (c.track().engine == EngineKind::Plugin) {
         if(c.deep(c.ui.track)){if(key==0)c.back();if(key==2)c.ask_unfreeze(c.ui.track);return;}
         if(c.ui.shift&&key==2){c.ui.shift_used=true;c.toggle_plugin_transport(c.track().plugin);return;}
-        if(key==0&&c.ui.edit_page[c.ui.track]){c.back();return;}
-        if(c.ui.edit_page[c.ui.track]&&c.ui.plugin_panel.design&&key==2){
-            if(!c.ui.plugin_panel.design_count)return;
-            if(c.ui.map_open){c.ui.plugin_design_page[c.track().plugin]=c.ui.map_cursor;c.ui.plugin_design_half[c.track().plugin]=0;c.ui.map_open=false;c.refresh_plugin_panel(c.track().plugin);}
-            else {c.ui.map_open=true;c.ui.map_cursor=uint8_t(c.ui.plugin_panel.design_page);}return;
+        if(key==2&&c.ui.plugin_panel.layout_revision){
+            const bool kit=std::string(c.ui.plugin_panel.name)=="Rhythmer Kit";
+            c.ui.edit_row[c.ui.track]=kit?uint8_t((c.ui.edit_row[c.ui.track]+1)%3):uint8_t(c.ui.edit_row[c.ui.track]?0:2);
+            if(!c.ui.edit_row[c.ui.track])c.ui.plugin_row[c.track().plugin]=2;
+            c.refresh_plugin_panel(c.track().plugin);return;
         }
-        if(c.ui.map_open)return;
-        if(key==2&&!c.ui.edit_page[c.ui.track]){
-            c.ui.edit_page[c.ui.track]=1;c.ui.kit_common=false;c.ui.map_open=false;
-            if(c.track().plugin<max_plugins){c.ui.plugin_design_page[c.track().plugin]=0;c.ui.plugin_design_half[c.track().plugin]=0;c.ui.plugin_panel.design=false;}
-            if(c.track().plugin<max_plugins){c.ui.plugin_row[c.track().plugin]=std::min<unsigned>(c.ui.plugin_panel.layout_revision?2:0,c.ui.plugin_panel.rows?c.ui.plugin_panel.rows-1:0);if(c.plugins)c.refresh_plugin_panel(c.track().plugin);}
-            c.plugin_panel_at=0;return;
-        }
-        if(key==2)return;
         if (key == 0) c.open_plugin_picker(UiState::PluginTarget::Instrument);
         if (key == 1 && c.ui.plugin_panel.entry == c.track().plugin && c.ui.plugin_panel.programs > 0) c.open_plugin_presets(c.track().plugin);
         if (key == 2) c.toggle_plugin_transport(c.track().plugin);
@@ -280,12 +273,6 @@ void soft(Context& c, int key) {
 
 // A PLUGIN track's rows of parameters (the panel knows how many).
 void plugin_rows(Context& c, int delta) {
-    if(!c.ui.edit_page[c.ui.track]){
-        const int count=c.ui.plugin_panel.layout_revision?4:2;
-        c.ui.edit_row[c.ui.track]=uint8_t((int(c.ui.edit_row[c.ui.track])+delta%count+count)%count);
-        if(c.track().plugin<max_plugins){auto& row=c.ui.plugin_row[c.track().plugin];row=c.ui.edit_row[c.ui.track]==3?1:0;if(c.plugins)c.plugins->panel(c.track().plugin,row,c.ui.plugin_panel);}
-        c.plugin_panel_at=0;return;
-    }
     if(c.ui.plugin_panel.design){
         auto& panel=c.ui.plugin_panel;unsigned entry=c.track().plugin;if(entry>=max_plugins||!panel.design_count)return;
         if(c.ui.map_open)c.ui.map_cursor=uint8_t(std::clamp<int>(int(c.ui.map_cursor)+delta,0,panel.design_count-1));
@@ -295,9 +282,10 @@ void plugin_rows(Context& c, int delta) {
     unsigned entry = c.track().plugin;
     if (entry >= max_plugins || c.ui.plugin_panel.entry != entry || !c.ui.plugin_panel.rows) return;
     auto& row = c.ui.plugin_row[entry];
-    row = uint16_t(std::clamp<int>(row + delta, 0, c.ui.plugin_panel.rows - 1));
+    c.ui.edit_row[c.ui.track]=0;
+    row = uint16_t(std::clamp<int>(row + delta,c.ui.plugin_panel.layout_revision?2:0,c.ui.plugin_panel.rows-1));
     c.ui.plugin_panel.row = row;
-    if(c.plugins)c.plugins->panel(entry,row,c.ui.plugin_panel);
+    if(c.plugins)c.refresh_plugin_panel(entry);
     c.plugin_panel_at = 0; // its cards again at once
 }
 

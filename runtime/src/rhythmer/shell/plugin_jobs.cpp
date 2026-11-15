@@ -124,6 +124,7 @@ void Context::choose_plugin(const PluginFile& file) {
     std::snprintf(ref.path, plugin_path_length, "%s", file.path.c_str());
     std::snprintf(ref.name, sizeof(ref.name), "%s", file.name.c_str());
     ref.id = file.id;
+    if (!same) ref.preset[0] = 0;
     if (same) plugins->reload(unsigned(entry)); // picked again: opened afresh (after it failed or stopped working)
     if (instrument) {
         unsigned t = ui.track % track_count;
@@ -159,10 +160,13 @@ void Context::choose_plugin(const PluginFile& file) {
 
 void Context::refresh_plugin_panel(unsigned entry){
     if(!plugins||entry>=max_plugins)return;
-    const bool editing=(ui.page==PageId::Edit||(ui.page==PageId::PluginPresets&&ui.presets_back==PageId::Edit))&&track().engine==EngineKind::Plugin&&track().plugin==entry&&ui.edit_page[ui.track];
+    const bool editing=((ui.page==PageId::Stage&&stage_page_now(ui,track(),false).kind==StageKind::PluginEdit)||ui.page==PageId::Edit||(ui.page==PageId::PluginPresets&&ui.presets_back==PageId::Edit))&&track().engine==EngineKind::Plugin&&track().plugin==entry&&(ui.page==PageId::Stage||ui.edit_page[ui.track]);
     if(editing){
-        ui.kit_common=false;plugins->edit_panel(entry,ui.plugin_design_page[entry],ui.plugin_design_half[entry],ui.plugin_panel);
-        if(ui.plugin_panel.design){ui.plugin_design_page[entry]=ui.plugin_panel.design_page;ui.plugin_design_half[entry]=ui.plugin_panel.design_half;if(ui.map_open)ui.map_cursor=uint8_t(std::min<unsigned>(ui.map_cursor,ui.plugin_panel.design_count?ui.plugin_panel.design_count-1:0));}
+        auto row=std::max<unsigned>(2,ui.plugin_row[entry]);
+        if(ui.page==PageId::Edit&&ui.edit_row[ui.track])row=ui.edit_row[ui.track]==1?0:1;
+        plugins->panel(entry,row,ui.plugin_panel);ui.plugin_panel.design=false;
+        ui.plugin_row[entry]=ui.plugin_panel.row;
+        if(ui.plugin_panel.layout_revision&&row>=2)for(unsigned k=0;k<ui.plugin_panel.window.size();++k)if(ui.plugin_panel.window_first+k<6)ui.plugin_panel.window[k]={};
     }else {plugins->panel(entry,ui.plugin_row[entry],ui.plugin_panel);ui.plugin_row[entry]=ui.plugin_panel.row;}
     plugin_panel_at=0;
 }
@@ -228,7 +232,9 @@ void Context::choose_plugin_program(int index) {
     if(plugin_frozen_edit(ui.presets_entry))return;
     auto programs = plugins->programs(ui.presets_entry);
     if (index < 0 || size_t(index) >= programs.list.size()) return;
-    plugins->select_program(ui.presets_entry, programs.list[size_t(index)].index);
+    const auto& picked=programs.list[size_t(index)];
+    plugins->select_program(ui.presets_entry,picked.index);
+    if(ui.presets_entry<max_plugins)std::snprintf(project.plugins[ui.presets_entry].preset,sizeof(project.plugins[0].preset),"%s",program_key(picked).c_str());
     ui.plugin_design_page[ui.presets_entry]=0;ui.plugin_design_half[ui.presets_entry]=0;ui.plugin_panel.design=false;
     if(std::string(project.plugins[ui.presets_entry].name)=="Rhythmer Kit"){
         ui.kit_common=false;

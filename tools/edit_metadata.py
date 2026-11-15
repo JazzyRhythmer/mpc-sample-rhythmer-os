@@ -22,6 +22,9 @@ def expand(name):
 
 def enrich(entry,port,contract):
  ps=entry['parameters'];levels=contract.get('ui_hierarchy',{}).get('levels',{})
+ if port.name=='fm1-mono2k':
+  # Three internal destination-track selectors are fixed to this instance.
+  entry.setdefault('hidden_keys',[]).extend(('p43','p51','p59'))
  groups={};labels={}
  for key,level in levels.items():
   if key=='root':continue
@@ -65,14 +68,18 @@ def enrich(entry,port,contract):
   start,end=(18,33)
   hidden.extend(p['key'] for p in ps if start<=p['index']<=end)
   # The source drum note mapper and chord sequencer are not sound controls.
-  a,b=(82,96)
+  a,b=(82,92) if port.name=='fm1-prophet' else (82,91)
   hidden.extend(p['key'] for p in ps if a<=p['index']<=b)
+  if port.name!='fm1-prophet':hidden.extend(p['key'] for p in ps if p['index'] in (9,95))
+  else:hidden.extend(p['key'] for p in ps if p['index']==9)
  # Select the full named bank once, via Sound/PRESETS. Original browser/file
  # actions otherwise change the backing bank without updating that selector.
  # Only add a context where names would otherwise collide. Already-qualified
  # names retain their compact source spelling.
  for p in ps:
   key=p['key'];name=p.get('edit_name',p['name'])
+  if p['name'] in ('FX Routing','FX Return','Reverb Type'):p['category']='Global FX';p['edit_name']=p['name']
+  if p['name'] in ('Velocity Sensitivity','Native Arp Enable'):p['category']='Performance';p['options']=['Off','On']
   if not p['category'] and not key.startswith(('groove_model_','rhythmer_model_')) and '_' in key and not re.match(r'^p\d+$',key):
    prefix=key.rsplit('_',1)[0].replace('_',' ')
    p['category']=prefix.title()

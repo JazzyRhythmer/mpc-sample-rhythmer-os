@@ -133,7 +133,7 @@ def assemble(stage_only=False):
         'origin': 'Melodee by Kerem Kilic (Ellic Studio)',
         'beta': True, 'hardware_validated': False, 'hardware_validation': 'Pending owner beta testing', 'public_release': False,
         'upstream': {'melodee': 'v0.2.0', 'commit': '8880d16116ccb3c69f75fb46bf2166b16c51ef0c', 'base': '7e2d15d9ca086608b942599f6471a82f48c139f7'},
-        'behavior_changes': ['Melodee 0.2.0 foundation: 128 patterns, Freeze, LV2/CLAP, USB web/mirror, native sample-pad sends and signed Rhythmer updates', 'branding and monochrome UI', 'original FM-1 four-track GEN and engine-scoped Acid/Break actions', 'single-sound and Rhythmer Kit plugin host', 'named presets and selected empty-track indication', '20 track entries and seven kit-only source variants', 'functional parameter pages with page count/map, focused-pad edit scope, MAIN MIX and stale-card protection'],
+        'behavior_changes': ['Melodee 0.2.0 foundation: 128 patterns, Freeze, LV2/CLAP, USB web/mirror, native sample-pad sends and signed Rhythmer updates', 'branding and monochrome UI', 'original FM-1 four-track GEN and engine-scoped Acid/Break actions', 'single-sound and Rhythmer Kit plugin host', 'named presets and selected empty-track indication', '20 track entries and seven kit-only source variants', 'native PRESETS/EDIT, source-ordered sound controls, focused-pad editing, host mixer and stale-card protection'],
         'mechanical_rename': {'source': 'src/rhythmer', 'namespace': 'rhythmer', 'class': 'RhythmerApp',
                               'binary': 'rhythmer', 'sd_runtime': 'autorun/rhythmer'},
         'features': {
@@ -147,7 +147,7 @@ def assemble(stage_only=False):
             'Skin': 'Monochrome solid geometric startup, vector marks without a wordmark backplate, numeric glyphs and segmented gauges; 20 distinct pitch/sustain-reactive sculptures',
             'Startup': 'Official MPC Sample vector device mark, minimal pixel Rhythmer OS vector wordmark and four unlabeled abstract machine panels and eased vector-letter animation',
             'Native_instruments': str(len(native))+' native ports plus Sophie and five original drum packages; source and host receipts in NATIVE_ENGINES_LOCK.json',
-            'Single_sound': '25 engine source views (24 original engines plus Hortator Acid) play one selected sound; named presets and complete original control pages. Percussion uses C4-referenced tape pitch; melodic engines retain native MIDI/polyphony.',
+            'Single_sound': '25 engine source views (24 original engines plus Hortator Acid) play one selected sound; named presets and source-ordered sound-design controls. Percussion uses C4-referenced tape pitch; melodic engines retain native MIDI/polyphony.',
             'Drum_kits': f"Rhythmer Kit: {len(json.loads((ROOT/'config/sound-catalog.json').read_text())['kits'])} named presets, every preset fills pads 1-16; original voices plus original Sophie supplementary percussion",
             'Hybrid': 'Rhythmer Kit supports per-pad engine/sound changes, independent sound design, 64-pad routing, user preset slots and complete project state',
             'TB-3PO': 'Original FM-1 TB-3PO and scale-mask wrapper integrated for Acid GEN',
@@ -179,7 +179,7 @@ def assemble(stage_only=False):
         for p in (ROOT/folder).rglob('*'):
             if p.is_file():files['RHYTHMER-GEN-SOURCE/'+p.relative_to(ROOT).as_posix()]=p.read_bytes()
     files['OPEN_MPC_COMPATIBILITY.md'] = (ROOT/'docs/OPEN_MPC_COMPATIBILITY.md').read_bytes()
-    for name in ('RHYTHMER_PRESETS.md','UPSTREAM_020.md','ORIGINAL_PRESET_AUDIT_KO.md','HORTATOR_KITS_KO.md','BREAK_ACID_GUIDE_KO.md','PARAMETER_PAGES.md','FINAL_UI_AUDIT.md','VERIFICATION.md','GEN8_BREAK.md','DESIGN.md','ENGINE_REGISTRY.md','DRUM_KITS.md','BETA_READINESS.md','SOUND_KIT_GUIDE.md','GEN_WORKFLOW.md','USER_MANUAL_KO_DRAFT.md','REBRAND.md','SOUND_FIXES_BETA4.md'):
+    for name in ('RHYTHMER_PRESETS.md','UPSTREAM_020.md','ORIGINAL_PRESET_AUDIT_KO.md','HORTATOR_KITS_KO.md','BREAK_ACID_GUIDE_KO.md','PARAMETER_PAGES.md','NATIVE_PLUGIN_WORKFLOW.md','NATIVE_CONTROL_COVERAGE.md','FINAL_UI_AUDIT.md','VERIFICATION.md','GEN8_BREAK.md','DESIGN.md','ENGINE_REGISTRY.md','DRUM_KITS.md','BETA_READINESS.md','SOUND_KIT_GUIDE.md','GEN_WORKFLOW.md','USER_MANUAL_KO_DRAFT.md','REBRAND.md','SOUND_FIXES_BETA4.md'):
         files[name]=(ROOT/'docs'/name).read_bytes()
     files['DEVICE_MARK_NOTICE.md']=(ROOT/'assets/device/NOTICE.md').read_bytes()
     # New installs use the canonical folder. The host also resolves legacy beta paths.

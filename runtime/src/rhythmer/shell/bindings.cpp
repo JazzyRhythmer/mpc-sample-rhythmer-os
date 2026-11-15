@@ -511,9 +511,19 @@ std::array<Binding, 3> stage_bindings(const Project& project, const UiState& ui,
         if (slot >= track.fx.count()) return {};
         return effect_row(t * 64 + slot * 8, track.fx.slots[slot], shift_row ? 1 : 0);
     }
-    case SK::PluginSound: // the three performance knobs, the same on every plug-in (engine/macros.h)
-        if (shift_row) return {};
-        return {param(track, plugin_track::Macro1), param(track, plugin_track::Macro2), param(track, plugin_track::Macro3)};
+    case SK::PluginSound: {
+        if(shift_row){return {};}
+        const auto& panel=ui.plugin_panel;
+        if(panel.entry!=track.plugin||panel.status!=PluginStatus::Ready)return {};
+        if(panel.focused_pad>=0){
+            std::array<Binding,3> out{};for(unsigned k=0;k<2;++k)if(panel.quick[k].used)out[k]={Kind::PluginParam,plugin_binding(track.plugin,unsigned(panel.quick[k].shown)),0,plugin_param_max,panel.quick[k].value};
+            out[2]={Kind::Level,0,0,127,track.mix.level};return out;
+        }
+        std::array<Binding,3> out{};for(unsigned k=0;k<3;++k)if(panel.quick[k].used)out[k]={Kind::PluginParam,plugin_binding(track.plugin,unsigned(panel.quick[k].shown)),0,plugin_param_max,panel.quick[k].value};return out;
+    }
+    case SK::PluginPerform:
+        if(shift_row)return {};
+        return {param(track,plugin_track::Macro1),param(track,plugin_track::Macro2),param(track,plugin_track::Macro3)};
     case SK::PluginEdit: // the plug-in's own row of three
         if (shift_row) return {};
         return plugin_cards(ui, track.plugin);

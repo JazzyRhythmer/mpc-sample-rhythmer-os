@@ -409,6 +409,16 @@
       "min": 0,
       "max": 2,
       "default": 1
+    },
+    {
+      "key": "p41",
+      "name": "Native Arp Enable",
+      "dynamic_name": true,
+      "type": "int",
+      "display": "int",
+      "min": 0,
+      "max": 1,
+      "default": 0
     }
   ],
   "ui_hierarchy": {}

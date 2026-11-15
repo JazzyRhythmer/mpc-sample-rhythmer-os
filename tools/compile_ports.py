@@ -26,8 +26,10 @@ def build(name):
     run(["bash", MV / "tools/test_port.sh", port / "vst.json"], ROOT)
     out = port / "build"
     objects = []
+    from wrapper_repairs import repair
+    repaired=out/'vst2_wrap.c';repaired.write_text(repair((MV/'wrapper/vst2_wrap.c').read_text()))
     sources = [port / s for s in cfg["build"]["sources"]] + [
-        MV / "adapters/schwung/schwung_engine.c", MV / "wrapper/vst2_wrap.c"
+        MV / "adapters/schwung/schwung_engine.c", repaired
     ]
     for i, source in enumerate(sources):
         cpp = source.suffix in (".cpp", ".cc", ".cxx")

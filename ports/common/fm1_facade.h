@@ -15,7 +15,11 @@ static void *native_create(const char *dir,const char *json) {
     if(native_count()<1||native_count()>NATIVE_MAX_PARAMS){active=0;return NULL;}return &active;
 }
 static void native_destroy(void *p){(void)p;active=0;}
-static void native_midi(void *p,const uint8_t *m,int n,int source){(void)p;(void)source;if(n>=3)native_note(m);}
+static void native_midi(void *p,const uint8_t *m,int n,int source){
+    (void)p;(void)source;
+    if(n>=3)native_note(m);
+    else if(n==2&&(m[0]&0xf0)==0xd0){uint8_t message[3]={m[0],m[1],0};native_note(message);}
+}
 static void native_set(void *p,const char *k,const char *v) {
     (void)p;
     if(!strcmp(k,"state")) {
@@ -23,12 +27,18 @@ static void native_set(void *p,const char *k,const char *v) {
         native_state_set(v);return;
 #else
         if(strncmp(v,"FM1S1:",6))return;const char *s=v+6;int values[NATIVE_MAX_PARAMS];
-        for(int i=0;i<native_count();++i) {
+        int count=0;
+        for(int i=0;i<native_count()&&*s;++i) {
             char *end;long n=strtol(s,&end,10);
             if(end==s||n<native_min(i)||n>native_max(i)||(*end!=','&&*end))return;
-            values[i]=(int)n;s=*end?end+1:end;
+            values[i]=(int)n;s=*end?end+1:end;++count;
         }
-        if(*s)return;for(int i=0;i<native_count();++i)native_control(i,values[i]);
+#ifdef NATIVE_MIN_STATE_PARAMS
+        if(*s||count<NATIVE_MIN_STATE_PARAMS)return;
+#else
+        if(*s||count!=native_count())return;
+#endif
+        for(int i=0;i<count;++i)native_control(i,values[i]);
 #ifdef NATIVE_SYNC
         native_sync();
 #endif

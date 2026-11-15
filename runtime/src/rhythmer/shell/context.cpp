@@ -215,7 +215,7 @@ void Context::reload_tick() {
 
 void Context::open(PageId page) {
     if(page==PageId::Edit&&track().engine==EngineKind::Plugin&&ui.page!=PageId::PluginPresets){
-        ui.edit_page[ui.track]=0;ui.edit_row[ui.track]=0;ui.kit_common=false;
+        ui.edit_page[ui.track]=1;ui.edit_row[ui.track]=0;ui.kit_common=false;
         if(track().plugin<max_plugins){ui.plugin_row[track().plugin]=0;}plugin_panel_at=0;
     }
     if(page!=PageId::Samples)ui.break_browse=false;
@@ -223,7 +223,7 @@ void Context::open(PageId page) {
     // A PLUGIN track's sounds are the plug-ins on the card (Sample Select, or Sounds from anywhere).
     if (page == PageId::Sounds && track().engine == EngineKind::Plugin && plugins) { open_plugin_picker(UiState::PluginTarget::Instrument); return; }
     if (page == PageId::Trim) { // Trim lives on Stage now: a kit's B1 TRIM (the sampler pages' B1 and Chop come here)
-        if (track().engine == EngineKind::Sampler) stage_go(ui, 0, 0);
+        if (track().engine == EngineKind::Sampler) stage_go(ui,EngineKind::Sampler,StageKind::Trim);
         page = PageId::Stage;
     }
     if (page != ui.page) punch_release(); // a pad held over a page change would never let go
@@ -263,10 +263,7 @@ void Context::open(PageId page) {
 
 void Context::back() {
     if(ui.page==PageId::Edit&&track().engine==EngineKind::Plugin&&ui.edit_page[ui.track]&&ui.map_open){ui.map_open=false;return;}
-    if(ui.page==PageId::Edit&&track().engine==EngineKind::Plugin&&ui.edit_page[ui.track]){
-        ui.edit_page[ui.track]=0;ui.kit_common=false;
-        if(track().plugin<max_plugins){auto& row=ui.plugin_row[track().plugin];row=ui.edit_row[ui.track]==3?1:0;if(plugins)plugins->panel(track().plugin,row,ui.plugin_panel);}plugin_panel_at=0;return;
-    }
+
     if (ui.sheet_open || ui.map_open || ui.picker_open || ui.move_open) { // a sheet, map or picker first
         ui.sheet_open = ui.map_open = ui.picker_open = ui.move_open = false;
         return;
@@ -278,7 +275,7 @@ void Context::select_track(unsigned t) {
     if (ui.page == PageId::Sounds) audition(-1);
     stage_tick(UINT32_MAX); // a sound still waiting to load lands on the track it was turned on
     ui.track = uint8_t(t % track_count);
-    if(ui.page==PageId::Edit&&track().engine==EngineKind::Plugin){ui.edit_page[ui.track]=0;ui.edit_row[ui.track]=0;ui.kit_common=false;if(track().plugin<max_plugins)ui.plugin_row[track().plugin]=0;plugin_panel_at=0;}
+    if(ui.page==PageId::Edit&&track().engine==EngineKind::Plugin){ui.edit_page[ui.track]=1;ui.edit_row[ui.track]=0;ui.kit_common=false;if(track().plugin<max_plugins)ui.plugin_row[track().plugin]=0;plugin_panel_at=0;}
     ui.held_step = -1;
     if (ui.page == PageId::Sounds) ui.sounds_cursor = track().preset;
 }

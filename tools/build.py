@@ -45,11 +45,17 @@ def copy_sources(app=True, destination=None):
 def container(command, ports=False, subdir='runtime'):
     check()
     cwd = WORK / ('plugins' if ports else subdir)
+    extra=[]
+    if os.environ.get('RHYTHMER_GEN_CARD'):
+        card=Path(os.environ['RHYTHMER_GEN_CARD']).resolve()
+        if not card.is_relative_to(Path('/Volumes/SSD/Development')):
+            raise RuntimeError('GEN fixture must stay on the development SSD')
+        extra=['-e','RHYTHMER_GEN_CARD='+str(card)]
     sp.run([DOCKER, 'run', '--rm', '--platform', 'linux/arm64',
             '-v', str(WORK) + ':' + str(WORK),
             '-v', str(WORK) + ':/Volumes/SSD/Development/BuildCache/groove-os', '-v', str(cwd) + ':/work',
             '-w', '/work', '-e', 'PYTHONDONTWRITEBYTECODE=1',
-            '-e', 'RHYTHMER_VERSION=' + (ROOT / 'VERSION').read_text().strip(), 'rhythmer-builder', 'sh', '-ec', command], check=True)
+            '-e', 'RHYTHMER_VERSION=' + (ROOT / 'VERSION').read_text().strip(), *extra, 'rhythmer-builder', 'sh', '-ec', command], check=True)
 
 
 def snapshot_times():

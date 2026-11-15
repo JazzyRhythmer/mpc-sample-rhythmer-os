@@ -1,4 +1,4 @@
-# Rhythmer OS 0.4.0-beta.1
+# Rhythmer OS 0.4.0-beta.3
 
 Developed by jazzy rhythmer. This is a beta package for owner-led MPC Sample testing. Hardware validation is pending; it is not labelled as completed. No device installation or public upload is performed by the packaging tools.
 

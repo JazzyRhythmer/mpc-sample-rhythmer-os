@@ -23,24 +23,27 @@ static const char *names[]={"Bend DCO","Bend VCF","Arp Rate","LFO Rate","LFO Del
     "VCA Level","Attack","Decay","Sustain","Release","Pulse On","Saw On","Sub On","Chorus I","Chorus II",
     "DCO Range","Arp Mode","Arp Octaves","PWM Mode","Filter Polarity","VCA Mode","FX Type","FX Mix","FX Rate",
     "FX Character","Reverb On","Reverb Mix","Reverb Decay","Shimmer","Voice Mode"};
-static int native_count(void){return 1+sizeof(control_ids);}
-static const char *native_name(int i){return i?names[i-1]:"Factory Program";}
-static int native_min(int i){return i&&control_ids[i-1]==31?1:0;}
+static int native_count(void){return 2+sizeof(control_ids);}
+static const char *native_name(int i){return i==1+sizeof(control_ids)?"Native Arp Enable":i?names[i-1]:"Factory Program";}
+static int native_min(int i){return i&&i<=sizeof(control_ids)&&control_ids[i-1]==31?1:0;}
 static int native_max(int i){
     if(!i)return FM106_NUM_FACTORY_PRESETS-1;
+    if(i==1+sizeof(control_ids))return 1;
     switch(control_ids[i-1]){
         case 9:return 3;case 23:case 24:case 25:case 27:case 28:case 33:case 34:case 35:case 45:return 1;
         case 29:case 30:case 49:return 2;case 31:return 3;case 36:return FM106_FX_COUNT-1;default:return 127;
     }
 }
-static int native_value(int i){return i?fm106_param_get(&g_synth,control_ids[i-1]):g_synth.patch_idx;}
-static void native_control(int i,int v){if(i)fm106_param_set(&g_synth,control_ids[i-1],(uint8_t)v);else fm106_load_preset(&g_synth,(unsigned)v);}
+static int native_value(int i){return i==1+sizeof(control_ids)?g_synth.arp_on:i?fm106_param_get(&g_synth,control_ids[i-1]):g_synth.patch_idx;}
+static void native_control(int i,int v){if(i==1+sizeof(control_ids))fm106_arp_enable(&g_synth,v);else if(i)fm106_param_set(&g_synth,control_ids[i-1],(uint8_t)v);else fm106_load_preset(&g_synth,(unsigned)v);}
 static void native_init(void){fm106_engine_init(&g_synth);}
 static void native_note(const uint8_t *m){
     unsigned kind=m[0]&0xf0;
     if(kind==0x90&&m[2])fm106_key_on(&g_synth,m[1],m[2]);
     else if(kind==0x80||(kind==0x90&&!m[2]))fm106_key_off(&g_synth,m[1]);
-    else if(kind==0xb0&&(m[1]==120||m[1]==123)){for(unsigned k=0;k<128;++k)fm106_key_off(&g_synth,k);}
+    else if(kind==0xe0)g_synth.pitch_bend_val=(int16_t)((m[1]|m[2]<<7)-8192);
+    else if(kind==0xb0&&m[1]==64){unsigned old=g_synth.hold_pedal;g_synth.hold_pedal=m[2]>=64;if(old&&!g_synth.hold_pedal)for(unsigned vi=0;vi<FM106_NUM_VOICES;++vi)if(!g_synth.voice[vi].gate)fm106_adsr_gate_off(&g_synth.voice[vi].adsr);}
+    else if(kind==0xb0&&(m[1]==120||m[1]==123)){g_synth.hold_pedal=0;for(unsigned k=0;k<128;++k)fm106_key_off(&g_synth,k);memset(g_synth.arp_pool,0,sizeof g_synth.arp_pool);}
 }
 static int32_t pcm[512];static unsigned cursor=256;
 static void native_audio(int16_t *out,int frames){
@@ -49,4 +52,5 @@ static void native_audio(int16_t *out,int frames){
         for(unsigned c=0;c<2;++c){int32_t v=pcm[2*cursor+c];out[2*f+c]=(int16_t)(v>32767?32767:v<-32768?-32768:v);}++cursor;
     }
 }
+#define NATIVE_MIN_STATE_PARAMS (native_count()-1)
 #include "fm1_facade.h"

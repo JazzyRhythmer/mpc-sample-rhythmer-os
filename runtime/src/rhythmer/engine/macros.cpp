@@ -8,7 +8,7 @@
 namespace rhythmer {
 
 const ParamInfo& macro_param(MacroKind kind) {
-    static const ParamInfo filter {"FILTER", -100, 100, 0, Format::Sweep};
+    static const ParamInfo filter {"DJ FILTER", -100, 100, 0, Format::Sweep};
     static const ParamInfo echo {"ECHO", 0, 100, 0, Format::Percent};
     static const ParamInfo space {"SPACE", 0, 100, 0, Format::Percent};
     switch (kind) {

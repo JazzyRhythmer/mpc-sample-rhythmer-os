@@ -18,7 +18,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 104
+      "default": 104,
+      "dynamic_display": true
     },
     {
       "key": "p2",
@@ -28,7 +29,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p3",
@@ -38,7 +40,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 49
+      "default": 49,
+      "dynamic_display": true
     },
     {
       "key": "p4",
@@ -48,7 +51,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 84
+      "default": 84,
+      "dynamic_display": true
     },
     {
       "key": "p5",
@@ -58,7 +62,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p6",
@@ -68,7 +73,8 @@
       "display": "int",
       "min": -64,
       "max": 63,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p7",
@@ -78,7 +84,8 @@
       "display": "int",
       "min": -64,
       "max": 63,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p8",
@@ -88,7 +95,8 @@
       "display": "int",
       "min": -64,
       "max": 63,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p9",
@@ -98,7 +106,8 @@
       "display": "int",
       "min": -64,
       "max": 63,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p10",
@@ -108,7 +117,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 103
+      "default": 103,
+      "dynamic_display": true
     },
     {
       "key": "p11",
@@ -118,7 +128,8 @@
       "display": "int",
       "min": 0,
       "max": 4,
-      "default": 1
+      "default": 1,
+      "dynamic_display": true
     },
     {
       "key": "p12",
@@ -128,7 +139,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p13",
@@ -138,7 +150,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p14",
@@ -148,7 +161,8 @@
       "display": "int",
       "min": -64,
       "max": 63,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p15",
@@ -158,7 +172,8 @@
       "display": "int",
       "min": -64,
       "max": 63,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p16",
@@ -168,7 +183,8 @@
       "display": "int",
       "min": -64,
       "max": 63,
-      "default": 63
+      "default": 63,
+      "dynamic_display": true
     },
     {
       "key": "p17",
@@ -178,7 +194,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p18",
@@ -188,7 +205,8 @@
       "display": "int",
       "min": 0,
       "max": 14,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p19",
@@ -198,7 +216,8 @@
       "display": "int",
       "min": 0,
       "max": 9,
-      "default": 2
+      "default": 2,
+      "dynamic_display": true
     },
     {
       "key": "p20",
@@ -208,7 +227,8 @@
       "display": "int",
       "min": 1,
       "max": 4,
-      "default": 1
+      "default": 1,
+      "dynamic_display": true
     },
     {
       "key": "p21",
@@ -218,7 +238,8 @@
       "display": "int",
       "min": 1,
       "max": 127,
-      "default": 64
+      "default": 64,
+      "dynamic_display": true
     },
     {
       "key": "p22",
@@ -228,7 +249,8 @@
       "display": "int",
       "min": 0,
       "max": 100,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p23",
@@ -238,7 +260,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 127
+      "default": 127,
+      "dynamic_display": true
     },
     {
       "key": "p24",
@@ -248,7 +271,8 @@
       "display": "int",
       "min": 0,
       "max": 1,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p25",
@@ -258,7 +282,8 @@
       "display": "int",
       "min": 0,
       "max": 1,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p26",
@@ -268,7 +293,8 @@
       "display": "int",
       "min": 0,
       "max": 11,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p27",
@@ -278,7 +304,8 @@
       "display": "int",
       "min": 0,
       "max": 15,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p28",
@@ -288,7 +315,8 @@
       "display": "int",
       "min": 0,
       "max": 4,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p29",
@@ -298,7 +326,8 @@
       "display": "int",
       "min": -24,
       "max": 24,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p30",
@@ -308,7 +337,8 @@
       "display": "int",
       "min": 1,
       "max": 64,
-      "default": 16
+      "default": 16,
+      "dynamic_display": true
     },
     {
       "key": "p31",
@@ -318,7 +348,8 @@
       "display": "int",
       "min": 0,
       "max": 9,
-      "default": 2
+      "default": 2,
+      "dynamic_display": true
     },
     {
       "key": "p32",
@@ -328,7 +359,8 @@
       "display": "int",
       "min": 0,
       "max": 100,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p33",
@@ -338,7 +370,8 @@
       "display": "int",
       "min": 1,
       "max": 127,
-      "default": 64
+      "default": 64,
+      "dynamic_display": true
     },
     {
       "key": "p34",
@@ -348,7 +381,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p35",
@@ -358,7 +392,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p36",
@@ -368,7 +403,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p37",
@@ -378,7 +414,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p38",
@@ -388,7 +425,8 @@
       "display": "int",
       "min": 0,
       "max": 3,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p39",
@@ -398,7 +436,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p40",
@@ -408,7 +447,8 @@
       "display": "int",
       "min": -64,
       "max": 63,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p41",
@@ -418,7 +458,8 @@
       "display": "int",
       "min": 0,
       "max": 1,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p42",
@@ -428,7 +469,8 @@
       "display": "int",
       "min": 0,
       "max": 1,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p43",
@@ -438,7 +480,8 @@
       "display": "int",
       "min": 0,
       "max": 2,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p44",
@@ -448,7 +491,8 @@
       "display": "int",
       "min": 0,
       "max": 1,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p45",
@@ -458,7 +502,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 40
+      "default": 40,
+      "dynamic_display": true
     },
     {
       "key": "p46",
@@ -468,7 +513,8 @@
       "display": "int",
       "min": 0,
       "max": 2,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p47",
@@ -478,7 +524,8 @@
       "display": "int",
       "min": 1,
       "max": 16,
-      "default": 1
+      "default": 1,
+      "dynamic_display": true
     },
     {
       "key": "p48",
@@ -488,7 +535,8 @@
       "display": "int",
       "min": 0,
       "max": 5,
-      "default": 1
+      "default": 1,
+      "dynamic_display": true
     },
     {
       "key": "p49",
@@ -498,7 +546,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 127
+      "default": 127,
+      "dynamic_display": true
     },
     {
       "key": "p50",
@@ -508,7 +557,8 @@
       "display": "int",
       "min": 0,
       "max": 10,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p51",
@@ -518,7 +568,8 @@
       "display": "int",
       "min": 0,
       "max": 22,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p52",
@@ -528,7 +579,8 @@
       "display": "int",
       "min": -64,
       "max": 63,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p53",
@@ -538,7 +590,8 @@
       "display": "int",
       "min": 0,
       "max": 10,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p54",
@@ -548,7 +601,8 @@
       "display": "int",
       "min": 0,
       "max": 22,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p55",
@@ -558,7 +612,8 @@
       "display": "int",
       "min": -64,
       "max": 63,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p56",
@@ -568,7 +623,8 @@
       "display": "int",
       "min": 0,
       "max": 10,
-      "default": 3
+      "default": 3,
+      "dynamic_display": true
     },
     {
       "key": "p57",
@@ -578,7 +634,8 @@
       "display": "int",
       "min": 0,
       "max": 22,
-      "default": 2
+      "default": 2,
+      "dynamic_display": true
     },
     {
       "key": "p58",
@@ -588,7 +645,8 @@
       "display": "int",
       "min": -64,
       "max": 63,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p59",
@@ -598,7 +656,8 @@
       "display": "int",
       "min": 0,
       "max": 10,
-      "default": 6
+      "default": 6,
+      "dynamic_display": true
     },
     {
       "key": "p60",
@@ -608,7 +667,8 @@
       "display": "int",
       "min": 0,
       "max": 22,
-      "default": 20
+      "default": 20,
+      "dynamic_display": true
     },
     {
       "key": "p61",
@@ -618,7 +678,8 @@
       "display": "int",
       "min": -64,
       "max": 63,
-      "default": 63
+      "default": 63,
+      "dynamic_display": true
     },
     {
       "key": "p62",
@@ -628,7 +689,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p63",
@@ -638,7 +700,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p64",
@@ -648,7 +711,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p65",
@@ -658,7 +722,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p66",
@@ -668,7 +733,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 127
+      "default": 127,
+      "dynamic_display": true
     },
     {
       "key": "p67",
@@ -678,7 +744,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 51
+      "default": 51,
+      "dynamic_display": true
     },
     {
       "key": "p68",
@@ -688,7 +755,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 44
+      "default": 44,
+      "dynamic_display": true
     },
     {
       "key": "p69",
@@ -698,7 +766,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p70",
@@ -708,7 +777,8 @@
       "display": "int",
       "min": 0,
       "max": 1,
-      "default": 1
+      "default": 1,
+      "dynamic_display": true
     },
     {
       "key": "p71",
@@ -718,7 +788,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 127
+      "default": 127,
+      "dynamic_display": true
     },
     {
       "key": "p72",
@@ -728,7 +799,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p73",
@@ -738,7 +810,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p74",
@@ -748,7 +821,8 @@
       "display": "int",
       "min": 0,
       "max": 3,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p75",
@@ -758,7 +832,8 @@
       "display": "int",
       "min": 0,
       "max": 2,
-      "default": 2
+      "default": 2,
+      "dynamic_display": true
     },
     {
       "key": "p76",
@@ -768,7 +843,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 127
+      "default": 127,
+      "dynamic_display": true
     },
     {
       "key": "p77",
@@ -778,7 +854,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 24
+      "default": 24,
+      "dynamic_display": true
     },
     {
       "key": "p78",
@@ -788,7 +865,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p79",
@@ -798,7 +876,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 127
+      "default": 127,
+      "dynamic_display": true
     },
     {
       "key": "p80",
@@ -808,7 +887,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p81",
@@ -818,7 +898,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 127
+      "default": 127,
+      "dynamic_display": true
     },
     {
       "key": "p82",
@@ -828,7 +909,8 @@
       "display": "int",
       "min": 0,
       "max": 10,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p83",
@@ -838,7 +920,8 @@
       "display": "int",
       "min": 0,
       "max": 4,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p84",
@@ -848,7 +931,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 127
+      "default": 127,
+      "dynamic_display": true
     },
     {
       "key": "p85",
@@ -858,7 +942,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 127
+      "default": 127,
+      "dynamic_display": true
     },
     {
       "key": "p86",
@@ -868,7 +953,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 127
+      "default": 127,
+      "dynamic_display": true
     },
     {
       "key": "p87",
@@ -878,7 +964,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 127
+      "default": 127,
+      "dynamic_display": true
     },
     {
       "key": "p88",
@@ -888,7 +975,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 127
+      "default": 127,
+      "dynamic_display": true
     },
     {
       "key": "p89",
@@ -898,7 +986,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 127
+      "default": 127,
+      "dynamic_display": true
     },
     {
       "key": "p90",
@@ -908,7 +997,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 127
+      "default": 127,
+      "dynamic_display": true
     },
     {
       "key": "p91",
@@ -918,7 +1008,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 127
+      "default": 127,
+      "dynamic_display": true
     },
     {
       "key": "p92",
@@ -928,7 +1019,8 @@
       "display": "int",
       "min": 0,
       "max": 10,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p93",
@@ -938,7 +1030,8 @@
       "display": "int",
       "min": 0,
       "max": 1,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p94",
@@ -948,7 +1041,8 @@
       "display": "int",
       "min": 0,
       "max": 1,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p95",
@@ -958,7 +1052,8 @@
       "display": "int",
       "min": 0,
       "max": 1,
-      "default": 1
+      "default": 1,
+      "dynamic_display": true
     },
     {
       "key": "p96",
@@ -968,7 +1063,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p97",
@@ -978,7 +1074,8 @@
       "display": "int",
       "min": 0,
       "max": 8,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p98",
@@ -988,7 +1085,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 64
+      "default": 64,
+      "dynamic_display": true
     },
     {
       "key": "p99",
@@ -998,7 +1096,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 96
+      "default": 96,
+      "dynamic_display": true
     },
     {
       "key": "p100",
@@ -1008,7 +1107,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 96
+      "default": 96,
+      "dynamic_display": true
     },
     {
       "key": "p101",
@@ -1018,7 +1118,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 127
+      "default": 127,
+      "dynamic_display": true
     },
     {
       "key": "p102",
@@ -1028,7 +1129,8 @@
       "display": "int",
       "min": 0,
       "max": 2,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p103",
@@ -1038,7 +1140,8 @@
       "display": "int",
       "min": 0,
       "max": 1,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p104",
@@ -1048,7 +1151,8 @@
       "display": "int",
       "min": 0,
       "max": 8,
-      "default": 0
+      "default": 0,
+      "dynamic_display": true
     },
     {
       "key": "p105",
@@ -1058,7 +1162,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 64
+      "default": 64,
+      "dynamic_display": true
     },
     {
       "key": "p106",
@@ -1068,7 +1173,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 96
+      "default": 96,
+      "dynamic_display": true
     },
     {
       "key": "p107",
@@ -1078,7 +1184,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 96
+      "default": 96,
+      "dynamic_display": true
     },
     {
       "key": "p108",
@@ -1088,7 +1195,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 127
+      "default": 127,
+      "dynamic_display": true
     },
     {
       "key": "p109",
@@ -1098,7 +1206,8 @@
       "display": "int",
       "min": 0,
       "max": 7,
-      "default": 4
+      "default": 4,
+      "dynamic_display": true
     },
     {
       "key": "p110",
@@ -1108,7 +1217,8 @@
       "display": "int",
       "min": 0,
       "max": 63,
-      "default": 12
+      "default": 12,
+      "dynamic_display": true
     },
     {
       "key": "p111",
@@ -1118,7 +1228,8 @@
       "display": "int",
       "min": 0,
       "max": 7,
-      "default": 4
+      "default": 4,
+      "dynamic_display": true
     },
     {
       "key": "p112",
@@ -1128,7 +1239,8 @@
       "display": "int",
       "min": 0,
       "max": 63,
-      "default": 12
+      "default": 12,
+      "dynamic_display": true
     },
     {
       "key": "p113",
@@ -1138,7 +1250,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 36
+      "default": 36,
+      "dynamic_display": true
     },
     {
       "key": "p114",
@@ -1148,7 +1261,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 60
+      "default": 60,
+      "dynamic_display": true
     },
     {
       "key": "p115",
@@ -1158,7 +1272,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 66
+      "default": 66,
+      "dynamic_display": true
     },
     {
       "key": "p116",
@@ -1168,7 +1283,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 9
+      "default": 9,
+      "dynamic_display": true
     },
     {
       "key": "p117",
@@ -1178,7 +1294,8 @@
       "display": "int",
       "min": 0,
       "max": 12,
-      "default": 1
+      "default": 1,
+      "dynamic_display": true
     },
     {
       "key": "p118",
@@ -1188,7 +1305,8 @@
       "display": "int",
       "min": 0,
       "max": 120,
-      "default": 60
+      "default": 60,
+      "dynamic_display": true
     },
     {
       "key": "p119",
@@ -1198,7 +1316,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 70
+      "default": 70,
+      "dynamic_display": true
     },
     {
       "key": "p120",
@@ -1208,7 +1327,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 90
+      "default": 90,
+      "dynamic_display": true
     },
     {
       "key": "p121",
@@ -1218,7 +1338,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 90
+      "default": 90,
+      "dynamic_display": true
     },
     {
       "key": "p122",
@@ -1228,7 +1349,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 60
+      "default": 60,
+      "dynamic_display": true
     },
     {
       "key": "p123",
@@ -1238,7 +1360,8 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 40
+      "default": 40,
+      "dynamic_display": true
     },
     {
       "key": "p124",
@@ -1248,7 +1371,24 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 60
+      "default": 60,
+      "dynamic_display": true
+    },
+    {
+      "key": "p125",
+      "name": "Reverb Type",
+      "dynamic_name": true,
+      "type": "enum",
+      "display": "int",
+      "min": 0,
+      "max": 2,
+      "default": 0,
+      "options": [
+        "ROOM",
+        "SPRING",
+        "HALL"
+      ],
+      "dynamic_display": true
     }
   ],
   "ui_hierarchy": {}

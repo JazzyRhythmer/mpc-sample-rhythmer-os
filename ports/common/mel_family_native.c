@@ -29,7 +29,7 @@ static uint32_t punch_clock_samples(void){return 0;}
 #define NATIVE_ENGINE ENGI_PROPHET
 #endif
 static unsigned selected,track_ids[P_COUNT],ntrack,patch_ids[512],npatch;
-static const uint8_t global_ids[]={G_BPM,G_TUNE};
+static const uint8_t global_ids[]={G_BPM,G_TUNE,G_FXMODE,G_FXRETURN,G_MFXTYPE,G_MFXMIX,G_MFXRATE,G_MFXCHAR,G_MFXTONE,G_MFX2TYPE,G_MFX2MIX,G_MFX2RATE,G_MFX2CHAR,G_MFX2TONE,G_MFX3TYPE,G_MFX3MIX,G_MFX3RATE,G_MFX3CHAR,G_MFX3TONE};
 static int native_count(void){return 1+(int)(ntrack+npatch+sizeof global_ids);}
 static const param_desc_t *patch_desc(unsigned i){
 #if FM1_HYDRA
@@ -40,7 +40,7 @@ static const param_desc_t *patch_desc(unsigned i){
 }
 static const char *native_name(int i){
     if(!i)return "Factory Program";--i;if((unsigned)i<ntrack)return track_desc(&trk[0],track_ids[i])->label;
-    i-=ntrack;if((unsigned)i<npatch)return patch_desc(i)->label;return GP[global_ids[i-npatch]].label;
+    i-=ntrack;if((unsigned)i<npatch)return patch_desc(i)->label;return global_ids[i-npatch]==G_FXMODE?"FX Routing":global_ids[i-npatch]==G_FXRETURN?"FX Return":GP[global_ids[i-npatch]].label;
 }
 static int native_min(int i){
     if(!i)return 0;--i;if((unsigned)i<ntrack)return track_desc(&trk[0],track_ids[i])->min;
@@ -69,7 +69,10 @@ static void native_control(int i,int v){
 #else
         p5_edit_value(&trk[0],patch_ids[i],v);
 #endif
-    }else song.g[global_ids[i-npatch]]=v;
+    }else {unsigned id=global_ids[i-npatch];
+        if(id>=G_MFXTYPE&&id<=G_MFX3CHAR&&(id-G_MFXTYPE)%FX_PARAMS==0)shared_fx_select(song.g,(id-G_MFXTYPE)/FX_PARAMS,v);
+        else song.g[id]=v;
+    }
 }
 static void native_init(void){
 #if !FM1_HYDRA
@@ -95,7 +98,7 @@ static void native_note(const uint8_t *m){unsigned kind=m[0]&0xf0;
     else if(kind==0x80||(kind==0x90&&!m[2]))trk_note_off(&trk[0],m[1]);
     else if(kind==0xb0&&(m[1]==120||m[1]==123))for(unsigned k=0;k<128;++k)trk_note_off(&trk[0],k);
     else if(kind==0xe0)midi_bend_target[0]=((int)(m[1]|m[2]<<7)-8192)/16;
-    else if(kind==0xb0&&m[1]==1)trk[0].mw=m[2];else if(kind==0xd0)trk[0].at=m[1];
+    else mod_midi(&trk[0],kind,m[1],m[2]);
 }
 static int32_t pcm[2*CTL];static unsigned cursor=CTL;
 static void native_audio(int16_t *out,int frames){for(int f=0;f<frames;++f){
@@ -104,4 +107,12 @@ static void native_audio(int16_t *out,int frames){for(int f=0;f<frames;++f){
 }}
 #define NATIVE_TEMPO 1
 static void native_tempo(float bpm){song.g[G_BPM]=(int16_t)(bpm>240?240:bpm<40?40:bpm);}
+#define NATIVE_DISPLAY 1
+static int native_display(int i,char *out,int capacity){
+    if(!i)return snprintf(out,(size_t)capacity,"%u",selected);
+    unsigned n=(unsigned)i-1;const param_desc_t *d=n<ntrack?track_desc(&trk[0],track_ids[n]):n<ntrack+npatch?patch_desc(n-ntrack):global_desc(global_ids[n-ntrack-npatch]);
+    char value[192]={0};const char *unit="";param_format(d,native_value(i),value,&unit);
+    return snprintf(out,(size_t)capacity,"%s%s%s",value,unit[0]?" ":"",unit);
+}
+#define NATIVE_MIN_STATE_PARAMS (native_count()-17)
 #include "fm1_facade.h"

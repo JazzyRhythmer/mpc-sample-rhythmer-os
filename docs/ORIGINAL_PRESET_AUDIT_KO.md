@@ -1,6 +1,6 @@
 # Preset and library provenance
 
-The release contains 20 picker entries, 25 source views, 36 complete Rhythmer Kit layouts and 2,563 sound/model selections. Of these, 2,520 are retained source selections and 43 are explicitly identified Rhythmer originals: 15 Prophet sounds and four Elixir kits split into 28 native voices. Original preset names and source values remain for all other engines. No hidden envelope overrides are applied.
+The release contains 20 picker entries, 25 source views, 36 complete Rhythmer Kit layouts and 2,659 sound/model selections. Of these, 2,616 are retained source selections and 43 are explicitly identified Rhythmer originals: 15 Prophet sounds and four Elixir kits split into 28 native voices. Original preset names and source values remain for all other engines. No hidden envelope overrides are applied.
 
 | Engine / source view | Selections | Basis |
 |---|---:|---|
@@ -21,7 +21,7 @@ The release contains 20 picker entries, 25 source views, 36 complete Rhythmer Ki
 | Braids  | 10 | Original factory bank / voice or model palette |
 | Dexed  | 1056 | Original factory bank / voice or model palette |
 | Hera  | 56 | Original factory bank / voice or model palette |
-| Plaits  | 24 | Original factory bank / voice or model palette |
+| Plaits  | 120 | Original 24 models plus 96 embedded 6-Op programs |
 | Sophie  | 16 | Original 16 default voices; no separate factory bank |
 | 6W6  | 8 | Original factory bank / voice or model palette |
 | 8W8  | 16 | Original factory bank / voice or model palette |

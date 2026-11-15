@@ -66,13 +66,15 @@ def check():
     assert native[e['library']]['names']==source
     basis='Original published bank files; source, unmodified release and staged copies match SHA-256; native names read back'
    if p.name=='move-aphex':source=next(x['options'] for x in json.loads((p/'contract.json').read_text())['chain_params'] if x['key']=='preset');basis='Original 41-preset module enum; original attack and hold retained'
-   if p.name=='move-plaits':source=next(x['options'] for x in json.loads((p/'contract.json').read_text())['chain_params'] if x['key']=='engine');basis='Original 24-model palette; internal ROM FM programs remain in original DSP'
+   if p.name=='move-plaits':
+    models=next(x['options'] for x in json.loads((p/'contract.json').read_text())['chain_params'] if x['key']=='engine');table=json.loads((p/'model-controls.json').read_text());assert table['source_commit']==pin['source_commit']
+    source=models+[models[b+2]+' / '+n.strip() for b,bank in enumerate(table['fm_banks']) for n in bank];basis='Original 24-model palette and 96 embedded 6-Op programs, with source model labels and quantizer mapping'
   if source:assert names==source,(e['name'],'source order/name mismatch',len(names),len(source))
   assert names and all(names)
   assert not any('host_adjustment' in s for s in e['sounds'])
   rows.append(dict(engine=e['name'],folder=e['folder'],variant=e.get('variant',''),source_slots=len(names),exposed_sounds=len(e.get('selection',names)),basis=basis,bank_assets=assets,excluded=excluded,missing=[]))
  assert len(rows)==25 and len(c['kits'])==len(json.loads((ROOT/'config/first-release-candidates.json').read_text())['kit_presets'])
- result=dict(version=(ROOT/'VERSION').read_text().strip(),source_views=25,track_picker_entries=20,factory_kits=len(c['kits']),exposed_sounds=sum(x['exposed_sounds'] for x in rows),missing_source_names=0,explicit_exclusions=7,excluded_factory_presets=4,excluded_input_only_models=3,excluded_external_bank_assets=118,excluded_external_sound_selections=1019,original_source_selections=2520,rhythmer_authored_selections=43,policy='Original bank names/data retained except 118 excluded external assets. User-authorized Rhythmer presets are separately identified: 15 Prophet sounds and four Elixir kits / 28 voices, made from GPL Init with independent edits. No hidden envelope overrides. This report is not blanket public distribution clearance.',engines=rows)
+ result=dict(version=(ROOT/'VERSION').read_text().strip(),source_views=25,track_picker_entries=20,factory_kits=len(c['kits']),exposed_sounds=sum(x['exposed_sounds'] for x in rows),missing_source_names=0,explicit_exclusions=7,excluded_factory_presets=4,excluded_input_only_models=3,excluded_external_bank_assets=118,excluded_external_sound_selections=1019,original_source_selections=2616,rhythmer_authored_selections=43,policy='Original bank names/data retained except 118 excluded external assets. User-authorized Rhythmer presets are separately identified: 15 Prophet sounds and four Elixir kits / 28 voices, made from GPL Init with independent edits. No hidden envelope overrides. This report is not blanket public distribution clearance.',engines=rows)
  (ROOT/'config/preset-coverage.json').write_text(json.dumps(result,indent=2)+'\n');print('Pinned preset coverage:',result['exposed_sounds'],'selections; 4 sample dependencies and 3 input-only models documented')
  return result
 if __name__=='__main__':check()

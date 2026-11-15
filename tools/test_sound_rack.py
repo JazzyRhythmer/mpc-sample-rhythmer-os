@@ -8,7 +8,9 @@ import os
 
 parser=argparse.ArgumentParser()
 parser.add_argument('--asan',action='store_true')
-parser.add_argument('mode',choices=('singles','kits','audit','inspect','playback','demo','transport','authored','audition','musical'))
+parser.add_argument('--plugins',type=Path,help='Candidate plugin tree; defaults to the staged SD card')
+parser.add_argument('--catalog',type=Path,help='Candidate catalog; defaults to this source snapshot')
+parser.add_argument('mode',choices=('singles','kits','audit','inspect','playback','demo','transport','authored','audition','musical','labels','userdefaults','presetcontrols','controlroundtrip','signalquality','kitownership','plaitscontrols','qualityreview','kitmodels','kitfilter','enginefilter'))
 parser.add_argument('engine',nargs='?')
 args=parser.parse_args()
 WORK=Path('/Volumes/SSD/Development/BuildCache/rhythmer-os')
@@ -19,7 +21,7 @@ common=['-std=c++17','-pthread','-DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1','-DJU
         '-DJUCE_USE_CURL=0','-DJUCE_WEB_BROWSER=0','-DJUCE_PLUGINHOST_VST3=1','-DNDEBUG',
         '-I'+str(APP/'src'),'-I'+str(APP/'base/src'),'-I'+str(APP/'build/deps/JUCE/modules')]
 sources=['plugin/vst2_instance','plugin/plugin_files','plugin/sound_rack','plugin/plugin_support',
-         'model/project_file','model/pattern','model/print','engine/engine_info']
+         'model/project_file','model/pattern','model/print','engine/engine_info','engine/effects','engine/effects_extra','engine/effect_info']
 objects=[]
 san=['-fsanitize=address,undefined','-fno-omit-frame-pointer','-g','-O1'] if args.asan else ['-O2']
 for source in sources:
@@ -31,8 +33,10 @@ for source in sources:
 objects+=list((APP/'build/obj').glob('juce*.o'))+[APP/'build/obj/plugin_support_pack.o']
 # Always inspect the catalogue from this same source snapshot.
 import shutil
-shutil.copyfile(ROOT/'config/sound-catalog.json',WORK/'sound-catalog.json')
+shutil.copyfile(ROOT/'ports/move-plaits/model-controls.json',WORK/'plaits-model-controls.json')
+catalog=args.catalog or WORK/'sound-catalog.json'
+if not args.catalog:shutil.copyfile(ROOT/'config/sound-catalog.json',catalog)
 binary=WORK/('sound_rack_asan' if args.asan else 'sound_rack_test')
 sp.run(['g++',*common,*san,str(ROOT/'tests/sound_rack_test.cpp'),*map(str,objects),*flags,'-ldl','-lrt','-o',str(binary)],check=True)
 env=dict(os.environ,ASAN_OPTIONS='detect_leaks=0:halt_on_error=1',UBSAN_OPTIONS='halt_on_error=1:print_stacktrace=1')
-sp.run([str(binary),str(WORK/'sound-catalog.json'),str(WORK/'sd-stage/Rhythmer/Plugins'),args.mode,*([args.engine] if args.engine else [])],check=True,env=env)
+sp.run([str(binary),str(catalog),str(args.plugins or WORK/'sd-stage/Rhythmer/Plugins'),args.mode,*([args.engine] if args.engine else [])],check=True,env=env)
