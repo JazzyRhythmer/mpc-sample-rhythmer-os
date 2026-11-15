@@ -28,6 +28,18 @@ Plaits exposes the original 24 models and 96 embedded 6-Op programs, with model-
 
 [Download the latest beta](https://github.com/JazzyRhythmer/mpc-sample-rhythmer-os/releases) · [Installation and recovery guide](docs/SD_CARD_GUIDE.md) · [Website and web manual](https://jazzyrhythmer.github.io/mpc-sample/) · [Engine port sources](https://github.com/JazzyRhythmer/mpc-sample-engine-ports)
 
-Use the complete **SD.zip** for first installation, the 0.4 transition, and beta.2 → beta.3: this revision also changes plugin binaries and the preset catalog. **UPDATE.zip** updates only a compatible Rhythmer application; it does not replace plugin/kit data. Back up projects, samples and the card first. Verify the release checksums and the AC50 / stock firmware 1.3.0.12 requirement in the installation guide. SOURCE, MOVE-SOURCE and SUPPORT-SOURCE archives contain corresponding source, not installers.
+Use the complete **SD.zip** for first installation, the 0.4 transition, beta.2 → beta.3, and beta.3 revision 1 → revision 2: this revision also changes plugin binaries and the preset catalog. **Revision 2 retains the beta.3 version number, so revision 1 does not automatically offer the same-version update. Use the full SD package for that transition.** [Current installation steps](https://jazzyrhythmer.github.io/mpc-sample/installer/). **UPDATE.zip** updates only a compatible Rhythmer application; it does not replace plugin/kit data. Back up projects, samples and the card first. Verify the release checksums and the AC50 / stock firmware 1.3.0.12 requirement in the installation guide. SOURCE, MOVE-SOURCE and SUPPORT-SOURCE archives contain corresponding source, not installers.
 
 This is an unofficial project, not affiliated with or endorsed by AKAI Professional or inMusic. Product names and logos belong to their respective owners. Provided without warranty under the applicable licenses. This beta has offline build, audio-host and UI checks; physical-device behavior, latency and recovery still require owner testing.
+
+<!-- JAZZY-RHYTHMER-PORTFOLIO:START -->
+## More from Jazzy Rhythmer
+
+**For MPC Sample:** [RHYTHMER OS](https://jazzyrhythmer.github.io/mpc-sample/) · **For FM-1:** [JAZZY](https://jazzyrhythmer.github.io/Jazzy/) / [RHYTHMER](https://jazzyrhythmer.github.io/Rhythmer/)
+
+**JR Audio Software** — in development, expected in 2027: [JR ACID](https://jazzyrhythmer.github.io/software.html#jr-acid) · [JR FX](https://jazzyrhythmer.github.io/software.html#jr-fx) · [JR SMPL](https://jazzyrhythmer.github.io/software.html#jr-smpl) · [JR RYTM](https://jazzyrhythmer.github.io/software.html#jr-rytm) · [JR DRAW](https://jazzyrhythmer.github.io/software.html#jr-draw) · [JR PLAY](https://jazzyrhythmer.github.io/software.html#jr-play) · [JR TREK](https://jazzyrhythmer.github.io/software.html#jr-trek).
+
+[Main website](https://jazzyrhythmer.github.io/) · [Ko-fi](https://ko-fi.com/jazzyrhythmer) · [Patreon](https://www.patreon.com/JazzyRhythmer/) · [Studio Notes & email updates](https://jazzyrhythmer.github.io/#notes) · [YouTube](https://www.youtube.com/@jazzyrhythmer) · [Instagram](https://www.instagram.com/jazzyrhythmer/)
+
+Voluntary support helps me keep making music, instruments and open-source tools. Thank you for being part of it.
+<!-- JAZZY-RHYTHMER-PORTFOLIO:END -->
