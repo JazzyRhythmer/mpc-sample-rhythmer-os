@@ -12,7 +12,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/move-aphex",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "move-braids",
@@ -24,7 +24,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/move-braids",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "fm1-cs1",
@@ -36,7 +36,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/fm1-cs1",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "move-dexed",
@@ -48,7 +48,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/move-dexed",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "drumx",
@@ -60,7 +60,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/drumx",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "fm1-elixir",
@@ -72,7 +72,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/fm1-elixir",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "fm1-fm106",
@@ -84,7 +84,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/fm1-fm106",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "fm1-fmini",
@@ -96,7 +96,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/fm1-fmini",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "fm1-guru600",
@@ -108,7 +108,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/fm1-guru600",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "move-hera",
@@ -120,7 +120,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/move-hera",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "fm1-hortator",
@@ -132,7 +132,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/fm1-hortator",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "fm1-kwasub",
@@ -144,7 +144,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/fm1-kwasub",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "fm1-kwasub-kit",
@@ -156,7 +156,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/fm1-kwasub-kit",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "fm1-mono2k",
@@ -168,7 +168,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/fm1-mono2k",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "fm1-obervave",
@@ -180,7 +180,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/fm1-obervave",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "move-plaits",
@@ -192,7 +192,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/move-plaits",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "fm1-prophet",
@@ -204,7 +204,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/fm1-prophet",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "fm1-s1vave",
@@ -216,7 +216,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/fm1-s1vave",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     },
     {
       "port": "sophie",
@@ -228,7 +228,7 @@
       "status": "PUBLIC_MONOREPO",
       "unofficial_port": true,
       "source_directory": "ports/sophie",
-      "repository_url": "https://github.com/JazzyRhythmer/mpc-sample-engine-ports"
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     }
   ],
   "excluded_reused_packages": [

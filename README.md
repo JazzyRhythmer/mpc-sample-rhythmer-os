@@ -26,7 +26,7 @@ Plaits exposes the original 24 models and 96 embedded 6-Op programs, with model-
 
 ## Install the beta
 
-[Download the latest beta](https://github.com/JazzyRhythmer/mpc-sample-rhythmer-os/releases) · [Installation and recovery guide](docs/SD_CARD_GUIDE.md) · [Website and web manual](https://jazzyrhythmer.github.io/mpc-sample/) · [Engine port sources](https://github.com/JazzyRhythmer/mpc-sample-engine-ports)
+[Download the latest beta](https://github.com/jazzyrhythmer/mpc-sample-rhythmer-os/releases) · [Installation and recovery guide](docs/SD_CARD_GUIDE.md) · [Website and web manual](https://jazzyrhythmer.github.io/mpc-sample/) · [Engine port sources](https://github.com/jazzyrhythmer/mpc-sample-engine-ports)
 
 Install using the complete **SD.zip**, which includes the app, plug-ins, kits and preset catalogue. **UPDATE.zip** is an app-only archive, not a first-install package. Back up the entire card before installing. Verify the release checksums and the AC50 / stock firmware 1.3.0.12 requirement in the [installation guide](https://jazzyrhythmer.github.io/mpc-sample/installer/). SOURCE, MOVE-SOURCE and SUPPORT-SOURCE archives contain corresponding source, not installers.
 
