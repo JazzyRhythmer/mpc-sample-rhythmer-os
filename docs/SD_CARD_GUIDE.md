@@ -3,7 +3,7 @@
 **beta.2 → beta.3에는 전체 SD.zip을 사용하세요.** 이번 수정에는 앱뿐 아니라 플러그인 바이너리·파라미터 표시 정보·프리셋 카탈로그 변경이 포함됩니다. 아래 절차대로 전원을 끄고 백업한 뒤 `autorun`과 플러그인/킷 자료를 함께 갱신하세요. `UPDATE.zip`만 적용하면 이번 수정 전체가 설치되지 않습니다.
 
 
-**Revision 2 (r2):** 확인창의 SHIFT + 인코더 취소, GEN 뒤로 가기, 모든 트랙이 EMPTY일 때 믹서 진입을 개선했습니다. beta.3-r1에서 플러그인·킷 자료를 그대로 유지한 경우 서명된 UPDATE ZIP으로 앱만 갱신할 수 있습니다. 첫 설치·이전 베타·설치 구성이 불확실한 경우 전체 SD ZIP을 사용하세요.
+**Revision 2 (r2):** 확인창의 SHIFT + 인코더 취소, GEN 뒤로 가기, 모든 트랙이 EMPTY일 때 믹서 진입을 개선했습니다. 이번 r2에는 전체 SD ZIP을 사용하세요. 기본 버전 문자열이 beta.3로 같기 때문에 r1 설치에서는 UPDATE ZIP의 자동 업데이트 안내가 나오지 않습니다. 기존 프로젝트·샘플·사용자 프리셋은 보존하세요.
 
 개발자: **jazzy rhythmer**. Instagram: https://www.instagram.com/jazzyrhythmer/ · YouTube: https://www.youtube.com/@jazzyrhythmer
 

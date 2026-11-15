@@ -12,7 +12,7 @@ Active Note Repeat/arp intentionally replaces TRACKS soft keys with rate choices
 
 GEN screen BACK and Shift + Push share one hierarchy: Vary, Break, Setup or Acid → GEN main → Patterns. Going back changes neither patterns nor seed. All-empty projects can open TRACKS using the native PAD FX + KNOB FX chord in either order; solo FX keys and their Shift functions keep the empty-track lock.
 
-Confirmation dialogs treat Shift + Push as Cancel, even when an affirmative answer is selected. Plain Push and B3 still confirm; B1 still cancels. The existing cancellation branch also preserves update deferral. Name, exit and in-progress-update handlers are separate and unchanged.
+Confirmation dialogs treat Shift + Push as Cancel, even when an affirmative answer is selected. Its Shift gesture is consumed so releasing Shift does not clear Roll note selection. Plain Push and B3 still confirm; B1 still cancels. The existing cancellation branch also preserves update deferral. Name, exit and in-progress-update handlers are separate and unchanged.
 
 ## Validation scope
 

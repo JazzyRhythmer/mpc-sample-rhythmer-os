@@ -144,8 +144,13 @@ inline int track_workflow_check() {
        ask(x,UiState::Ask(k),0);x.ui.ask_pick=uint8_t(pick);
        button(SurfaceButton::Shift,true);button(SurfaceButton::WheelPush,true);button(SurfaceButton::WheelPush,false);button(SurfaceButton::Shift,false);
        TRACK_CHECK(x.ui.ask==UiState::Ask::None,"Shift-Push cancels every Ask answer, including selected destructive answers");
+       TRACK_CHECK(x.ui.shift_used,"confirmation Back consumes Shift, avoiding a second Shift-tap action");
        TRACK_CHECK(x.track().engine==EngineKind::Midi&&x.patterns.at[0]==kept&&x.edits.size()==history,"dialog Back leaves sound, patterns and Undo untouched");
      }
+     x.ui.page=PageId::Roll;x.ui.roll_marked=1;x.ui.roll_mark_track=0;x.ui.roll_mark_pattern=x.track().pattern;x.ui.roll_marking=false;
+     ask(x,UiState::Ask::ClearTrack,0);x.ui.ask_pick=2;button(SurfaceButton::Shift,true);button(SurfaceButton::WheelPush,true);button(SurfaceButton::WheelPush,false);button(SurfaceButton::Shift,false);
+     TRACK_CHECK(x.ui.roll_marked==1&&x.patterns.at[0]==kept,"Back on Roll preserves selected notes when Shift is released");
+     x.ui.page=PageId::Stage;
      ask(x,UiState::Ask::ClearTrack,0);x.ui.ask_pick=2;button(SurfaceButton::WheelPush,true);button(SurfaceButton::WheelPush,false);
      TRACK_CHECK(!x.track().used()&&x.patterns.at[0][0].events.empty(),"plain Push still confirms selected deletion");
      x.undo();TRACK_CHECK(x.track().engine==EngineKind::Midi&&x.patterns.at[0]==kept,"confirmed deletion remains undoable");

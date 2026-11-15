@@ -2,7 +2,7 @@
 
 Built on Melodee by Kerem Kiliç (Ellic Studio) and contributors. Revision 2 corrects confirmation cancellation, GEN Back navigation and all-empty MIX access while preserving active Note Repeat rate keys.
 
-The release receipts bind the tested runtime, exact source inputs and corresponding source archives. Current runtime checks include the unit suite, 126 track-workflow assertions, GEN/Acid/Break integration, audio self-test, random surface inputs and 426 standard page previews. Confirmation tests cover both selected answers for all 12 Ask dialog types, retained plain-Push/B3 confirmation, B1 cancellation and Undo.
+The release receipts bind the tested runtime, exact source inputs and corresponding source archives. Current runtime checks include the unit suite, 151 track-workflow assertions, GEN/Acid/Break integration, audio self-test, random surface inputs and 426 standard page previews. Confirmation tests cover both selected answers for all 12 Ask dialog types, retained plain-Push/B3 confirmation, B1 cancellation and Undo. Shift release also preserves Roll note selection.
 
 The retained sound review covers 25 source views, 2,659 preset selections, 272,711 preset/control comparisons, 37,226 note probes, 576 pad gain/ownership checks and 4,567 control round trips. Engine/plugin/model source is compared byte-for-byte to the reviewed sound snapshot before retaining this evidence. ASan/UBSan covers the host wrapper, not every native DSP library. The three-pass release campaign is not claimed by these finite checks.
 

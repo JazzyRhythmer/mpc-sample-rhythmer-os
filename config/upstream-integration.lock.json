@@ -1,7 +1,7 @@
 {
   "upstream": "v0.2.0",
   "commit": "8880d16116ccb3c69f75fb46bf2166b16c51ef0c",
-  "patch_sha256": "f42694b4417b6050af1087044f7b1888693c627a8ff5418f21dd727efb2cf193",
+  "patch_sha256": "60160f7303ea981b65bba65cd5845dabbe36d3d31a70db1bc8bdd6cc26e2e518",
   "files": [
     "Makefile",
     "docs/GUIDE.md",
@@ -306,7 +306,7 @@
     "docs/USER_MANUAL_KO_DRAFT.md": "67532236c64d3014c19602ec6bed07412d1482f07aceb4c2ac84b777c9a94a33",
     "docs/GEN_WORKFLOW.md": "724211beacd9ef9367255993460a1b334f224ee5811437d72ac6f41f98257b26",
     "docs/BREAK_ACID_GUIDE_KO.md": "0e2382b9f480359a07bb4ecc65e06c87dc2d7b9b268e580ab345f36d49cfc34a",
-    "docs/SD_CARD_GUIDE.md": "fe7388bd91932b76855eb7af1c085e9cb8ec2c104cfeab66e88a4c872eda0564",
+    "docs/SD_CARD_GUIDE.md": "9e8516271c6456d6a24f0a5d773a5516145d4697df0544a8dcef10c99ef45e76",
     "assets/device/mpc-sample.svg": "5fecee227d799be663aa6ce4e50a15a056ec17074ebbf188bdb825106b6cdffe"
   }
 }

@@ -40,7 +40,10 @@ bool ask_button(Context& c, SurfaceButton button) {
     if (button == B::Play || button == B::Stop) return false; // the transport still answers
     // Shift + Push is Back, even when a destructive answer is highlighted.
     // Reuse B1's cancellation path, including update deferral.
-    if (button == B::WheelPush) button = ui.shift ? B::TopLeft : ui.ask_pick == 2 ? B::TopRight : B::TopLeft;
+    if (button == B::WheelPush) {
+        if (ui.shift) { ui.shift_used = true; button = B::TopLeft; }
+        else button = ui.ask_pick == 2 ? B::TopRight : B::TopLeft;
+    }
     if (button == B::TopLeft) { // Cancel (LATER on the update question: asked again when the card is returned)
         if (ui.ask == UiState::Ask::InstallUpdate && c.updates) c.updates->decline();
         ui.ask = UiState::Ask::None;
