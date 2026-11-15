@@ -2,9 +2,19 @@
 
 Turn your MPC Sample into an exploratory groovebox: diverse synth engines, hands-on drums, chopped breaks and new ways to find a pattern.
 
-**[DOWNLOAD & INSTALL](https://jazzyrhythmer.github.io/mpc-sample/installer/)** · **[MAKE YOUR FIRST PATTERN](https://jazzyrhythmer.github.io/mpc-sample/manual/quickstart.html)** · **[READ THE MANUAL](https://jazzyrhythmer.github.io/mpc-sample/manual/)** · **[WEBSITE](https://jazzyrhythmer.github.io/mpc-sample/)**
+**[DOWNLOAD & INSTALL](https://jazzyrhythmer.github.io/mpc-sample/installer/)** · **[FIRST GROOVE GUIDE](https://jazzyrhythmer.github.io/mpc-sample/manual/quickstart.html)** · **[READ THE MANUAL](https://jazzyrhythmer.github.io/mpc-sample/manual/)** · **[WEBSITE](https://jazzyrhythmer.github.io/mpc-sample/)**
 
 Free and open-source custom firmware by **jazzy rhythmer**, built on **Melodee 0.2.0 by Kerem Kiliç (Ellic Studio)** and the work of the original engine authors.
+
+## Your first groove with RHYTHMER OS.
+
+**Watch it come together. Then make it yours.** Follow drums, bass, FM-106 chords, an acid phrase and a chopped Think break from the first sound to a finished four-bar groove. Shape the sounds, balance the tracks and turn the loop into a mute jam.
+
+[![Watch Your first groove with RHYTHMER OS — click to play the film](assets/preview/your-first-groove.jpg)](https://jazzyrhythmer.github.io/mpc-sample/#first-groove)
+
+**[▶ WATCH THE FILM](https://jazzyrhythmer.github.io/mpc-sample/#first-groove)** &nbsp; · &nbsp; **[FOLLOW THE STEP-BY-STEP GUIDE ↗](https://jazzyrhythmer.github.io/mpc-sample/manual/quickstart.html)**
+
+*4 bars · 140 BPM · C minor · Follow at your own pace. Click the thumbnail to open the video.*
 
 <p align="center"><img src="assets/manual/boot.png" width="560" alt="RHYTHMER OS startup design for MPC Sample"></p>
 
