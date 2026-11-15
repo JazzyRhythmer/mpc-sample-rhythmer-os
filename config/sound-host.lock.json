@@ -9,7 +9,7 @@
   "authored_selections": 43,
   "asan_ubsan_host": true,
   "native_libraries_all_instrumented": false,
-  "runtime_sha256": "666388e4978d32453a20752672fafa174e82e60c0674c7f83ccb37e1fb062b46",
+  "runtime_sha256": "690b91ff5850e641eb0337a3219953106bc25e6d1c557c4ecfdaa8537fd582a4",
   "files": {
     "VERSION": "c4fbe2c1fae45cea7efcadaf6dddce8d68bc75e875ce07f4ec2791397ab8711d",
     "assets/brand/rhythmer-os.svg": "0275bef589775180d9725da2947db5f6e38c6a71f51be12adf8eea713aaf525d",
@@ -41,7 +41,7 @@
     "config/sound-catalog.json": "82106a935b149208f9fa0ef3c461d2bb75001764e5572f6c180c9b93332ed5c0",
     "config/tr-mpc-drum-map.json": "03b2a7a6a9f2f8470d558895aa22353274d30ca7eed836755d2b22094bf8fec7",
     "config/update-public-key.txt": "1e54c848e19e113f0beb040d0978610c09d16cbe4509aa20a355485f83869eab",
-    "config/upstream-integration.lock.json": "c85f87b7da49fdb5f463346f0947fe3553b4bd85270857bbf0a6a2646f9e612f",
+    "config/upstream-integration.lock.json": "74c0c434e45a6d960b84ab5bbc17f243231d7a4edd6243441a1e3a91bacee2e4",
     "extensions/engine/break_manipulator.cpp": "d120002aa1f4097fd2111465b0a04cb556bfad6c6038680df6787b0ace32802a",
     "extensions/engine/break_manipulator.h": "41f13ef30778e4167f5276a43c90f163cfa72df43144c7420f9de1272d0e7472",
     "extensions/model/acid_gen.cpp": "a3ca875dd4c5ad63dd3301c1b1440fcfe8dc6aedc04023575698c8a5dfd29815",
@@ -62,7 +62,7 @@
     "extensions/plugin/design_panel.inc": "47f61568d527f684a629d70295a82786e173153220dc1afb6f608a0128efee5e",
     "extensions/plugin/sound_rack.cpp": "b8be0f9a5356ea08adb8178bb8951d667731bdee4338bfe337e38ff85571f5ae",
     "extensions/plugin/sound_rack.h": "55d15a70edfdfd0757a33166c2f6d9a4a26f8dfad48707b11400f7d655f8401e",
-    "extensions/runtime-v020.patch": "aeb299ffb364ebcddb79813142ce6fdd91839110358937c80f8e8966c3863399",
+    "extensions/runtime-v020.patch": "f42694b4417b6050af1087044f7b1888693c627a8ff5418f21dd727efb2cf193",
     "extensions/shell/break_acid_check.inc": "fd1a6d7b43e69895d27ca0cea59ce37d92d1c2410aa70358aad7be34987da2fa",
     "extensions/shell/gen8_check.h": "6fb964dc12f3a8f8743122a32a8b9169d0c58164a36a846c03fcc8bfc5feb91b",
     "extensions/shell/gen8_jobs.cpp": "a8e8405854e4f2fadc591c3714907495b9f9233baf0d1e26d0cdc92f57a6e9ef",
@@ -1241,7 +1241,6 @@
     "ports/fm1-guru600/source-panels.json": "c4ea1f0425d482934ac56d37dce250afd79b75558a46fc0c5eaa8a65a9dc6dec",
     "ports/fm1-prophet/source-panels.json": "84ab59c06a1b410e0689e753cb1c582c77c9390ca421053faca6ff957466389b",
     "docs/USER_MANUAL_KO_DRAFT.md": "67532236c64d3014c19602ec6bed07412d1482f07aceb4c2ac84b777c9a94a33",
-    "config/final-validation.lock.json": "cdf09c671a1b6adccbeb9946b41ad7cb47ed014c18ce79c73fca14115a73e311",
     "tools/check_wrapper_enums.py": "a03164d987d4096893046b67bcb71852a7e8d9d63ed08e1265262971d2e2f448",
     "tools/wrapper_repairs.py": "e0d6a779c98e3a8ee51f8d9529f133d13389ae20e898b5bc6c0ce0d9453f5515",
     "tools/check_plaits_quantizer.py": "f8d9f6c2680b2e1753a91852b76a52b126dd33b6737d60765a2fe0ffb6750690",
@@ -1251,11 +1250,12 @@
     "tests/preset_controls.inc": "0174e46dfcd94fef259d27a675f24ab12a9521d68cd1221b2706291ab79b221f",
     "ports/common/obervave_display.h": "14887fcd3938079bba78d84881c5cb91c6aae31d9f5b815bc5387bf6b0a9d251",
     "ports/common/s1vave_display.h": "caf6be7b40f051e9ef40d1ad59867f787e27716455b024b280841687359741fa",
-    "ports/move-plaits/model-controls.json": "52446b1975edea13487489b808e98094cc84e21b022b03a1806d1390616dddd9"
+    "ports/move-plaits/model-controls.json": "52446b1975edea13487489b808e98094cc84e21b022b03a1806d1390616dddd9",
+    "config/final-validation.lock.json": "38ab7f68889dd6ad36d4ca0c855f367aae521d9226a2aa70a34a150e18ca4dce"
   },
   "release_host_passes": 0,
   "previous_release_host_passes": 1,
-  "validation_scope": "Current runtime build/unit/self-test/GEN/monkey/screen checks; 68 track workflow assertions; engine/plugin/model code byte-identical to prior DSP acceptance.",
+  "validation_scope": "Current runtime unit/self-test/GEN/input/UI checks and 126 track assertions; retained exact-source sound review with 2659 presets, 37226 note probes and 576 pads. No three-pass campaign claim.",
   "unchanged_sound_source_files": 138,
   "current_host_checks": [
     {
@@ -1303,5 +1303,8 @@
       "exit": 0,
       "seconds": 3.98
     }
-  ]
+  ],
+  "track_assertions": 126,
+  "chromatic_note_probes": 37226,
+  "release_tag": "v0.4.0-beta.3-r2"
 }

@@ -268,6 +268,9 @@ void Context::open(PageId page) {
 
 void Context::back() {
     if(ui.page==PageId::TrackActions && ui.track_types){ui.track_types=false;ui.track_action=1;return;}
+    // The screen BACK and Shift + Push share the same GEN hierarchy.
+    // A sub-generator returns to GEN first; only GEN's own Back closes it.
+    if(ui.page==PageId::Patterns && ui.sheet_open && ui.gen8_mode){ui.gen8_mode=0;ui.sheet_row=0;return;}
     if(ui.page==PageId::Edit&&track().engine==EngineKind::Plugin&&ui.edit_page[ui.track]&&ui.map_open){ui.map_open=false;return;}
 
     if (ui.sheet_open || ui.map_open || ui.picker_open || ui.move_open) { // a sheet, map or picker first

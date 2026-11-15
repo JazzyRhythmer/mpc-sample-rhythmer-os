@@ -209,6 +209,19 @@ inline int gen8_shell_check() {
      x.track().engine=EngineKind::Sampler;x.track().break_bars=2;x.load_sound(0,EngineKind::Sampler,0);if(x.track().break_bars)return gen_failure(68,__LINE__);
      x.track().engine=EngineKind::Midi;x.ui.gen8_mode=2;auto snap=std::make_unique<Snapshot>();s.snapshot(*snap,1);if(x.ui.gen8_mode!=0)return gen_failure(67,__LINE__);
     }
+    // Physical Back follows the same hierarchy as the on-screen GEN BACK.
+    {EngineHost h;Shell s(h);auto& x=s.context();x.load_sound(0,EngineKind::Sampler,0);
+     auto press=[&](SurfaceButton b,bool down){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(b);e.input.pressed=down;s.surface(e,2000);};
+     auto unchanged=x.patterns.at[0];auto seed=x.project.gen8.seed;
+     for(unsigned mode:{1u,2u,3u,4u}){
+       x.ui.page=PageId::Patterns;x.ui.sheet_open=true;x.ui.gen8_mode=uint8_t(mode);x.ui.sheet_row=1;
+       press(SurfaceButton::Shift,true);press(SurfaceButton::WheelPush,true);press(SurfaceButton::WheelPush,false);press(SurfaceButton::Shift,false);
+       if(x.ui.page!=PageId::Patterns||!x.ui.sheet_open||x.ui.gen8_mode||x.ui.sheet_row)return gen_failure(230,__LINE__);
+       if(x.patterns.at[0]!=unchanged||x.project.gen8.seed!=seed)return gen_failure(231,__LINE__);
+       press(SurfaceButton::Shift,true);press(SurfaceButton::WheelPush,true);press(SurfaceButton::WheelPush,false);press(SurfaceButton::Shift,false);
+       if(x.ui.sheet_open||x.ui.page!=PageId::Patterns)return gen_failure(232,__LINE__);
+     }
+    }
     // Native Edit starts at synthesis row two; Back returns to its caller.
     {EngineHost h;Shell s(h);auto& x=s.context();x.track().engine=EngineKind::Plugin;x.track().plugin=0;x.ui.page=PageId::Stage;
      x.open(PageId::Edit);if(x.ui.edit_page[x.ui.track]!=1)return gen_failure(215,__LINE__);

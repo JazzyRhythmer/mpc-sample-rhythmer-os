@@ -4,6 +4,8 @@ Developed by **jazzy rhythmer**. [Instagram](https://www.instagram.com/jazzyrhyt
 
 **0.4.0-beta.3**, an MPC Sample beta for owner device testing, based on **Melodee 0.2.0 by Kerem Kiliç (Ellic Studio)**. Existing sampler, sequencer, mixer, effects, driver and recovery foundations are retained.
 
+Revision 2 adds safe confirmation cancellation with Shift + Push, consistent GEN Back navigation and MIX access from all-empty projects. Note Repeat rate-key behavior is preserved.
+
 The plugin picker contains 20 entries: Rhythmer Kit, Acid Engine, Break Engine, Sophie, Elixir, Aphex, FM-106, FMini-1, CS-1, OberVave, K-WASUB, Hera, Braids, Plaits, Hortator, MONO2K, Prophet, S1Vave, Dexed, Guru-600. The original Sample Kit remains available through the native sampler. See [engine inventory](docs/ENGINE_REGISTRY.md).
 
 Rhythmer Kit has 36 named kit presets with pads 1–16 filled. Kit-wide switching, pad-specific engine/sound editing, user presets and project saving are supported. Individual instruments play one selected sound through chromatic/scale pads, with named presets and native control lists with current/total position. The native Melodee PRESETS/EDIT workflow is used, with original sound controls in the native parameter list; Kit source and save controls are separate from sound design. PRESETS mirrors the main native filter; Dexed, DRUM-X, Plaits, CS-1 and MONO2K additionally have an engine-owned OUTPUT FILTER while retaining original tone controls; B2 PERFORM keeps the track DJ FILTER / ECHO / SPACE. Rhythmer Kit has its own whole-kit LP/BP/HP filter, saved with Kit presets, with no insert slot consumed. Sample Kit and Break front the existing sampler-wide filter. See [native plugin workflow](docs/NATIVE_PLUGIN_WORKFLOW.md).
@@ -22,36 +24,10 @@ The 0.4 integration adds the new upstream 128-pattern Patterns home, Freeze/Deep
 
 Plaits exposes the original 24 models and 96 embedded 6-Op programs, with model-specific control names and named FM choices. The curated sound catalogue contains 2,616 retained original selections plus 43 explicitly authored Rhythmer selections: 15 Prophet sounds and four seven-voice Elixir kits. External Sequential/Erica/Hrtl banks are excluded. See [Rhythmer presets](docs/RHYTHMER_PRESETS.md) and [bank provenance](docs/ORIGINAL_PRESET_AUDIT_KO.md).
 
-
-
-<!-- RHYTHMER FILM START -->
-## Watch the launch film
-
-[![RHYTHMER OS for MPC Sample](assets/preview/launch-film.jpg)](https://jazzyrhythmer.github.io/mpc-sample/#launch-film)
-
-Jungle, Techno, House & IDM — an introduction to RHYTHMER OS, its sound engines and ways to build a groove.
-
-[Watch on the website](https://jazzyrhythmer.github.io/mpc-sample/#launch-film) · [Download 16:9 MP4](https://github.com/JazzyRhythmer/mpc-sample-rhythmer-os/releases/download/v0.4.0-beta.3-r1/RHYTHMER-OS-Launch-YouTube-60s-Acid-Flow.mp4) · [Instagram / Reels 9:16 MP4](https://github.com/JazzyRhythmer/mpc-sample-rhythmer-os/releases/download/v0.4.0-beta.3-r1/RHYTHMER-OS-Launch-Reels-60s-Acid-Flow.mp4)
-<!-- RHYTHMER FILM END -->
-
-
 ## Install the beta
-
-Use the full **0.4.0-beta.3 SD ZIP** when updating from beta.2. App-only UPDATE does not install the revised plug-ins and catalogue.
-
-[Install page](https://jazzyrhythmer.github.io/mpc-sample/installer/) · [First groove](https://jazzyrhythmer.github.io/mpc-sample/manual/quickstart.html)
-
-![Acid Engine native preview](assets/preview/acid-engine.gif)
-
 
 [Download the latest beta](https://github.com/JazzyRhythmer/mpc-sample-rhythmer-os/releases) · [Installation and recovery guide](docs/SD_CARD_GUIDE.md) · [Website and web manual](https://jazzyrhythmer.github.io/mpc-sample/) · [Engine port sources](https://github.com/JazzyRhythmer/mpc-sample-engine-ports)
 
 Use the complete **SD.zip** for first installation, the 0.4 transition, and beta.2 → beta.3: this revision also changes plugin binaries and the preset catalog. **UPDATE.zip** updates only a compatible Rhythmer application; it does not replace plugin/kit data. Back up projects, samples and the card first. Verify the release checksums and the AC50 / stock firmware 1.3.0.12 requirement in the installation guide. SOURCE, MOVE-SOURCE and SUPPORT-SOURCE archives contain corresponding source, not installers.
 
 This is an unofficial project, not affiliated with or endorsed by AKAI Professional or inMusic. Product names and logos belong to their respective owners. Provided without warranty under the applicable licenses. This beta has offline build, audio-host and UI checks; physical-device behavior, latency and recovery still require owner testing.
-
-## Rhythmer Kit
-
-Hit-responsive drum geometry, with a restrained input-driven depth response.
-
-![Rhythmer Kit native preview](assets/preview/rhythmer-kit.gif)

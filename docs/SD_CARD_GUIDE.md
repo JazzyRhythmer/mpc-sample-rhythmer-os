@@ -3,6 +3,8 @@
 **beta.2 → beta.3에는 전체 SD.zip을 사용하세요.** 이번 수정에는 앱뿐 아니라 플러그인 바이너리·파라미터 표시 정보·프리셋 카탈로그 변경이 포함됩니다. 아래 절차대로 전원을 끄고 백업한 뒤 `autorun`과 플러그인/킷 자료를 함께 갱신하세요. `UPDATE.zip`만 적용하면 이번 수정 전체가 설치되지 않습니다.
 
 
+**Revision 2 (r2):** 확인창의 SHIFT + 인코더 취소, GEN 뒤로 가기, 모든 트랙이 EMPTY일 때 믹서 진입을 개선했습니다. beta.3-r1에서 플러그인·킷 자료를 그대로 유지한 경우 서명된 UPDATE ZIP으로 앱만 갱신할 수 있습니다. 첫 설치·이전 베타·설치 구성이 불확실한 경우 전체 SD ZIP을 사용하세요.
+
 개발자: **jazzy rhythmer**. Instagram: https://www.instagram.com/jazzyrhythmer/ · YouTube: https://www.youtube.com/@jazzyrhythmer
 
 빌드·오프라인 검증 후 사용자가 실기기에서 테스트하는 베타다. 기기 설치·물리 조작·청취·latency는 현재 미검증으로 표시한다. 이 안내는 공개 베타 설치용이며, 기기 설치는 소유자가 직접 진행한다. 설치 전 프로젝트·샘플·카드 내용을 백업한다.
@@ -19,7 +21,7 @@
 
 ## 악기와 Rhythmer Kit
 
-빈 트랙에서는 인코더를 돌려 PLUG-IN / KIT / MIDI 계열의 카드를 선택한 뒤 Push로 연다. 기본 7개 카드 중 원하는 유형을 선택할 수 있다. B2는 Sample Kit, B3는 MIDI 바로가기다. 플러그인 브라우저에서 취소하면 같은 빈 트랙으로 돌아온다.
+빈 트랙에서는 인코더를 돌려 PLUG-IN / KIT / MIDI 계열의 카드를 선택한 뒤 Push로 연다. 기본 7개 카드 중 원하는 유형을 선택할 수 있다. 플러그인 브라우저에서 취소하면 같은 빈 트랙으로 돌아온다.
 
 플러그인 목록 맨 위의 Rhythmer Kit을 선택하면 PRESETS에서 36개 킷을 바꿀 수 있다. 모든 킷의 1–16번 패드가 채워져 있다. EDIT에서 B3 PAD SOURCE를 열면 K1 Pad / K2 Engine / K3 Sound로 선택한 패드만 바꾼다. B3 SAVE는 저장 화면, 그다음 B3 EDIT는 사운드 편집 화면으로 이동한다. 실제 패드를 눌러 편집 대상을 선택할 수도 있다. 킷에 따라 B–D bank에 추가 음색이 있다. Hortator MD 추가 6종의 원본 사운드 구성은 HORTATOR_KITS_KO.md를 참고한다.
 

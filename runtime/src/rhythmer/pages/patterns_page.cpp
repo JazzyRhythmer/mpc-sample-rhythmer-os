@@ -230,7 +230,7 @@ void nudge(Context& c, int way) { if(c.ui.sheet_open){wheel(c,way);return;} c.se
 void soft(Context& c, int key) {
     auto& ui = c.ui;
     if (c.ui.sheet_open) { // BACK, -, DO IT
-        if(key==0){if(c.ui.gen8_mode){c.ui.gen8_mode=0;c.ui.sheet_row=0;}else c.ui.sheet_open=false;}
+        if(key==0){c.back();return;}
         if(key==1&&c.ui.gen8_mode==4){c.ui.acid_gen_page=uint8_t((c.ui.acid_gen_page+1)%2);return;}
         if (key == 1) {c.ui.gen8_mode=c.ui.gen8_mode==0?1:c.ui.gen8_mode==1?3:0;c.ui.sheet_row=c.ui.gen8_mode==3&&c.project.gen8.assign?c.project.gen8.group:0;}
         if (key == 2) gen_push(c);

@@ -1,6 +1,7 @@
 {
   "version": "0.4.0-beta.3",
-  "runtime_sha256": "666388e4978d32453a20752672fafa174e82e60c0674c7f83ccb37e1fb062b46",
+  "release_tag": "v0.4.0-beta.3-r2",
+  "runtime_sha256": "690b91ff5850e641eb0337a3219953106bc25e6d1c557c4ecfdaa8537fd582a4",
   "files": {
     "config/animation-profiles.json": "08008495d6a49575b9e0772a210e537a6f1ecfd21b72a915b0d0cf2b210990dc",
     "config/baseline-parameters.json": "fc825926ae245e63ea9526fee5fecc990de43f5221b9101da3d2d7680a46a6ff",
@@ -29,7 +30,7 @@
     "config/tr-mpc-drum-map.json": "03b2a7a6a9f2f8470d558895aa22353274d30ca7eed836755d2b22094bf8fec7",
     "config/update-public-key.txt": "1e54c848e19e113f0beb040d0978610c09d16cbe4509aa20a355485f83869eab",
     "config/upstream-backports.json": "4827c17522539dd83285ae13b09fd00f136e73488c8a790a352b2feeaded0e30",
-    "config/upstream-integration.lock.json": "c85f87b7da49fdb5f463346f0947fe3553b4bd85270857bbf0a6a2646f9e612f",
+    "config/upstream-integration.lock.json": "74c0c434e45a6d960b84ab5bbc17f243231d7a4edd6243441a1e3a91bacee2e4",
     "extensions/engine/break_manipulator.cpp": "d120002aa1f4097fd2111465b0a04cb556bfad6c6038680df6787b0ace32802a",
     "extensions/engine/break_manipulator.h": "41f13ef30778e4167f5276a43c90f163cfa72df43144c7420f9de1272d0e7472",
     "extensions/model/acid_gen.cpp": "a3ca875dd4c5ad63dd3301c1b1440fcfe8dc6aedc04023575698c8a5dfd29815",
@@ -50,7 +51,7 @@
     "extensions/plugin/design_panel.inc": "47f61568d527f684a629d70295a82786e173153220dc1afb6f608a0128efee5e",
     "extensions/plugin/sound_rack.cpp": "b8be0f9a5356ea08adb8178bb8951d667731bdee4338bfe337e38ff85571f5ae",
     "extensions/plugin/sound_rack.h": "55d15a70edfdfd0757a33166c2f6d9a4a26f8dfad48707b11400f7d655f8401e",
-    "extensions/runtime-v020.patch": "aeb299ffb364ebcddb79813142ce6fdd91839110358937c80f8e8966c3863399",
+    "extensions/runtime-v020.patch": "f42694b4417b6050af1087044f7b1888693c627a8ff5418f21dd727efb2cf193",
     "extensions/shell/break_acid_check.inc": "fd1a6d7b43e69895d27ca0cea59ce37d92d1c2410aa70358aad7be34987da2fa",
     "extensions/shell/gen8_check.h": "6fb964dc12f3a8f8743122a32a8b9169d0c58164a36a846c03fcc8bfc5feb91b",
     "extensions/shell/gen8_jobs.cpp": "a8e8405854e4f2fadc591c3714907495b9f9233baf0d1e26d0cdc92f57a6e9ef",
@@ -251,11 +252,10 @@
     "ports/sophie/params.lock": "497849597c87f7dcb053a4183a537520394ad74296648136ae78d06ca6cd1a33",
     "VERSION": "c4fbe2c1fae45cea7efcadaf6dddce8d68bc75e875ce07f4ec2791397ab8711d",
     "docs/USER_MANUAL_KO_DRAFT.md": "67532236c64d3014c19602ec6bed07412d1482f07aceb4c2ac84b777c9a94a33",
-    "runtime_binary": "666388e4978d32453a20752672fafa174e82e60c0674c7f83ccb37e1fb062b46"
+    "runtime_binary": "690b91ff5850e641eb0337a3219953106bc25e6d1c557c4ecfdaa8537fd582a4"
   },
-  "validation_scope": "Current runtime build/unit/self-test/GEN/monkey/screen checks; 68 track workflow assertions; engine/plugin/model code byte-identical to prior DSP acceptance.",
+  "track_assertions": 126,
   "unchanged_sound_source_files": 138,
-  "prior_sound_runtime_sha256": "c8c35bcc51f79ba5e3a87d2842693c2831144e870e7db04633abc1571ebb1f17",
   "current_host_checks": [
     {
       "mode": "transport",
@@ -301,10 +301,30 @@
       "mode": "enginefilter",
       "exit": 0,
       "seconds": 3.98
+    },
+    {
+      "mode": "kitownership",
+      "exit": 0,
+      "seconds": 688.48
+    },
+    {
+      "mode": "audit",
+      "exit": 0,
+      "seconds": 92.74
+    },
+    {
+      "mode": "authored",
+      "exit": 0,
+      "seconds": 17.07
     }
   ],
-  "full_current_host_passes": 0,
-  "broader_qa": "continuing separately",
-  "hardware_validated": false,
-  "publication": "EARLY_BETA"
+  "chromatic": {
+    "contexts": 25,
+    "presets": 2659,
+    "notes": 37226,
+    "failures": 0
+  },
+  "release_host_passes": 0,
+  "validation_scope": "Current runtime unit/self-test/GEN/input/UI checks and 126 track assertions; retained exact-source sound review with 2659 presets, 37226 note probes and 576 pads. No three-pass campaign claim.",
+  "hardware_validated": false
 }

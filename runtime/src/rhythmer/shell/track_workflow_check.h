@@ -121,7 +121,40 @@ inline int track_workflow_check() {
         c.back();TRACK_CHECK(c.ui.page==PageId::Stage,"loaded B Back cannot return to A");
         c.plugins=nullptr;
     }else {std::fprintf(stderr,"TRACK_WORKFLOW: missing real plugin card fixture\n");return 2;}
-    std::printf("TRACK_WORKFLOW passed %u assertions; 128-pattern retention, real plugins, undo/redo, scoped navigation, async ownership\n",checks);
+    // Empty tracks retain their carousel but can reach MIX, in either key order.
+    {EngineHost h;Shell s(h);auto& x=s.context();for(auto& t:x.project.tracks)t=Track{};
+     x.ui.track=0;x.ui.page=PageId::Stage;offer_new_track(x);
+     auto button=[&](SurfaceButton b,bool down){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(b);e.input.pressed=down;s.surface(e,3000);};
+     for(bool reversed:{false,true}){
+       x.ui.page=PageId::Stage;auto first=reversed?SurfaceButton::KnobFx:SurfaceButton::PadFx;auto second=reversed?SurfaceButton::PadFx:SurfaceButton::KnobFx;
+       button(first,true);button(second,true);button(first,false);button(second,false);
+       TRACK_CHECK(x.ui.page==PageId::Tracks,"all-empty MIX chord works in either order");
+       TRACK_CHECK(!x.track().used()&&!x.ui.pad_fx_down&&!x.ui.knob_fx_down&&!x.ui.fx_chord_used,"MIX creates no track and leaves no held keys");
+     }
+     for(auto key:{SurfaceButton::PadFx,SurfaceButton::KnobFx}){
+       x.ui.page=PageId::Stage;button(key,true);button(key,false);
+       TRACK_CHECK(x.ui.page==PageId::Stage&&!x.track().used(),"empty solo FX key keeps native lock");
+     }
+    }
+    // Shift + Push always cancels Ask dialogs; ordinary confirmations remain.
+    {EngineHost h;Shell s(h);auto& x=s.context();x.ui.track=0;x.load_sound(0,EngineKind::Midi,0);
+     Event note;note.key=60;x.patterns.at[0][0].events={note};auto kept=x.patterns.at[0];auto history=x.edits.size();
+     auto button=[&](SurfaceButton b,bool down){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(b);e.input.pressed=down;s.surface(e,4000);};
+     for(unsigned k=unsigned(UiState::Ask::EraseKeyEvents);k<=unsigned(UiState::Ask::Unfreeze);++k)for(int pick:{0,2}){
+       ask(x,UiState::Ask(k),0);x.ui.ask_pick=uint8_t(pick);
+       button(SurfaceButton::Shift,true);button(SurfaceButton::WheelPush,true);button(SurfaceButton::WheelPush,false);button(SurfaceButton::Shift,false);
+       TRACK_CHECK(x.ui.ask==UiState::Ask::None,"Shift-Push cancels every Ask answer, including selected destructive answers");
+       TRACK_CHECK(x.track().engine==EngineKind::Midi&&x.patterns.at[0]==kept&&x.edits.size()==history,"dialog Back leaves sound, patterns and Undo untouched");
+     }
+     ask(x,UiState::Ask::ClearTrack,0);x.ui.ask_pick=2;button(SurfaceButton::WheelPush,true);button(SurfaceButton::WheelPush,false);
+     TRACK_CHECK(!x.track().used()&&x.patterns.at[0][0].events.empty(),"plain Push still confirms selected deletion");
+     x.undo();TRACK_CHECK(x.track().engine==EngineKind::Midi&&x.patterns.at[0]==kept,"confirmed deletion remains undoable");
+     ask(x,UiState::Ask::ClearTrack,0);button(SurfaceButton::TopRight,true);button(SurfaceButton::TopRight,false);
+     TRACK_CHECK(!x.track().used(),"B3 confirmation remains available");x.undo();
+     ask(x,UiState::Ask::ClearTrack,0);x.ui.ask_pick=2;button(SurfaceButton::TopLeft,true);button(SurfaceButton::TopLeft,false);
+     TRACK_CHECK(x.track().engine==EngineKind::Midi&&x.patterns.at[0]==kept,"B1 cancellation remains available");
+    }
+    std::printf("TRACK_WORKFLOW passed %u assertions; 128-pattern retention, real plugins, undo/redo, scoped navigation, async ownership, empty MIX chord, safe dialog Back\n",checks);
 #undef TRACK_CHECK
     return 0;
 }

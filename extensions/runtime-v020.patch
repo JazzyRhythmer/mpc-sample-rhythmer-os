@@ -3219,7 +3219,7 @@
 -        if (key == 0) ui.sheet_open = false;
 -        if (key == 2) do_vary(c);
 +    if (c.ui.sheet_open) { // BACK, -, DO IT
-+        if(key==0){if(c.ui.gen8_mode){c.ui.gen8_mode=0;c.ui.sheet_row=0;}else c.ui.sheet_open=false;}
++        if(key==0){c.back();return;}
 +        if(key==1&&c.ui.gen8_mode==4){c.ui.acid_gen_page=uint8_t((c.ui.acid_gen_page+1)%2);return;}
 +        if (key == 1) {c.ui.gen8_mode=c.ui.gen8_mode==0?1:c.ui.gen8_mode==1?3:0;c.ui.sheet_row=c.ui.gen8_mode==3&&c.project.gen8.assign?c.project.gen8.group:0;}
 +        if (key == 2) gen_push(c);
@@ -5245,7 +5245,18 @@
  
 --- a/src/rhythmer/shell/ask.cpp
 +++ b/src/rhythmer/shell/ask.cpp
-@@ -81,7 +81,7 @@
+@@ -38,7 +38,9 @@
+     auto& ui = c.ui;
+     if (ui.ask == UiState::Ask::None) return false;
+     if (button == B::Play || button == B::Stop) return false; // the transport still answers
+-    if (button == B::WheelPush) button = ui.ask_pick == 2 ? B::TopRight : B::TopLeft; // the key the wheel highlights
++    // Shift + Push is Back, even when a destructive answer is highlighted.
++    // Reuse B1's cancellation path, including update deferral.
++    if (button == B::WheelPush) button = ui.shift ? B::TopLeft : ui.ask_pick == 2 ? B::TopRight : B::TopLeft;
+     if (button == B::TopLeft) { // Cancel (LATER on the update question: asked again when the card is returned)
+         if (ui.ask == UiState::Ask::InstallUpdate && c.updates) c.updates->decline();
+         ui.ask = UiState::Ask::None;
+@@ -81,7 +83,7 @@
      case UiState::Ask::LooperOff: return "Turn the Looper off?";
      case UiState::Ask::ClearPattern: return "Clear P" + std::to_string(ui.ask_target % pattern_count + 1) + " of track " + std::to_string(ui.track % track_count + 1) + "?";
      case UiState::Ask::ErasePunches: return "Erase kept punches?";
@@ -5496,17 +5507,20 @@
          page = PageId::Stage;
      }
      if (page != ui.page) punch_release(); // a pad held over a page change would never let go
-@@ -255,6 +267,9 @@
+@@ -255,6 +267,12 @@
  }
  
  void Context::back() {
 +    if(ui.page==PageId::TrackActions && ui.track_types){ui.track_types=false;ui.track_action=1;return;}
++    // The screen BACK and Shift + Push share the same GEN hierarchy.
++    // A sub-generator returns to GEN first; only GEN's own Back closes it.
++    if(ui.page==PageId::Patterns && ui.sheet_open && ui.gen8_mode){ui.gen8_mode=0;ui.sheet_row=0;return;}
 +    if(ui.page==PageId::Edit&&track().engine==EngineKind::Plugin&&ui.edit_page[ui.track]&&ui.map_open){ui.map_open=false;return;}
 +
      if (ui.sheet_open || ui.map_open || ui.picker_open || ui.move_open) { // a sheet, map or picker first
          ui.sheet_open = ui.map_open = ui.picker_open = ui.move_open = false;
          return;
-@@ -265,7 +280,34 @@
+@@ -265,7 +283,34 @@
  void Context::select_track(unsigned t) {
      if (ui.page == PageId::Sounds) audition(-1);
      stage_tick(UINT32_MAX); // a sound still waiting to load lands on the track it was turned on
@@ -5541,7 +5555,7 @@
      ui.held_step = -1;
      if (ui.page == PageId::Sounds) ui.sounds_cursor = track().preset;
  }
-@@ -291,6 +333,7 @@
+@@ -291,6 +336,7 @@
  // engine; every press also goes into the ring Capture reads (roadmap P5).
  void Context::key(int k, int velocity, bool down, int cutoff) {
      auto& t = track();
@@ -5549,7 +5563,7 @@
      if (t.arp) {
          Command c {Type::ArpKey, ui.track, 0, uint16_t(k), int16_t(down ? velocity : 0)};
          c.position = uint32_t(cutoff + 1); // a 16 Levels Filter pad's cutoff, kept on its repeats
-@@ -356,6 +399,11 @@
+@@ -356,6 +402,11 @@
          return;
      }
      if (!t.used()) return;
@@ -5561,7 +5575,7 @@
      if (t.levels) { // 16 Levels on a synth: the last note on all sixteen, soft to loud or in pitch; Scale the key's notes
          auto level = levels_of(project, t, pad);
          ui.levels_hit = int8_t(pad); ui.levels_value = int16_t(level.shown);
-@@ -448,6 +496,7 @@
+@@ -448,6 +499,7 @@
  
  void Context::load_sound(unsigned t, EngineKind kind, unsigned sound) {
      auto& tr = project.tracks[t % track_count];
@@ -5569,7 +5583,7 @@
      bool engine_changed = tr.engine != kind;
      const auto& info = engine_info(kind);
      const UserSound* own = sound >= info.sound_count ? user_sound(kind, sound - info.sound_count) : nullptr;
-@@ -503,6 +552,9 @@
+@@ -503,6 +555,9 @@
      if (midi_binding(*this, b, value)) return; // roadmap P4: a MIDI track's device and SysEx file
      auto& t = track();
      switch (b.kind) {
@@ -5579,7 +5593,7 @@
      case Kind::Param:
          set_param(ui.track, b.id, value);
          if (t.engine != EngineKind::Midi || midi_track::is_cc(b.id) || b.id == midi_track::Bend) record_motion(b.id, value); // of a MIDI track's own, its slots and bend are lanes
-@@ -717,7 +769,7 @@
+@@ -717,7 +772,7 @@
      }
      case Kind::ChopZoom: ui.chop_zoom = uint8_t(value); ui.chop_focus = uint8_t(b.id % 2); ui.chop_view = {}; break;
      case Kind::FileJump: ui.files_cursor = uint16_t(value); break;
@@ -5588,7 +5602,7 @@
      case Kind::ProjectJump: ui.project_cursor = uint16_t(value); break;
      case Kind::ProjectSort: ui.project_sort = uint8_t(value); break;
      case Kind::PadFine: pad().fine = int8_t(value); send_pad(ui.track, t.last_pad); record_pad_motion(PadParam::Fine, value); break;
-@@ -800,7 +852,15 @@
+@@ -800,7 +855,15 @@
      case Kind::MarksRamp: roll_marks_ramp(*this, value); break;                               // Roll's Shift + K2, marked notes                             // Roll's Shift + K1
      case Kind::EuclidHits: case Kind::EuclidSteps: case Kind::EuclidRotate: set_euclid(b.kind, value); break;
      case Kind::TrackSpeed: set_speed(unsigned(b.id), value); break;
@@ -5605,7 +5619,7 @@
      case Kind::FollowAction: case Kind::FollowOther: case Kind::FollowAfter: case Kind::FollowChance: set_follow(b.kind, value); break; // roadmap P5
      case Kind::SceneTempo: set_scene_tempo(unsigned(b.id), value * 10); break; // Patterns' SCENE: below 30, none of its own
      case Kind::PrintTapPick: ui.print_sheet.tap = value ? PrintTap::PreFx : PrintTap::PostFx; break; // freeze plan F2c
-@@ -1384,6 +1444,7 @@
+@@ -1384,6 +1447,7 @@
  }
  
  void Context::apply_edit(const Edit& e, bool after) {
@@ -5613,7 +5627,7 @@
      if (e.pad >= 0) restore_pad(e.track, unsigned(e.pad), after ? e.pad_after : e.pad_before);
      if (after) for (const auto& [kit, value] : e.pads_after) restore_pad(e.track, kit, value);
      else for (auto p = e.pads_before.rbegin(); p != e.pads_before.rend(); ++p) restore_pad(e.track, p->first, p->second);
-@@ -1393,6 +1454,8 @@
+@@ -1393,6 +1457,8 @@
      if (song) restore_song(*song);
      const auto& motion = after ? e.motion_after : e.motion_before;
      if (motion) restore_motion(*motion);
@@ -5622,7 +5636,7 @@
      const auto& whole = after ? e.track_after : e.track_before;
      if (whole) restore_track(*this, e.track, *whole); // last: its pack carries the motion as restored
      if (e.swap_a >= 0) trade_tracks(*this, unsigned(e.swap_a), unsigned(e.swap_b)); // a move: the same swap again
-@@ -1412,6 +1475,7 @@
+@@ -1412,6 +1478,7 @@
          if (project.seq_tempo != m->per_pattern) { project.seq_tempo = m->per_pattern; send({Type::SeqTempo, 0, 0, ui.lead_pattern, int16_t(m->per_pattern)}); }
      }
      dirty = true;
@@ -5681,7 +5695,7 @@
 +#endif
 --- /dev/null
 +++ b/src/rhythmer/shell/gen8_check.h
-@@ -0,0 +1,290 @@
+@@ -0,0 +1,303 @@
 +// SPDX-License-Identifier: GPL-3.0-only
 +#pragma once
 +#include "rhythmer/model/project_file.h"
@@ -5892,6 +5906,19 @@
 +     x.track().engine=EngineKind::Plugin;x.track().plugin=0;std::strcpy(x.project.plugins[0].name,"Acid Engine");x.ui.sheet_row=4;patterns_page.push(x);if(x.ui.gen8_mode!=4)return gen_failure(65,__LINE__);patterns_page.soft(x,0);if(x.ui.gen8_mode!=0||!x.ui.sheet_open)return gen_failure(66,__LINE__);
 +     x.track().engine=EngineKind::Sampler;x.track().break_bars=2;x.load_sound(0,EngineKind::Sampler,0);if(x.track().break_bars)return gen_failure(68,__LINE__);
 +     x.track().engine=EngineKind::Midi;x.ui.gen8_mode=2;auto snap=std::make_unique<Snapshot>();s.snapshot(*snap,1);if(x.ui.gen8_mode!=0)return gen_failure(67,__LINE__);
++    }
++    // Physical Back follows the same hierarchy as the on-screen GEN BACK.
++    {EngineHost h;Shell s(h);auto& x=s.context();x.load_sound(0,EngineKind::Sampler,0);
++     auto press=[&](SurfaceButton b,bool down){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(b);e.input.pressed=down;s.surface(e,2000);};
++     auto unchanged=x.patterns.at[0];auto seed=x.project.gen8.seed;
++     for(unsigned mode:{1u,2u,3u,4u}){
++       x.ui.page=PageId::Patterns;x.ui.sheet_open=true;x.ui.gen8_mode=uint8_t(mode);x.ui.sheet_row=1;
++       press(SurfaceButton::Shift,true);press(SurfaceButton::WheelPush,true);press(SurfaceButton::WheelPush,false);press(SurfaceButton::Shift,false);
++       if(x.ui.page!=PageId::Patterns||!x.ui.sheet_open||x.ui.gen8_mode||x.ui.sheet_row)return gen_failure(230,__LINE__);
++       if(x.patterns.at[0]!=unchanged||x.project.gen8.seed!=seed)return gen_failure(231,__LINE__);
++       press(SurfaceButton::Shift,true);press(SurfaceButton::WheelPush,true);press(SurfaceButton::WheelPush,false);press(SurfaceButton::Shift,false);
++       if(x.ui.sheet_open||x.ui.page!=PageId::Patterns)return gen_failure(232,__LINE__);
++     }
 +    }
 +    // Native Edit starts at synthesis row two; Back returns to its caller.
 +    {EngineHost h;Shell s(h);auto& x=s.context();x.track().engine=EngineKind::Plugin;x.track().plugin=0;x.ui.page=PageId::Stage;
@@ -6348,7 +6375,7 @@
  #include <algorithm>
  #include <cstring>
  #include <memory>
-@@ -27,11 +28,12 @@
+@@ -27,11 +28,15 @@
          return true;
      }
      if (!new_track_locked(c)) return false;
@@ -6361,10 +6388,13 @@
 +    case B::Minus: case B::Plus: return false; // Undo/Redo must work after removing an instrument
 +    case B::TopMiddle: case B::TopRight: if(ui.page==PageId::Stage)return false; break;
 +    case B::PadBank: return false;    // + pad: another track
++    // Keep the native two-button MIX chord available without creating a sound.
++    // The shell still suppresses each key's standalone job while empty.
++    case B::PadFx: case B::KnobFx: if(!ui.shift)return false; break;
      default: break;
      }
      ui.new_taken |= bit;
-@@ -64,7 +66,7 @@
+@@ -64,7 +69,7 @@
      }
      if (ui.recording) return;
      bool doors = ui.new_for >= 0 && ui.page == PageId::Stage; // another empty track picked on the doors: the same page to go back to
@@ -6373,7 +6403,7 @@
      ui.new_for = int8_t(ui.track % track_count);
      c.open(PageId::Stage);
      if (!doors) { ui.new_pick_from = float(ui.new_pick % new_choice_count) + 0.9f; ui.new_pick_at = c.now ? c.now : 1; } // the cards slide in
-@@ -78,7 +80,7 @@
+@@ -78,7 +83,7 @@
      PageId back = ui.new_back;
      if (choice == NewChoice::Plugin) { // the card's instruments: the track turns PLUGIN once one is picked (choose_plugin)
          c.open_plugin_picker(UiState::PluginTarget::Instrument);
@@ -6382,7 +6412,7 @@
          return;
      }
      // One undo for the track made (Shift + Minus leaves it empty again), as Load Kit.
-@@ -137,4 +139,58 @@
+@@ -137,4 +142,58 @@
      c.back();
  }
  
@@ -6799,7 +6829,15 @@
      if (card_owns_controls(ui_)) { // SD card access (shell/card_access.h): B1, the question's B3, Play and Stop
          if (!pressed) { // a button held as the card went away lets go, doing nothing
              if (b == Button::Shift) ui_.shift = false;
-@@ -463,6 +472,10 @@
+@@ -270,6 +279,7 @@
+         case FxChord::Mix: context_.open(PageId::Tracks); end_copy_away(); return;
+         case FxChord::Wait: return;
+         case FxChord::Own:
++            if (new_track_locked(context_)) return; // empty: only the MIX chord, no solo Punch/Knob FX action
+             if (pressed) break; // Shift: below, as printed
+             if (ui.exit_open || ui.ask != UiState::Ask::None) return; // let go under a sheet: nothing
+             if (b == Button::KnobFx) context_.knob_fx_button();
+@@ -463,6 +473,10 @@
  }
  
  void Shell::pot(unsigned n, int position, bool syncing) {
@@ -6810,7 +6848,7 @@
      auto bindings = page_bindings(*project_, ui_, context_.pattern());
      // A Trim or Chop handle's pot: that handle in focus, the view zoomed in round it (shell/zoom_view.h).
      if (!syncing && focus_handle(ui_, bindings[n])) bindings = page_bindings(*project_, ui_, context_.pattern());
-@@ -654,6 +667,10 @@
+@@ -654,6 +668,10 @@
  
  void Shell::snapshot(Snapshot& out, uint32_t now) {
      std::lock_guard<std::mutex> guard(lock);
@@ -6918,7 +6956,7 @@
  } // namespace rhythmer
 --- /dev/null
 +++ b/src/rhythmer/shell/track_workflow_check.h
-@@ -0,0 +1,128 @@
+@@ -0,0 +1,161 @@
 +// SPDX-License-Identifier: AGPL-3.0-only
 +#pragma once
 +#include "rhythmer/shell/new_track.h"
@@ -7042,7 +7080,40 @@
 +        c.back();TRACK_CHECK(c.ui.page==PageId::Stage,"loaded B Back cannot return to A");
 +        c.plugins=nullptr;
 +    }else {std::fprintf(stderr,"TRACK_WORKFLOW: missing real plugin card fixture\n");return 2;}
-+    std::printf("TRACK_WORKFLOW passed %u assertions; 128-pattern retention, real plugins, undo/redo, scoped navigation, async ownership\n",checks);
++    // Empty tracks retain their carousel but can reach MIX, in either key order.
++    {EngineHost h;Shell s(h);auto& x=s.context();for(auto& t:x.project.tracks)t=Track{};
++     x.ui.track=0;x.ui.page=PageId::Stage;offer_new_track(x);
++     auto button=[&](SurfaceButton b,bool down){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(b);e.input.pressed=down;s.surface(e,3000);};
++     for(bool reversed:{false,true}){
++       x.ui.page=PageId::Stage;auto first=reversed?SurfaceButton::KnobFx:SurfaceButton::PadFx;auto second=reversed?SurfaceButton::PadFx:SurfaceButton::KnobFx;
++       button(first,true);button(second,true);button(first,false);button(second,false);
++       TRACK_CHECK(x.ui.page==PageId::Tracks,"all-empty MIX chord works in either order");
++       TRACK_CHECK(!x.track().used()&&!x.ui.pad_fx_down&&!x.ui.knob_fx_down&&!x.ui.fx_chord_used,"MIX creates no track and leaves no held keys");
++     }
++     for(auto key:{SurfaceButton::PadFx,SurfaceButton::KnobFx}){
++       x.ui.page=PageId::Stage;button(key,true);button(key,false);
++       TRACK_CHECK(x.ui.page==PageId::Stage&&!x.track().used(),"empty solo FX key keeps native lock");
++     }
++    }
++    // Shift + Push always cancels Ask dialogs; ordinary confirmations remain.
++    {EngineHost h;Shell s(h);auto& x=s.context();x.ui.track=0;x.load_sound(0,EngineKind::Midi,0);
++     Event note;note.key=60;x.patterns.at[0][0].events={note};auto kept=x.patterns.at[0];auto history=x.edits.size();
++     auto button=[&](SurfaceButton b,bool down){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(b);e.input.pressed=down;s.surface(e,4000);};
++     for(unsigned k=unsigned(UiState::Ask::EraseKeyEvents);k<=unsigned(UiState::Ask::Unfreeze);++k)for(int pick:{0,2}){
++       ask(x,UiState::Ask(k),0);x.ui.ask_pick=uint8_t(pick);
++       button(SurfaceButton::Shift,true);button(SurfaceButton::WheelPush,true);button(SurfaceButton::WheelPush,false);button(SurfaceButton::Shift,false);
++       TRACK_CHECK(x.ui.ask==UiState::Ask::None,"Shift-Push cancels every Ask answer, including selected destructive answers");
++       TRACK_CHECK(x.track().engine==EngineKind::Midi&&x.patterns.at[0]==kept&&x.edits.size()==history,"dialog Back leaves sound, patterns and Undo untouched");
++     }
++     ask(x,UiState::Ask::ClearTrack,0);x.ui.ask_pick=2;button(SurfaceButton::WheelPush,true);button(SurfaceButton::WheelPush,false);
++     TRACK_CHECK(!x.track().used()&&x.patterns.at[0][0].events.empty(),"plain Push still confirms selected deletion");
++     x.undo();TRACK_CHECK(x.track().engine==EngineKind::Midi&&x.patterns.at[0]==kept,"confirmed deletion remains undoable");
++     ask(x,UiState::Ask::ClearTrack,0);button(SurfaceButton::TopRight,true);button(SurfaceButton::TopRight,false);
++     TRACK_CHECK(!x.track().used(),"B3 confirmation remains available");x.undo();
++     ask(x,UiState::Ask::ClearTrack,0);x.ui.ask_pick=2;button(SurfaceButton::TopLeft,true);button(SurfaceButton::TopLeft,false);
++     TRACK_CHECK(x.track().engine==EngineKind::Midi&&x.patterns.at[0]==kept,"B1 cancellation remains available");
++    }
++    std::printf("TRACK_WORKFLOW passed %u assertions; 128-pattern retention, real plugins, undo/redo, scoped navigation, async ownership, empty MIX chord, safe dialog Back\n",checks);
 +#undef TRACK_CHECK
 +    return 0;
 +}

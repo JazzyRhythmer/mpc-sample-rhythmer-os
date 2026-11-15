@@ -279,6 +279,7 @@ void Shell::press(Button b, bool pressed) {
         case FxChord::Mix: context_.open(PageId::Tracks); end_copy_away(); return;
         case FxChord::Wait: return;
         case FxChord::Own:
+            if (new_track_locked(context_)) return; // empty: only the MIX chord, no solo Punch/Knob FX action
             if (pressed) break; // Shift: below, as printed
             if (ui.exit_open || ui.ask != UiState::Ask::None) return; // let go under a sheet: nothing
             if (b == Button::KnobFx) context_.knob_fx_button();

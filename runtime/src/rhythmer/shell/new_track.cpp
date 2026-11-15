@@ -34,6 +34,9 @@ bool new_track_lock(Context& c, SurfaceButton button, bool pressed) {
     case B::Minus: case B::Plus: return false; // Undo/Redo must work after removing an instrument
     case B::TopMiddle: case B::TopRight: if(ui.page==PageId::Stage)return false; break;
     case B::PadBank: return false;    // + pad: another track
+    // Keep the native two-button MIX chord available without creating a sound.
+    // The shell still suppresses each key's standalone job while empty.
+    case B::PadFx: case B::KnobFx: if(!ui.shift)return false; break;
     default: break;
     }
     ui.new_taken |= bit;

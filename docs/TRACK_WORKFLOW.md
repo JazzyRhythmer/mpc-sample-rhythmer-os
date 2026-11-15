@@ -42,6 +42,20 @@ The [Ableton Move manual, Browsing and Swapping Presets](https://www.ableton.com
 
 The pinned Melodee v0.2.0 TRACKS page had no instrument/type action menu; the fork had not removed one. The fork's added empty-track shortcuts were, however, inconsistent with the native empty-track button lock. KIT, MIDI, Back and Undo/Redo are now enabled through that lock.
 
-The local ARM64 build passed 68 workflow assertions; five native menu previews had zero text issues. Host checks exercise real plugin replacement and state restoration, all-pattern preservation, new/used/empty track transitions, scoped Back behavior, PAD BANK selection, delete cancel/confirm, recording/Freeze guards and asynchronous target ownership. Physical-device validation remains separate. This revision is local and is not a release or installation.
+The local ARM64 build passes track workflow assertions; five native menu previews had zero text issues. Host checks exercise real plugin replacement and state restoration, all-pattern preservation, new/used/empty track transitions, scoped Back behavior, PAD BANK selection, delete cancel/confirm, recording/Freeze guards and asynchronous target ownership. Physical-device validation remains separate. Physical installation remains separate from published early-beta software evidence.
 
 An intentional EMPTY retains its patterns and uses the same native PLUG-IN / KIT / MIDI carousel as a never-assigned track. Push from its TRACKS cell or a stranded empty Edit screen opens that carousel; it does not open TRACK SETUP. Sample Kit with no loaded samples is still a Sample Kit, not EMPTY.
+
+## Contextual keys and all-empty navigation
+
+The selected track's active Note Repeat/arp retains the native rate overlay on TRACKS: B1/B2/B3 choose 1/8, 1/16 and 1/32 (B1/B3 again: 1/4 and 1/64; Shift: triplets). Tap NOTE REPEAT to turn it off and restore TRACK SETUP / SENDS / FX. Enabling arp on its ARP page uses the same state. PAD BANK held, track copy/move and modal questions retain their native higher-priority controls. TRACK SETUP is the normal unmodified TRACKS B1 action, not an override of these modes.
+
+Even when every track is EMPTY, unshifted PAD FX + KNOB FX opens TRACKS, in either order. Each key alone stays blocked on the empty carousel, as upstream; their Shift functions are not newly enabled. This allows track/project management without first creating an instrument. No sound, pattern or track is automatically created.
+
+The instrument preset list's B2 PLUG-INS is an additional route to the same instrument picker as SAMPLE SELECT and CHANGE PLUG-IN. Effect preset lists do not expose this replacement route. The new routes check recording/freeze before opening; SAMPLE SELECT can still browse before its common load-time guard. This is a difference in guard timing, not permission to replace a recording/frozen instrument.
+
+GEN subpages use one Back hierarchy for screen BACK and Shift + Push: subpage → GEN main → Patterns. This applies to Vary, Break, Setup and Acid; it does not change generation, seed or note data. Sample-browser folder traversal remains distinct from cancelling the browser to its caller.
+
+## Confirmation cancellation
+
+Shift + Push cancels a confirmation dialog even if its affirmative action is selected. Plain Push and B3 still confirm; B1 still cancels. Cancel preserves the sound, patterns, pending target and undo history.
