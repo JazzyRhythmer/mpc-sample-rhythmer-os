@@ -48,10 +48,21 @@
         x.gen8_action(3);auto next_seed=x.track().acid_gen.seed;if(next_seed==0xdeadbeef)return gen_failure(413,__LINE__);
         x.undo();if(x.pattern().events!=first||x.track().acid_gen.seed!=0xdeadbeef)return gen_failure(414,__LINE__);
         x.redo();if(x.track().acid_gen.seed!=next_seed)return gen_failure(415,__LINE__);
-        for(unsigned page=0;page<3;page++){auto cards=page_bindings(x.project,x.ui,x.pattern());
-            if(cards[0].kind!=(page<2?Binding::Kind::AcidGenParam:Binding::Kind::AcidGenSeed))return gen_failure(416,__LINE__);
+        for(unsigned page=0;page<2;page++){auto cards=page_bindings(x.project,x.ui,x.pattern());
+            for(unsigned k=0;k<3;++k)if(cards[k].kind!=Binding::Kind::AcidGenParam || cards[k].id!=int(page*3+k))return gen_failure(416,__LINE__);
             patterns_page.soft(x,1);}
         if(x.ui.acid_gen_page)return gen_failure(417,__LINE__);
+        patterns_page.wheel(x,50);if(x.ui.sheet_row!=1)return gen_failure(422,__LINE__);
+        auto keep_seed=x.track().acid_gen.seed;auto keep_edits=x.edits.size();
+        x.ui.sheet_row=2;patterns_page.push(x);
+        if(x.ui.sheet_row || x.track().acid_gen.seed!=keep_seed || x.edits.size()!=keep_edits)return gen_failure(423,__LINE__);
+        x.ui.acid_gen_page=1;patterns_page.soft(x,0);
+        auto normal=page_bindings(x.project,x.ui,x.pattern());
+        if(normal[2].kind!=Binding::Kind::Gen8Seed)return gen_failure(424,__LINE__);
+        x.ui.sheet_row=4;patterns_page.push(x);
+        if(x.ui.gen8_mode!=4 || x.ui.acid_gen_page)return gen_failure(425,__LINE__);
+        auto root_cards=page_bindings(x.project,x.ui,x.pattern());
+        if(root_cards[0].kind!=Binding::Kind::AcidGenParam || root_cards[0].id!=0)return gen_failure(426,__LINE__);
         auto saved=save_project(x.project,x.patterns);auto project=std::make_unique<Project>();auto bank=std::make_unique<PatternBank>();
         if(!load_project(saved,*project,*bank).empty()||project->tracks[0].acid_gen.seed!=next_seed)return gen_failure(418,__LINE__);
         patterns_page.soft(x,0);if(x.ui.gen8_mode||!x.ui.sheet_open)return gen_failure(419,__LINE__);
@@ -62,5 +73,5 @@
         std::array<int32_t,256> audio{};
         for(unsigned n=0;n<400;n++){h.render(audio.data(),128,1);x.gen_break_tick();}
         if(x.project.tracks[0].acid_gen.seed==previous_seed||x.ui.track!=3||x.project.gen8.seed!=song_seed||x.edits.size()!=edits)return gen_failure(421,__LINE__);
-        std::printf("RHYTHMER_ACID settings_pages=3 seed=uint32 deterministic=ok mutate_stream=ok undo_redo=ok save_restore=ok gen_back=ok\n");
+        std::printf("RHYTHMER_ACID settings_pages=2 seed_ui=hidden replay_menu=removed general_gen_seed=retained seed=uint32 deterministic=ok mutate_stream=ok undo_redo=ok save_restore=ok gen_back=ok\n");
     }

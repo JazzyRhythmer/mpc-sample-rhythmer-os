@@ -27,8 +27,6 @@ Physical-device behavior remains a separate validation step. The beta installati
 
 추가 필터는 엔진의 원래 합성·내장 이펙트 뒤, OS PERFORM·트랙 인서트·센드 앞에서 출력 전체를 처리합니다. 인서트 슬롯이나 버스는 사용하지 않습니다. 기본값은 Cutoff 100%, Resonance 0%, LP이며 이 조합에서는 원본 오디오를 그대로 통과합니다. 원본 프리셋을 선택하면 이 중립값으로 시작하고, Save Sound와 프로젝트 저장에는 추가 필터 설정도 포함됩니다. 원본 필터·ENV·LFO·FX 설정은 변경하지 않습니다. Rhythmer Kit 안에서는 패드 원본의 필터와 별도로 킷 자체의 KIT FILTER가 전체 합산 출력을 처리합니다.
 
-## Replacing instruments and changing track families
+### Track replacement and navigation
 
-For another plug-in, press SAMPLE until Pads / Keys, then encoder Push to open the full editor and B1 PLUG-INS. Stage EDIT is a quick subpage with different soft-key labels.
-
-There is currently no visible dedicated track-family conversion menu. KIT / Empty creates an empty Sample Kit. To change Plug-in / Sample Kit / MIDI families, clear the track with PAD BANK + ERASE + its track pad, confirm B3 CLEAR, and choose a new card on the empty Stage. **This clears the sound and patterns together.** Save/copy the project first; SHIFT + Minus undoes the clear. A visible type-change command that preserves compatible patterns is a proposed improvement, not a feature of beta.3.
+The TRACKS page now exposes TRACK SETUP; instrument PRESETS exposes PLUG-INS. Track type changes keep patterns, deletion has its own confirmation, and track-owned browsers follow track selection. Cancel and Undo restore the current context and original instrument state. See [track workflow](TRACK_WORKFLOW.md).

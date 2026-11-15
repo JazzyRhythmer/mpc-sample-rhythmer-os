@@ -6,6 +6,7 @@
 #include "rhythmer/shell/sample_library.h"
 #include "rhythmer/shell/stage_map.h"
 #include "rhythmer/shell/track_copy.h"
+#include "rhythmer/plugin/plugin_rack.h"
 #include <algorithm>
 #include <cstring>
 #include <memory>
@@ -27,11 +28,12 @@ bool new_track_lock(Context& c, SurfaceButton button, bool pressed) {
         return true;
     }
     if (!new_track_locked(c)) return false;
-    bool carousel = ui.page == PageId::Stage;
     switch (button) {
     case B::Play: case B::Stop: case B::TapTempo: case B::TopLeft: return false;
-    case B::WheelPush: if (!ui.shift) return false; break; // Push makes it (Shift + Push, Back, waits)
-    case B::PadBank: if (carousel) return false; break;    // + pad: another track
+    case B::WheelPush: return false; // Push makes it (Shift + Push, Back, waits)
+    case B::Minus: case B::Plus: return false; // Undo/Redo must work after removing an instrument
+    case B::TopMiddle: case B::TopRight: if(ui.page==PageId::Stage)return false; break;
+    case B::PadBank: return false;    // + pad: another track
     default: break;
     }
     ui.new_taken |= bit;
@@ -64,7 +66,7 @@ void offer_new_track(Context& c) {
     }
     if (ui.recording) return;
     bool doors = ui.new_for >= 0 && ui.page == PageId::Stage; // another empty track picked on the doors: the same page to go back to
-    if (!doors) ui.new_back = ui.page;
+    if (!doors) ui.new_back = (ui.page == PageId::Tracks || ui.page == PageId::Patterns || ui.page == PageId::Roll || ui.page == PageId::Motion) ? ui.page : PageId::Stage;
     ui.new_for = int8_t(ui.track % track_count);
     c.open(PageId::Stage);
     if (!doors) { ui.new_pick_from = float(ui.new_pick % new_choice_count) + 0.9f; ui.new_pick_at = c.now ? c.now : 1; } // the cards slide in
@@ -78,7 +80,7 @@ void make_new_track(Context& c, NewChoice choice) {
     PageId back = ui.new_back;
     if (choice == NewChoice::Plugin) { // the card's instruments: the track turns PLUGIN once one is picked (choose_plugin)
         c.open_plugin_picker(UiState::PluginTarget::Instrument);
-        if (picked) ui.plugin_back = back;
+        ui.plugin_back = PageId::Stage;
         return;
     }
     // One undo for the track made (Shift + Minus leaves it empty again), as Load Kit.
@@ -135,6 +137,60 @@ void samples_cancel(Context& c) {
         c.undo(); // the kit made for its first sample: empty again
     ui.new_kit = -1;
     c.back();
+}
+
+void open_track_actions(Context& c) {
+    c.ui.track_action = 0;
+    c.ui.track_types = false;
+    c.open(PageId::TrackActions);
+}
+
+void change_track_type(Context& c, EngineKind kind) {
+    if (c.ui.recording || c.host_recording()) { c.notice("Finish recording first"); return; }
+    if (c.frozen_edit(c.ui.track)) return;
+    if (kind == EngineKind::Plugin) { c.open_plugin_picker(UiState::PluginTarget::Instrument); return; }
+    if (kind == c.track().engine) {
+        if(kind==EngineKind::None) offer_new_track(c);
+        else c.open(PageId::Stage);
+        return;
+    }
+    c.close_gesture();
+    unsigned t = c.ui.track;
+    Edit e = c.begin_edit("Change track type", t, -1, false);
+    e.motion_before.reset();
+    e.track_before = std::make_unique<TrackState>(track_state(c,t));
+    if(c.plugins && c.track().engine==EngineKind::Plugin && c.track().plugin<max_plugins){
+        unsigned entry=c.track().plugin;auto states=c.plugins->states();
+        e.gen_plugins_before.push_back({entry,c.project.plugins[entry],states[entry]});
+        e.gen_plugins_after=e.gen_plugins_before;
+    }
+    auto next = std::make_unique<TrackState>(*e.track_before);
+    Track fresh;
+    fresh.mix = next->track.mix;
+    fresh.fx = next->track.fx;
+    fresh.pattern = next->track.pattern;
+    fresh.speed = next->track.speed;
+    rhythmer::load_sound(fresh,kind,0);
+    if (kind == EngineKind::Sampler) { fresh.layout = PadLayout::Drums; fresh.set_name("KIT"); }
+    next->track = fresh;
+    if(c.kit_target==int(t))c.kit_target=-2;
+    if(c.bank_target==int(t))c.bank_target=-2;
+    if (c.ui.break_pending >= 0 && unsigned(c.ui.break_job_track>=0?c.ui.break_job_track:c.ui.break_track) == t) c.ui.break_pending = -1;
+    c.send({Command::Type::AllNotesOff,uint8_t(t)});
+    restore_track(c,t,*next);
+    e.track_after = std::move(next);
+    c.edits.push(std::move(e));
+    c.ui.new_for = -1;
+    c.ui.new_back = PageId::Stage;
+    c.ui.back_depth = 0;
+    stage_go(c.ui,0,0);
+    if(kind==EngineKind::None) {
+        c.ui.new_pick=uint8_t(NewChoice::Plugin);
+        offer_new_track(c);
+    } else c.open(PageId::Stage);
+    c.ui.back_depth=0;
+    if (c.plugins) c.plugins->sync(c.project,c.plugins_asleep());
+    c.notice("Type changed; patterns kept");
 }
 
 } // namespace rhythmer

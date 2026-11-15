@@ -15,6 +15,7 @@
 #include "rhythmer/pages/common.h"
 #include "rhythmer/pages/pages.h"
 #include "rhythmer/shell/midi_track_jobs.h"
+#include "rhythmer/shell/new_track.h"
 #include "rhythmer/ui/widgets.h"
 #include "rhythmer/plugin/plugin_rack.h"
 #include <algorithm>
@@ -306,6 +307,7 @@ void wheel(Context& c, int delta) {
 }
 
 void push(Context& c) {
+    if(!c.track().used()){offer_new_track(c);return;}
     if(break_home(c)){c.ui.break_perf_page=uint8_t((c.ui.break_perf_page+1)%6);return;}
     if(c.track().engine==EngineKind::Plugin){
         if(!c.ui.edit_page[c.ui.track])soft(c,2);

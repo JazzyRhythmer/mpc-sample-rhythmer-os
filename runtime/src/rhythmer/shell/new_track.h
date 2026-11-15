@@ -54,6 +54,9 @@ void cancel_new_track(Context& c);
 void offer_new_track(Context& c);
 // The card in the middle pressed: the track made, one undo step.
 void make_new_track(Context& c, NewChoice choice);
+// Replace only the sound/type; retain every pattern and mixer/insert settings.
+void change_track_type(Context& c, EngineKind kind);
+void open_track_actions(Context& c);
 // A sample loaded: a kit made for Samples goes back to the page it was picked on.
 void new_track_landed(Context& c);
 // B1 CANCEL at the top of Samples: back, and a kit just made there for its first sample empty again.

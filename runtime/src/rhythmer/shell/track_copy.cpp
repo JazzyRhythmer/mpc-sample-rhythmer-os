@@ -3,6 +3,7 @@
 #include "rhythmer/shell/track_copy.h"
 #include "rhythmer/engine/engine_host.h"
 #include "rhythmer/shell/context.h"
+#include "rhythmer/plugin/plugin_rack.h"
 #include "rhythmer/shell/track_swap.h"
 #include <cstring>
 
@@ -26,6 +27,11 @@ TrackState track_state(const Context& c, unsigned t) {
 
 void restore_track(Context& c, unsigned t, const TrackState& state) {
     t %= track_count;
+    // Whole-track replacement/undo invalidates late sound loads aimed at its previous state.
+    if(c.kit_target==int(t))c.kit_target=-2;
+    if(c.bank_target==int(t))c.bank_target=-2;
+    unsigned break_target=unsigned(c.ui.break_job_track>=0?c.ui.break_job_track:c.ui.break_track);
+    if(c.ui.break_pending>=0 && break_target==t)c.ui.break_pending=-1;
     c.project.tracks[t] = state.track;
     c.patterns.at[t] = state.patterns;
     c.free_retired();
@@ -126,9 +132,17 @@ void clear_track(Context& c, unsigned t) {
     std::string name = "Track " + std::to_string(t + 1);
     if (c.ui.recording) { c.notice("Clear track: not in a take"); return; }
     if (!track_clearable(c.project.tracks[t], c.patterns.at[t])) { c.notice(name + " is empty"); return; }
+    if(c.kit_target==int(t))c.kit_target=-2;
+    if(c.bank_target==int(t))c.bank_target=-2;
+    if(c.ui.break_pending>=0 && unsigned(c.ui.break_job_track>=0?c.ui.break_job_track:c.ui.break_track)==t)c.ui.break_pending=-1;
     std::string what = "Clear track " + std::to_string(t + 1);
     Edit edit = c.begin_edit(what.c_str(), t, -1, false);
     edit.track_before = std::make_unique<TrackState>(track_state(c, t));
+    if(c.plugins && c.project.tracks[t].engine==EngineKind::Plugin && c.project.tracks[t].plugin<max_plugins){
+        unsigned entry=c.project.tracks[t].plugin;auto states=c.plugins->states();
+        edit.gen_plugins_before.push_back({entry,c.project.plugins[entry],states[entry]});
+        edit.gen_plugins_after=edit.gen_plugins_before;
+    }
     auto next = std::make_unique<TrackState>();
     next->track.mix = c.project.tracks[t].mix; // the strip stays
     for (auto& p : next->patterns) p.length = c.project.bar_ticks();
@@ -136,6 +150,7 @@ void clear_track(Context& c, unsigned t) {
     edit.track_after = std::move(next);
     c.notice(name + " cleared");
     c.edits.push(std::move(edit));
+    if(c.ui.track==t && c.ui.page==PageId::TrackActions){c.open(PageId::Stage);c.ui.back_depth=0;}
 }
 
 } // namespace rhythmer

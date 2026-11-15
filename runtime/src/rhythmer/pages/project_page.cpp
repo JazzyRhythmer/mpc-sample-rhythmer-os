@@ -164,13 +164,14 @@ void draw(Paint& p, const Snapshot& s) {
                        : "SD / PROJECTS" + (s.project_folder.empty() ? juce::String() : " / " + juce::String(s.project_folder));
     h.left.push_back(pill(where));
     if (v.free_bytes) h.right.push_back(pill(Icon::Card, free_text(v.free_bytes)));
+    if(s.ui.project_kit_only) h.left.push_back(chip("LOAD KIT",colour::text));
     bool sheet = s.ui.sheet_open;
     unsigned count = project_rows(v.entries.size(), s.project_folder), cursor = std::min<unsigned>(s.ui.project_cursor, std::max(count, 1u) - 1);
     const auto* in_hand = entry_at(v, cursor, s.project_folder);
     bool open_one = in_hand && in_hand->path == s.project_path, mpc = in_hand && in_hand->mpc();
     if (s.ui.move_open) frame(p, s, {{"BACK", "", "MOVE"}, 2, colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::Check}}, h);
     else if (sheet) frame(p, s, {{"BACK", "", ""}, -1, colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::None}}, h); // the cards
-    else frame(p, s, {{"BACK", inside ? "CARD" : "INTERNAL", "OPEN"}, 2, colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::Check}}, h); // B2: the other drive
+    else frame(p, s, {{"BACK", inside ? "CARD" : "INTERNAL", s.ui.project_kit_only ? "LOAD KIT" : "OPEN"}, 2, colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::Check}}, h); // B2: the other drive
 
     unsigned first = cursor < 3 ? 0 : std::min(cursor - 3, count > visible ? count - visible : 0);
     for (unsigned row = 0; row < visible && first + row < count; ++row)
@@ -351,6 +352,7 @@ void open_row(Context& c) {
         if (c.store) c.store->list(c.project_folder);
         return;
     }
+    if(c.ui.project_kit_only) {c.load_kit_file(e->path,e->name);return;}
     c.ui.sheet_open = true; c.ui.sheet_row = 0; c.ui.delete_armed = false; // the likely job (Save or Load) is the first card
 }
 
@@ -392,6 +394,7 @@ void soft(Context& c, int key) {
     }
     if (key != 0) return;
     if (project_folder_up(c)) return; // BACK: up a folder, or from the card's top back to the tiles
+    if(c.ui.project_kit_only){c.back();return;}
     c.ui.project_list = false;
 }
 } // namespace

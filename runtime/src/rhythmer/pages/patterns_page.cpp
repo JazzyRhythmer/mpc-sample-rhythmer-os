@@ -150,11 +150,11 @@ void draw(Paint& p, const Snapshot& s) {
             static const char* brk[] {"GENRE CHOPS","STRAIGHT","RANDOM CHOPS","MUTATE CHOPS","TAIL FILL","BROWSE SAMPLE","BRK PERF"};
             bool br=s.track().engine==EngineKind::Sampler&&s.track().break_bars;
             bool acid=s.track().engine==EngineKind::Plugin&&s.track().plugin<max_plugins&&std::string(s.project.plugins[s.track().plugin].name)=="Acid Engine";
-            m.count=s.ui.gen8_mode==4?3:s.ui.gen8_mode==2?7:6;
+            m.count=s.ui.gen8_mode==4?2:s.ui.gen8_mode==2?7:6;
             for(unsigned i=0;i<m.count;i++) m.rows[i]={s.ui.gen8_mode==2?brk[i]:gen[i],{},false,false,false};
             if(s.ui.gen8_mode==0&&!s.project.gen8.assign){m.rows[0]={"GENERATE MIDI",{},false,false,false};m.rows[1]={"MUTATE MIDI",{},false,false,false};}
             if(s.ui.gen8_mode==0)m.rows[4]={br?"BREAK GEN":acid?"ACID GEN":"VARIATIONS",{},false,false,false};
-            if(s.ui.gen8_mode==4){m.rows[0]={"GENERATE ACID",{},false,false,false};m.rows[1]={"MUTATE ACID",{},false,false,false};m.rows[2]={"REPLAY SEED",{},false,false,false};}
+            if(s.ui.gen8_mode==4){m.rows[0]={"GENERATE ACID",{},false,false,false};m.rows[1]={"MUTATE ACID",{},false,false,false};}
             m.title=s.ui.gen8_mode==4?"HORTATOR ACID / TRACK":s.ui.gen8_mode==2?"16 SLICES / TEMPO SYNC":(s.project.gen8.assign?juce::String("T1 KIT / T2-4 INSTRUMENTS"):"T"+juce::String(s.project.gen8.first+1)+"-"+juce::String(s.project.gen8.last+1)+" MIDI ONLY");
             if(s.ui.gen8_mode==0){
                 const auto target="T"+juce::String(s.ui.track+1);
@@ -169,7 +169,7 @@ void draw(Paint& p, const Snapshot& s) {
                 m.title="T"+juce::String(s.ui.track+1)+(ready?" / 16 CHOPS":" / LOAD A LOOP");
                 if(!ready)for(unsigned i=0;i<5;++i)m.rows[i].off=true;
             }
-            if(s.ui.gen8_mode==4)m.title="T"+juce::String(s.ui.track+1)+" / SETTINGS "+juce::String(s.ui.acid_gen_page%3+1)+" OF 3";
+            if(s.ui.gen8_mode==4)m.title="T"+juce::String(s.ui.track+1)+" / SETTINGS "+juce::String(s.ui.acid_gen_page%2+1)+" OF 2";
             if(s.ui.gen8_mode==3){m.count=s.project.gen8.assign?4:1;
                 for(unsigned i=0;i<m.count;i++){m.rows[i]={s.project.gen8.assign?"T"+juce::String(i*4+1)+" - T"+juce::String(i*4+4):juce::String("RETURN TO GEN"),s.project.gen8.assign?"KIT T"+juce::String(i*4+1):juce::String(),false,false,false};}m.title=s.project.gen8.assign?"T"+juce::String(gen_song_first(s.project.gen8)+1)+" KIT / T"+juce::String(gen_song_first(s.project.gen8)+2)+"-"+juce::String(gen_song_first(s.project.gen8)+4):"MIDI: FROM - TO";}
         } else m.count = unsigned(Variation::Count);
@@ -188,10 +188,12 @@ void gen_push(Context& c) { // VARY: Push opens it on the row last used; there P
         if(mode==0&&row>=4) {
             bool br=c.track().engine==EngineKind::Sampler&&c.track().break_bars;
             bool acid=c.track().engine==EngineKind::Plugin&&c.track().plugin<max_plugins&&std::string(c.project.plugins[c.track().plugin].name)=="Acid Engine";
-            c.ui.gen8_mode=row==5?3:br?2:acid?4:1;c.ui.sheet_row=c.ui.gen8_mode==3&&c.project.gen8.assign?c.project.gen8.group:0;if(c.ui.gen8_mode==2){bool ready=true;for(unsigned i=0;i<16;++i)ready&=c.track().pads[(c.track().bank%sampler_banks)*16+i].used();if(!ready)c.ui.sheet_row=5;}return;
+            c.ui.gen8_mode=row==5?3:br?2:acid?4:1;c.ui.sheet_row=c.ui.gen8_mode==3&&c.project.gen8.assign?c.project.gen8.group:0;if(c.ui.gen8_mode==4)c.ui.acid_gen_page=0;if(c.ui.gen8_mode==2){bool ready=true;for(unsigned i=0;i<16;++i)ready&=c.track().pads[(c.track().bank%sampler_banks)*16+i].used();if(!ready)c.ui.sheet_row=5;}return;
         }
         if(mode==4){
-            c.gen8_action(row==2?12:row==1?3:2);return;
+            // An obsolete replay-row cursor must not execute a different action.
+            if(row>=2){c.ui.sheet_row=0;return;}
+            c.gen8_action(row==1?3:2);return;
         }
         if(mode==1)c.vary(Variation(row%unsigned(Variation::Count)));
         else c.gen8_action(mode==2?4+row:row);
@@ -215,7 +217,7 @@ void push(Context& c) {
 // The wheel: the track (the VARY sheet: its rows; Shift: the playhead).
 void wheel(Context& c, int delta) {
     auto& ui = c.ui;
-    if (c.ui.sheet_open) { int count=c.ui.gen8_mode==3?(c.project.gen8.assign?4:1):c.ui.gen8_mode==4?3:c.ui.gen8_mode==2?7:6; c.ui.sheet_row = uint8_t(std::clamp<int>(c.ui.sheet_row + delta, 0, count - 1)); return; }
+    if (c.ui.sheet_open) { int count=c.ui.gen8_mode==3?(c.project.gen8.assign?4:1):c.ui.gen8_mode==4?2:c.ui.gen8_mode==2?7:6; c.ui.sheet_row = uint8_t(std::clamp<int>(c.ui.sheet_row + delta, 0, count - 1)); return; }
     if (ui.shift) { ui.shift_used = true; c.locate(delta); return; } // Shift: the playhead by Q (stopped: where Shift + Play carries on)
     c.select_track(unsigned(std::clamp<int>(int(ui.track) + delta, 0, int(track_count) - 1)));
 }
@@ -229,7 +231,7 @@ void soft(Context& c, int key) {
     auto& ui = c.ui;
     if (c.ui.sheet_open) { // BACK, -, DO IT
         if(key==0){if(c.ui.gen8_mode){c.ui.gen8_mode=0;c.ui.sheet_row=0;}else c.ui.sheet_open=false;}
-        if(key==1&&c.ui.gen8_mode==4){c.ui.acid_gen_page=uint8_t((c.ui.acid_gen_page+1)%3);return;}
+        if(key==1&&c.ui.gen8_mode==4){c.ui.acid_gen_page=uint8_t((c.ui.acid_gen_page+1)%2);return;}
         if (key == 1) {c.ui.gen8_mode=c.ui.gen8_mode==0?1:c.ui.gen8_mode==1?3:0;c.ui.sheet_row=c.ui.gen8_mode==3&&c.project.gen8.assign?c.project.gen8.group:0;}
         if (key == 2) gen_push(c);
         return;

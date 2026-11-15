@@ -49,7 +49,7 @@ void draw(Paint& p, const Snapshot& s) {
     juce::String other = drive == Drive::Card ? "INTERNAL" : "CARD";
     // The file under the cursor as it previews (mock 7): its row fills as it plays; B3 lit while there is sound.
     PreviewPlace heard = s.ui.preview ? preview_place(s.heads, int(sampler_pads), uint16_t(preview_slot), dsp::model_rate) : PreviewPlace {};
-    SoftKeys keys {{s.files_top ? (s.ui.break_browse?(s.ui.break_load_b?"PERF":"GEN"):"") : "BACK", other, "PREVIEW"}, -1, c, {s.files_top&&!s.ui.break_browse ? KeyIcon::None : KeyIcon::Back, KeyIcon::None, KeyIcon::None}};
+    SoftKeys keys {{s.files_top ? (s.ui.break_browse?(s.ui.break_from_picker?"CANCEL":s.ui.break_load_b?"PERF":"GEN"):"") : "BACK", other, "PREVIEW"}, -1, c, {s.files_top&&!s.ui.break_browse ? KeyIcon::None : KeyIcon::Back, KeyIcon::None, KeyIcon::None}};
     keys.toggles = 4; // PREVIEW names a thing that is on or off: its LED, never ON / OFF (the row fills while it sounds)
     keys.lit = s.ui.preview ? 4 : 0;
     frame(p, s, keys, h);
@@ -120,7 +120,7 @@ void push(Context& c) {
 }
 
 void soft(Context& c, int key) {
-    if(key==0&&c.ui.break_browse&&(!c.library||c.library->top())){if(c.ui.break_load_b){c.ui.break_load_b=false;c.open(PageId::Edit);c.ui.break_perf_page=2;return;}c.open(PageId::Patterns);c.ui.sheet_open=true;c.ui.gen8_mode=2;c.ui.sheet_row=5;return;}
+    if(key==0&&c.ui.break_browse&&(!c.library||c.library->top())){if(c.ui.break_from_picker){c.ui.break_from_picker=false;c.open(PageId::Plugins);return;}if(c.ui.break_load_b){c.ui.break_load_b=false;c.open(PageId::Edit);c.ui.break_perf_page=2;return;}c.open(PageId::Patterns);c.ui.sheet_open=true;c.ui.gen8_mode=2;c.ui.sheet_row=5;return;}
     if (!c.library) return;
     auto& ui = c.ui;
     if (key == 0) { if (c.library->top()) samples_cancel(c); else c.library->browse_up(); } // at the top: CANCEL

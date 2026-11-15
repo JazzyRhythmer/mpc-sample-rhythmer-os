@@ -9,3 +9,7 @@ Existing sample-base startup/recovery, bounded command paths and plugin lifecycl
 Rhythmer musical source snapshots, GPL notice and hashes are in third_party/jiant-gen. Native adaptation coverage is described in GEN8_BREAK.md. No proprietary ROM or bundled break audio is supplied.
 
 Offline validation results are in VERIFICATION.md. Full asset/dependency redistribution review and real-device validation remain separate gates.
+
+Track navigation was compared with pinned Melodee v0.2.0 (`8880d16116ccb3c69f75fb46bf2166b16c51ef0c`). Its TRACKS page contains no replacement/type menu. The fork adds that menu using native load/undo/Freeze primitives, fixes empty-track input gating, and captures asynchronous kit/bank/Break destinations. See TRACK_WORKFLOW.md for source findings and host/device evidence boundaries.
+
+Acid GEN seed visibility is an interface-only adaptation. Native TB-3PO generation, the FM-1 bridge, runtime random-policy code and project serialization remain unchanged. Two Acid settings pages retain Density/Accent/Slide and Octaves/Base Octave/Auto Mutate.

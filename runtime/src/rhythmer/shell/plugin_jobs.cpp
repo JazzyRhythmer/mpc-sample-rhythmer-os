@@ -77,7 +77,7 @@ void Context::open_plugin_picker(UiState::PluginTarget target, unsigned chain, u
     ui.plugin_target = target;
     ui.plugin_chain = uint8_t(chain);
     ui.plugin_slot = uint8_t(slot);
-    ui.plugin_back = target == UiState::PluginTarget::Instrument ? PageId::Edit : ui.page;
+    ui.plugin_back = ui.page;
     plugins->browse(plugins->view().folder); // where the picker was left, listed afresh, on the row it was on
     if (ui.page != PageId::Plugins) ui.plugin_from = ui.page;
     open(PageId::Plugins);
@@ -85,11 +85,15 @@ void Context::open_plugin_picker(UiState::PluginTarget target, unsigned chain, u
 
 void Context::choose_plugin(const PluginFile& file) {
     if (!plugins) return;
+    if(!file.folder && !file.several() && ui.plugin_target==UiState::PluginTarget::Instrument) {
+        if(ui.recording || host_recording()){notice("Finish recording first");return;}
+        if(frozen_edit(ui.track))return;
+    }
     if(file.name=="Break Engine"){
         if(ui.plugin_target!=UiState::PluginTarget::Instrument){notice("Break Engine is an instrument");return;}
-        close_gesture();if(track().engine!=EngineKind::Sampler)load_sound(ui.track,EngineKind::Sampler,0);
-        track().break_bars=track().break_bars?track().break_bars:2;track().layout=PadLayout::Drums;track().set_name("BREAK");
-        ui.break_browse=true;ui.break_track=ui.track;ui.break_bars=track().break_bars;project.gen8.bars=track().break_bars;dirty=true;plugins->sync(project,plugins_asleep());open(PageId::Samples);notice("BREAK: K1 bars, Push loads loop");return;
+        close_gesture();ui.break_from_picker=true;ui.break_load_b=false;
+        ui.break_browse=true;ui.break_track=ui.track;ui.break_bars=track().break_bars?track().break_bars:2;
+        project.gen8.bars=ui.break_bars;open(PageId::Samples);notice("BREAK: choose a loop; Back cancels");return;
     }
     if (file.folder || file.several()) { plugins->browse(file.path); ui.plugins_cursor = 0; return; } // a folder, or a bundle's plug-ins
     if (!file.loadable()) { notice(file.why.empty() ? "Not a plug-in for this MPC" : file.why); return; }
@@ -114,22 +118,32 @@ void Context::choose_plugin(const PluginFile& file) {
     close_gesture();
     // An empty track turned PLUGIN: one undo step, as the carousel's KIT and MIDI ("New track"; shell/new_track.h).
     std::unique_ptr<Edit> made;
-    if (instrument && !track().used()) {
-        made = std::make_unique<Edit>(begin_edit("New track", ui.track, -1, false));
+    if (instrument) {
+        made = std::make_unique<Edit>(begin_edit(track().used()?"Change instrument":"New track", ui.track, -1, false));
         made->motion_before.reset();
         made->track_before = std::make_unique<TrackState>(track_state(*this, ui.track));
+        auto states=plugins->states();
+        made->gen_plugins_before.push_back({unsigned(entry),project.plugins[size_t(entry)],states[size_t(entry)]});
+        if(kit_target==ui.track)kit_target=-2;
+        if(bank_target==ui.track)bank_target=-2;
+        if(ui.break_pending>=0 && unsigned(ui.break_job_track>=0?ui.break_job_track:ui.break_track)==ui.track)ui.break_pending=-1;
     }
     auto& ref = project.plugins[size_t(entry)];
-    bool same = file.path == ref.path && file.id == ref.id;
+    bool same = file.path == ref.path && file.id == ref.id && (!instrument || track().engine==EngineKind::Plugin);
     std::snprintf(ref.path, plugin_path_length, "%s", file.path.c_str());
     std::snprintf(ref.name, sizeof(ref.name), "%s", file.name.c_str());
     ref.id = file.id;
-    if (!same) ref.preset[0] = 0;
+    if (!same) { ref.preset[0] = 0; plugins->set_gen_state(unsigned(entry),{}); }
     if (same) plugins->reload(unsigned(entry)); // picked again: opened afresh (after it failed or stopped working)
     if (instrument) {
         unsigned t = ui.track % track_count;
         auto& tr = project.tracks[t];
+        if(tr.engine != EngineKind::Plugin) {
+            Track fresh;fresh.mix=tr.mix;fresh.fx=tr.fx;fresh.pattern=tr.pattern;fresh.speed=tr.speed;
+            tr=fresh;
+        }
         tr.plugin = uint8_t(entry);tr.break_bars=0;
+        send({Type::AllNotesOff,uint8_t(t)});
         send({Type::TrackPlugin, uint8_t(t), 0, 0, int16_t(entry)});
         if (tr.engine != EngineKind::Plugin) load_sound(t, EngineKind::Plugin, 0);
         if (!file.drums.empty()) use_drum_pads(tr); // a drum machine (8W8, 9W9...): its pads as a kit's, 36 up
@@ -141,6 +155,8 @@ void Context::choose_plugin(const PluginFile& file) {
         if (made) {
             stage_go(ui, 0, 0); // B1: its PRESETS (or its face), as a new kit's TRIM
             made->track_after = std::make_unique<TrackState>(track_state(*this, t));
+            restore_track(*this,t,*made->track_after);
+            made->gen_plugins_after.push_back({unsigned(entry),ref,same?made->gen_plugins_before.front().state:std::vector<uint8_t>{}});
             edits.push(std::move(*made));
         }
     } else {
@@ -151,11 +167,13 @@ void Context::choose_plugin(const PluginFile& file) {
         ui.fx_cursor[UiState::cursor_of(n)] = uint8_t(k);
         ui.fx_row[UiState::cursor_of(n)] = 0;
     }
+    if(instrument){ui.plugin_panel={};plugin_panel_at=0;ui.preset_due=0;}
     ui.plugin_row[size_t(entry)] = 0;
     dirty = true;
     plugins->sync(project, plugins_asleep());
     notice("Loading " + file.name);
-    open(ui.plugin_back);
+    if(instrument) {ui.new_for=-1;ui.new_back=PageId::Stage;open(PageId::Stage);ui.back_depth=0;}
+    else open(ui.plugin_back);
 }
 
 void Context::refresh_plugin_panel(unsigned entry){

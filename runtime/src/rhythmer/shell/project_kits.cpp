@@ -29,6 +29,7 @@ KitImport import_kit(const Project& from, unsigned track, Track& into, const std
     KitImport result;
     const auto& src = from.tracks[track % track_count];
     into.engine = EngineKind::Sampler;into.break_bars=src.break_bars;
+    into.mods=src.mods;into.layout=PadLayout::Drums;
     into.preset = src.preset;
     into.params = src.params;
     into.set_name(src.name);

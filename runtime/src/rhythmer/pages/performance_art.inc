@@ -42,11 +42,86 @@ inline void performance_art(ui::Paint& p,const Signal& s,const juce::String& nam
     const float roll=a*(.16f*std::sin(phrase*.57f)+sustain*.18f*std::sin(phrase*1.13f));
     const float expansion=1.0f+impact*.12f+breath*.08f+sustain*.08f;
     const float drive=t*register_speed;
+
+    struct KitHit {uint32_t at=0;float strength=0;int pad=0;};
+    struct KitPose {std::array<KitHit,6> hits{};std::array<int,16> previous_held{};uint32_t at=0,epoch=0;unsigned next=0;float tail=0,pitch=0,yaw=0,roll=0,yaw_velocity=0,previous_level=0;};
+    static std::array<KitPose,16> kit_poses{};
+    auto& kit=kit_poses[size_t(std::clamp(int(s.ui.track),0,15))];
+    float kit_x=0,kit_y=0,kit_z=0,kit_yaw=0,kit_pitch=0,kit_roll=0,kit_twist=0;
+    if(kind==18){
+        if(reset||!kit.at){kit=KitPose{};kit.previous_held.fill(-1);kit.epoch=s.now;}
+        float dt=kit.at?std::clamp(float(s.now-kit.at)*.001f,0.0f,.10f):.033f;
+        kit.at=s.now;kit.tail=std::max(a,kit.tail*std::exp(-dt*2.5f));
+
+        unsigned added=0;
+        const float level_change=level-kit.previous_level;kit.previous_level=level;
+        auto kit_hit=[&](int pad){
+            const float strength=std::pow(std::clamp(level*1.35f,0.0f,1.0f),.85f);
+            kit.hits[kit.next%6]={s.now,a,pad};++kit.next;
+            if(strength<.015f)return;
+            float direction=(float(pad%4)-1.5f)/1.5f;
+            // Near an extreme, the new strike sends the frame back into travel.
+            if(kit.yaw*direction>.34f)direction=-direction;
+            const float impulse=(.10f+4.60f*std::pow(strength,1.35f))*direction;
+            kit.yaw_velocity=std::clamp(kit.yaw_velocity+impulse,-6.0f,6.0f);
+        };
+        for(int key:s.held_keys){if(key<0)continue;
+            bool was_down=false;for(int old:kit.previous_held)was_down|=old==key;
+            if(!was_down&&a>.025f){kit_hit((key+128-36)%16);++added;}
+        }
+        if(!added&&strike&&a>.025f){kit_hit(selected<0?0:selected%16);++added;}
+        kit.previous_held.fill(-1);unsigned held_index=0;
+        for(int key:s.held_keys)if(key>=0&&held_index<16)kit.previous_held[held_index++]=key;
+        float lift=0,depth=0,sway=0,rx=0,ry=0,rz=0,tw=0;
+        for(const auto& hit:kit.hits){if(!hit.at)continue;
+            float age=float(s.now-hit.at)*.001f;if(age>2.8f)continue;
+            float envelope=hit.strength*std::exp(-age*3.7f),angle=hit.pad*2*pi/16;
+            lift+=envelope*std::sin(age*12.5f);depth+=envelope*std::sin(age*8.5f+.25f);
+            sway+=envelope*std::sin(angle+.4f)*std::sin(age*9.0f);
+            rx+=envelope*std::cos(angle+.25f)*std::sin(age*10.0f);
+            ry+=envelope*std::sin(angle+.5f)*std::sin(age*8.0f);
+            rz+=envelope*std::sin(angle*2+.3f)*std::sin(age*11.0f);
+            tw+=envelope*std::cos(angle*2+.7f)*std::sin(age*7.5f);
+        }
+
+
+        // No free-running oscillator: only strikes and real envelope changes add energy.
+        if(!added&&std::abs(level_change)>.006f){
+            float side=(float((selected<0?0:selected%16)%4)-1.5f)/1.5f;
+            kit.yaw_velocity+=level_change*side*.55f;
+        }
+        const float damping=6.3f-std::min(1.0f,kit.tail)*.7f;
+        const float step=dt*.25f;
+        for(int i=0;i<4;++i){
+            kit.yaw_velocity+=(-46.0f*kit.yaw-damping*kit.yaw_velocity)*step;
+            kit.yaw+=kit.yaw_velocity*step;
+            if(kit.yaw>.65f){kit.yaw=.65f;kit.yaw_velocity=std::min(0.0f,kit.yaw_velocity)*.35f;}
+            if(kit.yaw<-.65f){kit.yaw=-.65f;kit.yaw_velocity=std::max(0.0f,kit.yaw_velocity)*.35f;}
+        }
+        if(std::abs(kit.yaw)<.00015f&&std::abs(kit.yaw_velocity)<.0005f){kit.yaw=0;kit.yaw_velocity=0;}
+        kit_x=0;kit_y=0;kit_z=0;
+        kit_pitch=0;kit_roll=0;kit_twist=0;kit_yaw=.14f*std::tanh(kit.yaw/.30f);
+
+    }
+
     struct V {float x,y,z;};struct Face {std::array<V,4> v;float z,light;};
     std::array<Face,384> faces{};unsigned count=0;
     const float yaw=.35f+std::sin(phrase*.64f)*a*(.82f+sustain*.3f)+pan*.12f;
     const float tilt=.26f+(pitch-.5f)*.22f+std::sin(phrase*.43f)*a*.32f;
     auto rotate=[&](V v){
+
+        if(kind==18){
+            const float radius=std::min(1.0f,std::sqrt(v.x*v.x+v.y*v.y));
+            const float twist=kit_twist*(.25f+.75f*radius*radius+.20f*v.z);
+            float xx=v.x*std::cos(twist)-v.y*std::sin(twist),yy=v.x*std::sin(twist)+v.y*std::cos(twist);
+            float zz=v.z+kit_twist*xx*yy*.32f;
+            float tx=xx*std::cos(kit_yaw)+zz*std::sin(kit_yaw),tz=-xx*std::sin(kit_yaw)+zz*std::cos(kit_yaw);
+            const float tilt=.694f+kit_pitch;
+            float ty=yy*std::cos(tilt)-tz*std::sin(tilt),depth=yy*std::sin(tilt)+tz*std::cos(tilt);
+            return V{tx*std::cos(kit_roll)-ty*std::sin(kit_roll)+kit_x,
+                     tx*std::sin(kit_roll)+ty*std::cos(kit_roll)+kit_y,depth+kit_z};
+        }
+
         // The original mesh remains; twist, orbit and envelope-driven depth
         // make each existing sculpture articulate rather than change identity.
         float twist=a*.16f*std::sin(v.y*1.8f+phrase+sustain*pi);
@@ -123,9 +198,59 @@ inline void performance_art(ui::Paint& p,const Signal& s,const juce::String& nam
     case 17: // Acid: a resonant, twisting filter tunnel.
         for(int j=0;j<10;++j)for(int i=0;i<24;++i){auto v=[&](int z,int n){float f=float(z)/10,q=n*2*pi/24+f*(.8f+a*.8f)+drive*.25f,r=1.3f-f*.95f;return V{std::cos(q)*r,std::sin(q)*r*.7f,-f*1.7f};};add(v(j,i),v(j,i+1),v(j+1,i+1),v(j+1,i),j%2?.36f:.8f);}
         break;
-    case 18: // Kit: a radial ring of 16 sound pillars; selected pad opens.
-        for(int i=0;i<16;++i){float q=i*2*pi/16,hh=.15f+(i==selected%16?.42f+a*.18f:.08f);box({std::cos(q)*1.18f,std::sin(q)*.48f,0},{.09f,hh,.11f},i==selected%16?1:.4f);}
+    case 18: { // Kit: struck drum skin, rebound, angular pressure waves.
+        const int pad=selected<0?0:selected%16,voice=pad%4;
+        const float hit_angle=pad*2*pi/16;
+        const float damping=voice==0?4.5f:voice==1?8.0f:voice==3?14.0f:6.0f;
+        const float pulse=a*std::exp(-age*damping);
+        auto skin=[&](int radial,int segment){
+            const float r=float(radial)/7.0f,q=segment*2*pi/24;
+            const float xx=r*std::cos(q),yy=r*std::sin(q);
+            float deformation=0;
+            for(const auto& hit:kit.hits){if(!hit.at)continue;
+                float age=float(s.now-hit.at)*.001f;if(age>2.4f)continue;
+                int voice=hit.pad%4;float angle=hit.pad*2*pi/16;
+                float dx=xx-std::cos(angle)*.24f,dy=yy-std::sin(angle)*.20f,rr=std::sqrt(dx*dx+dy*dy);
+                float frequency=voice==0?9.0f:voice==1?18.0f:voice==3?27.0f:12.0f;
+                float damping=voice==0?4.5f:voice==1?8.0f:voice==3?14.0f:6.0f;
+                deformation+=-.09f*hit.strength*std::exp(-age*24.0f)*std::exp(-rr*rr*10.0f)
+                    +.055f*hit.strength*std::exp(-age*damping)*std::cos(rr*frequency-age*42.0f)*std::exp(-rr*.75f);
+            }
+            return V{xx,yy,.14f*std::tanh(deformation/.14f)*std::sqrt(std::max(0.0f,1.0f-r))};
+        };
+        // Clamped rim and a shallow shell make the surface read as percussion.
+        for(int i=0;i<24;++i){
+            const float q=i*2*pi/24,qq=(i+1)*2*pi/24;
+            auto ring=[&](float r,float angle,float z){return V{r*std::cos(angle),r*std::sin(angle),z};};
+            add(ring(1.0f,q,0),ring(1.08f,q,0),ring(1.08f,qq,0),ring(1.0f,qq,0),.76f);
+            add(ring(1.08f,q,0),ring(1.08f,q,-.16f),ring(1.08f,qq,-.16f),ring(1.08f,qq,0),.28f);
+        }
+        for(int j=0;j<7;++j)for(int i=0;i<24;++i)
+            add(skin(j,i),skin(j+1,i),skin(j+1,i+1),skin(j,i+1),.30f+.26f*pulse+.16f*float((i+pad)%3==0));
+        // Expanding polygon rings: pressure leaving the struck surface.
+        for(unsigned n=0;n<3&&n<kit.next;++n){
+            const auto& hit=kit.hits[(kit.next-1-n)%6];float age=float(s.now-hit.at)*.001f;
+            if(age>=.55f||hit.strength<.025f)continue;
+            const float pulse=hit.strength*std::exp(-age*6.0f);
+            for(int j=0;j<2;++j){
+                const float radius=1.12f+age*1.30f+j*.19f;if(radius>1.90f)continue;
+                const float thickness=.014f+.018f*pulse;
+                for(int i=0;i<16;++i){
+                    auto v=[&](int n,float r){float q=n*2*pi/16;return V{r*std::cos(q),r*std::sin(q),.015f};};
+                    add(v(i,radius),v(i+1,radius),v(i+1,radius+thickness),v(i,radius+thickness),.14f+pulse*.65f-j*.12f-n*.08f);
+                }
+            }
+        }
+        // Short angular attack fragments; no constant orbit or idle rotation.
+        if(impact>.10f&&age<.16f)for(int i=0;i<8;++i){
+            float q=hit_angle+i*2*pi/8,r=1.16f+age*1.5f,tip=r+.09f+impact*.18f;
+            V a0{r*std::cos(q-.035f),r*std::sin(q-.035f),.05f};
+            V b0{tip*std::cos(q),tip*std::sin(q),.05f+impact*.12f};
+            V c0{r*std::cos(q+.035f),r*std::sin(q+.035f),.05f};
+            add(a0,b0,c0,c0,.9f);
+        }
         break;
+    }
     case 19: // Break: a segmented tape loop, separating and returning.
         for(int i=0;i<16;++i){float q=i*2*pi/16+drive*.18f,r=1.0f+a*.18f*std::sin(i*.7f+drive*1.8f);box({std::cos(q)*r*1.28f,std::sin(q)*r*.63f,std::sin(q*2)*a*.3f},{.12f,.12f,.12f},i==selected%16?1:.55f);}
         break;
@@ -134,9 +259,9 @@ inline void performance_art(ui::Paint& p,const Signal& s,const juce::String& nam
     }
     // Boot miniatures fit the complete projected silhouette, with a three-
     // pixel inset for antialiasing. Instrument pages retain their original framing.
-    auto project=[&](V v){float perspective=3.6f/(3.6f-v.z*.35f);return V{v.x*w*.29f*perspective,-v.y*h*.48f*perspective,0};};
+    auto project=[&](V v){float perspective=3.6f/(3.6f-v.z*.35f);return V{v.x*w*(kind==18?.217f:.29f)*perspective,-v.y*h*(kind==18?.235f:.48f)*perspective,0};};
     float fit_scale=1,centre_x=0,centre_y=0;
-    if(fit&&count){float left=1e6f,right=-1e6f,top=1e6f,bottom=-1e6f;
+    if(fit&&count&&kind!=18){float left=1e6f,right=-1e6f,top=1e6f,bottom=-1e6f;
         for(unsigned i=0;i<count;++i)for(const auto& v:faces[i].v){auto q=project(v);left=std::min(left,q.x);right=std::max(right,q.x);top=std::min(top,q.y);bottom=std::max(bottom,q.y);}
         fit_scale=std::min((w-6)/std::max(1.0f,right-left),(h-6)/std::max(1.0f,bottom-top));centre_x=(left+right)*.5f;centre_y=(top+bottom)*.5f;
     }

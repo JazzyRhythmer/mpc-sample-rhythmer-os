@@ -2,6 +2,7 @@
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
 #include "rhythmer/tools.h"
 #include "rhythmer/shell/gen8_check.h"
+#include "rhythmer/shell/track_workflow_check.h"
 #include "rhythmer/shell/stage_map.h"
 #include "rhythmer/shell/expansion_install.h"
 #include "rhythmer/shell/mpc_program.h"
@@ -738,7 +739,6 @@ const Preview previews[] {
     {"break-perf-5",[](Shell&,Snapshot& s){s.ui.page=PageId::Edit;s.ui.break_perf_page=5;s.project.tracks[s.ui.track].engine=EngineKind::Sampler;s.project.tracks[s.ui.track].break_bars=2;s.ui.held_pads=1<<6;}},
     {"acid-settings-0",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.ui.gen8_mode=4;s.ui.acid_gen_page=0;s.project.tracks[s.ui.track].engine=EngineKind::Plugin;s.project.tracks[s.ui.track].plugin=0;std::strcpy(s.project.plugins[0].name,"Acid Engine");s.project.tracks[s.ui.track].acid_gen.seed=0xdeadbeef;}},
     {"acid-settings-1",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.ui.gen8_mode=4;s.ui.acid_gen_page=1;s.project.tracks[s.ui.track].engine=EngineKind::Plugin;s.project.tracks[s.ui.track].plugin=0;std::strcpy(s.project.plugins[0].name,"Acid Engine");s.project.tracks[s.ui.track].acid_gen.seed=0xdeadbeef;}},
-    {"acid-settings-2",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.ui.gen8_mode=4;s.ui.acid_gen_page=2;s.project.tracks[s.ui.track].engine=EngineKind::Plugin;s.project.tracks[s.ui.track].plugin=0;std::strcpy(s.project.plugins[0].name,"Acid Engine");s.project.tracks[s.ui.track].acid_gen.seed=0xdeadbeef;}},
     {"gen-open-setup",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.ui.sheet_row=5;}},
     {"gen-open-vary",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.ui.sheet_row=4;}},
     {"break-empty-gen",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.ui.gen8_mode=2;s.ui.sheet_row=5;s.project.tracks[s.ui.track].engine=EngineKind::Sampler;s.project.tracks[s.ui.track].break_bars=2;for(auto& pad:s.project.tracks[s.ui.track].pads)pad=PadSound{};}},
@@ -933,6 +933,10 @@ const Preview previews[] {
     {"stageemptyslide", [](Shell&, Snapshot& s) { // the wheel just moved: Card on its way to the middle
          on_stage(s, 12, 1, 0); s.ui.new_pick = 2; s.ui.new_pick_from = 1; s.now = 1000; s.ui.new_pick_at = 960;
      }},
+    {"trackdeleteconfirm", [](Shell&, Snapshot& s){s.ui.page=PageId::TrackActions;s.ui.track=2;s.ui.track_action=4;s.ui.ask=UiState::Ask::ClearTrack;s.ui.ask_target=2;}},
+    {"trackactions", [](Shell&, Snapshot& s){s.ui.page=PageId::TrackActions;s.ui.track=2;}},
+    {"tracktypes", [](Shell&, Snapshot& s){s.ui.page=PageId::TrackActions;s.ui.track=2;s.ui.track_types=true;}},
+    {"trackdelete", [](Shell&, Snapshot& s){s.ui.page=PageId::TrackActions;s.ui.track=2;s.ui.track_action=4;}},
     {"tracks", [](Shell&, Snapshot& s) { // Pad Bank tapped twice; each track's share of a block (roadmap P2), one heavy
         s.ui.page = PageId::Tracks; s.ui.track = 2; s.playing = true;
         const float loads[] {0.04f, 0.11f, 0.07f, 0.02f, 0.66f, 0.09f, 0.03f, 0.05f};
@@ -2628,6 +2632,7 @@ static int mpc_import(const char* path) {
 
 std::optional<int> run_tool(int argc, char** argv) {
     if(argc==4&&!std::strcmp(argv[1],"--rhythmer-edit-preview"))return edit_preview(argv[2],argv[3]);
+    if(argc==2&&!std::strcmp(argv[1],"--rhythmer-track-check"))return track_workflow_check();
     if(argc==2&&!std::strcmp(argv[1],"--rhythmer-gen8-check"))return gen8_shell_check();
     if (argc >= 2 && !std::strcmp(argv[1], "--rhythmer-monkey")) { // [SEED COUNT MOVES], build.sh's: 1 12 3000
         auto arg = [&](int n, unsigned fallback) { return argc > n ? unsigned(std::strtoul(argv[n], nullptr, 10)) : fallback; };

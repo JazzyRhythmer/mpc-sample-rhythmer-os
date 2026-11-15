@@ -404,6 +404,8 @@ public:
     void start_new_project();                 // its B3: saved first if it has a file, then a new one, Stage
     void load_kit_file(const std::string& path, const std::string& name); // a project's kit onto the selected track, once loaded
     void load_kit(const Project& from, const std::string& name);          // that kit onto the selected track, one undo
+    int kit_target = -1, bank_target = -1;
+    uint8_t bank_target_bank = 0;
     std::string kit_from;                     // the file Load Kit waits for
     // Kit bank files (shell/project_jobs.cpp, model/project_file.h): Push on one in the Samples browser
     // loads it into the selected kit's bank in view, once the service thread has read it.

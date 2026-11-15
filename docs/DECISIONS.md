@@ -8,3 +8,9 @@
 - User break audio stays on the user's storage. No factory break library or proprietary ROM is included.
 - Source builds, offline tests and real-device validation are reported separately.
 - Public documentation describes the software, build procedure and evidence. Private development material is excluded.
+
+- Track instrument/type replacement retains all patterns and uses native undo; track deletion is separately confirmed. Track-owned browsers follow the selected track, while shared bus/master editors retain global ownership. See TRACK_WORKFLOW.md.
+
+- TRACK SETUP opens only with B1 TRACK SETUP on TRACKS. Encoder Push retains native track opening; intentional EMPTY tracks use the native type carousel, preserving patterns. Stage Shift shortcuts retain native behavior.
+
+- Acid GEN keeps its original NEW/MUTATE random policy and saved state. Only its seed knob/readout and Replay menu are removed; six musical settings occupy two pages. General GEN and Break seed controls retain their behavior.

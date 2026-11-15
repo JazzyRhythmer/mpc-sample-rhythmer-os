@@ -87,13 +87,13 @@ void draw_ask_sheet(Paint& p, const Snapshot& s) {
         juce::String what = !target.used() ? juce::String("Its ") + count_of(filled, "pattern", "patterns")
                           : juce::String(target.engine == EngineKind::Sampler ? "Its kit" : "Its sound") + (filled ? " and " + count_of(filled, "pattern", "patterns") : "");
         bool one = target.used() ? !filled : filled == 1;
-        sheet.title = "Clear track " + juce::String(which + 1) + "?";
+        sheet.title = juce::String(s.ui.page==PageId::TrackActions?"Delete track ":"Clear track ") + juce::String(which + 1) + "?";
         sheet.lines = {what + (one ? " goes." : " go."), one ? juce::String("Undo brings it back.") : undo_line};
         sheet.chip = target.used() ? juce::String(engine_info(target.engine).name) : juce::String("EMPTY");
         sheet.chip_colour = track_colour(which);
         sheet.name = "TRACK " + juce::String(which + 1);
         sheet.undo = true;
-        verb = "CLEAR";
+        verb = s.ui.page==PageId::TrackActions?"DELETE":"CLEAR";
         break;
     }
     case Ask::ResetSettings:

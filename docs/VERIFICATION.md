@@ -1,15 +1,11 @@
 # Rhythmer OS 0.4.0-beta.3 verification
 
-This public beta is built from the pinned Melodee 0.2.0 foundation and current RHYTHMER integration patch. Physical MPC Sample validation remains pending.
+This early beta includes TRACK SETUP, track-type changes that preserve patterns, the two-page Acid GEN interface and the approved Rhythmer Kit hit-responsive animation. Built on Melodee by Kerem Kiliç (Ellic Studio) and contributors.
 
-The release build runs runtime unit tests, self-test, GEN/Acid/Break card fixtures, input monkey checks and standard screen checks before stripping and stamping the exact executable. One fresh ASan/UBSan host pass validates the release generation: transport, user preset/reset state, labels, Plaits controls, preset values, parameter roundtrip, single sounds, complete kits, whole-kit and engine filters, selected-pad isolation, original preset audio and authored presets.
+The current runtime passes its build, unit tests, self-test, GEN/Acid/Break fixtures, input monkey checks and standard screen checks. A separate current-runtime check passes 68 track-workflow assertions, covering pattern retention, plug-in replacement, Undo/Redo, scoped navigation and asynchronous ownership. The exact runtime and inputs are bound in the validation receipts.
 
-The catalogue contains 20 track entries, 36 populated 16-pad kits, 2,616 retained original source selections and 43 separately identified authored selections. Original names, DSP attribution and permitted bank data are retained. External Prophet and Erica/Hrtl Elixir banks remain excluded. The source and notice inventory, excluded-bank checks, archive integrity and signed-update identity/tamper checks accompany packaging.
+Engine, plug-in and model source files are byte-identical to the previous accepted beta.3 source archive. Its ASan/UBSan sound-host acceptance remains historical evidence for that unchanged code. Current host checks are listed individually in the receipt; they are not presented as a new complete acceptance pass. Broader usability QA continues and fixes may follow.
 
-Historical beta.3 QA completed one additional full pass with 28,166 UI states and zero measured text issues. Additional historical repeats were not completed. These results are not represented as three completed release passes. Current receipt files bind the exact release runtime and source inputs. Continuous parameter combinations are not exhaustively tested.
+The catalogue contains 20 entries, 36 populated 16-pad kits, 2,616 retained original selections and 43 separately identified authored selections. External Prophet and Erica/Hrtl banks remain excluded. Original licences, credits and corresponding source are retained. No break recordings are bundled.
 
-Use the complete SD ZIP for beta.2 → beta.3: plugin binaries, parameter metadata and the preset catalogue changed. UPDATE replaces only the application.
-
-Device installation/recovery, physical controls, listening, CPU/latency, USB networking/UVC and long sessions remain owner beta tests. Offline checks do not certify hardware performance or timbral equivalence. Original source audio can vary considerably in level; the website demos are separately level-matched examples. This is an early beta, not a hardware-validated stable release.
-
-Based on Melodee by Kerem Kiliç (Ellic Studio) and contributors. Original licences and corresponding source are retained per component.
+Use the full SD ZIP for this update. UPDATE replaces the app only. Device installation/recovery, physical controls, listening, CPU/latency, USB/UVC and long sessions remain owner beta tests. Offline checks do not certify hardware performance.

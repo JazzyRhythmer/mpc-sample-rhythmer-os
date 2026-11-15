@@ -34,17 +34,16 @@ SOURCE 페이지의 **LOAD B**로 두 번째 루프를 선택한다. A와 B는 �
 
 ## Acid Generator
 
-Acid Engine 트랙에서 SEQ → PATTERNS → Shift+B3 GEN → **ACID GEN**을 선택한다. SETTINGS로 설정 페이지를 바꾸며 현재 위치를 제목에서 확인한다.
+Acid Engine 트랙에서 SEQ → PATTERNS → Shift+B3 GEN → **ACID GEN**을 선택한다. B2 SETTINGS로 두 설정 페이지를 번갈아 보며 제목의 1 OF 2 / 2 OF 2에서 현재 위치를 확인한다. 인코더로 GENERATE ACID 또는 MUTATE ACID를 선택하고 Push / B3 APPLY로 실행한다. 재진입은 첫 설정 페이지에서 시작한다.
 
 | 설정 페이지 | 노브 |
 |---|---|
-| 1 / 3 | Density 0–100%, Accent 0–100%, Slide 0–100% |
-| 2 / 3 | Octaves 1–3, Base Octave 0–4, Auto Mutate OFF 또는 1–16마디 |
-| 3 / 3 | 트랙의 Seed 확인·입력 |
+| 1 / 2 | Density 0–100%, Accent 0–100%, Slide 0–100% |
+| 2 / 2 | Octaves 1–3, Base Octave 0–4, Auto Mutate OFF 또는 1–16마디 |
 
 기본값은 FM-1과 같은 Density 70, Accent 40, Slide 25, Octaves 2, Base Octave 1이다. 조성과 스케일은 프로젝트의 현재 설정을 따른다. 생성과 변형에 같은 원본 TB-3PO 함수를 사용한다.
 
-**GENERATE ACID**는 원본 NEW처럼 새 Seed로 새 라인을 만든다. **MUTATE ACID**는 현재 라인을 변형하며 해당 트랙의 32비트 난수 흐름을 이어간다. **REPLAY SEED**는 표시된 Seed와 설정으로 결과를 재현한다. Seed를 노브로 입력할 수 있는 범위는 1–2,147,483,647이며, 생성·변형 과정의 전체 32비트 상태는 저장·복원한다. 다른 트랙이나 4트랙 GEN의 Seed는 공유하지 않는다.
+**GENERATE ACID**는 원본 NEW처럼 새 Seed로 새 라인을 만든다. **MUTATE ACID**는 현재 라인을 변형하며 해당 트랙의 32비트 난수 흐름을 이어간다. 시드는 내부에서만 관리하며 노브·숫자 표시·Replay 메뉴는 제공하지 않는다. 생성·변형 과정의 전체 32비트 상태와 Undo/Redo·프로젝트 저장·복원은 그대로 유지한다. 다른 트랙이나 4트랙 GEN의 Seed는 공유하지 않는다.
 
 Tie는 다음 스텝에서 다시 발음하는 노트로 바꾸지 않고, 기존 노트가 이어지는 길이로 변환한다. 패턴 경계를 넘는 Tie도 보존한다. 현재 SEQ 그리드의 1–64스텝을 사용한다. Accent는 원본의 127/96 벨로시티를 따르고 Slide는 시퀀스의 Slide 명령에 연결한다. Undo/Redo는 패턴과 그 트랙의 Seed를 함께 복구한다.
 

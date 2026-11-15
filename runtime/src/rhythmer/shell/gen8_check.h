@@ -107,7 +107,7 @@ inline int gen8_shell_check() {
         auto br=std::find_if(available.begin(),available.end(),[](const PluginFile& f){return f.name=="Break Engine";});
         if(br==available.end()){return gen_failure(52,__LINE__);}
         c.choose_plugin(*br);
-        if(c.track().engine!=EngineKind::Sampler||!c.track().break_bars||!c.ui.break_browse||c.ui.page!=PageId::Samples)return gen_failure(53,__LINE__);
+        if(c.track().engine!=EngineKind::Plugin||!c.ui.break_from_picker||!c.ui.break_browse||c.ui.page!=PageId::Samples)return gen_failure(53,__LINE__);
         auto browse_engine=std::find_if(available.begin(),available.end(),[](const PluginFile& f){return f.name=="FM-106";});if(browse_engine==available.end())return gen_failure(54,__LINE__);
         c.ui.track=6;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.ui.plugin_back=PageId::Edit;c.choose_plugin(*browse_engine);auto entry=c.track().plugin;
         for(unsigned tries=0;tries<3000&&rack.status(entry)!=PluginStatus::Ready;tries++){std::this_thread::sleep_for(std::chrono::milliseconds(10));}

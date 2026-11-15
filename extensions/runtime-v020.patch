@@ -382,7 +382,7 @@
 +Based on Melodee by Kerem Kiliç (Ellic Studio). Developed by jazzy rhythmer.
 --- /dev/null
 +++ b/docs/guide/break-acid.md
-@@ -0,0 +1,53 @@
+@@ -0,0 +1,52 @@
 +# Break Manipulator와 Acid Generator
 +
 +## Break Engine
@@ -419,17 +419,16 @@
 +
 +## Acid Generator
 +
-+Acid Engine 트랙에서 SEQ → PATTERNS → Shift+B3 GEN → **ACID GEN**을 선택한다. SETTINGS로 설정 페이지를 바꾸며 현재 위치를 제목에서 확인한다.
++Acid Engine 트랙에서 SEQ → PATTERNS → Shift+B3 GEN → **ACID GEN**을 선택한다. B2 SETTINGS로 두 설정 페이지를 번갈아 보며 제목의 1 OF 2 / 2 OF 2에서 현재 위치를 확인한다. 인코더로 GENERATE ACID 또는 MUTATE ACID를 선택하고 Push / B3 APPLY로 실행한다. 재진입은 첫 설정 페이지에서 시작한다.
 +
 +| 설정 페이지 | 노브 |
 +|---|---|
-+| 1 / 3 | Density 0–100%, Accent 0–100%, Slide 0–100% |
-+| 2 / 3 | Octaves 1–3, Base Octave 0–4, Auto Mutate OFF 또는 1–16마디 |
-+| 3 / 3 | 트랙의 Seed 확인·입력 |
++| 1 / 2 | Density 0–100%, Accent 0–100%, Slide 0–100% |
++| 2 / 2 | Octaves 1–3, Base Octave 0–4, Auto Mutate OFF 또는 1–16마디 |
 +
 +기본값은 FM-1과 같은 Density 70, Accent 40, Slide 25, Octaves 2, Base Octave 1이다. 조성과 스케일은 프로젝트의 현재 설정을 따른다. 생성과 변형에 같은 원본 TB-3PO 함수를 사용한다.
 +
-+**GENERATE ACID**는 원본 NEW처럼 새 Seed로 새 라인을 만든다. **MUTATE ACID**는 현재 라인을 변형하며 해당 트랙의 32비트 난수 흐름을 이어간다. **REPLAY SEED**는 표시된 Seed와 설정으로 결과를 재현한다. Seed를 노브로 입력할 수 있는 범위는 1–2,147,483,647이며, 생성·변형 과정의 전체 32비트 상태는 저장·복원한다. 다른 트랙이나 4트랙 GEN의 Seed는 공유하지 않는다.
++**GENERATE ACID**는 원본 NEW처럼 새 Seed로 새 라인을 만든다. **MUTATE ACID**는 현재 라인을 변형하며 해당 트랙의 32비트 난수 흐름을 이어간다. 시드는 내부에서만 관리하며 노브·숫자 표시·Replay 메뉴는 제공하지 않는다. 생성·변형 과정의 전체 32비트 상태와 Undo/Redo·프로젝트 저장·복원은 그대로 유지한다. 다른 트랙이나 4트랙 GEN의 Seed는 공유하지 않는다.
 +
 +Tie는 다음 스텝에서 다시 발음하는 노트로 바꾸지 않고, 기존 노트가 이어지는 길이로 변환한다. 패턴 경계를 넘는 Tie도 보존한다. 현재 SEQ 그리드의 1–64스텝을 사용한다. Accent는 원본의 127/96 벨로시티를 따르고 Slide는 시퀀스의 Slide 명령에 연결한다. Undo/Redo는 패턴과 그 트랙의 Seed를 함께 복구한다.
 +
@@ -2746,6 +2745,24 @@
          } else if (name == "MIDC") { // a track's own MIDI channel; without it none
              unsigned t = r.u8(), channel = r.u8();
              if (r.ok && t < track_count) project->tracks[t].midi_channel = uint8_t(channel <= 16 ? channel : 0);
+--- a/src/rhythmer/pages/ask_sheet.cpp
++++ b/src/rhythmer/pages/ask_sheet.cpp
+@@ -87,13 +87,13 @@
+         juce::String what = !target.used() ? juce::String("Its ") + count_of(filled, "pattern", "patterns")
+                           : juce::String(target.engine == EngineKind::Sampler ? "Its kit" : "Its sound") + (filled ? " and " + count_of(filled, "pattern", "patterns") : "");
+         bool one = target.used() ? !filled : filled == 1;
+-        sheet.title = "Clear track " + juce::String(which + 1) + "?";
++        sheet.title = juce::String(s.ui.page==PageId::TrackActions?"Delete track ":"Clear track ") + juce::String(which + 1) + "?";
+         sheet.lines = {what + (one ? " goes." : " go."), one ? juce::String("Undo brings it back.") : undo_line};
+         sheet.chip = target.used() ? juce::String(engine_info(target.engine).name) : juce::String("EMPTY");
+         sheet.chip_colour = track_colour(which);
+         sheet.name = "TRACK " + juce::String(which + 1);
+         sheet.undo = true;
+-        verb = "CLEAR";
++        verb = s.ui.page==PageId::TrackActions?"DELETE":"CLEAR";
+         break;
+     }
+     case Ask::ResetSettings:
 --- /dev/null
 +++ b/src/rhythmer/pages/break_performance.inc
 @@ -0,0 +1,40 @@
@@ -2831,7 +2848,7 @@
      char text[32];
      switch (b.kind) {
 +    case Kind::AcidGenParam:{static const char* names[]={"DENSITY","ACCENT","SLIDE","OCTAVES","BASE OCTAVE","AUTO MUTATE"};c.label=names[unsigned(b.id)%6];c.value=b.id==5&&!b.value?"OFF":juce::String(b.value);c.unit=b.id<3?"%":b.id==5&&b.value?"BARS":"";break;}
-+    case Kind::AcidGenSeed:c.label="SEED";c.value=juce::String(juce::int64(s.track().acid_gen.seed));break;
++    case Kind::AcidGenSeed: return; // Reserved binding ID; Acid random state is internal, never a UI card.
 +    case Kind::BreakPerfParam:{static const char* names[]={"ORBIT","VARIATION","DRIFT","DJ FILTER","LOOP HOLD","TAIL FILL","GRAIN","SPLICE","SLOW","PLAY MODE"};c.label=names[unsigned(b.id)%10];c.value=b.id==9?(b.value?"CHOP":"LOOP"):b.id==7?juce::String(b.value/10.0,1):b.id>=6?juce::String(b.value):b.id>=4?(b.value?"ON":"OFF"):b.id==3?(b.value==64?"OPEN":b.value<64?"LP "+juce::String(break_filter_hz[b.value]):"HP "+juce::String(break_filter_hz[b.value])):juce::String(b.value);c.unit=b.id==3&&b.value!=64?"Hz":b.id==6?"ms":b.id==7?"ms":b.id==8?"x":"";break;}
      case Kind::Param: {
          const auto& p = track_param_info(track.engine, track.params, unsigned(b.id));
@@ -2912,15 +2929,17 @@
  // SPDX-License-Identifier: AGPL-3.0-only
  // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
  // EDIT (Push on Keys): one engine page at a time, its curve filling the
-@@ -15,6 +16,7 @@
+@@ -14,7 +15,9 @@
+ #include "rhythmer/pages/common.h"
  #include "rhythmer/pages/pages.h"
  #include "rhythmer/shell/midi_track_jobs.h"
++#include "rhythmer/shell/new_track.h"
  #include "rhythmer/ui/widgets.h"
 +#include "rhythmer/plugin/plugin_rack.h"
  #include <algorithm>
  #include <cmath>
  #include <complex>
-@@ -149,21 +151,45 @@
+@@ -149,21 +152,45 @@
      }
  }
  
@@ -2970,7 +2989,7 @@
          if (s.track().plugin >= max_plugins) { // none yet: B1 picks one from the card
              icon(p, Icon::Plug, zone::width / 2.0f - 14, zone::picture_y + 40, 28, colour::dim, 1.4f);
              p.text("NONE", 0, zone::picture_y + 76, zone::width, 14, caps_text(colour::dim), juce::Justification::centred);
-@@ -184,7 +210,8 @@
+@@ -184,7 +211,8 @@
      unsigned count = edit_page_count(info);
      const auto& before = edit_page_at(info, index + count - 1);
      const auto& after = edit_page_at(info, index + 1);
@@ -2980,7 +2999,7 @@
      if (page.picture == Picture::Mod && !s.ui.map_open) {
          unsigned used = 0;
          for (const auto& r : s.track().mods) used += r.used();
-@@ -210,7 +237,21 @@
+@@ -210,7 +238,21 @@
  unsigned page_count(Context& c) { return std::max(edit_page_count(engine_info(c.track().engine)), 1u); }
  
  void soft(Context& c, int key) {
@@ -3002,7 +3021,7 @@
          if (key == 0) c.open_plugin_picker(UiState::PluginTarget::Instrument);
          if (key == 1 && c.ui.plugin_panel.entry == c.track().plugin && c.ui.plugin_panel.programs > 0) c.open_plugin_presets(c.track().plugin);
          if (key == 2) c.toggle_plugin_transport(c.track().plugin);
-@@ -232,17 +273,26 @@
+@@ -232,17 +274,26 @@
  
  // A PLUGIN track's rows of parameters (the panel knows how many).
  void plugin_rows(Context& c, int delta) {
@@ -3030,10 +3049,11 @@
      if (c.track().engine == EngineKind::Plugin) { plugin_rows(c, delta); return; }
      const auto& info = engine_info(c.track().engine);
      if (!info.page_count) return;
-@@ -256,6 +306,12 @@
+@@ -256,6 +307,13 @@
  }
  
  void push(Context& c) {
++    if(!c.track().used()){offer_new_track(c);return;}
 +    if(break_home(c)){c.ui.break_perf_page=uint8_t((c.ui.break_perf_page+1)%6);return;}
 +    if(c.track().engine==EngineKind::Plugin){
 +        if(!c.ui.edit_page[c.ui.track])soft(c,2);
@@ -3043,7 +3063,7 @@
      const auto& info = engine_info(c.track().engine);
      if (!info.page_count) return;
      unsigned t = c.ui.track;
-@@ -283,6 +339,6 @@
+@@ -283,6 +341,6 @@
  }
  } // namespace
  
@@ -3051,6 +3071,27 @@
 +const PageSpec edit_page {draw, break_pad, wheel, push, soft, nudge};
  
  } // namespace rhythmer
+--- a/src/rhythmer/pages/pages.cpp
++++ b/src/rhythmer/pages/pages.cpp
+@@ -56,6 +56,7 @@
+     case PageId::MidiConfig: return midi_config_page;
+     case PageId::CardAccess: return card_access_page;
+     case PageId::Tracks: return tracks_page;
++    case PageId::TrackActions: return track_actions_page;
+     case PageId::Looper: return looper_page;
+     case PageId::Print: return print_page; // freeze plan F2c
+     case PageId::Trim: // lives on Stage now (Context::open lands there)
+--- a/src/rhythmer/pages/pages.h
++++ b/src/rhythmer/pages/pages.h
+@@ -35,7 +35,7 @@
+     pad_edit_page, play_edit_page, envelope_page, filter_page, follow_page, cloud_page, layers_page, mod_page,
+     punch_page, settings_page, about_page, pad_fx_page, time_correct_page, step_edit_page,
+     pad_mix_page, pad_filter_page, filter_env_page, knob_fx_page, compressor_page, flex_beat_page,
+-    fader_page, midi_config_page, card_access_page, tracks_page, looper_page, rec_quantize_page, plugins_page,
++    fader_page, midi_config_page, card_access_page, tracks_page, track_actions_page, looper_page, rec_quantize_page, plugins_page,
+     plugin_presets_page, print_page;
+ // Shift + pad on Samples: the file under the cursor onto the next empty pad (false elsewhere).
+ bool samples_shift_pad(Context& c);
 --- a/src/rhythmer/pages/patterns_page.cpp
 +++ b/src/rhythmer/pages/patterns_page.cpp
 @@ -125,9 +125,9 @@
@@ -3074,7 +3115,7 @@
          p.dim_zone(zone::picture_y, zone::picture_h, 0.7f);
          MenuSheet m;
          m.title = "INTO THE NEXT EMPTY PATTERN"; m.accent = c;
-@@ -145,22 +145,67 @@
+@@ -145,22 +145,69 @@
              bool here = variation_on_kit(Variation(v)) || !kit;
              m.rows[v] = {variation_name(Variation(v)), v < 3 ? juce::String(s.ui.vary_amount) + " %" : juce::String(), false, false, !here};
          }
@@ -3084,11 +3125,11 @@
 +            static const char* brk[] {"GENRE CHOPS","STRAIGHT","RANDOM CHOPS","MUTATE CHOPS","TAIL FILL","BROWSE SAMPLE","BRK PERF"};
 +            bool br=s.track().engine==EngineKind::Sampler&&s.track().break_bars;
 +            bool acid=s.track().engine==EngineKind::Plugin&&s.track().plugin<max_plugins&&std::string(s.project.plugins[s.track().plugin].name)=="Acid Engine";
-+            m.count=s.ui.gen8_mode==4?3:s.ui.gen8_mode==2?7:6;
++            m.count=s.ui.gen8_mode==4?2:s.ui.gen8_mode==2?7:6;
 +            for(unsigned i=0;i<m.count;i++) m.rows[i]={s.ui.gen8_mode==2?brk[i]:gen[i],{},false,false,false};
 +            if(s.ui.gen8_mode==0&&!s.project.gen8.assign){m.rows[0]={"GENERATE MIDI",{},false,false,false};m.rows[1]={"MUTATE MIDI",{},false,false,false};}
 +            if(s.ui.gen8_mode==0)m.rows[4]={br?"BREAK GEN":acid?"ACID GEN":"VARIATIONS",{},false,false,false};
-+            if(s.ui.gen8_mode==4){m.rows[0]={"GENERATE ACID",{},false,false,false};m.rows[1]={"MUTATE ACID",{},false,false,false};m.rows[2]={"REPLAY SEED",{},false,false,false};}
++            if(s.ui.gen8_mode==4){m.rows[0]={"GENERATE ACID",{},false,false,false};m.rows[1]={"MUTATE ACID",{},false,false,false};}
 +            m.title=s.ui.gen8_mode==4?"HORTATOR ACID / TRACK":s.ui.gen8_mode==2?"16 SLICES / TEMPO SYNC":(s.project.gen8.assign?juce::String("T1 KIT / T2-4 INSTRUMENTS"):"T"+juce::String(s.project.gen8.first+1)+"-"+juce::String(s.project.gen8.last+1)+" MIDI ONLY");
 +            if(s.ui.gen8_mode==0){
 +                const auto target="T"+juce::String(s.ui.track+1);
@@ -3103,7 +3144,7 @@
 +                m.title="T"+juce::String(s.ui.track+1)+(ready?" / 16 CHOPS":" / LOAD A LOOP");
 +                if(!ready)for(unsigned i=0;i<5;++i)m.rows[i].off=true;
 +            }
-+            if(s.ui.gen8_mode==4)m.title="T"+juce::String(s.ui.track+1)+" / SETTINGS "+juce::String(s.ui.acid_gen_page%3+1)+" OF 3";
++            if(s.ui.gen8_mode==4)m.title="T"+juce::String(s.ui.track+1)+" / SETTINGS "+juce::String(s.ui.acid_gen_page%2+1)+" OF 2";
 +            if(s.ui.gen8_mode==3){m.count=s.project.gen8.assign?4:1;
 +                for(unsigned i=0;i<m.count;i++){m.rows[i]={s.project.gen8.assign?"T"+juce::String(i*4+1)+" - T"+juce::String(i*4+4):juce::String("RETURN TO GEN"),s.project.gen8.assign?"KIT T"+juce::String(i*4+1):juce::String(),false,false,false};}m.title=s.project.gen8.assign?"T"+juce::String(gen_song_first(s.project.gen8)+1)+" KIT / T"+juce::String(gen_song_first(s.project.gen8)+2)+"-"+juce::String(gen_song_first(s.project.gen8)+4):"MIDI: FROM - TO";}
 +        } else m.count = unsigned(Variation::Count);
@@ -3130,10 +3171,12 @@
 +        if(mode==0&&row>=4) {
 +            bool br=c.track().engine==EngineKind::Sampler&&c.track().break_bars;
 +            bool acid=c.track().engine==EngineKind::Plugin&&c.track().plugin<max_plugins&&std::string(c.project.plugins[c.track().plugin].name)=="Acid Engine";
-+            c.ui.gen8_mode=row==5?3:br?2:acid?4:1;c.ui.sheet_row=c.ui.gen8_mode==3&&c.project.gen8.assign?c.project.gen8.group:0;if(c.ui.gen8_mode==2){bool ready=true;for(unsigned i=0;i<16;++i)ready&=c.track().pads[(c.track().bank%sampler_banks)*16+i].used();if(!ready)c.ui.sheet_row=5;}return;
++            c.ui.gen8_mode=row==5?3:br?2:acid?4:1;c.ui.sheet_row=c.ui.gen8_mode==3&&c.project.gen8.assign?c.project.gen8.group:0;if(c.ui.gen8_mode==4)c.ui.acid_gen_page=0;if(c.ui.gen8_mode==2){bool ready=true;for(unsigned i=0;i<16;++i)ready&=c.track().pads[(c.track().bank%sampler_banks)*16+i].used();if(!ready)c.ui.sheet_row=5;}return;
 +        }
 +        if(mode==4){
-+            c.gen8_action(row==2?12:row==1?3:2);return;
++            // An obsolete replay-row cursor must not execute a different action.
++            if(row>=2){c.ui.sheet_row=0;return;}
++            c.gen8_action(row==1?3:2);return;
 +        }
 +        if(mode==1)c.vary(Variation(row%unsigned(Variation::Count)));
 +        else c.gen8_action(mode==2?4+row:row);
@@ -3152,12 +3195,12 @@
      ui.scene = uint8_t(scene_of(c.project, ui));
      if (ui.patterns_cards == 1) { c.name_scene(ui.scene); return; }
      if (ui.patterns_cards == 2) { c.follow_to_column(); return; }
-@@ -170,28 +215,30 @@
+@@ -170,28 +217,30 @@
  // The wheel: the track (the VARY sheet: its rows; Shift: the playhead).
  void wheel(Context& c, int delta) {
      auto& ui = c.ui;
 -    if (ui.sheet_open) { ui.sheet_row = uint8_t(std::clamp<int>(ui.sheet_row + delta, 0, int(Variation::Count) - 1)); return; }
-+    if (c.ui.sheet_open) { int count=c.ui.gen8_mode==3?(c.project.gen8.assign?4:1):c.ui.gen8_mode==4?3:c.ui.gen8_mode==2?7:6; c.ui.sheet_row = uint8_t(std::clamp<int>(c.ui.sheet_row + delta, 0, count - 1)); return; }
++    if (c.ui.sheet_open) { int count=c.ui.gen8_mode==3?(c.project.gen8.assign?4:1):c.ui.gen8_mode==4?2:c.ui.gen8_mode==2?7:6; c.ui.sheet_row = uint8_t(std::clamp<int>(c.ui.sheet_row + delta, 0, count - 1)); return; }
      if (ui.shift) { ui.shift_used = true; c.locate(delta); return; } // Shift: the playhead by Q (stopped: where Shift + Play carries on)
      c.select_track(unsigned(std::clamp<int>(int(ui.track) + delta, 0, int(track_count) - 1)));
  }
@@ -3177,7 +3220,7 @@
 -        if (key == 2) do_vary(c);
 +    if (c.ui.sheet_open) { // BACK, -, DO IT
 +        if(key==0){if(c.ui.gen8_mode){c.ui.gen8_mode=0;c.ui.sheet_row=0;}else c.ui.sheet_open=false;}
-+        if(key==1&&c.ui.gen8_mode==4){c.ui.acid_gen_page=uint8_t((c.ui.acid_gen_page+1)%3);return;}
++        if(key==1&&c.ui.gen8_mode==4){c.ui.acid_gen_page=uint8_t((c.ui.acid_gen_page+1)%2);return;}
 +        if (key == 1) {c.ui.gen8_mode=c.ui.gen8_mode==0?1:c.ui.gen8_mode==1?3:0;c.ui.sheet_row=c.ui.gen8_mode==3&&c.project.gen8.assign?c.project.gen8.group:0;}
 +        if (key == 2) gen_push(c);
          return;
@@ -3193,7 +3236,7 @@
      if (key == 0) { ui.patterns_cards = 0; return; } // PATTERNS again: the pattern's cards
 --- /dev/null
 +++ b/src/rhythmer/pages/performance_art.inc
-@@ -0,0 +1,148 @@
+@@ -0,0 +1,273 @@
 +// SPDX-License-Identifier: AGPL-3.0-only
 +// Original input-driven geometric sculptures. Screen thread only, <=384 faces;
 +// existing meters/notes supply motion. No audio-thread work or DSP change.
@@ -3238,11 +3281,86 @@
 +    const float roll=a*(.16f*std::sin(phrase*.57f)+sustain*.18f*std::sin(phrase*1.13f));
 +    const float expansion=1.0f+impact*.12f+breath*.08f+sustain*.08f;
 +    const float drive=t*register_speed;
++
++    struct KitHit {uint32_t at=0;float strength=0;int pad=0;};
++    struct KitPose {std::array<KitHit,6> hits{};std::array<int,16> previous_held{};uint32_t at=0,epoch=0;unsigned next=0;float tail=0,pitch=0,yaw=0,roll=0,yaw_velocity=0,previous_level=0;};
++    static std::array<KitPose,16> kit_poses{};
++    auto& kit=kit_poses[size_t(std::clamp(int(s.ui.track),0,15))];
++    float kit_x=0,kit_y=0,kit_z=0,kit_yaw=0,kit_pitch=0,kit_roll=0,kit_twist=0;
++    if(kind==18){
++        if(reset||!kit.at){kit=KitPose{};kit.previous_held.fill(-1);kit.epoch=s.now;}
++        float dt=kit.at?std::clamp(float(s.now-kit.at)*.001f,0.0f,.10f):.033f;
++        kit.at=s.now;kit.tail=std::max(a,kit.tail*std::exp(-dt*2.5f));
++
++        unsigned added=0;
++        const float level_change=level-kit.previous_level;kit.previous_level=level;
++        auto kit_hit=[&](int pad){
++            const float strength=std::pow(std::clamp(level*1.35f,0.0f,1.0f),.85f);
++            kit.hits[kit.next%6]={s.now,a,pad};++kit.next;
++            if(strength<.015f)return;
++            float direction=(float(pad%4)-1.5f)/1.5f;
++            // Near an extreme, the new strike sends the frame back into travel.
++            if(kit.yaw*direction>.34f)direction=-direction;
++            const float impulse=(.10f+4.60f*std::pow(strength,1.35f))*direction;
++            kit.yaw_velocity=std::clamp(kit.yaw_velocity+impulse,-6.0f,6.0f);
++        };
++        for(int key:s.held_keys){if(key<0)continue;
++            bool was_down=false;for(int old:kit.previous_held)was_down|=old==key;
++            if(!was_down&&a>.025f){kit_hit((key+128-36)%16);++added;}
++        }
++        if(!added&&strike&&a>.025f){kit_hit(selected<0?0:selected%16);++added;}
++        kit.previous_held.fill(-1);unsigned held_index=0;
++        for(int key:s.held_keys)if(key>=0&&held_index<16)kit.previous_held[held_index++]=key;
++        float lift=0,depth=0,sway=0,rx=0,ry=0,rz=0,tw=0;
++        for(const auto& hit:kit.hits){if(!hit.at)continue;
++            float age=float(s.now-hit.at)*.001f;if(age>2.8f)continue;
++            float envelope=hit.strength*std::exp(-age*3.7f),angle=hit.pad*2*pi/16;
++            lift+=envelope*std::sin(age*12.5f);depth+=envelope*std::sin(age*8.5f+.25f);
++            sway+=envelope*std::sin(angle+.4f)*std::sin(age*9.0f);
++            rx+=envelope*std::cos(angle+.25f)*std::sin(age*10.0f);
++            ry+=envelope*std::sin(angle+.5f)*std::sin(age*8.0f);
++            rz+=envelope*std::sin(angle*2+.3f)*std::sin(age*11.0f);
++            tw+=envelope*std::cos(angle*2+.7f)*std::sin(age*7.5f);
++        }
++
++
++        // No free-running oscillator: only strikes and real envelope changes add energy.
++        if(!added&&std::abs(level_change)>.006f){
++            float side=(float((selected<0?0:selected%16)%4)-1.5f)/1.5f;
++            kit.yaw_velocity+=level_change*side*.55f;
++        }
++        const float damping=6.3f-std::min(1.0f,kit.tail)*.7f;
++        const float step=dt*.25f;
++        for(int i=0;i<4;++i){
++            kit.yaw_velocity+=(-46.0f*kit.yaw-damping*kit.yaw_velocity)*step;
++            kit.yaw+=kit.yaw_velocity*step;
++            if(kit.yaw>.65f){kit.yaw=.65f;kit.yaw_velocity=std::min(0.0f,kit.yaw_velocity)*.35f;}
++            if(kit.yaw<-.65f){kit.yaw=-.65f;kit.yaw_velocity=std::max(0.0f,kit.yaw_velocity)*.35f;}
++        }
++        if(std::abs(kit.yaw)<.00015f&&std::abs(kit.yaw_velocity)<.0005f){kit.yaw=0;kit.yaw_velocity=0;}
++        kit_x=0;kit_y=0;kit_z=0;
++        kit_pitch=0;kit_roll=0;kit_twist=0;kit_yaw=.14f*std::tanh(kit.yaw/.30f);
++
++    }
++
 +    struct V {float x,y,z;};struct Face {std::array<V,4> v;float z,light;};
 +    std::array<Face,384> faces{};unsigned count=0;
 +    const float yaw=.35f+std::sin(phrase*.64f)*a*(.82f+sustain*.3f)+pan*.12f;
 +    const float tilt=.26f+(pitch-.5f)*.22f+std::sin(phrase*.43f)*a*.32f;
 +    auto rotate=[&](V v){
++
++        if(kind==18){
++            const float radius=std::min(1.0f,std::sqrt(v.x*v.x+v.y*v.y));
++            const float twist=kit_twist*(.25f+.75f*radius*radius+.20f*v.z);
++            float xx=v.x*std::cos(twist)-v.y*std::sin(twist),yy=v.x*std::sin(twist)+v.y*std::cos(twist);
++            float zz=v.z+kit_twist*xx*yy*.32f;
++            float tx=xx*std::cos(kit_yaw)+zz*std::sin(kit_yaw),tz=-xx*std::sin(kit_yaw)+zz*std::cos(kit_yaw);
++            const float tilt=.694f+kit_pitch;
++            float ty=yy*std::cos(tilt)-tz*std::sin(tilt),depth=yy*std::sin(tilt)+tz*std::cos(tilt);
++            return V{tx*std::cos(kit_roll)-ty*std::sin(kit_roll)+kit_x,
++                     tx*std::sin(kit_roll)+ty*std::cos(kit_roll)+kit_y,depth+kit_z};
++        }
++
 +        // The original mesh remains; twist, orbit and envelope-driven depth
 +        // make each existing sculpture articulate rather than change identity.
 +        float twist=a*.16f*std::sin(v.y*1.8f+phrase+sustain*pi);
@@ -3319,9 +3437,59 @@
 +    case 17: // Acid: a resonant, twisting filter tunnel.
 +        for(int j=0;j<10;++j)for(int i=0;i<24;++i){auto v=[&](int z,int n){float f=float(z)/10,q=n*2*pi/24+f*(.8f+a*.8f)+drive*.25f,r=1.3f-f*.95f;return V{std::cos(q)*r,std::sin(q)*r*.7f,-f*1.7f};};add(v(j,i),v(j,i+1),v(j+1,i+1),v(j+1,i),j%2?.36f:.8f);}
 +        break;
-+    case 18: // Kit: a radial ring of 16 sound pillars; selected pad opens.
-+        for(int i=0;i<16;++i){float q=i*2*pi/16,hh=.15f+(i==selected%16?.42f+a*.18f:.08f);box({std::cos(q)*1.18f,std::sin(q)*.48f,0},{.09f,hh,.11f},i==selected%16?1:.4f);}
++    case 18: { // Kit: struck drum skin, rebound, angular pressure waves.
++        const int pad=selected<0?0:selected%16,voice=pad%4;
++        const float hit_angle=pad*2*pi/16;
++        const float damping=voice==0?4.5f:voice==1?8.0f:voice==3?14.0f:6.0f;
++        const float pulse=a*std::exp(-age*damping);
++        auto skin=[&](int radial,int segment){
++            const float r=float(radial)/7.0f,q=segment*2*pi/24;
++            const float xx=r*std::cos(q),yy=r*std::sin(q);
++            float deformation=0;
++            for(const auto& hit:kit.hits){if(!hit.at)continue;
++                float age=float(s.now-hit.at)*.001f;if(age>2.4f)continue;
++                int voice=hit.pad%4;float angle=hit.pad*2*pi/16;
++                float dx=xx-std::cos(angle)*.24f,dy=yy-std::sin(angle)*.20f,rr=std::sqrt(dx*dx+dy*dy);
++                float frequency=voice==0?9.0f:voice==1?18.0f:voice==3?27.0f:12.0f;
++                float damping=voice==0?4.5f:voice==1?8.0f:voice==3?14.0f:6.0f;
++                deformation+=-.09f*hit.strength*std::exp(-age*24.0f)*std::exp(-rr*rr*10.0f)
++                    +.055f*hit.strength*std::exp(-age*damping)*std::cos(rr*frequency-age*42.0f)*std::exp(-rr*.75f);
++            }
++            return V{xx,yy,.14f*std::tanh(deformation/.14f)*std::sqrt(std::max(0.0f,1.0f-r))};
++        };
++        // Clamped rim and a shallow shell make the surface read as percussion.
++        for(int i=0;i<24;++i){
++            const float q=i*2*pi/24,qq=(i+1)*2*pi/24;
++            auto ring=[&](float r,float angle,float z){return V{r*std::cos(angle),r*std::sin(angle),z};};
++            add(ring(1.0f,q,0),ring(1.08f,q,0),ring(1.08f,qq,0),ring(1.0f,qq,0),.76f);
++            add(ring(1.08f,q,0),ring(1.08f,q,-.16f),ring(1.08f,qq,-.16f),ring(1.08f,qq,0),.28f);
++        }
++        for(int j=0;j<7;++j)for(int i=0;i<24;++i)
++            add(skin(j,i),skin(j+1,i),skin(j+1,i+1),skin(j,i+1),.30f+.26f*pulse+.16f*float((i+pad)%3==0));
++        // Expanding polygon rings: pressure leaving the struck surface.
++        for(unsigned n=0;n<3&&n<kit.next;++n){
++            const auto& hit=kit.hits[(kit.next-1-n)%6];float age=float(s.now-hit.at)*.001f;
++            if(age>=.55f||hit.strength<.025f)continue;
++            const float pulse=hit.strength*std::exp(-age*6.0f);
++            for(int j=0;j<2;++j){
++                const float radius=1.12f+age*1.30f+j*.19f;if(radius>1.90f)continue;
++                const float thickness=.014f+.018f*pulse;
++                for(int i=0;i<16;++i){
++                    auto v=[&](int n,float r){float q=n*2*pi/16;return V{r*std::cos(q),r*std::sin(q),.015f};};
++                    add(v(i,radius),v(i+1,radius),v(i+1,radius+thickness),v(i,radius+thickness),.14f+pulse*.65f-j*.12f-n*.08f);
++                }
++            }
++        }
++        // Short angular attack fragments; no constant orbit or idle rotation.
++        if(impact>.10f&&age<.16f)for(int i=0;i<8;++i){
++            float q=hit_angle+i*2*pi/8,r=1.16f+age*1.5f,tip=r+.09f+impact*.18f;
++            V a0{r*std::cos(q-.035f),r*std::sin(q-.035f),.05f};
++            V b0{tip*std::cos(q),tip*std::sin(q),.05f+impact*.12f};
++            V c0{r*std::cos(q+.035f),r*std::sin(q+.035f),.05f};
++            add(a0,b0,c0,c0,.9f);
++        }
 +        break;
++    }
 +    case 19: // Break: a segmented tape loop, separating and returning.
 +        for(int i=0;i<16;++i){float q=i*2*pi/16+drive*.18f,r=1.0f+a*.18f*std::sin(i*.7f+drive*1.8f);box({std::cos(q)*r*1.28f,std::sin(q)*r*.63f,std::sin(q*2)*a*.3f},{.12f,.12f,.12f},i==selected%16?1:.55f);}
 +        break;
@@ -3330,9 +3498,9 @@
 +    }
 +    // Boot miniatures fit the complete projected silhouette, with a three-
 +    // pixel inset for antialiasing. Instrument pages retain their original framing.
-+    auto project=[&](V v){float perspective=3.6f/(3.6f-v.z*.35f);return V{v.x*w*.29f*perspective,-v.y*h*.48f*perspective,0};};
++    auto project=[&](V v){float perspective=3.6f/(3.6f-v.z*.35f);return V{v.x*w*(kind==18?.217f:.29f)*perspective,-v.y*h*(kind==18?.235f:.48f)*perspective,0};};
 +    float fit_scale=1,centre_x=0,centre_y=0;
-+    if(fit&&count){float left=1e6f,right=-1e6f,top=1e6f,bottom=-1e6f;
++    if(fit&&count&&kind!=18){float left=1e6f,right=-1e6f,top=1e6f,bottom=-1e6f;
 +        for(unsigned i=0;i<count;++i)for(const auto& v:faces[i].v){auto q=project(v);left=std::min(left,q.x);right=std::max(right,q.x);top=std::min(top,q.y);bottom=std::max(bottom,q.y);}
 +        fit_scale=std::min((w-6)/std::max(1.0f,right-left),(h-6)/std::max(1.0f,bottom-top));centre_x=(left+right)*.5f;centre_y=(top+bottom)*.5f;
 +    }
@@ -3417,19 +3585,39 @@
 +}
 --- a/src/rhythmer/pages/plugin_presets_page.cpp
 +++ b/src/rhythmer/pages/plugin_presets_page.cpp
-@@ -40,7 +40,7 @@
+@@ -15,13 +15,14 @@
+ #include "rhythmer/plugin/plugin_rack.h"
+ #include "rhythmer/plugin/preset_rows.h"
+ #include "rhythmer/ui/widgets.h"
++#include "rhythmer/shell/new_track.h"
+ 
+ namespace rhythmer {
+ namespace {
+ using namespace ui;
+ constexpr unsigned visible = list_rows;
+ 
+-bool for_instrument(const Snapshot& s) { return s.ui.presets_back == PageId::Edit; }
++bool for_instrument(const Snapshot& s) { return s.ui.presets_back == PageId::Edit || s.ui.presets_back == PageId::Stage; }
+ std::string folder_in_view(const UiState& ui) { return std::string(ui.presets_folder.data()); }
+ 
+ void draw(Paint& p, const Snapshot& s) {
+@@ -40,7 +41,7 @@
          h.left.push_back(pill(Icon::Folder, juce::String::fromUTF8(preset_folder_name(inside).c_str()) + dot + juce::String(held), c));
      }
      if (for_instrument(s)) h.right.push_back(tag_of(s, s.ui.track));
 -    frame(p, s, {{"BACK", "", ""}, -1, c, {KeyIcon::Back, KeyIcon::None, KeyIcon::None}}, h);
-+    frame(p, s, {{"BACK", "", rows.empty()?"":"LOAD"}, -1, c, {KeyIcon::Back, KeyIcon::None, KeyIcon::None}}, h);
++    frame(p, s, {{"BACK", for_instrument(s)?"PLUG-INS":"", rows.empty()?"":"LOAD"}, -1, c, {KeyIcon::Back, KeyIcon::None, KeyIcon::None}}, h);
      if (rows.empty()) {
          icon(p, v.finding ? Icon::Clock : Icon::Layers, zone::width / 2.0f - 14, zone::picture_y + 40, 28, colour::dim, 1.4f);
          p.text(v.finding ? "LOOKING" : "NONE", 0, zone::picture_y + 76, zone::width, 14, caps_text(colour::dim), juce::Justification::centred);
-@@ -85,6 +85,7 @@
+@@ -85,6 +86,11 @@
  
  void soft(Context& c, int key) {
      if (key == 0) c.back_plugin_presets();
++    if (key == 1 && (c.ui.presets_back == PageId::Edit || c.ui.presets_back == PageId::Stage)) {
++        if(c.ui.recording || c.host_recording()) {c.notice("Finish recording first");return;}
++        if(!c.frozen_edit(c.ui.track))c.open_plugin_picker(UiState::PluginTarget::Instrument);
++    }
 +    if (key == 2) push(c);
  }
  } // namespace
@@ -3496,6 +3684,40 @@
              if (!loaded.empty() && file.path == loaded && file.id == loaded_id) r.fact_icon = Icon::Check; // the one loaded
              else if (file.instrument >= 0) r.fact_icon = file.instrument ? Icon::Keyboard : Icon::Sliders;
          }
+--- a/src/rhythmer/pages/project_page.cpp
++++ b/src/rhythmer/pages/project_page.cpp
+@@ -164,13 +164,14 @@
+                        : "SD / PROJECTS" + (s.project_folder.empty() ? juce::String() : " / " + juce::String(s.project_folder));
+     h.left.push_back(pill(where));
+     if (v.free_bytes) h.right.push_back(pill(Icon::Card, free_text(v.free_bytes)));
++    if(s.ui.project_kit_only) h.left.push_back(chip("LOAD KIT",colour::text));
+     bool sheet = s.ui.sheet_open;
+     unsigned count = project_rows(v.entries.size(), s.project_folder), cursor = std::min<unsigned>(s.ui.project_cursor, std::max(count, 1u) - 1);
+     const auto* in_hand = entry_at(v, cursor, s.project_folder);
+     bool open_one = in_hand && in_hand->path == s.project_path, mpc = in_hand && in_hand->mpc();
+     if (s.ui.move_open) frame(p, s, {{"BACK", "", "MOVE"}, 2, colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::Check}}, h);
+     else if (sheet) frame(p, s, {{"BACK", "", ""}, -1, colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::None}}, h); // the cards
+-    else frame(p, s, {{"BACK", inside ? "CARD" : "INTERNAL", "OPEN"}, 2, colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::Check}}, h); // B2: the other drive
++    else frame(p, s, {{"BACK", inside ? "CARD" : "INTERNAL", s.ui.project_kit_only ? "LOAD KIT" : "OPEN"}, 2, colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::Check}}, h); // B2: the other drive
+ 
+     unsigned first = cursor < 3 ? 0 : std::min(cursor - 3, count > visible ? count - visible : 0);
+     for (unsigned row = 0; row < visible && first + row < count; ++row)
+@@ -351,6 +352,7 @@
+         if (c.store) c.store->list(c.project_folder);
+         return;
+     }
++    if(c.ui.project_kit_only) {c.load_kit_file(e->path,e->name);return;}
+     c.ui.sheet_open = true; c.ui.sheet_row = 0; c.ui.delete_armed = false; // the likely job (Save or Load) is the first card
+ }
+ 
+@@ -392,6 +394,7 @@
+     }
+     if (key != 0) return;
+     if (project_folder_up(c)) return; // BACK: up a folder, or from the card's top back to the tiles
++    if(c.ui.project_kit_only){c.back();return;}
+     c.ui.project_list = false;
+ }
+ } // namespace
 --- a/src/rhythmer/pages/roll_page.cpp
 +++ b/src/rhythmer/pages/roll_page.cpp
 @@ -1,3 +1,4 @@
@@ -3542,7 +3764,7 @@
      // The file under the cursor as it previews (mock 7): its row fills as it plays; B3 lit while there is sound.
      PreviewPlace heard = s.ui.preview ? preview_place(s.heads, int(sampler_pads), uint16_t(preview_slot), dsp::model_rate) : PreviewPlace {};
 -    SoftKeys keys {{s.files_top ? "CANCEL" : "BACK", other, "PREVIEW"}, -1, c, {KeyIcon::Back, KeyIcon::None, KeyIcon::None}};
-+    SoftKeys keys {{s.files_top ? (s.ui.break_browse?(s.ui.break_load_b?"PERF":"GEN"):"") : "BACK", other, "PREVIEW"}, -1, c, {s.files_top&&!s.ui.break_browse ? KeyIcon::None : KeyIcon::Back, KeyIcon::None, KeyIcon::None}};
++    SoftKeys keys {{s.files_top ? (s.ui.break_browse?(s.ui.break_from_picker?"CANCEL":s.ui.break_load_b?"PERF":"GEN"):"") : "BACK", other, "PREVIEW"}, -1, c, {s.files_top&&!s.ui.break_browse ? KeyIcon::None : KeyIcon::Back, KeyIcon::None, KeyIcon::None}};
      keys.toggles = 4; // PREVIEW names a thing that is on or off: its LED, never ON / OFF (the row fills while it sounds)
      keys.lit = s.ui.preview ? 4 : 0;
      frame(p, s, keys, h);
@@ -3558,7 +3780,7 @@
  }
  
  void soft(Context& c, int key) {
-+    if(key==0&&c.ui.break_browse&&(!c.library||c.library->top())){if(c.ui.break_load_b){c.ui.break_load_b=false;c.open(PageId::Edit);c.ui.break_perf_page=2;return;}c.open(PageId::Patterns);c.ui.sheet_open=true;c.ui.gen8_mode=2;c.ui.sheet_row=5;return;}
++    if(key==0&&c.ui.break_browse&&(!c.library||c.library->top())){if(c.ui.break_from_picker){c.ui.break_from_picker=false;c.open(PageId::Plugins);return;}if(c.ui.break_load_b){c.ui.break_load_b=false;c.open(PageId::Edit);c.ui.break_perf_page=2;return;}c.open(PageId::Patterns);c.ui.sheet_open=true;c.ui.gen8_mode=2;c.ui.sheet_row=5;return;}
      if (!c.library) return;
      auto& ui = c.ui;
      if (key == 0) { if (c.library->top()) samples_cancel(c); else c.library->browse_up(); } // at the top: CANCEL
@@ -3846,6 +4068,81 @@
      for (int l = 0; l < lines.size(); ++l) p.text(lines[l], x + 6, y + 19 + l * 12, iw, 14, p.fit(lines[l], name, iw, type::floor));
      float fy = y + 48, fh = h - 56;
      column(p, x + 8, fy, 7, fh, track.mix.level / 127.0f, c);
+--- a/src/rhythmer/pages/tracks_page.cpp
++++ b/src/rhythmer/pages/tracks_page.cpp
+@@ -12,7 +12,11 @@
+ #include "rhythmer/pages/common.h"
+ #include "rhythmer/pages/pages.h"
+ #include "rhythmer/shell/erase_copy.h"
++#include "rhythmer/shell/ask.h"
++#include "rhythmer/shell/project_store.h"
++#include "rhythmer/ui/widgets.h"
+ #include "rhythmer/shell/new_track.h"
++#include "rhythmer/shell/stage_map.h"
+ #include "rhythmer/shell/pad_bank.h"
+ #include <cmath>
+ 
+@@ -38,6 +42,7 @@
+     }
+     h.right.push_back(label(s.project.name));
+     SoftKeys keys = mix_keys(s);
++    keys.labels[0] = "TRACK SETUP";
+     if (s.ui.shift) { // Shift: a track moved or copied to another pad
+         keys = SoftKeys {{"", "MOVE", "COPY"}, -1, colour_of(s)};
+         keys.glyphs[1] = Icon::Swap; keys.glyphs[2] = Icon::Copy;
+@@ -64,10 +69,52 @@
+         if (key > 0) start_track_pick(c.ui, key == 1);
+         return;
+     }
++    if (key == 0) { open_track_actions(c); return; }
+     mix_soft(c, key);
++}
++void actions_draw(Paint& p, const Snapshot& s) {
++    Header h = header_of(s);
++    h.left.push_back(chip(s.ui.track_types ? "TRACK TYPE" : "TRACK SETUP",colour_of(s)));
++    h.right.push_back(tag_of(s,s.ui.track));
++    frame(p,s,{{"BACK","","SELECT"},-1,colour_of(s)},h);
++    const char* actions[] = {s.track().engine==EngineKind::Sampler?"LOAD SAMPLE":s.track().engine==EngineKind::Midi?"MIDI DEVICE":s.track().used()?"CHANGE PLUG-IN":"ADD INSTRUMENT","TRACK TYPE","LOAD MPC KIT","OPEN TRACK","DELETE TRACK"};
++    const char* types[] = {"PLUG-IN","SAMPLE KIT","MIDI","EMPTY"};
++    unsigned count=s.ui.track_types?4:5;
++    for (unsigned i=0;i<count;++i) {
++        ListRow row; row.name = s.ui.track_types ? types[i] : actions[i];
++        row.current = s.ui.track_action == i; row.chevron = true; row.accent = colour_of(s);
++        list_row(p,zone::pad,zone::picture_y+i*(list_row_h+list_row_gap),zone::width-2*zone::pad,row);
++    }
++    const char* hint = !s.ui.track_types && s.ui.track_action==4 ? "Removes sound AND all patterns" : "Change sound / type; patterns stay";
++    p.text(hint,zone::pad,zone::picture_y+count*(list_row_h+list_row_gap)+4,zone::width-2*zone::pad,16,caps_text(colour::dim),juce::Justification::centred);
++}
++void actions_wheel(Context& c,int delta) { c.ui.track_action=uint8_t(std::clamp<int>(int(c.ui.track_action)+delta,0,c.ui.track_types?3:4)); }
++void actions_push(Context& c) {
++    unsigned at=c.ui.track_action;
++    if(c.ui.track_types) {
++        static constexpr EngineKind kinds[]={EngineKind::Plugin,EngineKind::Sampler,EngineKind::Midi,EngineKind::None};
++        change_track_type(c,kinds[at%4]); return;
++    }
++    if(at==1 || (at==0 && !c.track().used())) {c.ui.track_types=true;c.ui.track_action=0;return;}
++    if(at==3) {c.open(PageId::Stage);return;}
++    if(c.ui.recording || c.host_recording()) {c.notice("Finish recording first");return;}
++    if(c.frozen_edit(c.ui.track))return;
++    if(at==4) {ask(c,UiState::Ask::ClearTrack,c.ui.track);return;}
++    if(at==2) {c.open(PageId::Project);c.ui.project_kit_only=true;c.ui.project_list=true;
++        if(c.store)c.store->list(c.project_folder);
++        return;
++    }
++    if(c.track().engine==EngineKind::Plugin)c.open_plugin_picker(UiState::PluginTarget::Instrument);
++    else if(c.track().engine==EngineKind::Sampler)c.open(PageId::Samples);
++    else {c.open(PageId::Stage);stage_go(c.ui,0,0);c.notice("MIDI: DEVICE sets port/channel");}
++}
++void actions_soft(Context& c,int key) {
++    if(key==0) {if(c.ui.track_types){c.ui.track_types=false;c.ui.track_action=1;}else c.back();}
++    if(key==2)actions_push(c);
+ }
+ } // namespace
+ 
++const PageSpec track_actions_page {actions_draw,play_pad,actions_wheel,actions_push,actions_soft,actions_wheel};
+ const PageSpec tracks_page {draw, pad, wheel, push, soft, wheel}; // Minus / Plus: the track, as the wheel
+ 
+ } // namespace rhythmer
 --- /dev/null
 +++ b/src/rhythmer/plugin/design_pages.h
 @@ -0,0 +1,23 @@
@@ -4946,6 +5243,17 @@
      // Opcodes the plug-in sent that this host does not answer, for the probe.
      juce::String unansweredHostOpcodes() const;
  
+--- a/src/rhythmer/shell/ask.cpp
++++ b/src/rhythmer/shell/ask.cpp
+@@ -81,7 +81,7 @@
+     case UiState::Ask::LooperOff: return "Turn the Looper off?";
+     case UiState::Ask::ClearPattern: return "Clear P" + std::to_string(ui.ask_target % pattern_count + 1) + " of track " + std::to_string(ui.track % track_count + 1) + "?";
+     case UiState::Ask::ErasePunches: return "Erase kept punches?";
+-    case UiState::Ask::ClearTrack: return "Clear track " + std::to_string(ui.ask_target % track_count + 1) + "?";
++    case UiState::Ask::ClearTrack: return std::string(ui.page==PageId::TrackActions?"Delete track ":"Clear track ") + std::to_string(ui.ask_target % track_count + 1) + "?";
+     case UiState::Ask::InstallUpdate: return std::string("Update to ") + ui.update.version + "?";
+     case UiState::Ask::Unfreeze: return "Unfreeze track " + std::to_string(ui.ask_target % track_count + 1) + "?";
+     default: return {};
 --- a/src/rhythmer/shell/bindings.cpp
 +++ b/src/rhythmer/shell/bindings.cpp
 @@ -25,6 +25,7 @@
@@ -4988,7 +5296,15 @@
      case SK::PluginEdit: // the plug-in's own row of three
          if (shift_row) return {};
          return plugin_cards(ui, track.plugin);
-@@ -754,8 +765,23 @@
+@@ -583,6 +594,7 @@
+     }
+     if (knob_owns(project, ui)) return knob_bindings(project, true);
+     switch (ui.page) {
++    case PageId::TrackActions: return {};
+     case PageId::Tracks: // Shift + K1: the strip in hand's playback speed (roadmap P1)
+         if (!track.used()) return {};
+         return {Binding {Kind::TrackSpeed, int(ui.track % track_count), 0, int(speed_count) - 1, track.speed % int(speed_count)}, Binding {}, Binding {}};
+@@ -754,8 +766,23 @@
          unsigned listed = sound_list(track, ui, list);
          return {Binding {Kind::Jump, 0, 0, int(std::max(listed, 1u)) - 1, std::min<int>(ui.sounds_cursor, int(listed) - 1)}, Binding {}, Binding {}};
      }
@@ -5013,16 +5329,15 @@
          if (track.engine == EngineKind::Plugin) return plugin_cards(ui, track.plugin);
          const auto& info = engine_info(track.engine);
          if (!info.page_count) return {};
-@@ -794,7 +820,22 @@
+@@ -794,7 +821,21 @@
          return {lane_binding(track, t, lanes[0]), lane_binding(track, t, lanes[1]), lane_binding(track, t, lanes[2])};
      }
      case PageId::Patterns: { // the pattern's cards; SCENE: the scene in view's tempo; FOLLOW: the pattern's follow action
 -        if (ui.sheet_open) return {Binding {Kind::VaryAmount, 0, 0, 100, ui.vary_amount}, Binding {}, Binding {}}; // the VARY sheet
 +        if (ui.sheet_open) {
 +            if(ui.gen8_mode==4){const auto& a=track.acid_gen;
-+                if(ui.acid_gen_page%3==0)return {Binding{Kind::AcidGenParam,0,0,100,a.density},Binding{Kind::AcidGenParam,1,0,100,a.accent},Binding{Kind::AcidGenParam,2,0,100,a.slide}};
-+                if(ui.acid_gen_page%3==1)return {Binding{Kind::AcidGenParam,3,1,3,a.octaves},Binding{Kind::AcidGenParam,4,0,4,a.octave},Binding{Kind::AcidGenParam,5,0,16,a.auto_bars}};
-+                return {Binding{Kind::AcidGenSeed,0,1,2147483647,int(a.seed&0x7fffffff)},Binding{},Binding{}};
++                if(ui.acid_gen_page%2==0)return {Binding{Kind::AcidGenParam,0,0,100,a.density},Binding{Kind::AcidGenParam,1,0,100,a.accent},Binding{Kind::AcidGenParam,2,0,100,a.slide}};
++                return {Binding{Kind::AcidGenParam,3,1,3,a.octaves},Binding{Kind::AcidGenParam,4,0,4,a.octave},Binding{Kind::AcidGenParam,5,0,16,a.auto_bars}};
 +            }
 +            if(ui.gen8_mode==3){
 +                if(project.gen8.assign)return {Binding{Kind::GenGroup,0,0,3,project.gen8.group},Binding{},Binding{Kind::GenAssign,0,0,1,project.gen8.assign}};
@@ -5037,7 +5352,7 @@
          if (ui.patterns_cards == 1) {
              unsigned scene = track.pattern % pattern_count; // the selected track's pattern's column
              unsigned tempo = project.scenes[scene].tempo;
-@@ -965,7 +1006,9 @@
+@@ -965,8 +1006,11 @@
      }
      case PageId::FlexBeat: // K1 One Shot / Loop, K3 mix (as on the MPC)
          return {Binding {Kind::FlexMode, 0, 0, 1, project.flex.mode}, Binding {}, Binding {Kind::FlexMix, 0, 0, 100, project.flex.mix}};
@@ -5046,8 +5361,10 @@
 +        if(ui.break_browse&&ui.break_load_b)return {}; // Break loop length is chosen before loading
 +        if(ui.break_browse)return {Binding{Kind::GenBars,0,1,4,project.gen8.bars},Binding{},Binding{}};
          return {Binding {Kind::FileJump, 0, 0, std::max(int(ui.files_count) - 1, 1), ui.files_cursor}, Binding {}, Binding {}};
++    case PageId::TrackActions: return {};
      case PageId::Plugins:
          return {Binding {Kind::PluginJump, 0, 0, std::max(int(ui.plugins_count) - 1, 1), ui.plugins_cursor}, Binding {}, Binding {}};
+     case PageId::Roll: { // the note in focus: K1 its length in steps of Q, K2 velocity, K3 chance; none, no cards
 --- a/src/rhythmer/shell/bindings.h
 +++ b/src/rhythmer/shell/bindings.h
 @@ -75,7 +75,7 @@
@@ -5061,7 +5378,7 @@
          // Pad layers (roadmap P3), the last pad hit: the layer in hand 0-3, its velocities, its tune and level over the
 --- /dev/null
 +++ b/src/rhythmer/shell/break_acid_check.inc
-@@ -0,0 +1,66 @@
+@@ -0,0 +1,77 @@
 +// SPDX-License-Identifier: GPL-3.0-only
 +    {
 +        EngineHost h;Shell s(h);auto& x=s.context();x.ui.track=0;x.ui.page=PageId::Edit;
@@ -5112,10 +5429,21 @@
 +        x.gen8_action(3);auto next_seed=x.track().acid_gen.seed;if(next_seed==0xdeadbeef)return gen_failure(413,__LINE__);
 +        x.undo();if(x.pattern().events!=first||x.track().acid_gen.seed!=0xdeadbeef)return gen_failure(414,__LINE__);
 +        x.redo();if(x.track().acid_gen.seed!=next_seed)return gen_failure(415,__LINE__);
-+        for(unsigned page=0;page<3;page++){auto cards=page_bindings(x.project,x.ui,x.pattern());
-+            if(cards[0].kind!=(page<2?Binding::Kind::AcidGenParam:Binding::Kind::AcidGenSeed))return gen_failure(416,__LINE__);
++        for(unsigned page=0;page<2;page++){auto cards=page_bindings(x.project,x.ui,x.pattern());
++            for(unsigned k=0;k<3;++k)if(cards[k].kind!=Binding::Kind::AcidGenParam || cards[k].id!=int(page*3+k))return gen_failure(416,__LINE__);
 +            patterns_page.soft(x,1);}
 +        if(x.ui.acid_gen_page)return gen_failure(417,__LINE__);
++        patterns_page.wheel(x,50);if(x.ui.sheet_row!=1)return gen_failure(422,__LINE__);
++        auto keep_seed=x.track().acid_gen.seed;auto keep_edits=x.edits.size();
++        x.ui.sheet_row=2;patterns_page.push(x);
++        if(x.ui.sheet_row || x.track().acid_gen.seed!=keep_seed || x.edits.size()!=keep_edits)return gen_failure(423,__LINE__);
++        x.ui.acid_gen_page=1;patterns_page.soft(x,0);
++        auto normal=page_bindings(x.project,x.ui,x.pattern());
++        if(normal[2].kind!=Binding::Kind::Gen8Seed)return gen_failure(424,__LINE__);
++        x.ui.sheet_row=4;patterns_page.push(x);
++        if(x.ui.gen8_mode!=4 || x.ui.acid_gen_page)return gen_failure(425,__LINE__);
++        auto root_cards=page_bindings(x.project,x.ui,x.pattern());
++        if(root_cards[0].kind!=Binding::Kind::AcidGenParam || root_cards[0].id!=0)return gen_failure(426,__LINE__);
 +        auto saved=save_project(x.project,x.patterns);auto project=std::make_unique<Project>();auto bank=std::make_unique<PatternBank>();
 +        if(!load_project(saved,*project,*bank).empty()||project->tracks[0].acid_gen.seed!=next_seed)return gen_failure(418,__LINE__);
 +        patterns_page.soft(x,0);if(x.ui.gen8_mode||!x.ui.sheet_open)return gen_failure(419,__LINE__);
@@ -5126,19 +5454,31 @@
 +        std::array<int32_t,256> audio{};
 +        for(unsigned n=0;n<400;n++){h.render(audio.data(),128,1);x.gen_break_tick();}
 +        if(x.project.tracks[0].acid_gen.seed==previous_seed||x.ui.track!=3||x.project.gen8.seed!=song_seed||x.edits.size()!=edits)return gen_failure(421,__LINE__);
-+        std::printf("RHYTHMER_ACID settings_pages=3 seed=uint32 deterministic=ok mutate_stream=ok undo_redo=ok save_restore=ok gen_back=ok\n");
++        std::printf("RHYTHMER_ACID settings_pages=2 seed_ui=hidden replay_menu=removed general_gen_seed=retained seed=uint32 deterministic=ok mutate_stream=ok undo_redo=ok save_restore=ok gen_back=ok\n");
 +    }
 --- a/src/rhythmer/shell/context.cpp
 +++ b/src/rhythmer/shell/context.cpp
-@@ -95,6 +95,7 @@
+@@ -95,6 +95,9 @@
  void Context::save_project() { save_project_to(project_path.empty() && store ? store->free_path("") : project_path); }
  
  void Context::new_project() {
++    if(!kit_from.empty())kit_target=-2;
++    if(!bank_from.empty())bank_target=-2;
 +    ui.break_pending=-1;ui.break_browse=false;
      auto fresh = std::make_unique<Project>();
      auto bank = std::make_unique<PatternBank>();
      starting_project(*fresh, *bank);
-@@ -213,10 +214,16 @@
+@@ -103,6 +106,9 @@
+ 
+ void Context::switch_to(const Project& next, const PatternBank& bank, const std::string& path,
+                         const std::array<std::vector<uint8_t>, max_plugins>* plugin_states, const PrintTable* next_prints) {
++    if(!kit_from.empty())kit_target=-2;
++    if(!bank_from.empty())bank_target=-2;
++    ui.break_pending=-1;ui.break_from_picker=false;
+     send({Type::AllNotesOff, 255});
+     prints = next_prints ? *next_prints : PrintTable {}; // a print still under way for the last project is dropped (print_tick)
+     freeze_waiting = 0; // freeze plan F2b: its frozen tracks play live until their prints are checked and mapped again
+@@ -213,10 +219,16 @@
  }
  
  void Context::open(PageId page) {
@@ -5146,8 +5486,8 @@
 +        ui.edit_page[ui.track]=1;ui.edit_row[ui.track]=0;ui.kit_common=false;
 +        if(track().plugin<max_plugins){ui.plugin_row[track().plugin]=0;}plugin_panel_at=0;
 +    }
-+    if(page!=PageId::Samples)ui.break_browse=false;
-+    if(page==PageId::Project)ui.break_pending=-1;
++    if(page!=PageId::Samples){ui.break_browse=false;ui.break_from_picker=false;}
++    if(page!=PageId::Project)ui.project_kit_only=false;
      // A PLUGIN track's sounds are the plug-ins on the card (Sample Select, or Sounds from anywhere).
      if (page == PageId::Sounds && track().engine == EngineKind::Plugin && plugins) { open_plugin_picker(UiState::PluginTarget::Instrument); return; }
      if (page == PageId::Trim) { // Trim lives on Stage now: a kit's B1 TRIM (the sampler pages' B1 and Chop come here)
@@ -5156,24 +5496,52 @@
          page = PageId::Stage;
      }
      if (page != ui.page) punch_release(); // a pad held over a page change would never let go
-@@ -255,6 +262,8 @@
+@@ -255,6 +267,9 @@
  }
  
  void Context::back() {
++    if(ui.page==PageId::TrackActions && ui.track_types){ui.track_types=false;ui.track_action=1;return;}
 +    if(ui.page==PageId::Edit&&track().engine==EngineKind::Plugin&&ui.edit_page[ui.track]&&ui.map_open){ui.map_open=false;return;}
 +
      if (ui.sheet_open || ui.map_open || ui.picker_open || ui.move_open) { // a sheet, map or picker first
          ui.sheet_open = ui.map_open = ui.picker_open = ui.move_open = false;
          return;
-@@ -266,6 +275,7 @@
+@@ -265,7 +280,34 @@
+ void Context::select_track(unsigned t) {
      if (ui.page == PageId::Sounds) audition(-1);
      stage_tick(UINT32_MAX); // a sound still waiting to load lands on the track it was turned on
++    bool changed = ui.track != t % track_count;
++    bool bound = (ui.page==PageId::Project && ui.project_kit_only) || ui.page==PageId::Print || ui.page == PageId::Samples || ui.page == PageId::Sounds || ui.page == PageId::TrackActions
++        || ui.page == PageId::Edit || ui.page == PageId::Chop || ui.page == PageId::PadPage
++        || ui.page == PageId::PlayPage || ui.page == PageId::EnvelopePage || ui.page == PageId::FilterPage
++        || ui.page == PageId::FollowPage || ui.page == PageId::CloudPage || ui.page == PageId::PadMix
++        || ui.page == PageId::PadFilterPage || ui.page == PageId::FilterEnvPage || ui.page == PageId::LayersPage
++        || (ui.page == PageId::PluginPresets && (ui.presets_back == PageId::Stage || ui.presets_back == PageId::Edit || ui.presets_back == PageId::Rack || ui.presets_back == PageId::PadFx))
++        || (ui.page == PageId::Plugins && (ui.plugin_target == UiState::PluginTarget::Instrument || ui.plugin_chain < track_count));
      ui.track = uint8_t(t % track_count);
++    if(changed) {
++        ui.sheet_open=ui.map_open=ui.picker_open=ui.move_open=false;
++        ui.new_for=-1;ui.new_back=PageId::Stage;
++        ui.new_kit=-1;ui.layer_load=-1;ui.zone=0;ui.held_note=-1;ui.kit_common=false;
++        plugin_panel_at=0;
++        // Preserve global navigation, but remove old track-owned browsers from its history.
++        unsigned kept=0;
++        for(unsigned i=0;i<ui.back_depth;++i){auto p=ui.back_stack[i];
++            bool stale=p==PageId::PluginPresets || p==PageId::Plugins || p==PageId::Samples || p==PageId::Sounds
++                || p==PageId::Edit || p==PageId::TrackActions || p==PageId::Chop || p==PageId::PadPage
++                || p==PageId::PlayPage || p==PageId::EnvelopePage || p==PageId::FilterPage || p==PageId::FollowPage
++                || p==PageId::CloudPage || p==PageId::PadMix || p==PageId::PadFilterPage || p==PageId::FilterEnvPage
++                || p==PageId::LayersPage || p==PageId::Print;
++            if(!stale)ui.back_stack[kept++]=p;
++        }
++        ui.back_depth=uint8_t(kept);
++        if(bound) {open(PageId::Stage);stage_go(ui,0,0);ui.back_depth=0;}
++    }
 +    if(ui.page==PageId::Edit&&track().engine==EngineKind::Plugin){ui.edit_page[ui.track]=1;ui.edit_row[ui.track]=0;ui.kit_common=false;if(track().plugin<max_plugins)ui.plugin_row[track().plugin]=0;plugin_panel_at=0;}
      ui.held_step = -1;
      if (ui.page == PageId::Sounds) ui.sounds_cursor = track().preset;
  }
-@@ -291,6 +301,7 @@
+@@ -291,6 +333,7 @@
  // engine; every press also goes into the ring Capture reads (roadmap P5).
  void Context::key(int k, int velocity, bool down, int cutoff) {
      auto& t = track();
@@ -5181,7 +5549,7 @@
      if (t.arp) {
          Command c {Type::ArpKey, ui.track, 0, uint16_t(k), int16_t(down ? velocity : 0)};
          c.position = uint32_t(cutoff + 1); // a 16 Levels Filter pad's cutoff, kept on its repeats
-@@ -356,6 +367,11 @@
+@@ -356,6 +399,11 @@
          return;
      }
      if (!t.used()) return;
@@ -5193,7 +5561,7 @@
      if (t.levels) { // 16 Levels on a synth: the last note on all sixteen, soft to loud or in pitch; Scale the key's notes
          auto level = levels_of(project, t, pad);
          ui.levels_hit = int8_t(pad); ui.levels_value = int16_t(level.shown);
-@@ -448,6 +464,7 @@
+@@ -448,6 +496,7 @@
  
  void Context::load_sound(unsigned t, EngineKind kind, unsigned sound) {
      auto& tr = project.tracks[t % track_count];
@@ -5201,7 +5569,7 @@
      bool engine_changed = tr.engine != kind;
      const auto& info = engine_info(kind);
      const UserSound* own = sound >= info.sound_count ? user_sound(kind, sound - info.sound_count) : nullptr;
-@@ -503,6 +520,9 @@
+@@ -503,6 +552,9 @@
      if (midi_binding(*this, b, value)) return; // roadmap P4: a MIDI track's device and SysEx file
      auto& t = track();
      switch (b.kind) {
@@ -5211,7 +5579,7 @@
      case Kind::Param:
          set_param(ui.track, b.id, value);
          if (t.engine != EngineKind::Midi || midi_track::is_cc(b.id) || b.id == midi_track::Bend) record_motion(b.id, value); // of a MIDI track's own, its slots and bend are lanes
-@@ -717,7 +737,7 @@
+@@ -717,7 +769,7 @@
      }
      case Kind::ChopZoom: ui.chop_zoom = uint8_t(value); ui.chop_focus = uint8_t(b.id % 2); ui.chop_view = {}; break;
      case Kind::FileJump: ui.files_cursor = uint16_t(value); break;
@@ -5220,7 +5588,7 @@
      case Kind::ProjectJump: ui.project_cursor = uint16_t(value); break;
      case Kind::ProjectSort: ui.project_sort = uint8_t(value); break;
      case Kind::PadFine: pad().fine = int8_t(value); send_pad(ui.track, t.last_pad); record_pad_motion(PadParam::Fine, value); break;
-@@ -800,7 +820,15 @@
+@@ -800,7 +852,15 @@
      case Kind::MarksRamp: roll_marks_ramp(*this, value); break;                               // Roll's Shift + K2, marked notes                             // Roll's Shift + K1
      case Kind::EuclidHits: case Kind::EuclidSteps: case Kind::EuclidRotate: set_euclid(b.kind, value); break;
      case Kind::TrackSpeed: set_speed(unsigned(b.id), value); break;
@@ -5237,7 +5605,7 @@
      case Kind::FollowAction: case Kind::FollowOther: case Kind::FollowAfter: case Kind::FollowChance: set_follow(b.kind, value); break; // roadmap P5
      case Kind::SceneTempo: set_scene_tempo(unsigned(b.id), value * 10); break; // Patterns' SCENE: below 30, none of its own
      case Kind::PrintTapPick: ui.print_sheet.tap = value ? PrintTap::PreFx : PrintTap::PostFx; break; // freeze plan F2c
-@@ -1384,6 +1412,7 @@
+@@ -1384,6 +1444,7 @@
  }
  
  void Context::apply_edit(const Edit& e, bool after) {
@@ -5245,7 +5613,7 @@
      if (e.pad >= 0) restore_pad(e.track, unsigned(e.pad), after ? e.pad_after : e.pad_before);
      if (after) for (const auto& [kit, value] : e.pads_after) restore_pad(e.track, kit, value);
      else for (auto p = e.pads_before.rbegin(); p != e.pads_before.rend(); ++p) restore_pad(e.track, p->first, p->second);
-@@ -1393,6 +1422,8 @@
+@@ -1393,6 +1454,8 @@
      if (song) restore_song(*song);
      const auto& motion = after ? e.motion_after : e.motion_before;
      if (motion) restore_motion(*motion);
@@ -5254,11 +5622,11 @@
      const auto& whole = after ? e.track_after : e.track_before;
      if (whole) restore_track(*this, e.track, *whole); // last: its pack carries the motion as restored
      if (e.swap_a >= 0) trade_tracks(*this, unsigned(e.swap_a), unsigned(e.swap_b)); // a move: the same swap again
-@@ -1412,6 +1443,7 @@
+@@ -1412,6 +1475,7 @@
          if (project.seq_tempo != m->per_pattern) { project.seq_tempo = m->per_pattern; send({Type::SeqTempo, 0, 0, ui.lead_pattern, int16_t(m->per_pattern)}); }
      }
      dirty = true;
-+    if(plugins&&!e.tracks_before.empty())plugins->sync(project,plugins_asleep());
++    if(plugins&&(!e.tracks_before.empty() || e.track_before || !e.gen_plugins_before.empty()))plugins->sync(project,plugins_asleep());
      take_track = -1;
  }
  
@@ -5285,6 +5653,15 @@
      void toggle_plugin_transport(unsigned entry); // TRANSPORT on or off for that plug-in (PluginRef::transport)
      void choose_plugin_program(int index);    // that program, by its place in the plug-in's list (Stage's wheel)
      void push_plugin_preset();                // PRESETS' Push: into the folder under the cursor, or load the preset
+@@ -398,6 +404,8 @@
+     void start_new_project();                 // its B3: saved first if it has a file, then a new one, Stage
+     void load_kit_file(const std::string& path, const std::string& name); // a project's kit onto the selected track, once loaded
+     void load_kit(const Project& from, const std::string& name);          // that kit onto the selected track, one undo
++    int kit_target = -1, bank_target = -1;
++    uint8_t bank_target_bank = 0;
+     std::string kit_from;                     // the file Load Kit waits for
+     // Kit bank files (shell/project_jobs.cpp, model/project_file.h): Push on one in the Samples browser
+     // loads it into the selected kit's bank in view, once the service thread has read it.
 --- /dev/null
 +++ b/src/rhythmer/shell/fm1_gen_bridge.h
 @@ -0,0 +1,14 @@
@@ -5414,7 +5791,7 @@
 +        auto br=std::find_if(available.begin(),available.end(),[](const PluginFile& f){return f.name=="Break Engine";});
 +        if(br==available.end()){return gen_failure(52,__LINE__);}
 +        c.choose_plugin(*br);
-+        if(c.track().engine!=EngineKind::Sampler||!c.track().break_bars||!c.ui.break_browse||c.ui.page!=PageId::Samples)return gen_failure(53,__LINE__);
++        if(c.track().engine!=EngineKind::Plugin||!c.ui.break_from_picker||!c.ui.break_browse||c.ui.page!=PageId::Samples)return gen_failure(53,__LINE__);
 +        auto browse_engine=std::find_if(available.begin(),available.end(),[](const PluginFile& f){return f.name=="FM-106";});if(browse_engine==available.end())return gen_failure(54,__LINE__);
 +        c.ui.track=6;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.ui.plugin_back=PageId::Edit;c.choose_plugin(*browse_engine);auto entry=c.track().plugin;
 +        for(unsigned tries=0;tries<3000&&rack.status(entry)!=PluginStatus::Ready;tries++){std::this_thread::sleep_for(std::chrono::milliseconds(10));}
@@ -5833,7 +6210,7 @@
 +} // namespace rhythmer
 --- /dev/null
 +++ b/src/rhythmer/shell/gen_break_jobs.cpp
-@@ -0,0 +1,66 @@
+@@ -0,0 +1,76 @@
 +// SPDX-License-Identifier: GPL-3.0-only
 +#include "rhythmer/shell/context.h"
 +#include "rhythmer/shell/track_copy.h"
@@ -5849,7 +6226,8 @@
 +    if(frozen_edit(ui.track))return;
 +    int slot=sample_slot(path,name);if(slot<0){notice("No sample slot");return;}
 +    ui.break_pending=slot;ui.break_pending_b=ui.break_load_b;ui.break_track=ui.track;ui.break_bank=track().bank;ui.break_bars=ui.break_load_b?project.tracks[ui.break_track].break_bars:project.gen8.bars;
-+    ui.break_browse=false;open(PageId::Patterns);ui.sheet_open=true;ui.gen8_mode=2;ui.sheet_row=0;notice("Loading BREAK sample");
++    ui.break_job_track=int8_t(ui.break_track);ui.break_job_bank=ui.break_bank;ui.break_job_bars=ui.break_bars;ui.break_job_b=ui.break_pending_b;ui.break_job_from_picker=ui.break_from_picker;
++    ui.break_from_picker=false;ui.break_browse=false;open(PageId::Patterns);ui.sheet_open=true;ui.gen8_mode=2;ui.sheet_row=0;notice("Loading BREAK sample");
 +}
 +void Context::gen_break_tick(){
 +    for(unsigned t=0;t<track_count;t++)if(project.tracks[t].break_bars&&!frozen(t))project.tracks[t].break_source=uint8_t(host.break_source_of(t));
@@ -5866,27 +6244,35 @@
 +    }
 +    if(plugins)for(unsigned e=0;e<max_plugins;e++)if(project.plugins[e].gen_program>=0&&plugins->status(e)==PluginStatus::Ready){plugins->select_program(e,project.plugins[e].gen_program);project.plugins[e].gen_program=-1;}
 +    if(ui.break_pending<0||host_recording())return;
-+    unsigned slot=unsigned(ui.break_pending),at=ui.break_track;
++    unsigned slot=unsigned(ui.break_pending),at=ui.break_job_track>=0?unsigned(ui.break_job_track):ui.break_track;
++    unsigned job_bars=ui.break_job_track>=0?ui.break_job_bars:ui.break_bars;
++    unsigned job_bank=ui.break_job_track>=0?ui.break_job_bank:ui.break_bank;
++    bool job_b=ui.break_job_track>=0?ui.break_job_b:ui.break_pending_b;
++    bool from_picker=ui.break_job_track>=0?ui.break_job_from_picker:ui.break_from_picker;
 +    if(slot>=sample_slots||at>=track_count){ui.break_pending=-1;return;}
 +    const auto& sample=project.samples[slot];if(!sample.frames){if(library){auto loaded=library->slot(slot);if(!loaded.error.empty()){ui.break_pending=-1;notice("BREAK: sample load failed");}}return;}
-+    ui.break_pending=-1;
++    ui.break_pending=-1;ui.break_job_track=-1;
 +    if(frozen_edit(at))return; // a track may have frozen while sample decoding ran
-+    unsigned bars=std::clamp<unsigned>(ui.break_bars,1,4);
++    unsigned bars=std::clamp<unsigned>(job_bars,1,4);
 +    if(sample.instrument()||sample.frames<16){notice("BREAK needs an audio loop");return;}
 +    double bpm=bars*4.0*60.0*44100.0/sample.frames;
 +    if(bpm*10<1||bpm*10>65535){notice("BREAK sample duration out of range");return;}
-+    if(ui.break_pending_b&&project.tracks[at].break_bars){
++    if(job_b&&project.tracks[at].break_bars){
 +        Edit edit;edit.what="Load BREAK B";edit.track=uint8_t(at);edit.track_before=std::make_unique<TrackState>(track_state(*this,at));
 +        auto next=std::make_unique<TrackState>(*edit.track_before);auto& t=next->track;
-+        auto& layer=t.pads[t.bank*16].layers[0];layer.sample=uint16_t(slot);layer.start=0;layer.end=sample.frames;
-+        restore_track(*this,at,*next);edit.track_after=std::move(next);edits.push(std::move(edit));dirty=true;ui.break_load_b=false;
-+        ui.track=uint8_t(at);open(PageId::Edit);ui.edit_page[at]=0;ui.break_perf_page=2;notice("BREAK B ready");return;
++        auto& layer=t.pads[(job_bank%sampler_banks)*16].layers[0];layer.sample=uint16_t(slot);layer.start=0;layer.end=sample.frames;
++        restore_track(*this,at,*next);edit.track_after=std::move(next);edits.push(std::move(edit));dirty=true;
++        if(ui.track==at && ui.page==PageId::Patterns){open(PageId::Edit);ui.edit_page[at]=0;ui.break_perf_page=2;}notice("BREAK B ready");return;
 +    }
-+    ui.break_load_b=false;
 +    Edit edit;edit.what="Load BREAK";edit.track=uint8_t(at);
 +    edit.track_before=std::make_unique<TrackState>(track_state(*this,at));
++    if(plugins && project.tracks[at].engine==EngineKind::Plugin && project.tracks[at].plugin<max_plugins){
++        unsigned entry=project.tracks[at].plugin;auto states=plugins->states();
++        edit.gen_plugins_before.push_back({entry,project.plugins[entry],states[entry]});
++        edit.gen_plugins_after=edit.gen_plugins_before;
++    }
 +    auto next=std::make_unique<TrackState>(*edit.track_before);auto& t=next->track;
-+    rhythmer::load_sound(t,EngineKind::Sampler,0);t.break_bars=uint8_t(bars);t.bank=ui.break_bank%sampler_banks;t.layout=PadLayout::Drums;t.set_name("BREAK");t.last_note=uint8_t(sampler_first_note+t.bank*16);
++    rhythmer::load_sound(t,EngineKind::Sampler,0);t.break_bars=uint8_t(bars);t.bank=job_bank%sampler_banks;t.layout=PadLayout::Drums;t.set_name("BREAK");t.last_note=uint8_t(sampler_first_note+t.bank*16);
 +    t.params[sampler::Follow]=1;t.params[sampler::FollowHow]=0;
 +    for(unsigned i=0;i<16;i++){
 +        PadSound sound;sound.sample=uint16_t(slot);sound.start=uint32_t(uint64_t(sample.frames)*i/16);sound.end=uint32_t(uint64_t(sample.frames)*(i+1)/16);
@@ -5897,6 +6283,7 @@
 +    BreakMap map;map.bars=bars;for(unsigned i=0;i<16;i++)map.slices[i]=uint8_t(sampler_first_note+t.bank*16+i);
 +    pat=break_generate(pat,BreakAction::Straight,project.gen8,map,project.tempo/10);
 +    restore_track(*this,at,*next);edit.track_after=std::move(next);edits.push(std::move(edit));dirty=true;
++    if(from_picker && ui.track==at && ui.page==PageId::Patterns){open(PageId::Stage);ui.back_depth=0;}
 +    notice("BREAK ready: "+std::to_string(bars)+" bars / 16 chops");
 +}
 +}
@@ -5951,6 +6338,121 @@
      if (ui.learn_lane < 0) { c.notice("Turn a knob first"); return; }
      unsigned t = ui.learn_track % track_count, param = lane_param(ui.learn_lane), pad = lane_pad(ui.learn_lane) % sampler_pads;
      auto info = motion_param(c.project.tracks[t], ui.learn_lane, &c.project);
+--- a/src/rhythmer/shell/new_track.cpp
++++ b/src/rhythmer/shell/new_track.cpp
+@@ -6,6 +6,7 @@
+ #include "rhythmer/shell/sample_library.h"
+ #include "rhythmer/shell/stage_map.h"
+ #include "rhythmer/shell/track_copy.h"
++#include "rhythmer/plugin/plugin_rack.h"
+ #include <algorithm>
+ #include <cstring>
+ #include <memory>
+@@ -27,11 +28,12 @@
+         return true;
+     }
+     if (!new_track_locked(c)) return false;
+-    bool carousel = ui.page == PageId::Stage;
+     switch (button) {
+     case B::Play: case B::Stop: case B::TapTempo: case B::TopLeft: return false;
+-    case B::WheelPush: if (!ui.shift) return false; break; // Push makes it (Shift + Push, Back, waits)
+-    case B::PadBank: if (carousel) return false; break;    // + pad: another track
++    case B::WheelPush: return false; // Push makes it (Shift + Push, Back, waits)
++    case B::Minus: case B::Plus: return false; // Undo/Redo must work after removing an instrument
++    case B::TopMiddle: case B::TopRight: if(ui.page==PageId::Stage)return false; break;
++    case B::PadBank: return false;    // + pad: another track
+     default: break;
+     }
+     ui.new_taken |= bit;
+@@ -64,7 +66,7 @@
+     }
+     if (ui.recording) return;
+     bool doors = ui.new_for >= 0 && ui.page == PageId::Stage; // another empty track picked on the doors: the same page to go back to
+-    if (!doors) ui.new_back = ui.page;
++    if (!doors) ui.new_back = (ui.page == PageId::Tracks || ui.page == PageId::Patterns || ui.page == PageId::Roll || ui.page == PageId::Motion) ? ui.page : PageId::Stage;
+     ui.new_for = int8_t(ui.track % track_count);
+     c.open(PageId::Stage);
+     if (!doors) { ui.new_pick_from = float(ui.new_pick % new_choice_count) + 0.9f; ui.new_pick_at = c.now ? c.now : 1; } // the cards slide in
+@@ -78,7 +80,7 @@
+     PageId back = ui.new_back;
+     if (choice == NewChoice::Plugin) { // the card's instruments: the track turns PLUGIN once one is picked (choose_plugin)
+         c.open_plugin_picker(UiState::PluginTarget::Instrument);
+-        if (picked) ui.plugin_back = back;
++        ui.plugin_back = PageId::Stage;
+         return;
+     }
+     // One undo for the track made (Shift + Minus leaves it empty again), as Load Kit.
+@@ -137,4 +139,58 @@
+     c.back();
+ }
+ 
++void open_track_actions(Context& c) {
++    c.ui.track_action = 0;
++    c.ui.track_types = false;
++    c.open(PageId::TrackActions);
++}
++
++void change_track_type(Context& c, EngineKind kind) {
++    if (c.ui.recording || c.host_recording()) { c.notice("Finish recording first"); return; }
++    if (c.frozen_edit(c.ui.track)) return;
++    if (kind == EngineKind::Plugin) { c.open_plugin_picker(UiState::PluginTarget::Instrument); return; }
++    if (kind == c.track().engine) {
++        if(kind==EngineKind::None) offer_new_track(c);
++        else c.open(PageId::Stage);
++        return;
++    }
++    c.close_gesture();
++    unsigned t = c.ui.track;
++    Edit e = c.begin_edit("Change track type", t, -1, false);
++    e.motion_before.reset();
++    e.track_before = std::make_unique<TrackState>(track_state(c,t));
++    if(c.plugins && c.track().engine==EngineKind::Plugin && c.track().plugin<max_plugins){
++        unsigned entry=c.track().plugin;auto states=c.plugins->states();
++        e.gen_plugins_before.push_back({entry,c.project.plugins[entry],states[entry]});
++        e.gen_plugins_after=e.gen_plugins_before;
++    }
++    auto next = std::make_unique<TrackState>(*e.track_before);
++    Track fresh;
++    fresh.mix = next->track.mix;
++    fresh.fx = next->track.fx;
++    fresh.pattern = next->track.pattern;
++    fresh.speed = next->track.speed;
++    rhythmer::load_sound(fresh,kind,0);
++    if (kind == EngineKind::Sampler) { fresh.layout = PadLayout::Drums; fresh.set_name("KIT"); }
++    next->track = fresh;
++    if(c.kit_target==int(t))c.kit_target=-2;
++    if(c.bank_target==int(t))c.bank_target=-2;
++    if (c.ui.break_pending >= 0 && unsigned(c.ui.break_job_track>=0?c.ui.break_job_track:c.ui.break_track) == t) c.ui.break_pending = -1;
++    c.send({Command::Type::AllNotesOff,uint8_t(t)});
++    restore_track(c,t,*next);
++    e.track_after = std::move(next);
++    c.edits.push(std::move(e));
++    c.ui.new_for = -1;
++    c.ui.new_back = PageId::Stage;
++    c.ui.back_depth = 0;
++    stage_go(c.ui,0,0);
++    if(kind==EngineKind::None) {
++        c.ui.new_pick=uint8_t(NewChoice::Plugin);
++        offer_new_track(c);
++    } else c.open(PageId::Stage);
++    c.ui.back_depth=0;
++    if (c.plugins) c.plugins->sync(c.project,c.plugins_asleep());
++    c.notice("Type changed; patterns kept");
++}
++
+ } // namespace rhythmer
+--- a/src/rhythmer/shell/new_track.h
++++ b/src/rhythmer/shell/new_track.h
+@@ -54,6 +54,9 @@
+ void offer_new_track(Context& c);
+ // The card in the middle pressed: the track made, one undo step.
+ void make_new_track(Context& c, NewChoice choice);
++// Replace only the sound/type; retain every pattern and mixer/insert settings.
++void change_track_type(Context& c, EngineKind kind);
++void open_track_actions(Context& c);
+ // A sample loaded: a kit made for Samples goes back to the page it was picked on.
+ void new_track_landed(Context& c);
+ // B1 CANCEL at the top of Samples: back, and a kit just made there for its first sample empty again.
 --- a/src/rhythmer/shell/pad_context.h
 +++ b/src/rhythmer/shell/pad_context.h
 @@ -54,7 +54,7 @@
@@ -5964,30 +6466,66 @@
      if (ui.copying == UiState::Copying::Keys && (facts.key_pads || ui.page == PageId::Roll || (ui.page == PageId::StepEdit && !ui.step_pads)))
 --- a/src/rhythmer/shell/plugin_jobs.cpp
 +++ b/src/rhythmer/shell/plugin_jobs.cpp
-@@ -85,6 +85,12 @@
+@@ -77,7 +77,7 @@
+     ui.plugin_target = target;
+     ui.plugin_chain = uint8_t(chain);
+     ui.plugin_slot = uint8_t(slot);
+-    ui.plugin_back = target == UiState::PluginTarget::Instrument ? PageId::Edit : ui.page;
++    ui.plugin_back = ui.page;
+     plugins->browse(plugins->view().folder); // where the picker was left, listed afresh, on the row it was on
+     if (ui.page != PageId::Plugins) ui.plugin_from = ui.page;
+     open(PageId::Plugins);
+@@ -85,6 +85,16 @@
  
  void Context::choose_plugin(const PluginFile& file) {
      if (!plugins) return;
++    if(!file.folder && !file.several() && ui.plugin_target==UiState::PluginTarget::Instrument) {
++        if(ui.recording || host_recording()){notice("Finish recording first");return;}
++        if(frozen_edit(ui.track))return;
++    }
 +    if(file.name=="Break Engine"){
 +        if(ui.plugin_target!=UiState::PluginTarget::Instrument){notice("Break Engine is an instrument");return;}
-+        close_gesture();if(track().engine!=EngineKind::Sampler)load_sound(ui.track,EngineKind::Sampler,0);
-+        track().break_bars=track().break_bars?track().break_bars:2;track().layout=PadLayout::Drums;track().set_name("BREAK");
-+        ui.break_browse=true;ui.break_track=ui.track;ui.break_bars=track().break_bars;project.gen8.bars=track().break_bars;dirty=true;plugins->sync(project,plugins_asleep());open(PageId::Samples);notice("BREAK: K1 bars, Push loads loop");return;
++        close_gesture();ui.break_from_picker=true;ui.break_load_b=false;
++        ui.break_browse=true;ui.break_track=ui.track;ui.break_bars=track().break_bars?track().break_bars:2;
++        project.gen8.bars=ui.break_bars;open(PageId::Samples);notice("BREAK: choose a loop; Back cancels");return;
 +    }
      if (file.folder || file.several()) { plugins->browse(file.path); ui.plugins_cursor = 0; return; } // a folder, or a bundle's plug-ins
      if (!file.loadable()) { notice(file.why.empty() ? "Not a plug-in for this MPC" : file.why); return; }
      bool instrument = ui.plugin_target == UiState::PluginTarget::Instrument;
-@@ -118,15 +124,17 @@
+@@ -108,31 +118,45 @@
+     close_gesture();
+     // An empty track turned PLUGIN: one undo step, as the carousel's KIT and MIDI ("New track"; shell/new_track.h).
+     std::unique_ptr<Edit> made;
+-    if (instrument && !track().used()) {
+-        made = std::make_unique<Edit>(begin_edit("New track", ui.track, -1, false));
++    if (instrument) {
++        made = std::make_unique<Edit>(begin_edit(track().used()?"Change instrument":"New track", ui.track, -1, false));
+         made->motion_before.reset();
+         made->track_before = std::make_unique<TrackState>(track_state(*this, ui.track));
++        auto states=plugins->states();
++        made->gen_plugins_before.push_back({unsigned(entry),project.plugins[size_t(entry)],states[size_t(entry)]});
++        if(kit_target==ui.track)kit_target=-2;
++        if(bank_target==ui.track)bank_target=-2;
++        if(ui.break_pending>=0 && unsigned(ui.break_job_track>=0?ui.break_job_track:ui.break_track)==ui.track)ui.break_pending=-1;
+     }
+     auto& ref = project.plugins[size_t(entry)];
+-    bool same = file.path == ref.path && file.id == ref.id;
++    bool same = file.path == ref.path && file.id == ref.id && (!instrument || track().engine==EngineKind::Plugin);
      std::snprintf(ref.path, plugin_path_length, "%s", file.path.c_str());
      std::snprintf(ref.name, sizeof(ref.name), "%s", file.name.c_str());
      ref.id = file.id;
-+    if (!same) ref.preset[0] = 0;
++    if (!same) { ref.preset[0] = 0; plugins->set_gen_state(unsigned(entry),{}); }
      if (same) plugins->reload(unsigned(entry)); // picked again: opened afresh (after it failed or stopped working)
      if (instrument) {
          unsigned t = ui.track % track_count;
          auto& tr = project.tracks[t];
 -        tr.plugin = uint8_t(entry);
++        if(tr.engine != EngineKind::Plugin) {
++            Track fresh;fresh.mix=tr.mix;fresh.fx=tr.fx;fresh.pattern=tr.pattern;fresh.speed=tr.speed;
++            tr=fresh;
++        }
 +        tr.plugin = uint8_t(entry);tr.break_bars=0;
++        send({Type::AllNotesOff,uint8_t(t)});
          send({Type::TrackPlugin, uint8_t(t), 0, 0, int16_t(entry)});
          if (tr.engine != EngineKind::Plugin) load_sound(t, EngineKind::Plugin, 0);
          if (!file.drums.empty()) use_drum_pads(tr); // a drum machine (8W8, 9W9...): its pads as a kit's, 36 up
@@ -5996,10 +6534,30 @@
          std::string name = file.name;
          std::transform(name.begin(), name.end(), name.begin(), [](unsigned char ch) { return char(std::toupper(ch)); });
          tr.set_name(name.c_str());
-@@ -150,14 +158,25 @@
-     open(ui.plugin_back);
- }
- 
+         if (made) {
+             stage_go(ui, 0, 0); // B1: its PRESETS (or its face), as a new kit's TRIM
+             made->track_after = std::make_unique<TrackState>(track_state(*this, t));
++            restore_track(*this,t,*made->track_after);
++            made->gen_plugins_after.push_back({unsigned(entry),ref,same?made->gen_plugins_before.front().state:std::vector<uint8_t>{}});
+             edits.push(std::move(*made));
+         }
+     } else {
+@@ -143,21 +167,34 @@
+         ui.fx_cursor[UiState::cursor_of(n)] = uint8_t(k);
+         ui.fx_row[UiState::cursor_of(n)] = 0;
+     }
++    if(instrument){ui.plugin_panel={};plugin_panel_at=0;ui.preset_due=0;}
+     ui.plugin_row[size_t(entry)] = 0;
+     dirty = true;
+     plugins->sync(project, plugins_asleep());
+     notice("Loading " + file.name);
+-    open(ui.plugin_back);
+-}
+-
++    if(instrument) {ui.new_for=-1;ui.new_back=PageId::Stage;open(PageId::Stage);ui.back_depth=0;}
++    else open(ui.plugin_back);
++}
++
 +void Context::refresh_plugin_panel(unsigned entry){
 +    if(!plugins||entry>=max_plugins)return;
 +    const bool editing=((ui.page==PageId::Stage&&stage_page_now(ui,track(),false).kind==StageKind::PluginEdit)||ui.page==PageId::Edit||(ui.page==PageId::PluginPresets&&ui.presets_back==PageId::Edit))&&track().engine==EngineKind::Plugin&&track().plugin==entry&&(ui.page==PageId::Stage||ui.edit_page[ui.track]);
@@ -6027,7 +6585,7 @@
      dirty = true;
  }
  
-@@ -170,8 +189,21 @@
+@@ -170,8 +207,21 @@
  } // namespace
  
  // PRESETS opens where the preset picked last is: its folder, its row (plugin/preset_rows.h).
@@ -6049,7 +6607,7 @@
      auto& ref = project.plugins[entry];
      ref.transport = !ref.transport;
      dirty = true;
-@@ -191,14 +223,26 @@
+@@ -191,14 +241,26 @@
      ui.presets_back = ui.page;
      set_presets_folder(ui, place.folder);
      ui.presets_cursor = uint16_t(place.row);
@@ -6077,7 +6635,7 @@
      dirty = true; // the plug-in's state, saved with the project, now holds it
  }
  
-@@ -214,6 +258,7 @@
+@@ -214,6 +276,7 @@
      if (into.size() >= ui.presets_folder.size()) { notice("Folder name too long"); return; }
      set_presets_folder(ui, into);
      ui.presets_cursor = 0;
@@ -6085,7 +6643,7 @@
      if (!row.current) return;
      auto in = preset_rows(programs.list, into, programs.current); // the preset picked last is in here: open on it
      for (size_t n = 0; n < in.size(); ++n)
-@@ -226,6 +271,7 @@
+@@ -226,6 +289,7 @@
      auto programs = plugins->programs(ui.presets_entry);
      ui.presets_cursor = uint16_t(preset_row_of_folder(programs.list, inside, programs.current));
      set_presets_folder(ui, preset_folder_up(inside));
@@ -6093,7 +6651,7 @@
  }
  
  int Context::plugin_in_focus() const {
-@@ -248,6 +294,11 @@
+@@ -248,6 +312,11 @@
          auto root = library->root();
          plugins->set_card(root.empty() ? std::string() : std::filesystem::path(root).parent_path().string());
      }
@@ -6105,7 +6663,7 @@
      split_shared_plugins();
      plugins->sync(project, plugins_asleep());
      if (ui.page == PageId::Plugins && plugins->changes() != plugin_view_seen) { // the picker's rows, and where going up lands
-@@ -266,8 +317,11 @@
+@@ -266,8 +335,11 @@
      }
      int entry = plugin_in_focus();
      if (entry < 0) { ui.plugin_panel = PluginPanel {}; return; }
@@ -6119,14 +6677,107 @@
  }
  
  } // namespace rhythmer
+--- a/src/rhythmer/shell/project_jobs.cpp
++++ b/src/rhythmer/shell/project_jobs.cpp
+@@ -11,6 +11,8 @@
+ #include "rhythmer/shell/project_store.h"
+ #include "rhythmer/shell/sample_library.h"
+ #include "rhythmer/shell/track_copy.h"
++#include "rhythmer/shell/stage_map.h"
++#include "rhythmer/plugin/plugin_rack.h"
+ #include <memory>
+ 
+ namespace rhythmer {
+@@ -28,50 +30,71 @@
+ 
+ void Context::load_kit_file(const std::string& path, const std::string& name) {
+     if (!store) return;
++    if(!kit_from.empty()){notice("Wait for the current kit load");return;}
++    if(ui.recording || host_recording()) {notice("Finish recording first");return;}
++    if(frozen_edit(ui.track))return;
++    kit_target=ui.track;
+     kit_from = path;
+     store->load(path); // lands in load_kit() instead of switching (shell/lights.cpp)
+     notice("Loading kit from " + name);
+ }
+ 
+ void Context::load_kit(const Project& from, const std::string& name) {
++    if(kit_target==-2){kit_target=-1;return;}
++    unsigned target=unsigned(kit_target>=0?kit_target:ui.track)%track_count;
++    kit_target=-1;
++    if(frozen_edit(target))return;
+     int k = kit_track(from);
+     if (k < 0) { notice("No kit in " + name); return; }
+     if (ui.recording) { notice("Load Kit: not in a take"); return; }
+     std::string what = "Load kit " + name;
+-    Edit edit = begin_edit(what.c_str(), ui.track, -1, false);
++    Edit edit = begin_edit(what.c_str(), target, -1, false);
+     edit.motion_before.reset(); // the kit brings no motion
+-    edit.track_before = std::make_unique<TrackState>(track_state(*this, ui.track));
++    edit.track_before = std::make_unique<TrackState>(track_state(*this, target));
++    if(plugins && project.tracks[target].engine==EngineKind::Plugin && project.tracks[target].plugin<max_plugins){
++        unsigned entry=project.tracks[target].plugin;auto states=plugins->states();
++        edit.gen_plugins_before.push_back({entry,project.plugins[entry],states[entry]});
++        edit.gen_plugins_after=edit.gen_plugins_before;
++    }
+     auto next = std::make_unique<TrackState>(*edit.track_before);
+     auto result = import_kit(from, unsigned(k), next->track, [&](const SampleRef& ref) { return sample_slot(ref.path, ref.name); });
+-    restore_track(*this, ui.track, *next);
++    restore_track(*this, target, *next);
+     edit.track_after = std::move(next);
+     edits.push(std::move(edit));
+     notice(result.missing ? what + ": " + std::to_string(result.missing) + " pads without a slot" : what);
+-    if (ui.page == PageId::Project) open(PageId::Stage); // the kit's sound (Sample held shows its pads)
++    if (ui.track == target && (ui.page == PageId::Project || ui.page == PageId::Samples)) {open(PageId::Stage);ui.back_depth=0;stage_go(ui,0,0);} // the kit's sound (Sample held shows its pads)
+ }
+ 
+ // A kit bank file (Push on one in the Samples browser): read on the service
+ // thread, then into the bank in view of the selected kit (files_landed()).
+ void Context::load_bank_file(const std::string& path, const std::string& name) {
+     if (!library) return;
++    if(!bank_from.empty()){notice("Wait for the current bank load");return;}
+     if (track().engine != EngineKind::Sampler) { notice("Load Bank: kit tracks"); return; }
++    if(ui.recording || host_recording()) {notice("Finish recording first");return;}
++    if(frozen_edit(ui.track))return;
++    bank_target=ui.track;bank_target_bank=track().bank;
+     bank_from = path;
+     library->read_bank(path);
+     notice("Loading " + name);
+ }
+ 
+ void Context::load_bank(const BankFile& bank, const std::string& name) {
+-    auto& t = track();
++    if(bank_target==-2){bank_target=-1;return;}
++    unsigned target=unsigned(bank_target>=0?bank_target:ui.track)%track_count;
++    unsigned into=bank_target>=0?bank_target_bank%sampler_banks:track().bank%sampler_banks;
++    bank_target=-1;
++    if(frozen_edit(target))return;
++    auto& t = project.tracks[target];
+     if (t.engine != EngineKind::Sampler) { notice("Load Bank: kit tracks"); return; }
+     if (ui.recording) { notice("Load Bank: not in a take"); return; }
+-    unsigned into = t.bank % sampler_banks;
+     std::string bank_name = std::string("Bank ") + char('A' + into), what = "Load " + bank_name; // the notice holds 31 characters
+-    Edit edit = begin_edit(what.c_str(), ui.track, -1, false);
++    Edit edit = begin_edit(what.c_str(), target, -1, false);
+     edit.motion_before.reset(); // a bank brings no motion
+-    edit.track_before = std::make_unique<TrackState>(track_state(*this, ui.track));
++    edit.track_before = std::make_unique<TrackState>(track_state(*this, target));
+     auto next = std::make_unique<TrackState>(*edit.track_before);
+     auto result = import_bank(bank, into, next->track, [&](const SampleRef& ref) { return sample_slot(ref.path, ref.name); });
+-    restore_track(*this, ui.track, *next);
++    restore_track(*this, target, *next);
+     edit.track_after = std::move(next);
+     edits.push(std::move(edit));
+     dirty = true;
 --- a/src/rhythmer/shell/project_kits.cpp
 +++ b/src/rhythmer/shell/project_kits.cpp
-@@ -28,7 +28,7 @@
+@@ -28,7 +28,8 @@
  KitImport import_kit(const Project& from, unsigned track, Track& into, const std::function<int(const SampleRef&)>& slot_for) {
      KitImport result;
      const auto& src = from.tracks[track % track_count];
 -    into.engine = EngineKind::Sampler;
 +    into.engine = EngineKind::Sampler;into.break_bars=src.break_bars;
++    into.mods=src.mods;into.layout=PadLayout::Drums;
      into.preset = src.preset;
      into.params = src.params;
      into.set_name(src.name);
@@ -6217,9 +6868,210 @@
      if (t.levels) return -1;
      if (t.engine == EngineKind::Sampler) return int(t.step_note());
      if (drum_pads(t)) return drum_pad_of(t.last_note) >= 0 ? int(t.last_note) : drum_key(t, 0);
+--- a/src/rhythmer/shell/track_copy.cpp
++++ b/src/rhythmer/shell/track_copy.cpp
+@@ -3,6 +3,7 @@
+ #include "rhythmer/shell/track_copy.h"
+ #include "rhythmer/engine/engine_host.h"
+ #include "rhythmer/shell/context.h"
++#include "rhythmer/plugin/plugin_rack.h"
+ #include "rhythmer/shell/track_swap.h"
+ #include <cstring>
+ 
+@@ -26,6 +27,11 @@
+ 
+ void restore_track(Context& c, unsigned t, const TrackState& state) {
+     t %= track_count;
++    // Whole-track replacement/undo invalidates late sound loads aimed at its previous state.
++    if(c.kit_target==int(t))c.kit_target=-2;
++    if(c.bank_target==int(t))c.bank_target=-2;
++    unsigned break_target=unsigned(c.ui.break_job_track>=0?c.ui.break_job_track:c.ui.break_track);
++    if(c.ui.break_pending>=0 && break_target==t)c.ui.break_pending=-1;
+     c.project.tracks[t] = state.track;
+     c.patterns.at[t] = state.patterns;
+     c.free_retired();
+@@ -126,9 +132,17 @@
+     std::string name = "Track " + std::to_string(t + 1);
+     if (c.ui.recording) { c.notice("Clear track: not in a take"); return; }
+     if (!track_clearable(c.project.tracks[t], c.patterns.at[t])) { c.notice(name + " is empty"); return; }
++    if(c.kit_target==int(t))c.kit_target=-2;
++    if(c.bank_target==int(t))c.bank_target=-2;
++    if(c.ui.break_pending>=0 && unsigned(c.ui.break_job_track>=0?c.ui.break_job_track:c.ui.break_track)==t)c.ui.break_pending=-1;
+     std::string what = "Clear track " + std::to_string(t + 1);
+     Edit edit = c.begin_edit(what.c_str(), t, -1, false);
+     edit.track_before = std::make_unique<TrackState>(track_state(c, t));
++    if(c.plugins && c.project.tracks[t].engine==EngineKind::Plugin && c.project.tracks[t].plugin<max_plugins){
++        unsigned entry=c.project.tracks[t].plugin;auto states=c.plugins->states();
++        edit.gen_plugins_before.push_back({entry,c.project.plugins[entry],states[entry]});
++        edit.gen_plugins_after=edit.gen_plugins_before;
++    }
+     auto next = std::make_unique<TrackState>();
+     next->track.mix = c.project.tracks[t].mix; // the strip stays
+     for (auto& p : next->patterns) p.length = c.project.bar_ticks();
+@@ -136,6 +150,7 @@
+     edit.track_after = std::move(next);
+     c.notice(name + " cleared");
+     c.edits.push(std::move(edit));
++    if(c.ui.track==t && c.ui.page==PageId::TrackActions){c.open(PageId::Stage);c.ui.back_depth=0;}
+ }
+ 
+ } // namespace rhythmer
+--- /dev/null
++++ b/src/rhythmer/shell/track_workflow_check.h
+@@ -0,0 +1,128 @@
++// SPDX-License-Identifier: AGPL-3.0-only
++#pragma once
++#include "rhythmer/shell/new_track.h"
++#include "rhythmer/shell/ask.h"
++#include "rhythmer/plugin/plugin_files.h"
++#include "rhythmer/shell/track_copy.h"
++
++namespace rhythmer {
++inline int track_workflow_check() {
++    unsigned checks=0;
++    auto require=[&](bool ok,const char* what){++checks;if(!ok)std::fprintf(stderr,"TRACK_WORKFLOW FAIL %u: %s\n",checks,what);return ok;};
++#define TRACK_CHECK(x,what) do {if(!require((x),what))return 1;}while(false)
++    EngineHost host;Shell shell(host);auto& c=shell.context();
++    auto press=[&](SurfaceButton b,bool down){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(b);e.input.pressed=down;shell.surface(e,2000+checks);};
++    c.ui.track=0;c.ui.page=PageId::Stage;
++    c.load_sound(0,EngineKind::Midi,0);c.track().mix.level=77;c.track().mix.pan=-12;c.track().pattern=73;
++    for(unsigned n=0;n<pattern_count;++n){Event e;e.tick=n;e.key=uint8_t(36+n%60);c.patterns.at[0][n].events={e};}
++    auto before=c.patterns.at[0];
++    auto patterns_kept=[&]{return c.patterns.at[0]==before;};
++    c.open(PageId::Tracks);tracks_page.push(c);
++    TRACK_CHECK(c.ui.page==PageId::Stage && patterns_kept(),"used track encoder still opens its sound");
++    c.open(PageId::Tracks);
++    tracks_page.soft(c,0);
++    TRACK_CHECK(c.ui.page==PageId::TrackActions,"TRACKS exposes actions");
++    c.ui.track_action=1;track_actions_page.push(c);
++    TRACK_CHECK(c.ui.track_types,"type submenu");
++    c.back();TRACK_CHECK(!c.ui.track_types && c.ui.page==PageId::TrackActions,"Back leaves submenu first");
++    c.ui.track_types=true;c.ui.track_action=1;track_actions_page.push(c);
++    TRACK_CHECK(c.track().engine==EngineKind::Sampler && patterns_kept(),"MIDI to kit retains all 128 patterns");
++    TRACK_CHECK(c.track().pattern==73 && c.track().mix.level==77 && c.track().mix.pan==-12,"selected pattern and mix survive");
++    TRACK_CHECK(c.ui.page==PageId::Stage && c.ui.back_depth==0,"successful conversion lands on track, no stale menu");
++    c.undo();TRACK_CHECK(c.track().engine==EngineKind::Midi && patterns_kept(),"type undo");
++    c.redo();TRACK_CHECK(c.track().engine==EngineKind::Sampler && patterns_kept(),"type redo");
++    change_track_type(c,EngineKind::None);TRACK_CHECK(!c.track().used() && patterns_kept(),"empty retains patterns");
++    TRACK_CHECK(c.ui.page==PageId::Stage && c.ui.new_for==0 && c.ui.new_pick==uint8_t(NewChoice::Plugin),"intentional EMPTY opens native type carousel");
++    c.open(PageId::Tracks);tracks_page.push(c);
++    TRACK_CHECK(c.ui.page==PageId::Stage && c.ui.new_for==0 && patterns_kept(),"intentional EMPTY encoder opens type selection, not actions");
++    c.ui.page=PageId::Edit;edit_page.push(c);
++    TRACK_CHECK(c.ui.page==PageId::Stage && c.ui.new_for==0 && patterns_kept(),"EMPTY stranded on Edit opens type selection");
++    c.open(PageId::Tracks);tracks_page.soft(c,0);
++    TRACK_CHECK(c.ui.page==PageId::TrackActions,"EMPTY actions still require B1");
++    c.open(PageId::Stage);
++    TRACK_CHECK(!new_track_lock(c,SurfaceButton::Minus,true),"empty track permits Undo");
++    TRACK_CHECK(!new_track_lock(c,SurfaceButton::TopMiddle,true) && !new_track_lock(c,SurfaceButton::TopRight,true),"visible KIT/MIDI empty-track buttons are enabled");
++    TRACK_CHECK(!new_track_lock(c,SurfaceButton::WheelPush,true),"empty browser permits Back");
++    press(SurfaceButton::Shift,true);press(SurfaceButton::Minus,true);press(SurfaceButton::Minus,false);press(SurfaceButton::Shift,false);
++    TRACK_CHECK(c.track().engine==EngineKind::Sampler,"physical Shift-Minus restores empty track");
++    open_track_actions(c);c.ui.track_action=4;track_actions_page.push(c);
++    TRACK_CHECK(c.ui.ask==UiState::Ask::ClearTrack && patterns_kept(),"delete requires confirmation");
++    ask_button(c,SurfaceButton::TopLeft);TRACK_CHECK(c.track().used() && patterns_kept(),"cancel delete is non-destructive");
++    c.ui.track_action=4;track_actions_page.push(c);ask_button(c,SurfaceButton::TopRight);
++    bool clear=true;for(const auto& p:c.patterns.at[0])clear &= p.events.empty();
++    TRACK_CHECK(!c.track().used() && clear && c.ui.page==PageId::Stage,"confirmed delete clears all patterns and lands empty");
++    c.undo();TRACK_CHECK(c.track().engine==EngineKind::Sampler && patterns_kept(),"delete undo restores sound and patterns");
++    c.ui.recording=true;change_track_type(c,EngineKind::Midi);TRACK_CHECK(c.track().engine==EngineKind::Sampler,"recording guard");c.ui.recording=false;
++    c.prints.freeze[0].state=FreezeState::Frozen;change_track_type(c,EngineKind::Midi);
++    TRACK_CHECK(c.track().engine==EngineKind::Sampler && c.ui.ask==UiState::Ask::Unfreeze,"freeze guard");c.ui.ask=UiState::Ask::None;c.prints.freeze[0]={};
++    const PageId owned[]={PageId::PluginPresets,PageId::Plugins,PageId::Samples,PageId::Sounds,PageId::Edit,PageId::Chop,PageId::PadPage,PageId::LayersPage,PageId::Print,PageId::TrackActions};
++    for(auto page:owned){c.ui.track=0;c.ui.page=page;c.ui.presets_back=PageId::Stage;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.ui.sheet_open=true;
++        c.select_track(1);TRACK_CHECK(c.ui.track==1 && c.ui.page==PageId::Stage && !c.ui.sheet_open,"track-owned screen follows selected track");
++        c.back();TRACK_CHECK(c.ui.page==PageId::Stage,"Back cannot resurrect previous track's browser");}
++    c.ui.track=0;c.ui.page=PageId::PluginPresets;c.ui.presets_back=PageId::Bus;c.select_track(1);
++    TRACK_CHECK(c.ui.page==PageId::PluginPresets,"bus preset list remains global");
++    c.ui.back_depth=1;c.ui.back_stack[0]=PageId::Bus;c.select_track(2);c.back();
++    TRACK_CHECK(c.ui.page==PageId::Bus,"global Back retains bus owner");
++    c.ui.page=PageId::Plugins;c.ui.plugin_target=UiState::PluginTarget::Effect;c.ui.plugin_chain=track_count;c.select_track(2);
++    TRACK_CHECK(c.ui.page==PageId::Plugins,"bus effect picker remains global");
++    c.ui.track=0;c.ui.page=PageId::PluginPresets;c.ui.presets_back=PageId::Edit;c.select_track(1);offer_new_track(c);make_new_track(c,NewChoice::Kit);
++    TRACK_CHECK(c.ui.track==1 && c.ui.page==PageId::Stage && c.track().engine==EngineKind::Sampler,"preset A to empty B to kit B");
++    c.ui.track=0;c.ui.page=PageId::PluginPresets;c.ui.presets_back=PageId::Stage;
++    SurfaceEvent button;button.input.kind=SurfaceInput::Kind::Button;button.input.index=uint8_t(SurfaceButton::PadBank);button.input.pressed=true;shell.surface(button,1000);
++    SurfaceEvent hit;hit.pad=8;hit.midi.status=0x90;hit.midi.key=8;hit.midi.value=100;shell.surface(hit,1001);
++    hit.midi.status=0x80;hit.midi.value=0;shell.surface(hit,1002);button.input.pressed=false;shell.surface(button,1003);
++    TRACK_CHECK(c.ui.track==8 && c.ui.page==PageId::Stage,"physical PAD BANK plus pad follows new track");
++    c.ui.track=3;c.ui.page=PageId::Plugins;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.track().engine=EngineKind::None;
++    TRACK_CHECK(!new_track_lock(c,SurfaceButton::PadBank,true),"empty plug-in picker permits track switching");
++    // Async whole-kit load belongs to the original target, never whichever track is selected later.
++    auto source=std::make_unique<Project>();source->tracks[0].engine=EngineKind::Sampler;source->tracks[0].set_name("TEST KIT");
++    source->tracks[0].pads[0].sample=0;std::strcpy(source->samples[0].path,"Samples/workflow.wav");
++    c.project.samples[0]=source->samples[0];
++    c.ui.track=4;c.project.tracks[4].engine=EngineKind::Midi;c.kit_target=5;c.load_kit(*source,"TEST KIT");
++    TRACK_CHECK(c.ui.track==4 && c.project.tracks[4].engine==EngineKind::Midi && c.project.tracks[5].engine==EngineKind::Sampler,"async kit target captured");
++    BankFile bank;bank.pads[0].sample=0;std::strcpy(bank.samples[0].path,"Samples/workflow.wav");
++    c.project.tracks[7]=Track{};c.project.tracks[7].engine=EngineKind::Sampler;c.project.tracks[7].bank=1;
++    c.bank_target=7;c.bank_target_bank=3;c.load_bank(bank,"ASYNC BANK");
++    TRACK_CHECK(c.ui.track==4 && c.project.tracks[7].pads[48].used() && !c.project.tracks[7].pads[16].used(),"async bank retains original track AND bank");
++    c.kit_target=4;c.bank_target=4;auto restored=std::make_unique<TrackState>(track_state(c,4));restore_track(c,4,*restored);
++    TRACK_CHECK(c.kit_target==-2 && c.bank_target==-2,"whole-track undo/replacement invalidates late loads");
++    c.kit_target=-2;c.load_kit(*source,"TEST KIT");TRACK_CHECK(c.project.tracks[4].engine==EngineKind::Midi,"invalidated request discarded");
++    c.ui.track=4;c.ui.break_pending=0;c.ui.break_pending_b=true;c.ui.break_track=5;c.ui.break_bars=2;c.project.tracks[5].break_bars=2;c.project.samples[0].frames=176400;
++    c.gen_break_tick();TRACK_CHECK(c.ui.track==4,"Break B completion does not steal selected track");
++    if(const char* card=std::getenv("RHYTHMER_GEN_CARD")){
++        PluginRack rack(host);rack.set_card(card);c.plugins=&rack;
++        auto files=list_plugins(plugin_folder(card));
++        auto file=[&](const char* name){return std::find_if(files.begin(),files.end(),[&](const PluginFile& f){return f.name==name;});};
++        auto first=file("FM-106"),second=file("Sophie"),br=file("Break Engine");
++        TRACK_CHECK(first!=files.end() && second!=files.end() && br!=files.end(),"real plugin fixture available");
++        auto wait=[&]{for(unsigned n=0;n<2000;++n){if(rack.status(c.track().plugin)==PluginStatus::Ready)return true;std::this_thread::sleep_for(std::chrono::milliseconds(10));}return false;};
++        c.ui.track=0;c.ui.page=PageId::Stage;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.choose_plugin(*first);
++        TRACK_CHECK(c.track().engine==EngineKind::Plugin && wait() && patterns_kept(),"load real plugin over kit, keep patterns");
++        auto entry=c.track().plugin;auto old_ref=c.project.plugins[entry];auto old_state=rack.states()[entry];
++        c.open_plugin_presets(entry);TRACK_CHECK(c.ui.page==PageId::PluginPresets,"native preset list opens from Stage");
++        plugin_presets_page.soft(c,1);TRACK_CHECK(c.ui.page==PageId::Plugins,"preset list exposes replacement");
++        c.choose_plugin(*second);TRACK_CHECK(wait() && c.ui.page==PageId::Stage && c.ui.back_depth==0 && patterns_kept(),"replacement lands at selected track");
++        c.undo();bool undo_ready=wait();auto restored_state=rack.states()[entry];
++        if(!undo_ready || std::strcmp(c.project.plugins[entry].path,old_ref.path) || restored_state!=old_state){
++            std::fprintf(stderr,"BEFORE %.180s\nAFTER %.180s\n",std::string(old_state.begin(),old_state.end()).c_str(),std::string(restored_state.begin(),restored_state.end()).c_str());
++            size_t diff=0;while(diff<restored_state.size()&&diff<old_state.size()&&restored_state[diff]==old_state[diff])++diff;
++            std::fprintf(stderr,"UNDO detail ready=%d old=%s actual=%s old_bytes=%zu new_bytes=%zu first_diff=%zu notice=%s\n",undo_ready,old_ref.path,c.project.plugins[entry].path,old_state.size(),restored_state.size(),diff,c.ui.notice);
++        }
++        TRACK_CHECK(undo_ready && std::strcmp(c.project.plugins[entry].path,old_ref.path)==0 && restored_state==old_state,"replacement undo restores original plugin and sound state");
++        c.redo();TRACK_CHECK(wait() && std::strcmp(c.project.plugins[entry].name,"Sophie")==0,"replacement redo");
++        auto plugin_state=rack.states()[c.track().plugin];
++        change_track_type(c,EngineKind::Midi);TRACK_CHECK(c.track().engine==EngineKind::Midi && patterns_kept(),"plugin to MIDI keeps sequence");
++        c.undo();TRACK_CHECK(c.track().engine==EngineKind::Plugin && wait() && rack.states()[c.track().plugin]==plugin_state,"type undo restores real plugin state");
++        auto engine=c.track().engine;auto history=c.edits.size();c.choose_plugin(*br);
++        TRACK_CHECK(c.track().engine==engine && c.edits.size()==history && c.ui.break_browse,"choosing Break defers destructive conversion");
++        samples_page.soft(c,0);TRACK_CHECK(c.track().engine==engine && c.ui.page==PageId::Plugins,"Break browser cancel preserves instrument");
++        c.ui.track=0;c.ui.page=PageId::PluginPresets;c.ui.presets_back=PageId::Stage;c.select_track(6);offer_new_track(c);make_new_track(c,NewChoice::Plugin);c.choose_plugin(*first);
++        TRACK_CHECK(c.ui.track==6 && c.ui.page==PageId::Stage && wait(),"preset A to empty B to plugin B");
++        c.back();TRACK_CHECK(c.ui.page==PageId::Stage,"loaded B Back cannot return to A");
++        c.plugins=nullptr;
++    }else {std::fprintf(stderr,"TRACK_WORKFLOW: missing real plugin card fixture\n");return 2;}
++    std::printf("TRACK_WORKFLOW passed %u assertions; 128-pattern retention, real plugins, undo/redo, scoped navigation, async ownership\n",checks);
++#undef TRACK_CHECK
++    return 0;
++}
++} // namespace rhythmer
 --- a/src/rhythmer/shell/ui_state.h
 +++ b/src/rhythmer/shell/ui_state.h
-@@ -143,7 +143,11 @@
+@@ -31,6 +31,7 @@
+                             LayersPage,                        // roadmap P3: a kit pad's four layers
+                             ModPage,                           // roadmap P4: modulators and macros (MOTION again on Motion)
+                             Print,                             // freeze plan F2c: the PRINT sheet (Sample Record on a plug-in or MIDI track)
++                            TrackActions,                      // visible track instrument/type management
+                             Count };
+ 
+ // Takeover (shell/takeover.h): a pot or the fader drives its value once it has
+@@ -68,6 +69,13 @@
+     std::array<PageId, back_capacity> back_stack {};
+     uint8_t back_depth = 0;
+     uint8_t track = 0;
++    uint8_t track_action = 0;
++    bool track_types = false;
++    bool project_kit_only = false;
++    bool break_from_picker = false;
++    int8_t break_job_track = -1;
++    uint8_t break_job_bank = 0, break_job_bars = 2;
++    bool break_job_b = false, break_job_from_picker = false;
+     bool shift = false, shift_used = false; // Shift held; another control used during the hold
+     bool pad_bank = false, mute = false, erase = false; // held
+     bool pad_bank_used = false;  // Pad Bank held did something (a pad, -/+, the wheel): its release steps no bank
+@@ -143,7 +151,11 @@
      bool fill = false;                        // Play held while playing: Fill (FILL trig conditions play)
      int8_t held_note = -1;                    // Roll: the pad held on the note in focus (its cards lock it, roadmap P1)
      bool euclid_cards = false;                // Steps on a kit, STEPS a third time: the EUCLID row of the last pad's lane (roadmap P1)
@@ -6232,7 +7084,7 @@
      // The fader (shell/fader.cpp): where it sits (-1 until it moves)
      // and whether it has met the value it drives (takeover), when it last moved (its card shows a moment).
      Pot fader;
-@@ -228,11 +232,15 @@
+@@ -228,11 +240,15 @@
      PageId plugin_back = PageId::Stage;          // where B1 (Back) at the top and a load go
      PageId plugin_from = PageId::Stage;          // the page it opened over: B1 at the top while the track is not PLUGIN yet
      PluginPanel plugin_panel;
@@ -6305,15 +7157,16 @@
 +}
 --- a/src/rhythmer/tools.cpp
 +++ b/src/rhythmer/tools.cpp
-@@ -1,6 +1,7 @@
+@@ -1,6 +1,8 @@
  // SPDX-License-Identifier: AGPL-3.0-only
  // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
  #include "rhythmer/tools.h"
 +#include "rhythmer/shell/gen8_check.h"
++#include "rhythmer/shell/track_workflow_check.h"
  #include "rhythmer/shell/stage_map.h"
  #include "rhythmer/shell/expansion_install.h"
  #include "rhythmer/shell/mpc_program.h"
-@@ -728,6 +729,113 @@
+@@ -728,6 +730,112 @@
  };
  
  const Preview previews[] {
@@ -6326,7 +7179,6 @@
 +    {"break-perf-5",[](Shell&,Snapshot& s){s.ui.page=PageId::Edit;s.ui.break_perf_page=5;s.project.tracks[s.ui.track].engine=EngineKind::Sampler;s.project.tracks[s.ui.track].break_bars=2;s.ui.held_pads=1<<6;}},
 +    {"acid-settings-0",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.ui.gen8_mode=4;s.ui.acid_gen_page=0;s.project.tracks[s.ui.track].engine=EngineKind::Plugin;s.project.tracks[s.ui.track].plugin=0;std::strcpy(s.project.plugins[0].name,"Acid Engine");s.project.tracks[s.ui.track].acid_gen.seed=0xdeadbeef;}},
 +    {"acid-settings-1",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.ui.gen8_mode=4;s.ui.acid_gen_page=1;s.project.tracks[s.ui.track].engine=EngineKind::Plugin;s.project.tracks[s.ui.track].plugin=0;std::strcpy(s.project.plugins[0].name,"Acid Engine");s.project.tracks[s.ui.track].acid_gen.seed=0xdeadbeef;}},
-+    {"acid-settings-2",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.ui.gen8_mode=4;s.ui.acid_gen_page=2;s.project.tracks[s.ui.track].engine=EngineKind::Plugin;s.project.tracks[s.ui.track].plugin=0;std::strcpy(s.project.plugins[0].name,"Acid Engine");s.project.tracks[s.ui.track].acid_gen.seed=0xdeadbeef;}},
 +    {"gen-open-setup",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.ui.sheet_row=5;}},
 +    {"gen-open-vary",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.ui.sheet_row=4;}},
 +    {"break-empty-gen",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.ui.gen8_mode=2;s.ui.sheet_row=5;s.project.tracks[s.ui.track].engine=EngineKind::Sampler;s.project.tracks[s.ui.track].break_bars=2;for(auto& pad:s.project.tracks[s.ui.track].pads)pad=PadSound{};}},
@@ -6427,7 +7279,18 @@
      {"stage", [](Shell&, Snapshot& s) { s.ui.page = PageId::Stage; s.playing = true; }}, // track 1, a synth plug-in: B1 MIX
      // The place bar (shell/place_bar.h) on the kit's Pads, its pattern slot 8 made 4 bars long (no other preview
      // plays it): playing, at the top; recording, at the bottom; stopped, held where Shift + Play carries on.
-@@ -1025,6 +1133,7 @@
+@@ -825,6 +933,10 @@
+     {"stageemptyslide", [](Shell&, Snapshot& s) { // the wheel just moved: Card on its way to the middle
+          on_stage(s, 12, 1, 0); s.ui.new_pick = 2; s.ui.new_pick_from = 1; s.now = 1000; s.ui.new_pick_at = 960;
+      }},
++    {"trackdeleteconfirm", [](Shell&, Snapshot& s){s.ui.page=PageId::TrackActions;s.ui.track=2;s.ui.track_action=4;s.ui.ask=UiState::Ask::ClearTrack;s.ui.ask_target=2;}},
++    {"trackactions", [](Shell&, Snapshot& s){s.ui.page=PageId::TrackActions;s.ui.track=2;}},
++    {"tracktypes", [](Shell&, Snapshot& s){s.ui.page=PageId::TrackActions;s.ui.track=2;s.ui.track_types=true;}},
++    {"trackdelete", [](Shell&, Snapshot& s){s.ui.page=PageId::TrackActions;s.ui.track=2;s.ui.track_action=4;}},
+     {"tracks", [](Shell&, Snapshot& s) { // Pad Bank tapped twice; each track's share of a block (roadmap P2), one heavy
+         s.ui.page = PageId::Tracks; s.ui.track = 2; s.playing = true;
+         const float loads[] {0.04f, 0.11f, 0.07f, 0.02f, 0.66f, 0.09f, 0.03f, 0.05f};
+@@ -1025,6 +1137,7 @@
      // plug-ins loading again (THAWING), and the question an edit of it asks.
      {"printdeep", [](Shell&, Snapshot& s) { print_scene(s); s.ui.shift = true; }},
      {"deepfreeze", [](Shell&, Snapshot& s) { deep_scene(s); on_stage(s, 2, 1, 0); }},
@@ -6435,7 +7298,7 @@
      {"thawing", [](Shell&, Snapshot& s) { deep_scene(s); on_stage(s, 2, 1, 0); s.thawing = 1u << 2; }},
      {"tracksdeep", [](Shell&, Snapshot& s) { // track 3 deep frozen, track 5 frozen
           deep_scene(s);
-@@ -2302,6 +2411,8 @@
+@@ -2302,6 +2415,8 @@
  
  // The boot animation at 30 frames a second, fading out over the starting
  // project's first page, as DIR/boot-NNN.png.
@@ -6444,7 +7307,7 @@
  int boot_frames(const std::string& folder) {
      EngineHost host;
      Shell shell(host);
-@@ -2314,17 +2425,20 @@
+@@ -2314,17 +2429,20 @@
      snapshot->pattern = shell.patterns().at[snapshot->ui.track][track.pattern];
      ui::BootAnimation boot;
      unsigned written = 0;
@@ -6474,11 +7337,12 @@
      }
      std::cout << "RHYTHMER_BOOT frames=" << written << '\n';
      return written > 1 ? 0 : 1;
-@@ -2513,6 +2627,8 @@
+@@ -2513,6 +2631,9 @@
  }
  
  std::optional<int> run_tool(int argc, char** argv) {
 +    if(argc==4&&!std::strcmp(argv[1],"--rhythmer-edit-preview"))return edit_preview(argv[2],argv[3]);
++    if(argc==2&&!std::strcmp(argv[1],"--rhythmer-track-check"))return track_workflow_check();
 +    if(argc==2&&!std::strcmp(argv[1],"--rhythmer-gen8-check"))return gen8_shell_check();
      if (argc >= 2 && !std::strcmp(argv[1], "--rhythmer-monkey")) { // [SEED COUNT MOVES], build.sh's: 1 12 3000
          auto arg = [&](int n, unsigned fallback) { return argc > n ? unsigned(std::strtoul(argv[n], nullptr, 10)) : fallback; };

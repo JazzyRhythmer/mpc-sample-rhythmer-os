@@ -594,6 +594,7 @@ std::array<Binding, 3> shift_bindings(const Project& project, const UiState& ui,
     }
     if (knob_owns(project, ui)) return knob_bindings(project, true);
     switch (ui.page) {
+    case PageId::TrackActions: return {};
     case PageId::Tracks: // Shift + K1: the strip in hand's playback speed (roadmap P1)
         if (!track.used()) return {};
         return {Binding {Kind::TrackSpeed, int(ui.track % track_count), 0, int(speed_count) - 1, track.speed % int(speed_count)}, Binding {}, Binding {}};
@@ -822,9 +823,8 @@ std::array<Binding, 3> base_bindings(const Project& project, const UiState& ui, 
     case PageId::Patterns: { // the pattern's cards; SCENE: the scene in view's tempo; FOLLOW: the pattern's follow action
         if (ui.sheet_open) {
             if(ui.gen8_mode==4){const auto& a=track.acid_gen;
-                if(ui.acid_gen_page%3==0)return {Binding{Kind::AcidGenParam,0,0,100,a.density},Binding{Kind::AcidGenParam,1,0,100,a.accent},Binding{Kind::AcidGenParam,2,0,100,a.slide}};
-                if(ui.acid_gen_page%3==1)return {Binding{Kind::AcidGenParam,3,1,3,a.octaves},Binding{Kind::AcidGenParam,4,0,4,a.octave},Binding{Kind::AcidGenParam,5,0,16,a.auto_bars}};
-                return {Binding{Kind::AcidGenSeed,0,1,2147483647,int(a.seed&0x7fffffff)},Binding{},Binding{}};
+                if(ui.acid_gen_page%2==0)return {Binding{Kind::AcidGenParam,0,0,100,a.density},Binding{Kind::AcidGenParam,1,0,100,a.accent},Binding{Kind::AcidGenParam,2,0,100,a.slide}};
+                return {Binding{Kind::AcidGenParam,3,1,3,a.octaves},Binding{Kind::AcidGenParam,4,0,4,a.octave},Binding{Kind::AcidGenParam,5,0,16,a.auto_bars}};
             }
             if(ui.gen8_mode==3){
                 if(project.gen8.assign)return {Binding{Kind::GenGroup,0,0,3,project.gen8.group},Binding{},Binding{Kind::GenAssign,0,0,1,project.gen8.assign}};
@@ -1010,6 +1010,7 @@ std::array<Binding, 3> base_bindings(const Project& project, const UiState& ui, 
         if(ui.break_browse&&ui.break_load_b)return {}; // Break loop length is chosen before loading
         if(ui.break_browse)return {Binding{Kind::GenBars,0,1,4,project.gen8.bars},Binding{},Binding{}};
         return {Binding {Kind::FileJump, 0, 0, std::max(int(ui.files_count) - 1, 1), ui.files_cursor}, Binding {}, Binding {}};
+    case PageId::TrackActions: return {};
     case PageId::Plugins:
         return {Binding {Kind::PluginJump, 0, 0, std::max(int(ui.plugins_count) - 1, 1), ui.plugins_cursor}, Binding {}, Binding {}};
     case PageId::Roll: { // the note in focus: K1 its length in steps of Q, K2 velocity, K3 chance; none, no cards

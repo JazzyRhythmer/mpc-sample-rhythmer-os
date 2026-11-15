@@ -12,7 +12,11 @@
 #include "rhythmer/pages/common.h"
 #include "rhythmer/pages/pages.h"
 #include "rhythmer/shell/erase_copy.h"
+#include "rhythmer/shell/ask.h"
+#include "rhythmer/shell/project_store.h"
+#include "rhythmer/ui/widgets.h"
 #include "rhythmer/shell/new_track.h"
+#include "rhythmer/shell/stage_map.h"
 #include "rhythmer/shell/pad_bank.h"
 #include <cmath>
 
@@ -38,6 +42,7 @@ void draw(Paint& p, const Snapshot& s) {
     }
     h.right.push_back(label(s.project.name));
     SoftKeys keys = mix_keys(s);
+    keys.labels[0] = "TRACK SETUP";
     if (s.ui.shift) { // Shift: a track moved or copied to another pad
         keys = SoftKeys {{"", "MOVE", "COPY"}, -1, colour_of(s)};
         keys.glyphs[1] = Icon::Swap; keys.glyphs[2] = Icon::Copy;
@@ -64,10 +69,52 @@ void soft(Context& c, int key) {
         if (key > 0) start_track_pick(c.ui, key == 1);
         return;
     }
+    if (key == 0) { open_track_actions(c); return; }
     mix_soft(c, key);
+}
+void actions_draw(Paint& p, const Snapshot& s) {
+    Header h = header_of(s);
+    h.left.push_back(chip(s.ui.track_types ? "TRACK TYPE" : "TRACK SETUP",colour_of(s)));
+    h.right.push_back(tag_of(s,s.ui.track));
+    frame(p,s,{{"BACK","","SELECT"},-1,colour_of(s)},h);
+    const char* actions[] = {s.track().engine==EngineKind::Sampler?"LOAD SAMPLE":s.track().engine==EngineKind::Midi?"MIDI DEVICE":s.track().used()?"CHANGE PLUG-IN":"ADD INSTRUMENT","TRACK TYPE","LOAD MPC KIT","OPEN TRACK","DELETE TRACK"};
+    const char* types[] = {"PLUG-IN","SAMPLE KIT","MIDI","EMPTY"};
+    unsigned count=s.ui.track_types?4:5;
+    for (unsigned i=0;i<count;++i) {
+        ListRow row; row.name = s.ui.track_types ? types[i] : actions[i];
+        row.current = s.ui.track_action == i; row.chevron = true; row.accent = colour_of(s);
+        list_row(p,zone::pad,zone::picture_y+i*(list_row_h+list_row_gap),zone::width-2*zone::pad,row);
+    }
+    const char* hint = !s.ui.track_types && s.ui.track_action==4 ? "Removes sound AND all patterns" : "Change sound / type; patterns stay";
+    p.text(hint,zone::pad,zone::picture_y+count*(list_row_h+list_row_gap)+4,zone::width-2*zone::pad,16,caps_text(colour::dim),juce::Justification::centred);
+}
+void actions_wheel(Context& c,int delta) { c.ui.track_action=uint8_t(std::clamp<int>(int(c.ui.track_action)+delta,0,c.ui.track_types?3:4)); }
+void actions_push(Context& c) {
+    unsigned at=c.ui.track_action;
+    if(c.ui.track_types) {
+        static constexpr EngineKind kinds[]={EngineKind::Plugin,EngineKind::Sampler,EngineKind::Midi,EngineKind::None};
+        change_track_type(c,kinds[at%4]); return;
+    }
+    if(at==1 || (at==0 && !c.track().used())) {c.ui.track_types=true;c.ui.track_action=0;return;}
+    if(at==3) {c.open(PageId::Stage);return;}
+    if(c.ui.recording || c.host_recording()) {c.notice("Finish recording first");return;}
+    if(c.frozen_edit(c.ui.track))return;
+    if(at==4) {ask(c,UiState::Ask::ClearTrack,c.ui.track);return;}
+    if(at==2) {c.open(PageId::Project);c.ui.project_kit_only=true;c.ui.project_list=true;
+        if(c.store)c.store->list(c.project_folder);
+        return;
+    }
+    if(c.track().engine==EngineKind::Plugin)c.open_plugin_picker(UiState::PluginTarget::Instrument);
+    else if(c.track().engine==EngineKind::Sampler)c.open(PageId::Samples);
+    else {c.open(PageId::Stage);stage_go(c.ui,0,0);c.notice("MIDI: DEVICE sets port/channel");}
+}
+void actions_soft(Context& c,int key) {
+    if(key==0) {if(c.ui.track_types){c.ui.track_types=false;c.ui.track_action=1;}else c.back();}
+    if(key==2)actions_push(c);
 }
 } // namespace
 
+const PageSpec track_actions_page {actions_draw,play_pad,actions_wheel,actions_push,actions_soft,actions_wheel};
 const PageSpec tracks_page {draw, pad, wheel, push, soft, wheel}; // Minus / Plus: the track, as the wheel
 
 } // namespace rhythmer

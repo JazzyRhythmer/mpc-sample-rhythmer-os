@@ -10,7 +10,7 @@ Rhythmer Kit has 36 named kit presets with pads 1–16 filled. Kit-wide switchin
 
 GEN uses the original FM-1 Rhythmer generator: choose tracks 1–4, 5–8, 9–12 or 13–16. The first track receives a kit, the remaining three instruments and MIDI. MIDI ONLY supports a range or one track. Acid/Break actions follow the selected engine. Break audio is browsed from user storage; 1–4 declared source bars are synchronized and sliced. No break recordings are bundled.
 
-[Build](docs/BUILD.md) · [Sound and kits](docs/SOUND_KIT_GUIDE.md) · [GEN](docs/GEN_WORKFLOW.md) · [Installation and recovery](docs/SD_CARD_GUIDE.md) · [Validation](docs/VERIFICATION.md) · [Credits](THIRD_PARTY_NOTICES.md).
+[Track changes and navigation](docs/TRACK_WORKFLOW.md) · [Build](docs/BUILD.md) · [Sound and kits](docs/SOUND_KIT_GUIDE.md) · [GEN](docs/GEN_WORKFLOW.md) · [Installation and recovery](docs/SD_CARD_GUIDE.md) · [Validation](docs/VERIFICATION.md) · [Credits](THIRD_PARTY_NOTICES.md).
 
 Excluded engine source folders and package resources are removed from this release. Shared dependencies, upstream authorship and license notices are preserved. Public source exports omit private history and conversations. Offline builds and host tests do not establish physical-device behavior; physical-device validation remains pending.
 
@@ -37,8 +37,8 @@ Use the complete **SD.zip** for first installation, the 0.4 transition, and beta
 
 This is an unofficial project, not affiliated with or endorsed by AKAI Professional or inMusic. Product names and logos belong to their respective owners. Provided without warranty under the applicable licenses. This beta has offline build, audio-host and UI checks; physical-device behavior, latency and recovery still require owner testing.
 
-## Stay in touch
+## Rhythmer Kit
 
-RHYTHMER OS is free and open source, and will always be free. Your support helps me keep working on this project and other open-source tools.
+Hit-responsive drum geometry, with a restrained input-driven depth response.
 
-[Support on Ko-fi](https://ko-fi.com/jazzyrhythmer) · [Patreon](https://www.patreon.com/JazzyRhythmer/) · [Email updates](https://jazzy-rhythmer.kit.com/6dd4006c7c) · [Main website](https://jazzyrhythmer.github.io/) · [Instagram](https://www.instagram.com/jazzyrhythmer/) · [YouTube](https://www.youtube.com/@jazzyrhythmer)
+![Rhythmer Kit native preview](assets/preview/rhythmer-kit.gif)

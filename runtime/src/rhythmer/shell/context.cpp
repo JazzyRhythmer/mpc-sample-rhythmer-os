@@ -95,6 +95,8 @@ unsigned Context::free_unused_samples() {
 void Context::save_project() { save_project_to(project_path.empty() && store ? store->free_path("") : project_path); }
 
 void Context::new_project() {
+    if(!kit_from.empty())kit_target=-2;
+    if(!bank_from.empty())bank_target=-2;
     ui.break_pending=-1;ui.break_browse=false;
     auto fresh = std::make_unique<Project>();
     auto bank = std::make_unique<PatternBank>();
@@ -104,6 +106,9 @@ void Context::new_project() {
 
 void Context::switch_to(const Project& next, const PatternBank& bank, const std::string& path,
                         const std::array<std::vector<uint8_t>, max_plugins>* plugin_states, const PrintTable* next_prints) {
+    if(!kit_from.empty())kit_target=-2;
+    if(!bank_from.empty())bank_target=-2;
+    ui.break_pending=-1;ui.break_from_picker=false;
     send({Type::AllNotesOff, 255});
     prints = next_prints ? *next_prints : PrintTable {}; // a print still under way for the last project is dropped (print_tick)
     freeze_waiting = 0; // freeze plan F2b: its frozen tracks play live until their prints are checked and mapped again
@@ -218,8 +223,8 @@ void Context::open(PageId page) {
         ui.edit_page[ui.track]=1;ui.edit_row[ui.track]=0;ui.kit_common=false;
         if(track().plugin<max_plugins){ui.plugin_row[track().plugin]=0;}plugin_panel_at=0;
     }
-    if(page!=PageId::Samples)ui.break_browse=false;
-    if(page==PageId::Project)ui.break_pending=-1;
+    if(page!=PageId::Samples){ui.break_browse=false;ui.break_from_picker=false;}
+    if(page!=PageId::Project)ui.project_kit_only=false;
     // A PLUGIN track's sounds are the plug-ins on the card (Sample Select, or Sounds from anywhere).
     if (page == PageId::Sounds && track().engine == EngineKind::Plugin && plugins) { open_plugin_picker(UiState::PluginTarget::Instrument); return; }
     if (page == PageId::Trim) { // Trim lives on Stage now: a kit's B1 TRIM (the sampler pages' B1 and Chop come here)
@@ -262,6 +267,7 @@ void Context::open(PageId page) {
 }
 
 void Context::back() {
+    if(ui.page==PageId::TrackActions && ui.track_types){ui.track_types=false;ui.track_action=1;return;}
     if(ui.page==PageId::Edit&&track().engine==EngineKind::Plugin&&ui.edit_page[ui.track]&&ui.map_open){ui.map_open=false;return;}
 
     if (ui.sheet_open || ui.map_open || ui.picker_open || ui.move_open) { // a sheet, map or picker first
@@ -274,7 +280,33 @@ void Context::back() {
 void Context::select_track(unsigned t) {
     if (ui.page == PageId::Sounds) audition(-1);
     stage_tick(UINT32_MAX); // a sound still waiting to load lands on the track it was turned on
+    bool changed = ui.track != t % track_count;
+    bool bound = (ui.page==PageId::Project && ui.project_kit_only) || ui.page==PageId::Print || ui.page == PageId::Samples || ui.page == PageId::Sounds || ui.page == PageId::TrackActions
+        || ui.page == PageId::Edit || ui.page == PageId::Chop || ui.page == PageId::PadPage
+        || ui.page == PageId::PlayPage || ui.page == PageId::EnvelopePage || ui.page == PageId::FilterPage
+        || ui.page == PageId::FollowPage || ui.page == PageId::CloudPage || ui.page == PageId::PadMix
+        || ui.page == PageId::PadFilterPage || ui.page == PageId::FilterEnvPage || ui.page == PageId::LayersPage
+        || (ui.page == PageId::PluginPresets && (ui.presets_back == PageId::Stage || ui.presets_back == PageId::Edit || ui.presets_back == PageId::Rack || ui.presets_back == PageId::PadFx))
+        || (ui.page == PageId::Plugins && (ui.plugin_target == UiState::PluginTarget::Instrument || ui.plugin_chain < track_count));
     ui.track = uint8_t(t % track_count);
+    if(changed) {
+        ui.sheet_open=ui.map_open=ui.picker_open=ui.move_open=false;
+        ui.new_for=-1;ui.new_back=PageId::Stage;
+        ui.new_kit=-1;ui.layer_load=-1;ui.zone=0;ui.held_note=-1;ui.kit_common=false;
+        plugin_panel_at=0;
+        // Preserve global navigation, but remove old track-owned browsers from its history.
+        unsigned kept=0;
+        for(unsigned i=0;i<ui.back_depth;++i){auto p=ui.back_stack[i];
+            bool stale=p==PageId::PluginPresets || p==PageId::Plugins || p==PageId::Samples || p==PageId::Sounds
+                || p==PageId::Edit || p==PageId::TrackActions || p==PageId::Chop || p==PageId::PadPage
+                || p==PageId::PlayPage || p==PageId::EnvelopePage || p==PageId::FilterPage || p==PageId::FollowPage
+                || p==PageId::CloudPage || p==PageId::PadMix || p==PageId::PadFilterPage || p==PageId::FilterEnvPage
+                || p==PageId::LayersPage || p==PageId::Print;
+            if(!stale)ui.back_stack[kept++]=p;
+        }
+        ui.back_depth=uint8_t(kept);
+        if(bound) {open(PageId::Stage);stage_go(ui,0,0);ui.back_depth=0;}
+    }
     if(ui.page==PageId::Edit&&track().engine==EngineKind::Plugin){ui.edit_page[ui.track]=1;ui.edit_row[ui.track]=0;ui.kit_common=false;if(track().plugin<max_plugins)ui.plugin_row[track().plugin]=0;plugin_panel_at=0;}
     ui.held_step = -1;
     if (ui.page == PageId::Sounds) ui.sounds_cursor = track().preset;
@@ -1443,7 +1475,7 @@ void Context::apply_edit(const Edit& e, bool after) {
         if (project.seq_tempo != m->per_pattern) { project.seq_tempo = m->per_pattern; send({Type::SeqTempo, 0, 0, ui.lead_pattern, int16_t(m->per_pattern)}); }
     }
     dirty = true;
-    if(plugins&&!e.tracks_before.empty())plugins->sync(project,plugins_asleep());
+    if(plugins&&(!e.tracks_before.empty() || e.track_before || !e.gen_plugins_before.empty()))plugins->sync(project,plugins_asleep());
     take_track = -1;
 }
 

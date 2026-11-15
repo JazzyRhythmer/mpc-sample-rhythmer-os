@@ -81,7 +81,7 @@ std::string ask_title(const Project& project, const UiState& ui) {
     case UiState::Ask::LooperOff: return "Turn the Looper off?";
     case UiState::Ask::ClearPattern: return "Clear P" + std::to_string(ui.ask_target % pattern_count + 1) + " of track " + std::to_string(ui.track % track_count + 1) + "?";
     case UiState::Ask::ErasePunches: return "Erase kept punches?";
-    case UiState::Ask::ClearTrack: return "Clear track " + std::to_string(ui.ask_target % track_count + 1) + "?";
+    case UiState::Ask::ClearTrack: return std::string(ui.page==PageId::TrackActions?"Delete track ":"Clear track ") + std::to_string(ui.ask_target % track_count + 1) + "?";
     case UiState::Ask::InstallUpdate: return std::string("Update to ") + ui.update.version + "?";
     case UiState::Ask::Unfreeze: return "Unfreeze track " + std::to_string(ui.ask_target % track_count + 1) + "?";
     default: return {};

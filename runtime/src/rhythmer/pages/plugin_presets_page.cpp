@@ -15,13 +15,14 @@
 #include "rhythmer/plugin/plugin_rack.h"
 #include "rhythmer/plugin/preset_rows.h"
 #include "rhythmer/ui/widgets.h"
+#include "rhythmer/shell/new_track.h"
 
 namespace rhythmer {
 namespace {
 using namespace ui;
 constexpr unsigned visible = list_rows;
 
-bool for_instrument(const Snapshot& s) { return s.ui.presets_back == PageId::Edit; }
+bool for_instrument(const Snapshot& s) { return s.ui.presets_back == PageId::Edit || s.ui.presets_back == PageId::Stage; }
 std::string folder_in_view(const UiState& ui) { return std::string(ui.presets_folder.data()); }
 
 void draw(Paint& p, const Snapshot& s) {
@@ -40,7 +41,7 @@ void draw(Paint& p, const Snapshot& s) {
         h.left.push_back(pill(Icon::Folder, juce::String::fromUTF8(preset_folder_name(inside).c_str()) + dot + juce::String(held), c));
     }
     if (for_instrument(s)) h.right.push_back(tag_of(s, s.ui.track));
-    frame(p, s, {{"BACK", "", rows.empty()?"":"LOAD"}, -1, c, {KeyIcon::Back, KeyIcon::None, KeyIcon::None}}, h);
+    frame(p, s, {{"BACK", for_instrument(s)?"PLUG-INS":"", rows.empty()?"":"LOAD"}, -1, c, {KeyIcon::Back, KeyIcon::None, KeyIcon::None}}, h);
     if (rows.empty()) {
         icon(p, v.finding ? Icon::Clock : Icon::Layers, zone::width / 2.0f - 14, zone::picture_y + 40, 28, colour::dim, 1.4f);
         p.text(v.finding ? "LOOKING" : "NONE", 0, zone::picture_y + 76, zone::width, 14, caps_text(colour::dim), juce::Justification::centred);
@@ -85,6 +86,10 @@ void push(Context& c) { c.push_plugin_preset(); }
 
 void soft(Context& c, int key) {
     if (key == 0) c.back_plugin_presets();
+    if (key == 1 && (c.ui.presets_back == PageId::Edit || c.ui.presets_back == PageId::Stage)) {
+        if(c.ui.recording || c.host_recording()) {c.notice("Finish recording first");return;}
+        if(!c.frozen_edit(c.ui.track))c.open_plugin_picker(UiState::PluginTarget::Instrument);
+    }
     if (key == 2) push(c);
 }
 } // namespace

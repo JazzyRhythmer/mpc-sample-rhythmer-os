@@ -56,6 +56,7 @@ const PageSpec& page_spec(PageId page) {
     case PageId::MidiConfig: return midi_config_page;
     case PageId::CardAccess: return card_access_page;
     case PageId::Tracks: return tracks_page;
+    case PageId::TrackActions: return track_actions_page;
     case PageId::Looper: return looper_page;
     case PageId::Print: return print_page; // freeze plan F2c
     case PageId::Trim: // lives on Stage now (Context::open lands there)

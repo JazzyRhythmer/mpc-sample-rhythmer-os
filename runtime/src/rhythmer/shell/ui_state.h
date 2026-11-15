@@ -31,6 +31,7 @@ enum class PageId : uint8_t { Stage, Keys, Sounds, Edit, Roll, Motion, Patterns,
                             LayersPage,                        // roadmap P3: a kit pad's four layers
                             ModPage,                           // roadmap P4: modulators and macros (MOTION again on Motion)
                             Print,                             // freeze plan F2c: the PRINT sheet (Sample Record on a plug-in or MIDI track)
+                            TrackActions,                      // visible track instrument/type management
                             Count };
 
 // Takeover (shell/takeover.h): a pot or the fader drives its value once it has
@@ -68,6 +69,13 @@ struct UiState {
     std::array<PageId, back_capacity> back_stack {};
     uint8_t back_depth = 0;
     uint8_t track = 0;
+    uint8_t track_action = 0;
+    bool track_types = false;
+    bool project_kit_only = false;
+    bool break_from_picker = false;
+    int8_t break_job_track = -1;
+    uint8_t break_job_bank = 0, break_job_bars = 2;
+    bool break_job_b = false, break_job_from_picker = false;
     bool shift = false, shift_used = false; // Shift held; another control used during the hold
     bool pad_bank = false, mute = false, erase = false; // held
     bool pad_bank_used = false;  // Pad Bank held did something (a pad, -/+, the wheel): its release steps no bank

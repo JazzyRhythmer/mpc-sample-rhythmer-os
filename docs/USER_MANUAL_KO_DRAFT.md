@@ -10,6 +10,18 @@ Rhythmer OS는 MPC Sample에서 샘플, 신스, 드럼킷과 시퀀서를 사용
 
 기존 샘플러 방식입니다. Samples에서 WAV·MP3·FLAC·Ogg Vorbis·AIFF를 패드에 넣거나, 지원되는 MPC `.xpm`·`.xty` 드럼 프로그램을 선택하고 Push로 킷을 로드합니다. MPC Sample `.xpj` 프로젝트에서는 `Load kit (no patterns)`로 킷만 가져올 수도 있습니다. 샘플과 관련 데이터 폴더를 함께 보관하세요. 모든 MPC 효과와 설정이 완전히 재현되는 것은 아닙니다.
 
+### 악기·트랙 타입 바꾸기
+
+PAD BANK + 번호 패드로 트랙을 선택합니다. PAD FX + KNOB FX를 함께 눌러 TRACKS를 열고 B1 **TRACK SETUP**를 누릅니다. 헤더의 트랙 번호를 확인하세요.
+
+- **CHANGE PLUG-IN**: 현재 플러그인을 다른 악기로 교체합니다. 플러그인 프리셋 목록에서도 B2 **PLUG-INS**로 바로 교체할 수 있습니다.
+- Sample Kit의 **LOAD SAMPLE**은 선택 패드에 소리를 넣고, MIDI의 **MIDI DEVICE**는 포트·채널 설정을 엽니다.
+- **TRACK TYPE**: PLUG-IN / SAMPLE KIT / MIDI / EMPTY를 고릅니다. EMPTY는 악기만 비우고 패턴은 남깁니다. 타입 변경은 128개 패턴·현재 패턴·트랙 믹스·인서트를 유지합니다. 음표나 음역을 새 악기에 맞게 자동 변환하지는 않습니다.
+- **LOAD MPC KIT**: 카드 또는 내부 드라이브의 프로젝트·드럼 프로그램에서 킷만 불러옵니다. 이 화면에서는 전체 프로젝트를 여는 대신 킷만 적용합니다.
+- **DELETE TRACK**: 확인 후 소리와 모든 패턴을 지웁니다. 취소가 기본 선택입니다. Shift + Minus로 복원하고 Shift + Plus로 다시 적용합니다.
+
+TRACK SETUP는 TRACKS의 B1 버튼으로만 엽니다. TRACKS에서 인코더를 누르면 악기가 있는 트랙은 기존 메인 화면으로, EMPTY로 비운 트랙은 PLUG-IN / KIT / MIDI 선택 화면으로 들어갑니다. Trim·Layers의 전용 Shift 조작과 Freeze 조작은 기존대로 유지합니다. 프리셋·플러그인·샘플 로드 화면에서 다른 트랙을 선택하면 그 트랙의 메인 화면으로 이동합니다. 악기를 확정하면 해당 트랙의 첫 화면으로 돌아오며, 취소하면 기존 악기가 유지됩니다. 버스·마스터 편집 화면은 공용 화면이므로 트랙을 바꿔도 유지합니다.
+
 ### 개별 엔진 — 한 트랙에 한 음색
 
 플러그인 목록에서 엔진을 선택합니다. Keys에서 Chromatic 또는 Scale과 원하는 루트·스케일을 설정합니다. 패드는 선택한 한 음색을 음높이에 맞춰 연주합니다. 드럼 엔진도 개별 엔진으로 선택하면 하나의 드럼 음색을 연주하며, C4를 기준으로 Tape 피치가 적용됩니다. 이 경우 길이와 기존 잔향도 함께 변합니다.
@@ -137,7 +149,7 @@ Sample Kit의 COLOUR는 **실제 패드 조명 색상**을 지정합니다. 화�
 
 ## Break Manipulator와 Acid 상세
 
-[Break/Acid 사용 안내](BREAK_ACID_GUIDE_KO.md)에 BRK PERF, 19개 연주 명령·녹음·재생·A/B/Return, Acid 설정·Seed·Tie와 진입·복귀 경로를 정리했습니다. 루프가 없는 Break 트랙의 Stage에서 Push로 다시 샘플을 고를 수 있습니다.
+[Break/Acid 사용 안내](BREAK_ACID_GUIDE_KO.md)에 BRK PERF, 19개 연주 명령·녹음·재생·A/B/Return, Acid의 두 설정 페이지·내부 난수 상태·Tie와 진입·복귀 경로를 정리했습니다. 루프가 없는 Break 트랙의 Stage에서 Push로 다시 샘플을 고를 수 있습니다.
 
 ## Melodee 0.2.0 기반 기능
 
