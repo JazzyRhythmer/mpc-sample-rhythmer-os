@@ -36,3 +36,9 @@ Use the full **0.4.0-beta.3 SD ZIP** when updating from beta.2. App-only UPDATE 
 Use the complete **SD.zip** for first installation, the 0.4 transition, and beta.2 → beta.3: this revision also changes plugin binaries and the preset catalog. **UPDATE.zip** updates only a compatible Rhythmer application; it does not replace plugin/kit data. Back up projects, samples and the card first. Verify the release checksums and the AC50 / stock firmware 1.3.0.12 requirement in the installation guide. SOURCE, MOVE-SOURCE and SUPPORT-SOURCE archives contain corresponding source, not installers.
 
 This is an unofficial project, not affiliated with or endorsed by AKAI Professional or inMusic. Product names and logos belong to their respective owners. Provided without warranty under the applicable licenses. This beta has offline build, audio-host and UI checks; physical-device behavior, latency and recovery still require owner testing.
+
+## Stay in touch
+
+RHYTHMER OS is free and open source, and will always be free. Your support helps me keep working on this project and other open-source tools.
+
+[Support on Ko-fi](https://ko-fi.com/jazzyrhythmer) · [Patreon](https://www.patreon.com/JazzyRhythmer/) · [Email updates](https://jazzy-rhythmer.kit.com/6dd4006c7c) · [Main website](https://jazzyrhythmer.github.io/) · [Instagram](https://www.instagram.com/jazzyrhythmer/) · [YouTube](https://www.youtube.com/@jazzyrhythmer)
