@@ -179,6 +179,7 @@ void draw(Paint& p, const Snapshot& s) {
         h.right.push_back(tag_of(s, s.ui.track));
         bool presets = ours && panel.programs > 0;
         bool kit=ours&&juce::String(panel.name)=="Rhythmer Kit";
+        if(ours&&panel.layout_revision&&panel.status==PluginStatus::Ready&&panel.row<2)h.left.push_back(pill(panel.row==0?"PAD SOURCE":kit?"SAVE KIT":"SAVE SOUND",c));
         bool home=false;
         if(s.ui.shift){SoftKeys k{{"", "", "TRANSPORT"},-1,c};k.toggles=4;k.lit=s.track().plugin<max_plugins&&s.project.plugins[s.track().plugin].transport?4:0;frame(p,s,k,h);}
         else frame(p,s,{{"PLUG-INS",presets?(kit?"KIT PRESETS":"PRESETS"):"",panel.layout_revision?(s.ui.edit_row[s.ui.track]?(kit&&s.ui.edit_row[s.ui.track]==1?"SAVE":"EDIT"):kit?"PAD SOURCE":"SAVE"):""},-1,c},h);

@@ -16,6 +16,10 @@
 
 이 개발판은 자동으로 SD카드나 기기에 복사하지 않았다. 실제 사용을 시작할 때 기존 카드 자료를 백업하고, MPC Sample AC50의 firmware 1.3.0.12 조건을 확인해야 한다. 기존 SD launcher는 다른 firmware에서 실행을 거부한다. ZIP의 최상위 `autorun`과 `Rhythmer`가 카드의 최상위 폴더가 되는 기존 SD 실행 구조를 사용한다. stock MPC 앱 패치나 VST enhancement 패치를 실행하지 않는다.
 
+## 첫 조작 안내
+
+처음 사용하는 분은 [GETTING_STARTED_KO.md](GETTING_STARTED_KO.md)의 트랙 선택·진입·타입 변경·녹음·프리셋 저장 순서를 먼저 확인하세요. SAMPLE은 선택 트랙의 악기 메인 화면이며, PAD FX + KNOB FX는 TRACKS입니다.
+
 ## 악기와 Rhythmer Kit
 
 빈 트랙에서는 인코더를 돌려 PLUG-IN / KIT / MIDI 계열의 카드를 선택한 뒤 Push로 연다. 기본 7개 카드 중 원하는 유형을 선택할 수 있다. 플러그인 브라우저에서 취소하면 같은 빈 트랙으로 돌아온다.
@@ -24,7 +28,7 @@
 
 개별 엔진은 한 트랙에서 한 음색을 연주한다. Keys의 Chromatic 또는 Scale을 선택한다. 멜로디 엔진의 원래 MIDI/폴리포니를 유지하며, 드럼 단일 음색은 C4 기준 Tape 피치로 연주한다. 드럼의 길이와 기존 꼬리도 함께 피치 변환된다.
 
-Stage PRESETS에서 엔진·프리셋 이름과 애니메이션을 보고, EDIT에서 소리를 편집한다. B2 PRESETS에서 인코더로 선택하고 Push/LOAD로 로드한다. 현재 프리셋 이름은 EDIT 상단에도 표시된다. 인코더/−/+로 3개씩 이동하며, 6줄 목록 중 K1–K3 표시가 있는 줄을 해당 노브로 조절한다. EDIT 현재/전체 표시로 위치를 확인한다. 일반 악기는 B3 SAVE에서 Save slot과 Save Sound로, 킷은 PAD SOURCE 다음 SAVE에서 Save slot과 Save Kit으로 저장한다. 저장된 항목은 PRESETS의 User Sound / User Kit에 추가된다. 동일 슬롯에 저장하면 해당 슬롯을 교체한다.
+Stage PRESETS에서 엔진·프리셋 이름과 애니메이션을 보고, B1 EDIT에서 소리를 편집한다. EDIT에서 인코더 Push를 누르면 Rhythmer Kit은 PAD SOURCE, 개별 엔진은 SAVE 도구로 들어간다. 화면의 PUSH 안내를 따른다. B2 PRESETS에서 인코더로 선택하고 Push/LOAD로 로드한다. 현재 프리셋 이름은 EDIT 상단에도 표시된다. 인코더/−/+로 3개씩 이동하며, 6줄 목록 중 K1–K3 표시가 있는 줄을 해당 노브로 조절한다. EDIT 현재/전체 표시로 위치를 확인한다. 일반 악기는 B3 SAVE에서 Save slot과 Save Sound로, 킷은 PAD SOURCE 다음 SAVE에서 Save slot과 Save Kit으로 저장한다. 저장된 항목은 PRESETS의 User Sound / User Kit에 추가된다. 동일 슬롯에 저장하면 해당 슬롯을 교체한다.
 
 프로젝트 저장은 전체 킷의 패드별 엔진·음색·편집 파라미터를 보존한다. 사용자 프리셋은 Rhythmer/Presets에 저장한다. 설치 시 autorun과 Rhythmer/Plugins/RHYTHMER - Rhythmer Kit을 포함해 패키지 전체를 복사한다. 자세한 단계는 SOUND_KIT_GUIDE.md를 참고한다.
 
@@ -60,3 +64,6 @@ GEN의 트랙 범위·악기 자동 배정·MIDI 전용 모드와 1–4마디 Br
 첫 설치에는 **SD.zip** 전체 패키지를 사용한다. **UPDATE.zip**은 호환 Rhythmer 설치의 실행 앱만 업데이트하며 플러그인이나 킷을 포함하지 않는다. SOURCE / MOVE-SOURCE / SUPPORT-SOURCE는 재빌드를 위한 소스 배포물로 SD 설치 파일이 아니다. 배포 페이지의 버전과 `.sha256` 값을 다운로드 파일과 대조한다.
 
 이 프로젝트는 AKAI Professional 또는 inMusic이 승인하거나 지원하는 공식 펌웨어가 아니다. MPC Sample 명칭과 로고의 권리는 각 권리자에게 있다. 소프트웨어는 각 라이선스에 따라 무보증으로 제공된다. 테스트 범위·알려진 한계는 VERIFICATION.md를 확인한다. 제조사 펌웨어를 덮어쓰는 설치가 아니라 SD launcher를 사용하는 방식이다.
+
+
+프리셋 저장: K1 Save slot 1–64 → K2 Save Sound / Save Kit → K3 Status Ready. B2 PRESETS / KIT PRESETS에서 User Sound / User Kit을 선택하고 Push / LOAD로 복원한다. 같은 슬롯은 덮어쓴다. SHIFT + Push는 원래 Stage EDIT 위치로 돌아간다. 프로젝트 SAVE는 음색 프리셋과 별개로 패턴·편곡을 저장한다.

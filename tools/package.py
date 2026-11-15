@@ -127,17 +127,22 @@ def assemble(stage_only=False):
         raise RuntimeError('Corresponding Move source ZIP is missing or changed')
     status = {
         'product': 'Rhythmer OS', 'version': VERSION, 'source_commit': commit,
+        'runtime_sha256': digest((app/'build/rhythmer').read_bytes()),
+        'release_binary_sha256': digest((app/'build/rhythmer.release').read_bytes()),
+        'distribution': 'public-beta-hotfix' if os.environ.get('RHYTHMER_PUBLIC_RELEASE') == '1' else 'first-public-beta-candidate',
+        'release_tag': os.environ.get('RHYTHMER_RELEASE_TAG'),
         'developer': 'jazzy rhythmer',
         'instagram': 'https://www.instagram.com/jazzyrhythmer/',
         'youtube': 'https://www.youtube.com/@jazzyrhythmer',
         'origin': 'Melodee by Kerem Kilic (Ellic Studio)',
-        'beta': True, 'hardware_validated': False, 'hardware_validation': 'Pending owner beta testing', 'public_release': False,
+        'beta': True, 'hardware_validated': False, 'hardware_validation': 'Pending owner beta testing', 'public_release': os.environ.get('RHYTHMER_PUBLIC_RELEASE') == '1',
         'upstream': {'melodee': 'v0.2.0', 'commit': '8880d16116ccb3c69f75fb46bf2166b16c51ef0c', 'base': '7e2d15d9ca086608b942599f6471a82f48c139f7'},
         'behavior_changes': ['Melodee 0.2.0 foundation: 128 patterns, Freeze, LV2/CLAP, USB web/mirror, native sample-pad sends and signed Rhythmer updates', 'branding and monochrome UI', 'original FM-1 four-track GEN and engine-scoped Acid/Break actions', 'single-sound and Rhythmer Kit plugin host', 'named presets and selected empty-track indication', '20 track entries and seven kit-only source variants', 'native PRESETS/EDIT, source-ordered sound controls, focused-pad editing, host mixer and stale-card protection'],
         'mechanical_rename': {'source': 'src/rhythmer', 'namespace': 'rhythmer', 'class': 'RhythmerApp',
                               'binary': 'rhythmer', 'sd_runtime': 'autorun/rhythmer'},
         'features': {
             'Upstream_020': '128 patterns A-H; Patterns home and native Step Edit; Freeze/Deep Freeze; LV2/CLAP; USB web/files and UVC mirror; decoder/chop/MIDI fixes; Rhythmer-specific signed autorun updates',
+            'Sound_Tools': 'Stage EDIT Push opens PAD SOURCE or SAVE; K1 slot, K2 save, Status Ready; PRESETS reloads User Sound/User Kit; Back restores edit position',
             'Plugin_Transport': 'Forwarded to native child engines; Shift+B3 on Edit',
             'Pad_Sends': 'Native Sample Kit pads A-D; Rhythmer Kit retains track-level sends',
             'Sophie': 'Original 16-pad DSP; common Open MPC wrapper',
@@ -170,6 +175,8 @@ def assemble(stage_only=False):
     files['PRESET_COVERAGE.json']=(ROOT/'config/preset-coverage.json').read_bytes()
     files['ANIMATION_PROFILES.json']=(ROOT/'config/animation-profiles.json').read_bytes()
     files['DRUM_KITS.json']=(ROOT/'config/drum-kits.json').read_bytes()
+    for image in ('essential-controls.png','os-structure.png'):
+        files['Documentation/'+image]=(ROOT/'assets/manual'/image).read_bytes()
     files['CORRESPONDING_SOURCE.json']=(json.dumps(dict(runtime_and_ports='RHYTHMER-OS-'+VERSION+'-SOURCE.zip',move_sources=source_receipt,support_libraries=support_receipt),indent=2)+'\n').encode()
     files['THIRD_PARTY_NOTICES.md'] = (ROOT / 'THIRD_PARTY_NOTICES.md').read_bytes()
     files['JUCE_COMPONENTS.spdx.json']=(app/'build/deps/JUCE/JUCE.spdx.json').read_bytes()
@@ -179,7 +186,7 @@ def assemble(stage_only=False):
         for p in (ROOT/folder).rglob('*'):
             if p.is_file():files['RHYTHMER-GEN-SOURCE/'+p.relative_to(ROOT).as_posix()]=p.read_bytes()
     files['OPEN_MPC_COMPATIBILITY.md'] = (ROOT/'docs/OPEN_MPC_COMPATIBILITY.md').read_bytes()
-    for name in ('RHYTHMER_PRESETS.md','UPSTREAM_020.md','ORIGINAL_PRESET_AUDIT_KO.md','HORTATOR_KITS_KO.md','BREAK_ACID_GUIDE_KO.md','PARAMETER_PAGES.md','NATIVE_PLUGIN_WORKFLOW.md','NATIVE_CONTROL_COVERAGE.md','FINAL_UI_AUDIT.md','VERIFICATION.md','GEN8_BREAK.md','DESIGN.md','ENGINE_REGISTRY.md','DRUM_KITS.md','BETA_READINESS.md','SOUND_KIT_GUIDE.md','GEN_WORKFLOW.md','USER_MANUAL_KO_DRAFT.md','REBRAND.md','SOUND_FIXES_BETA4.md'):
+    for name in ('GETTING_STARTED_KO.md','TRACK_WORKFLOW.md','RHYTHMER_PRESETS.md','UPSTREAM_020.md','ORIGINAL_PRESET_AUDIT_KO.md','HORTATOR_KITS_KO.md','BREAK_ACID_GUIDE_KO.md','PARAMETER_PAGES.md','NATIVE_PLUGIN_WORKFLOW.md','NATIVE_CONTROL_COVERAGE.md','FINAL_UI_AUDIT.md','VERIFICATION.md','GEN8_BREAK.md','DESIGN.md','ENGINE_REGISTRY.md','DRUM_KITS.md','BETA_READINESS.md','SOUND_KIT_GUIDE.md','GEN_WORKFLOW.md','USER_MANUAL_KO_DRAFT.md','REBRAND.md','SOUND_FIXES_BETA4.md'):
         files[name]=(ROOT/'docs'/name).read_bytes()
     files['DEVICE_MARK_NOTICE.md']=(ROOT/'assets/device/NOTICE.md').read_bytes()
     # New installs use the canonical folder. The host also resolves legacy beta paths.

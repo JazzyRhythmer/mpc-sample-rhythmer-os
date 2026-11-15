@@ -2,6 +2,27 @@
 
 첫 공개 베타용 안내입니다. B1/B2/B3는 화면 위쪽의 소프트 버튼, K1/K2/K3는 화면 아래 값과 연결되는 노브입니다. Push는 큰 로터리 인코더를 누르는 동작입니다.
 
+
+## 꼭 알아야 할 키 조합
+
+| 목적 | 조작 | 알아둘 점 |
+| --- | --- | --- |
+| 뒤로 / 취소 | **SHIFT + 인코더 클릭** | 확인창에서는 취소. GEN 하위 화면은 GEN 메인으로 복귀 |
+| TRACKS 진입 | **PAD FX + KNOB FX 동시 누르기** | 트랙 선택 후 클릭은 악기 화면. B1 TRACK SETUP은 악기·타입 변경 |
+| 트랙 선택 | **PAD BANK 누른 채 Pad 1–16** | 선택 후 PAD BANK를 놓고 헤더의 트랙 번호 확인 |
+| 악기 / 패턴 화면 | **SAMPLE / SEQ** | SAMPLE은 소리 연주, PATTERNS에서는 패드로 패턴 선택 |
+| 미세 조정 | **K1–K3 중 대상 노브 조작 → SHIFT + 인코더 회전** | SHIFT 없이 회전하면 EDIT 파라미터 행 이동 |
+| 프로젝트 저장 | **SHIFT + Pad 16 → B1 SAVE** | User Sound / User Kit 저장과 별개 |
+| GEN | **PATTERNS → SHIFT + B3 GEN** | 적용 대상과 NEW SOUNDS / KEEP SOUNDS를 확인 |
+| Undo / Redo | **SHIFT + − / +** | 지원되는 프로젝트 편집에 적용 |
+| 오디오 끊기 | **STOP 두 번, 400ms 이내** | SHIFT + STOP은 All Notes Off |
+
+설치 ZIP의 오프라인 이미지: `Documentation/essential-controls.png`와 `Documentation/os-structure.png`.
+
+한 장짜리 비주얼 안내: [필수 조작](https://jazzyrhythmer.github.io/mpc-sample/manual/essentials.html) · [OS 구조](https://jazzyrhythmer.github.io/mpc-sample/manual/structure.html).
+
+프로젝트 안에 16트랙이 있고 각 트랙은 악기·패턴·믹스를 갖습니다. EMPTY에서 PLUG-IN / KIT / MIDI를 선택합니다. Rhythmer Kit은 PLUG-IN 안에 있는 16패드 악기이고, KIT은 샘플을 넣는 네이티브 Sample Kit입니다. 트랙마다 최대 128패턴을 만들고 Scenes로 묶어 연주하거나 Song에 배열합니다. SAMPLE은 소리, SEQ는 패턴, TRACKS는 트랙과 믹스의 출발점입니다.
+
 ## 1. 트랙 선택과 트랙 화면 열기는 다릅니다
 
 1. **PAD BANK를 누른 채 번호 패드 1–16**을 누릅니다. PAD BANK를 놓고 헤더의 트랙 번호를 확인합니다.
@@ -44,7 +65,19 @@ EMPTY 트랙의 Stage에서 인코더를 돌려 PLUG-IN / KIT / MIDI 계열 카�
 
 Stage EDIT에서는 인코더 또는 −/+로 세 파라미터씩 이동하고 K1–K3으로 조절합니다. 킷에서는 실제 패드를 눌러 편집 대상을 고르고 P01–P16과 ALL PADS 표시를 확인합니다. 엔진 원본 필터·ENV·LFO·FX는 이 사운드 목록의 이름과 단위로 구분합니다.
 
-**현재 베타의 별도 전체 편집창 진입 한계:** PAD SOURCE / SAVE 화면 자체는 구현되어 있으나 현재 Stage 버튼에서 해당 창으로 들어가는 직접 경로가 확인되지 않습니다. 예전의 “Pads / Keys → Push”를 확정 경로로 안내하지 않습니다. Stage EDIT의 현재 제어와 킷 전체 PRESETS를 사용하고, 작업 상태는 프로젝트 SAVE로 보관하세요. 패드별 엔진 교체와 User Kit / User Sound 저장을 완성된 워크플로우로 소개하려면 이 펌웨어 진입 경로를 보완해야 합니다.
+### User Sound / User Kit 저장과 다시 불러오기
+
+**SAMPLE → B1 EDIT → 인코더 Push**로 사운드 도구를 엽니다. EDIT 화면의 PUSH 안내를 확인하세요. 외부 플러그인은 기존 동작을 유지하며, 이 도구는 Rhythmer 저장/킷 기능을 지원하는 엔진에서만 표시됩니다.
+
+- **개별 엔진**은 SAVE 화면으로 바로 들어갑니다. **K1 Save slot**에서 1–64번 슬롯을 선택하고 **K2 Save Sound**를 오른쪽으로 돌립니다. **K3 Status**가 Ready인지 확인하세요. 같은 슬롯에 저장하면 그 슬롯을 덮어씁니다.
+- **Rhythmer Kit**은 PAD SOURCE로 들어갑니다. 실제 패드 또는 **K1 Pad**로 대상을 고른 다음 **K2 Engine / K3 Sound**로 그 패드만 바꿉니다. P01–P16과 엔진·사운드 이름을 확인하세요.
+- 킷 도구에서 **B3 SAVE**로 이동하고 K1 슬롯 → K2 Save Kit → Status Ready 순으로 전체 킷을 저장합니다. B3은 PAD SOURCE → SAVE → EDIT를 순환합니다. 도구 EDIT에서 B3 PAD SOURCE를 누르면 다시 패드 설정으로 갑니다.
+- **B2 PRESETS / KIT PRESETS**를 열고 목록의 **User Sound 01… / User Kit 01…** 항목을 골라 Push / LOAD합니다. 인코더로 목록을 움직이는 것만으로는 로드되지 않습니다. 새 프로젝트에서도 같은 엔진 또는 Rhythmer Kit을 로드하면 저장한 항목을 다시 사용할 수 있습니다.
+- **SHIFT + Push**로 돌아가면 악기 메인 화면의 원래 EDIT 위치를 복원합니다. 화면을 연 상태에서 다른 트랙을 고르면 새 트랙의 메인 화면으로 갑니다.
+
+NOTE REPEAT / ARP가 켜져 소프트 버튼에 반복 속도가 보이면 해당 기능을 끄고 도구 조작을 계속하세요. 반복 속도 버튼의 기존 우선순위는 유지합니다.
+
+저장 위치는 `Rhythmer/Presets/Sounds/<engine>/` 또는 `Rhythmer/Presets/Kits/`입니다. 이 프리셋 파일은 패턴·곡 구성·원본 샘플을 대신 저장하지 않습니다. 편곡은 프로젝트 SAVE로 별도 보관합니다. 원래 Melodee의 SHIFT + SAMPLE SELECT 사운드 파일은 이 플러그인 전체 상태 프리셋과 다른 형식입니다.
 
 ## 5. 패턴 고르기와 연주는 별도 화면입니다
 
@@ -73,3 +106,9 @@ Acid 트랙에서는 ENGINE GEN → ACID GEN, Break 트랙에서는 ENGINE GEN �
 - [트랙 타입과 비동기 로드 상세](TRACK_WORKFLOW.md)
 
 Melodee by Kerem Kiliç (Ellic Studio)의 기반 조작을 유지한 Rhythmer OS 안내입니다. 소스에서 확인한 동작과 실기기 검증은 구분하며, 실기기 조작·설치·복구 검증은 아직 소유자 베타 테스트 범위입니다.
+
+## 플러그인 TRANSPORT와 EDIT 미세 조정
+
+사운드 도구에서 SHIFT를 누르면 B3 TRANSPORT가 나타납니다. ON은 OS의 PLAY·STOP 상태를 해당 플러그인에 전달하고 OFF는 정지 상태로 전달합니다. 내부 시퀀서·아르페지에이터 등 이 정보를 사용하는 엔진에만 효과가 있으며, 트랙 음소거·노트 차단·곡 전체 재생 제어는 아닙니다.
+
+원본 Melodee의 Stage EDIT 클릭은 K1–K3 선택을 순환하고 SHIFT + 인코더 회전의 미세 조정 대상을 정했습니다. 이번 지원 엔진은 클릭을 저장 도구 진입으로 바꿨습니다. 미세 조정은 K1–K3 중 대상 노브를 조작한 뒤 SHIFT + 인코더 회전으로 계속 사용할 수 있습니다. 외부 플러그인의 원래 클릭 동작은 유지합니다.

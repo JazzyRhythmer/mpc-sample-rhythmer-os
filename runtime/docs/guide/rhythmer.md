@@ -165,3 +165,8 @@ Sequential의 외부 Prophet 뱅크와 Erica/Hrtl 외부 Elixir 뱅크는 배포
 추가 필터는 엔진의 원래 합성·내장 이펙트 뒤, OS PERFORM·트랙 인서트·센드 앞에서 출력 전체를 처리합니다. 인서트 슬롯이나 버스는 사용하지 않습니다. 기본값은 Cutoff 100%, Resonance 0%, LP이며 이 조합에서는 원본 오디오를 그대로 통과합니다. 원본 프리셋을 선택하면 이 중립값으로 시작하고, Save Sound와 프로젝트 저장에는 추가 필터 설정도 포함됩니다. 원본 필터·ENV·LFO·FX 설정은 변경하지 않습니다. Rhythmer Kit 안에서는 패드 원본의 필터와 별도로 킷 자체의 KIT FILTER가 전체 합산 출력을 처리합니다.
 
 킷 패드 EDIT 제목은 `P11 / CS-1 / 사운드명`처럼 선택 패드·실제 엔진·소리를 표시합니다. 킷 전체 필터 행은 `킷 이름 / ALL PADS`를 표시합니다. 패드 소스를 교체해도 킷 프리셋 이름을 현재 소스 엔진으로 오해하지 않도록 구분합니다.
+
+
+## Save a Rhythmer sound or kit
+
+Tap SAMPLE for the selected track’s Stage. On an owned plug-in, press B1 for EDIT, then Push the encoder at the on-screen prompt. Single instruments open SAVE; Rhythmer Kit opens PAD SOURCE (K1 Pad, K2 Engine, K3 Sound). In the kit tools, B3 cycles SOURCE / SAVE / EDIT. On SAVE, K1 selects slot 1–64, turning K2 saves, and Status must return to Ready. A used slot is overwritten. B2 PRESETS / KIT PRESETS lists User Sound / User Kit items; select one and Push / LOAD. Shift + Push returns to the original Stage edit row. Save the project separately for patterns and arrangement.

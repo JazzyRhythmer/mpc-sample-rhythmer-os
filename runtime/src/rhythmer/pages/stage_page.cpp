@@ -1144,6 +1144,16 @@ void push(Context& c) {
     if(t.engine==EngineKind::Sampler&&t.break_bars&&!t.pads[t.last_pad%sampler_pads].used()){
         c.ui.break_browse=true;c.ui.break_load_b=false;c.ui.break_track=c.ui.track;c.ui.break_bars=t.break_bars;c.project.gen8.bars=t.break_bars;c.open(PageId::Samples);c.notice("Choose loop A");return;
     } // the card in the middle
+    if (page.kind == StageKind::PluginEdit && c.ui.plugin_panel.entry == t.plugin && c.ui.plugin_panel.layout_revision && c.ui.plugin_panel.status == PluginStatus::Ready) {
+        if (c.frozen_edit(c.ui.track)) return;
+        const auto row = c.ui.plugin_row[t.plugin];
+        c.open(PageId::Edit);
+        c.ui.sound_tools_track = int(c.ui.track);
+        c.ui.sound_tools_row = row;
+        c.ui.edit_row[c.ui.track] = std::string(c.ui.plugin_panel.name) == "Rhythmer Kit" ? 1 : 2;
+        c.refresh_plugin_panel(t.plugin);
+        return;
+    }
     if (page.kind == StageKind::Preset) { c.stage_tick(UINT32_MAX); c.open(PageId::Sounds); return; }
     if (page.kind == StageKind::Fx && !t.fx.count()) { // nothing yet: the picker on the track's chain, to add the first
         c.ui.fx_loop = -1;

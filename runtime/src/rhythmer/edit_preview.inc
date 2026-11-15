@@ -17,6 +17,7 @@ int edit_preview(const std::string& folder,const std::string& inventory) {
         std::snprintf(panel.preset,sizeof panel.preset,"%s",item["programs"][0].toString().toRawUTF8());
         const bool browser=bool(item["preset_browser"]),art=bool(item["art_only"]),stage=bool(item["stage_presets"])||bool(item["home"]);
         const bool source=bool(item["source_view"]),save=bool(item["save_view"]);
+        if(bool(item["stage_edit"])){s->ui.page=PageId::Stage;s->ui.stage_group[0]=0;s->ui.stage_sub[0]=1;}
         if(stage){s->ui.page=PageId::Stage;s->ui.stage_group[0]=bool(item["perform_view"])?1:0;s->ui.stage_sub[0]=0;}
         if(browser||stage){s->ui.presets_entry=0;s->presets.entry=0;std::vector<PluginProgram> programs;for(int i=0;i<item["programs"].size();++i)programs.push_back({i,item["programs"][i].toString().toStdString(),{}});s->presets.list=PluginProgramList(std::move(programs));s->presets.current=0;}
         if(browser){s->ui.page=PageId::PluginPresets;s->ui.presets_back=PageId::Edit;s->ui.presets_entry=0;s->presets.entry=0;std::vector<PluginProgram> programs;for(int i=0;i<item["programs"].size();++i)programs.push_back({i,item["programs"][i].toString().toStdString(),{}});s->presets.list=PluginProgramList(std::move(programs));}

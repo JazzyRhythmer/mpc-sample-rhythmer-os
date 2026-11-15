@@ -90,8 +90,25 @@ int main(int argc,char** argv){try{
             sound->getStateInformation(state);auto restored=rhythmer::make_sound_rack(catalog,e,loader,44100,128,error);require(bool(restored),error.toRawUTF8());restored->setStateInformation(state.getData(),int(state.getSize()));
             int restored_index=-1;for(int p=6;p<rhythmer::sound_rack_parameter_count(restored.get());++p)if(restored->getParameters()[p]->getName(128)==name)restored_index=p;
             require(restored_index>=0&&std::abs(restored->getParameters()[restored_index]->getDefaultValue()-saved)<.0001f,"Project lost user reset baseline");
-            std::cout<<"USER_DEFAULT "<<label<<" saved_reset=ok"<<std::endl;
-        }return 0;
+            // Reopen from the saved file in a genuinely fresh rack, without injecting project state.
+            auto disk=rhythmer::make_sound_rack(catalog,e,loader,44100,128,error);require(bool(disk),error.toRawUTF8());
+            require(disk->getNumPrograms()==factory+1,("Saved preset missing after fresh open: "+label).toRawUTF8());
+            disk->setCurrentProgram(factory);MemoryBlock disk_ready;disk->getStateInformation(disk_ready);
+            int disk_index=-1;for(int p=6;p<rhythmer::sound_rack_parameter_count(disk.get());++p)if(disk->getParameters()[p]->getName(128)==name)disk_index=p;
+            require(disk_index>=0&&std::abs(disk->getParameters()[disk_index]->getValue()-saved)<.0001f,("Fresh disk preset differs: "+label).toRawUTF8());
+            require(rhythmer::sound_rack_preset_name(disk.get()).startsWith(e<0?"User Kit ":"User Sound "),"Reloaded preset label lost");
+            std::cout<<"USER_DEFAULT "<<label<<" saved_reset=ok fresh_disk_reload=ok"<<std::endl;
+        }
+        // A card path that cannot be a directory must show failure, not Ready or a listed preset.
+        auto blocked=JSON::parse(JSON::toString(catalog));auto bad_root=user.getChildFile("blocked-storage");
+        require(bad_root.replaceWithText("not a directory"),"Could not create blocked-storage fixture");
+        blocked.getDynamicObject()->setProperty("user_directory",bad_root.getFullPathName());
+        auto failed=rhythmer::make_sound_rack(blocked,0,loader,44100,128,error);require(bool(failed),error.toRawUTF8());
+        int count_before=failed->getNumPrograms();failed->getParameters()[4]->setValue(1);MemoryBlock failed_state;failed->getStateInformation(failed_state);
+        require(failed->getParameters()[5]->getText(0,128)!="Ready","Failed save incorrectly reports Ready");
+        require(failed->getNumPrograms()==count_before,"Failed save created a phantom preset");
+        std::cout<<"USER_SAVE_FAILURE status=error phantom_preset=none"<<std::endl;
+        return 0;
     }
     if(argc>3&&String(argv[3])=="labels") {
         int e=-1;for(int n=0;n<engines.size();++n)if(engines[n]["name"].toString()=="Prophet")e=n;

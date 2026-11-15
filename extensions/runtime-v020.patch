@@ -529,7 +529,7 @@
 +이 프로젝트는 AKAI Professional 또는 inMusic이 승인하거나 지원하는 공식 펌웨어가 아니다. MPC Sample 명칭과 로고의 권리는 각 권리자에게 있다. 소프트웨어는 각 라이선스에 따라 무보증으로 제공된다. 테스트 범위·알려진 한계는 VERIFICATION.md를 확인한다. 제조사 펌웨어를 덮어쓰는 설치가 아니라 SD launcher를 사용하는 방식이다.
 --- /dev/null
 +++ b/docs/guide/rhythmer.md
-@@ -0,0 +1,167 @@
+@@ -0,0 +1,172 @@
 +# Rhythmer OS 사용 설명서
 +
 +웹사이트 게재용 초안 · 대상 버전 0.4.0-beta.3
@@ -697,9 +697,14 @@
 +추가 필터는 엔진의 원래 합성·내장 이펙트 뒤, OS PERFORM·트랙 인서트·센드 앞에서 출력 전체를 처리합니다. 인서트 슬롯이나 버스는 사용하지 않습니다. 기본값은 Cutoff 100%, Resonance 0%, LP이며 이 조합에서는 원본 오디오를 그대로 통과합니다. 원본 프리셋을 선택하면 이 중립값으로 시작하고, Save Sound와 프로젝트 저장에는 추가 필터 설정도 포함됩니다. 원본 필터·ENV·LFO·FX 설정은 변경하지 않습니다. Rhythmer Kit 안에서는 패드 원본의 필터와 별도로 킷 자체의 KIT FILTER가 전체 합산 출력을 처리합니다.
 +
 +킷 패드 EDIT 제목은 `P11 / CS-1 / 사운드명`처럼 선택 패드·실제 엔진·소리를 표시합니다. 킷 전체 필터 행은 `킷 이름 / ALL PADS`를 표시합니다. 패드 소스를 교체해도 킷 프리셋 이름을 현재 소스 엔진으로 오해하지 않도록 구분합니다.
++
++
++## Save a Rhythmer sound or kit
++
++Tap SAMPLE for the selected track’s Stage. On an owned plug-in, press B1 for EDIT, then Push the encoder at the on-screen prompt. Single instruments open SAVE; Rhythmer Kit opens PAD SOURCE (K1 Pad, K2 Engine, K3 Sound). In the kit tools, B3 cycles SOURCE / SAVE / EDIT. On SAVE, K1 selects slot 1–64, turning K2 saves, and Status must return to Ready. A used slot is overwritten. B2 PRESETS / KIT PRESETS lists User Sound / User Kit items; select one and Push / LOAD. Shift + Push returns to the original Stage edit row. Save the project separately for patterns and arrangement.
 --- /dev/null
 +++ b/src/rhythmer/edit_preview.inc
-@@ -0,0 +1,67 @@
+@@ -0,0 +1,68 @@
 +// SPDX-License-Identifier: AGPL-3.0-only
 +// Render every inspected state; capture_rows only reduces duplicate PNG writes.
 +#include "rhythmer/pages/performance_art.inc"
@@ -719,6 +724,7 @@
 +        std::snprintf(panel.preset,sizeof panel.preset,"%s",item["programs"][0].toString().toRawUTF8());
 +        const bool browser=bool(item["preset_browser"]),art=bool(item["art_only"]),stage=bool(item["stage_presets"])||bool(item["home"]);
 +        const bool source=bool(item["source_view"]),save=bool(item["save_view"]);
++        if(bool(item["stage_edit"])){s->ui.page=PageId::Stage;s->ui.stage_group[0]=0;s->ui.stage_sub[0]=1;}
 +        if(stage){s->ui.page=PageId::Stage;s->ui.stage_group[0]=bool(item["perform_view"])?1:0;s->ui.stage_sub[0]=0;}
 +        if(browser||stage){s->ui.presets_entry=0;s->presets.entry=0;std::vector<PluginProgram> programs;for(int i=0;i<item["programs"].size();++i)programs.push_back({i,item["programs"][i].toString().toStdString(),{}});s->presets.list=PluginProgramList(std::move(programs));s->presets.current=0;}
 +        if(browser){s->ui.page=PageId::PluginPresets;s->ui.presets_back=PageId::Edit;s->ui.presets_entry=0;s->presets.entry=0;std::vector<PluginProgram> programs;for(int i=0;i<item["programs"].size();++i)programs.push_back({i,item["programs"][i].toString().toStdString(),{}});s->presets.list=PluginProgramList(std::move(programs));}
@@ -2939,7 +2945,7 @@
  #include <algorithm>
  #include <cmath>
  #include <complex>
-@@ -149,21 +152,45 @@
+@@ -149,21 +152,46 @@
      }
  }
  
@@ -2974,6 +2980,7 @@
 -        frame(p, s, keys, h);
 +        bool presets = ours && panel.programs > 0;
 +        bool kit=ours&&juce::String(panel.name)=="Rhythmer Kit";
++        if(ours&&panel.layout_revision&&panel.status==PluginStatus::Ready&&panel.row<2)h.left.push_back(pill(panel.row==0?"PAD SOURCE":kit?"SAVE KIT":"SAVE SOUND",c));
 +        bool home=false;
 +        if(s.ui.shift){SoftKeys k{{"", "", "TRANSPORT"},-1,c};k.toggles=4;k.lit=s.track().plugin<max_plugins&&s.project.plugins[s.track().plugin].transport?4:0;frame(p,s,k,h);}
 +        else frame(p,s,{{"PLUG-INS",presets?(kit?"KIT PRESETS":"PRESETS"):"",panel.layout_revision?(s.ui.edit_row[s.ui.track]?(kit&&s.ui.edit_row[s.ui.track]==1?"SAVE":"EDIT"):kit?"PAD SOURCE":"SAVE"):""},-1,c},h);
@@ -2989,7 +2996,7 @@
          if (s.track().plugin >= max_plugins) { // none yet: B1 picks one from the card
              icon(p, Icon::Plug, zone::width / 2.0f - 14, zone::picture_y + 40, 28, colour::dim, 1.4f);
              p.text("NONE", 0, zone::picture_y + 76, zone::width, 14, caps_text(colour::dim), juce::Justification::centred);
-@@ -184,7 +211,8 @@
+@@ -184,7 +212,8 @@
      unsigned count = edit_page_count(info);
      const auto& before = edit_page_at(info, index + count - 1);
      const auto& after = edit_page_at(info, index + 1);
@@ -2999,7 +3006,7 @@
      if (page.picture == Picture::Mod && !s.ui.map_open) {
          unsigned used = 0;
          for (const auto& r : s.track().mods) used += r.used();
-@@ -210,7 +238,21 @@
+@@ -210,7 +239,21 @@
  unsigned page_count(Context& c) { return std::max(edit_page_count(engine_info(c.track().engine)), 1u); }
  
  void soft(Context& c, int key) {
@@ -3021,7 +3028,7 @@
          if (key == 0) c.open_plugin_picker(UiState::PluginTarget::Instrument);
          if (key == 1 && c.ui.plugin_panel.entry == c.track().plugin && c.ui.plugin_panel.programs > 0) c.open_plugin_presets(c.track().plugin);
          if (key == 2) c.toggle_plugin_transport(c.track().plugin);
-@@ -232,17 +274,26 @@
+@@ -232,17 +275,26 @@
  
  // A PLUGIN track's rows of parameters (the panel knows how many).
  void plugin_rows(Context& c, int delta) {
@@ -3049,7 +3056,7 @@
      if (c.track().engine == EngineKind::Plugin) { plugin_rows(c, delta); return; }
      const auto& info = engine_info(c.track().engine);
      if (!info.page_count) return;
-@@ -256,6 +307,13 @@
+@@ -256,6 +308,13 @@
  }
  
  void push(Context& c) {
@@ -3063,7 +3070,7 @@
      const auto& info = engine_info(c.track().engine);
      if (!info.page_count) return;
      unsigned t = c.ui.track;
-@@ -283,6 +341,6 @@
+@@ -283,6 +342,6 @@
  }
  } // namespace
  
@@ -3624,9 +3631,15 @@
  
 --- a/src/rhythmer/pages/plugin_view.cpp
 +++ b/src/rhythmer/pages/plugin_view.cpp
-@@ -55,25 +55,41 @@
+@@ -54,26 +54,47 @@
+         p.text("NONE", x, top + 74, w, 14, caps_text(colour::dim), juce::Justification::centred);
          return;
      }
++    if (s.ui.page == PageId::Stage && s.track().engine == EngineKind::Plugin && panel.layout_revision && panel.row >= 2) {
++        const bool kit = juce::String(panel.name) == "Rhythmer Kit";
++        p.text(kit ? "PUSH: PAD SOURCE / SAVE" : "PUSH: SAVE SOUND", x, top, w, 11, caps_text(colour::sec, type::floor));
++        top += 12;
++    }
      // Six rows: the three in hand raised on one panel, ticked in their knobs' colours.
 -    constexpr float row_h = 23;
 -    unsigned hand = panel.row * 3u;
@@ -4002,7 +4015,7 @@
          return;
      }
      if (stage_opens_edit(c.track(), unsigned(key))) { c.open(PageId::Edit); return; } // a MIDI track's B3 EDIT
-@@ -1104,7 +1140,10 @@
+@@ -1104,7 +1140,20 @@
  void push(Context& c) {
      auto& t = c.track();
      const auto& page = stage_page_now(c.ui, t, stage_instrument(c.project, t));
@@ -4011,6 +4024,16 @@
 +    if(t.engine==EngineKind::Sampler&&t.break_bars&&!t.pads[t.last_pad%sampler_pads].used()){
 +        c.ui.break_browse=true;c.ui.break_load_b=false;c.ui.break_track=c.ui.track;c.ui.break_bars=t.break_bars;c.project.gen8.bars=t.break_bars;c.open(PageId::Samples);c.notice("Choose loop A");return;
 +    } // the card in the middle
++    if (page.kind == StageKind::PluginEdit && c.ui.plugin_panel.entry == t.plugin && c.ui.plugin_panel.layout_revision && c.ui.plugin_panel.status == PluginStatus::Ready) {
++        if (c.frozen_edit(c.ui.track)) return;
++        const auto row = c.ui.plugin_row[t.plugin];
++        c.open(PageId::Edit);
++        c.ui.sound_tools_track = int(c.ui.track);
++        c.ui.sound_tools_row = row;
++        c.ui.edit_row[c.ui.track] = std::string(c.ui.plugin_panel.name) == "Rhythmer Kit" ? 1 : 2;
++        c.refresh_plugin_panel(t.plugin);
++        return;
++    }
      if (page.kind == StageKind::Preset) { c.stage_tick(UINT32_MAX); c.open(PageId::Sounds); return; }
      if (page.kind == StageKind::Fx && !t.fx.count()) { // nothing yet: the picker on the track's chain, to add the first
          c.ui.fx_loop = -1;
@@ -5510,7 +5533,7 @@
          page = PageId::Stage;
      }
      if (page != ui.page) punch_release(); // a pad held over a page change would never let go
-@@ -255,6 +267,12 @@
+@@ -255,17 +267,62 @@
  }
  
  void Context::back() {
@@ -5523,8 +5546,23 @@
      if (ui.sheet_open || ui.map_open || ui.picker_open || ui.move_open) { // a sheet, map or picker first
          ui.sheet_open = ui.map_open = ui.picker_open = ui.move_open = false;
          return;
-@@ -265,7 +283,34 @@
+     }
++    if (ui.page == PageId::Edit && track().engine == EngineKind::Plugin && ui.sound_tools_track == int(ui.track) && back_target(ui) == PageId::Stage) {
++        const auto row = ui.sound_tools_row;
++        ui.sound_tools_track = -1;
++        open(PageId::Stage);
++        ui.edit_row[ui.track] = 0;
++        if (track().plugin < max_plugins) {
++            ui.plugin_row[track().plugin] = row;
++            refresh_plugin_panel(track().plugin);
++        }
++        return;
++    }
+     open(back_target(ui)); // open() finds it on the stack and drops it and what came after
+ }
+ 
  void Context::select_track(unsigned t) {
++    if (t % track_count != ui.track) ui.sound_tools_track = -1;
      if (ui.page == PageId::Sounds) audition(-1);
      stage_tick(UINT32_MAX); // a sound still waiting to load lands on the track it was turned on
 +    bool changed = ui.track != t % track_count;
@@ -5558,7 +5596,7 @@
      ui.held_step = -1;
      if (ui.page == PageId::Sounds) ui.sounds_cursor = track().preset;
  }
-@@ -291,6 +336,7 @@
+@@ -291,6 +348,7 @@
  // engine; every press also goes into the ring Capture reads (roadmap P5).
  void Context::key(int k, int velocity, bool down, int cutoff) {
      auto& t = track();
@@ -5566,7 +5604,7 @@
      if (t.arp) {
          Command c {Type::ArpKey, ui.track, 0, uint16_t(k), int16_t(down ? velocity : 0)};
          c.position = uint32_t(cutoff + 1); // a 16 Levels Filter pad's cutoff, kept on its repeats
-@@ -356,6 +402,11 @@
+@@ -356,6 +414,11 @@
          return;
      }
      if (!t.used()) return;
@@ -5578,7 +5616,7 @@
      if (t.levels) { // 16 Levels on a synth: the last note on all sixteen, soft to loud or in pitch; Scale the key's notes
          auto level = levels_of(project, t, pad);
          ui.levels_hit = int8_t(pad); ui.levels_value = int16_t(level.shown);
-@@ -448,6 +499,7 @@
+@@ -448,6 +511,7 @@
  
  void Context::load_sound(unsigned t, EngineKind kind, unsigned sound) {
      auto& tr = project.tracks[t % track_count];
@@ -5586,7 +5624,7 @@
      bool engine_changed = tr.engine != kind;
      const auto& info = engine_info(kind);
      const UserSound* own = sound >= info.sound_count ? user_sound(kind, sound - info.sound_count) : nullptr;
-@@ -503,6 +555,9 @@
+@@ -503,6 +567,9 @@
      if (midi_binding(*this, b, value)) return; // roadmap P4: a MIDI track's device and SysEx file
      auto& t = track();
      switch (b.kind) {
@@ -5596,7 +5634,7 @@
      case Kind::Param:
          set_param(ui.track, b.id, value);
          if (t.engine != EngineKind::Midi || midi_track::is_cc(b.id) || b.id == midi_track::Bend) record_motion(b.id, value); // of a MIDI track's own, its slots and bend are lanes
-@@ -717,7 +772,7 @@
+@@ -717,7 +784,7 @@
      }
      case Kind::ChopZoom: ui.chop_zoom = uint8_t(value); ui.chop_focus = uint8_t(b.id % 2); ui.chop_view = {}; break;
      case Kind::FileJump: ui.files_cursor = uint16_t(value); break;
@@ -5605,7 +5643,7 @@
      case Kind::ProjectJump: ui.project_cursor = uint16_t(value); break;
      case Kind::ProjectSort: ui.project_sort = uint8_t(value); break;
      case Kind::PadFine: pad().fine = int8_t(value); send_pad(ui.track, t.last_pad); record_pad_motion(PadParam::Fine, value); break;
-@@ -800,7 +855,15 @@
+@@ -800,7 +867,15 @@
      case Kind::MarksRamp: roll_marks_ramp(*this, value); break;                               // Roll's Shift + K2, marked notes                             // Roll's Shift + K1
      case Kind::EuclidHits: case Kind::EuclidSteps: case Kind::EuclidRotate: set_euclid(b.kind, value); break;
      case Kind::TrackSpeed: set_speed(unsigned(b.id), value); break;
@@ -5622,7 +5660,7 @@
      case Kind::FollowAction: case Kind::FollowOther: case Kind::FollowAfter: case Kind::FollowChance: set_follow(b.kind, value); break; // roadmap P5
      case Kind::SceneTempo: set_scene_tempo(unsigned(b.id), value * 10); break; // Patterns' SCENE: below 30, none of its own
      case Kind::PrintTapPick: ui.print_sheet.tap = value ? PrintTap::PreFx : PrintTap::PostFx; break; // freeze plan F2c
-@@ -1384,6 +1447,7 @@
+@@ -1384,6 +1459,7 @@
  }
  
  void Context::apply_edit(const Edit& e, bool after) {
@@ -5630,7 +5668,7 @@
      if (e.pad >= 0) restore_pad(e.track, unsigned(e.pad), after ? e.pad_after : e.pad_before);
      if (after) for (const auto& [kit, value] : e.pads_after) restore_pad(e.track, kit, value);
      else for (auto p = e.pads_before.rbegin(); p != e.pads_before.rend(); ++p) restore_pad(e.track, p->first, p->second);
-@@ -1393,6 +1457,8 @@
+@@ -1393,6 +1469,8 @@
      if (song) restore_song(*song);
      const auto& motion = after ? e.motion_after : e.motion_before;
      if (motion) restore_motion(*motion);
@@ -5639,7 +5677,7 @@
      const auto& whole = after ? e.track_after : e.track_before;
      if (whole) restore_track(*this, e.track, *whole); // last: its pack carries the motion as restored
      if (e.swap_a >= 0) trade_tracks(*this, unsigned(e.swap_a), unsigned(e.swap_b)); // a move: the same swap again
-@@ -1412,6 +1478,7 @@
+@@ -1412,6 +1490,7 @@
          if (project.seq_tempo != m->per_pattern) { project.seq_tempo = m->per_pattern; send({Type::SeqTempo, 0, 0, ui.lead_pattern, int16_t(m->per_pattern)}); }
      }
      dirty = true;
@@ -6959,10 +6997,11 @@
  } // namespace rhythmer
 --- /dev/null
 +++ b/src/rhythmer/shell/track_workflow_check.h
-@@ -0,0 +1,166 @@
+@@ -0,0 +1,193 @@
 +// SPDX-License-Identifier: AGPL-3.0-only
 +#pragma once
 +#include "rhythmer/shell/new_track.h"
++#include "rhythmer/shell/stage_map.h"
 +#include "rhythmer/shell/ask.h"
 +#include "rhythmer/plugin/plugin_files.h"
 +#include "rhythmer/shell/track_copy.h"
@@ -6973,6 +7012,32 @@
 +    auto require=[&](bool ok,const char* what){++checks;if(!ok)std::fprintf(stderr,"TRACK_WORKFLOW FAIL %u: %s\n",checks,what);return ok;};
 +#define TRACK_CHECK(x,what) do {if(!require((x),what))return 1;}while(false)
 +    EngineHost host;Shell shell(host);auto& c=shell.context();
++    // The owned plug-in EDIT face exposes source/save via Push, while PRESETS keeps its native job.
++    {
++        auto tap_tools=[&](SurfaceButton button){for(bool down:{true,false}){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(button);e.input.pressed=down;shell.surface(e,2000+checks);}};
++        c.ui.track=0;auto& t=c.project.tracks[0];t.engine=EngineKind::Plugin;t.plugin=0;
++        c.ui.page=PageId::Stage;stage_go(c.ui,0,1);c.ui.plugin_row[0]=7;
++        c.ui.plugin_panel.entry=0;c.ui.plugin_panel.status=PluginStatus::Ready;c.ui.plugin_panel.layout_revision=1;
++        std::snprintf(c.ui.plugin_panel.name,sizeof(c.ui.plugin_panel.name),"Rhythmer Kit");
++        tap_tools(SurfaceButton::WheelPush);
++        TRACK_CHECK(c.ui.page==PageId::Edit&&c.ui.edit_row[0]==1,"kit EDIT Push reaches PAD SOURCE");
++        TRACK_CHECK(c.ui.sound_tools_track==0&&c.ui.sound_tools_row==7,"tool entry remembers sound row");
++        tap_tools(SurfaceButton::TopRight);TRACK_CHECK(c.ui.edit_row[0]==2,"kit source goes to SAVE");
++        tap_tools(SurfaceButton::TopRight);TRACK_CHECK(c.ui.edit_row[0]==0,"kit save returns to EDIT");
++        c.back();TRACK_CHECK(c.ui.page==PageId::Stage&&c.ui.plugin_row[0]==7&&c.ui.sound_tools_track==-1,"Back restores Stage edit position");
++        c.ui.plugin_panel.layout_revision=0;tap_tools(SurfaceButton::WheelPush);
++        TRACK_CHECK(c.ui.page==PageId::Stage&&c.ui.sound_tools_track==-1,"external plug-in Push keeps native behavior");
++        c.ui.plugin_panel.layout_revision=1;stage_go(c.ui,0,0);tap_tools(SurfaceButton::WheelPush);
++        TRACK_CHECK(c.ui.page==PageId::Stage&&c.ui.sound_tools_track==-1,"PRESETS Push is not intercepted by tools");
++        stage_go(c.ui,0,1);
++        c.ui.plugin_panel.entry=0;c.ui.plugin_panel.status=PluginStatus::Ready;c.ui.plugin_panel.layout_revision=1;
++        std::snprintf(c.ui.plugin_panel.name,sizeof(c.ui.plugin_panel.name),"Sophie");
++        tap_tools(SurfaceButton::WheelPush);TRACK_CHECK(c.ui.page==PageId::Edit&&c.ui.edit_row[0]==2,"single sound EDIT Push reaches SAVE");
++        tap_tools(SurfaceButton::TopRight);TRACK_CHECK(c.ui.edit_row[0]==0,"single save returns to EDIT");
++        c.select_track(1);TRACK_CHECK(c.ui.sound_tools_track==-1,"track change invalidates tool bookmark");
++        c.ui=UiState{};c.project.tracks[0]=Track{};
++    }
++
 +    auto press=[&](SurfaceButton b,bool down){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(b);e.input.pressed=down;shell.surface(e,2000+checks);};
 +    c.ui.track=0;c.ui.page=PageId::Stage;
 +    c.load_sound(0,EngineKind::Midi,0);c.track().mix.level=77;c.track().mix.pan=-12;c.track().pattern=73;
@@ -7163,7 +7228,7 @@
      // The fader (shell/fader.cpp): where it sits (-1 until it moves)
      // and whether it has met the value it drives (takeover), when it last moved (its card shows a moment).
      Pot fader;
-@@ -228,11 +240,15 @@
+@@ -228,11 +240,17 @@
      PageId plugin_back = PageId::Stage;          // where B1 (Back) at the top and a load go
      PageId plugin_from = PageId::Stage;          // the page it opened over: B1 at the top while the track is not PLUGIN yet
      PluginPanel plugin_panel;
@@ -7171,6 +7236,8 @@
 +    std::array<uint8_t,max_plugins> plugin_design_half {};
 +    bool kit_common=false;
      std::array<uint16_t, max_plugins> plugin_row {};
++    int sound_tools_track = -1; // transient return bookmark; not project state
++    uint16_t sound_tools_row = 2;
      DrumVoices drum_voices; // the selected track's Drums pads: its drum plug-in's voices (Keys, the pad lights)
      // PRESETS: the entry whose programs it lists, the row under the cursor, and where B1 goes back to.
      uint8_t presets_entry = no_plugin;

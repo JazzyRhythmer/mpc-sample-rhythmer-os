@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 #pragma once
 #include "rhythmer/shell/new_track.h"
+#include "rhythmer/shell/stage_map.h"
 #include "rhythmer/shell/ask.h"
 #include "rhythmer/plugin/plugin_files.h"
 #include "rhythmer/shell/track_copy.h"
@@ -11,6 +12,32 @@ inline int track_workflow_check() {
     auto require=[&](bool ok,const char* what){++checks;if(!ok)std::fprintf(stderr,"TRACK_WORKFLOW FAIL %u: %s\n",checks,what);return ok;};
 #define TRACK_CHECK(x,what) do {if(!require((x),what))return 1;}while(false)
     EngineHost host;Shell shell(host);auto& c=shell.context();
+    // The owned plug-in EDIT face exposes source/save via Push, while PRESETS keeps its native job.
+    {
+        auto tap_tools=[&](SurfaceButton button){for(bool down:{true,false}){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(button);e.input.pressed=down;shell.surface(e,2000+checks);}};
+        c.ui.track=0;auto& t=c.project.tracks[0];t.engine=EngineKind::Plugin;t.plugin=0;
+        c.ui.page=PageId::Stage;stage_go(c.ui,0,1);c.ui.plugin_row[0]=7;
+        c.ui.plugin_panel.entry=0;c.ui.plugin_panel.status=PluginStatus::Ready;c.ui.plugin_panel.layout_revision=1;
+        std::snprintf(c.ui.plugin_panel.name,sizeof(c.ui.plugin_panel.name),"Rhythmer Kit");
+        tap_tools(SurfaceButton::WheelPush);
+        TRACK_CHECK(c.ui.page==PageId::Edit&&c.ui.edit_row[0]==1,"kit EDIT Push reaches PAD SOURCE");
+        TRACK_CHECK(c.ui.sound_tools_track==0&&c.ui.sound_tools_row==7,"tool entry remembers sound row");
+        tap_tools(SurfaceButton::TopRight);TRACK_CHECK(c.ui.edit_row[0]==2,"kit source goes to SAVE");
+        tap_tools(SurfaceButton::TopRight);TRACK_CHECK(c.ui.edit_row[0]==0,"kit save returns to EDIT");
+        c.back();TRACK_CHECK(c.ui.page==PageId::Stage&&c.ui.plugin_row[0]==7&&c.ui.sound_tools_track==-1,"Back restores Stage edit position");
+        c.ui.plugin_panel.layout_revision=0;tap_tools(SurfaceButton::WheelPush);
+        TRACK_CHECK(c.ui.page==PageId::Stage&&c.ui.sound_tools_track==-1,"external plug-in Push keeps native behavior");
+        c.ui.plugin_panel.layout_revision=1;stage_go(c.ui,0,0);tap_tools(SurfaceButton::WheelPush);
+        TRACK_CHECK(c.ui.page==PageId::Stage&&c.ui.sound_tools_track==-1,"PRESETS Push is not intercepted by tools");
+        stage_go(c.ui,0,1);
+        c.ui.plugin_panel.entry=0;c.ui.plugin_panel.status=PluginStatus::Ready;c.ui.plugin_panel.layout_revision=1;
+        std::snprintf(c.ui.plugin_panel.name,sizeof(c.ui.plugin_panel.name),"Sophie");
+        tap_tools(SurfaceButton::WheelPush);TRACK_CHECK(c.ui.page==PageId::Edit&&c.ui.edit_row[0]==2,"single sound EDIT Push reaches SAVE");
+        tap_tools(SurfaceButton::TopRight);TRACK_CHECK(c.ui.edit_row[0]==0,"single save returns to EDIT");
+        c.select_track(1);TRACK_CHECK(c.ui.sound_tools_track==-1,"track change invalidates tool bookmark");
+        c.ui=UiState{};c.project.tracks[0]=Track{};
+    }
+
     auto press=[&](SurfaceButton b,bool down){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(b);e.input.pressed=down;shell.surface(e,2000+checks);};
     c.ui.track=0;c.ui.page=PageId::Stage;
     c.load_sound(0,EngineKind::Midi,0);c.track().mix.level=77;c.track().mix.pan=-12;c.track().pattern=73;

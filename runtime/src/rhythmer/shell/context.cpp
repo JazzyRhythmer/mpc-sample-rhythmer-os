@@ -277,10 +277,22 @@ void Context::back() {
         ui.sheet_open = ui.map_open = ui.picker_open = ui.move_open = false;
         return;
     }
+    if (ui.page == PageId::Edit && track().engine == EngineKind::Plugin && ui.sound_tools_track == int(ui.track) && back_target(ui) == PageId::Stage) {
+        const auto row = ui.sound_tools_row;
+        ui.sound_tools_track = -1;
+        open(PageId::Stage);
+        ui.edit_row[ui.track] = 0;
+        if (track().plugin < max_plugins) {
+            ui.plugin_row[track().plugin] = row;
+            refresh_plugin_panel(track().plugin);
+        }
+        return;
+    }
     open(back_target(ui)); // open() finds it on the stack and drops it and what came after
 }
 
 void Context::select_track(unsigned t) {
+    if (t % track_count != ui.track) ui.sound_tools_track = -1;
     if (ui.page == PageId::Sounds) audition(-1);
     stage_tick(UINT32_MAX); // a sound still waiting to load lands on the track it was turned on
     bool changed = ui.track != t % track_count;

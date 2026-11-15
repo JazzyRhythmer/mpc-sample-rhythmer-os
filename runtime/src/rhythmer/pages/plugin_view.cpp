@@ -54,6 +54,11 @@ void draw_plugin_view(Paint& p, const Snapshot& s, unsigned entry, float top) {
         p.text("NONE", x, top + 74, w, 14, caps_text(colour::dim), juce::Justification::centred);
         return;
     }
+    if (s.ui.page == PageId::Stage && s.track().engine == EngineKind::Plugin && panel.layout_revision && panel.row >= 2) {
+        const bool kit = juce::String(panel.name) == "Rhythmer Kit";
+        p.text(kit ? "PUSH: PAD SOURCE / SAVE" : "PUSH: SAVE SOUND", x, top, w, 11, caps_text(colour::sec, type::floor));
+        top += 12;
+    }
     // Six rows: the three in hand raised on one panel, ticked in their knobs' colours.
     if(panel.preset[0]) {
         auto style=plain(colour::text,type::body,Weight::SemiBold);

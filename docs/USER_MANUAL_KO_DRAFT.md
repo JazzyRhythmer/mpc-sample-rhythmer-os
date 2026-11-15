@@ -1,6 +1,6 @@
 # Rhythmer OS 사용 설명서
 
-> **처음 사용하는 분:** [트랙 선택·진입·타입 변경부터 읽기](GETTING_STARTED_KO.md). SAMPLE은 Stage로, PAD FX + KNOB FX는 TRACKS로 갑니다. PATTERNS의 패드는 패턴 실행용이며, 연주 녹음은 SAMPLE로 Stage에 돌아와 진행합니다. 별도 PAD SOURCE / SAVE 편집창 진입은 현재 베타의 확인 과제로 표시합니다.
+> **처음 사용하는 분:** [트랙 선택·진입·타입 변경부터 읽기](GETTING_STARTED_KO.md). SAMPLE은 Stage로, PAD FX + KNOB FX는 TRACKS로 갑니다. PATTERNS의 패드는 패턴 실행용이며, 연주 녹음은 SAMPLE로 Stage에 돌아와 진행합니다. Stage B1 EDIT에서 인코더 Push로 PAD SOURCE / SAVE 도구를 엽니다.
 
 웹사이트 게재용 초안 · 대상 버전 0.4.0-beta.3
 
@@ -44,7 +44,7 @@ PRESETS 하단은 해당 엔진의 실제 주 필터·레조넌스와 대표 음
 
 그 뒤의 **P01 … / P11 …** 항목은 선택 패드의 원본 엔진 제어입니다. KIT 항목은 전체 킷, P번호 항목은 해당 패드이므로 구분하여 조정하세요. 다른 패드를 눌러도 전체 필터 값은 유지됩니다. SAVE KIT에는 전체 필터와 패드별 소리가 함께 저장됩니다.
 
-아래는 별도 전체 편집창의 제어 설명입니다. 현재 Stage에서 이 창으로 들어가는 경로는 [초기 안내의 베타 한계](GETTING_STARTED_KO.md)를 확인하세요. 별도 Edit 화면의 B3 **PAD SOURCE**를 열면 `Pad / Engine / Sound`가 나옵니다. B3은 SOURCE → SAVE → EDIT 순서로 전환합니다.
+Stage에서 B1 EDIT를 선택한 뒤 인코더 Push로 도구를 엽니다. Rhythmer Kit은 PAD SOURCE, 개별 엔진은 SAVE로 시작합니다. 도구 Edit 화면의 B3 **PAD SOURCE**를 열면 `Pad / Engine / Sound`가 나옵니다. B3은 SOURCE → SAVE → EDIT 순서로 전환합니다.
 
 1. 패드를 누르거나 Pad를 돌려 편집할 패드를 선택합니다.
 2. Engine으로 그 패드의 엔진을 선택합니다.
@@ -179,3 +179,12 @@ Sequential의 외부 Prophet 뱅크와 Erica/Hrtl 외부 Elixir 뱅크는 배포
 추가 필터는 엔진의 원래 합성·내장 이펙트 뒤, OS PERFORM·트랙 인서트·센드 앞에서 출력 전체를 처리합니다. 인서트 슬롯이나 버스는 사용하지 않습니다. 기본값은 Cutoff 100%, Resonance 0%, LP이며 이 조합에서는 원본 오디오를 그대로 통과합니다. 원본 프리셋을 선택하면 이 중립값으로 시작하고, Save Sound와 프로젝트 저장에는 추가 필터 설정도 포함됩니다. 원본 필터·ENV·LFO·FX 설정은 변경하지 않습니다. Rhythmer Kit 안에서는 패드 원본의 필터와 별도로 킷 자체의 KIT FILTER가 전체 합산 출력을 처리합니다.
 
 킷 패드 EDIT 제목은 `P11 / CS-1 / 사운드명`처럼 선택 패드·실제 엔진·소리를 표시합니다. 킷 전체 필터 행은 `킷 이름 / ALL PADS`를 표시합니다. 패드 소스를 교체해도 킷 프리셋 이름을 현재 소스 엔진으로 오해하지 않도록 구분합니다.
+
+
+## 저장한 음색을 다시 쓰기
+
+자세한 경로는 [빠른 시작의 User Sound / User Kit 저장](GETTING_STARTED_KO.md)을 따르세요. K1 Save slot 1–64 → K2 Save Sound / Save Kit → K3 Status Ready를 확인합니다. 같은 슬롯은 교체됩니다. B2 PRESETS / KIT PRESETS의 User Sound / User Kit 항목을 Push / LOAD로 다시 불러옵니다. SHIFT + Push는 악기 메인 EDIT의 원래 위치로 돌아갑니다. 프리셋은 음색/킷 재사용용이며 곡은 프로젝트 SAVE로 별도 저장합니다.
+
+## 필수 조작·구조 안내와 핫픽스 저장 도구
+
+[첫 세션 안내](GETTING_STARTED_KO.md)의 필수 키 조합과 OS 구조부터 확인하세요. 뒤로 가기는 SHIFT + 인코더 클릭, 미세 조정은 대상 K1–K3 조작 후 SHIFT + 인코더 회전입니다. Stage EDIT 클릭은 지원 엔진의 SAVE SOUND / PAD SOURCE 진입으로 변경됐고, 도구의 SHIFT + B3는 플러그인 TRANSPORT 수신 설정입니다. 프로젝트 SAVE와 User Sound / User Kit 저장은 별개입니다.

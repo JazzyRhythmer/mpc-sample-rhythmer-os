@@ -30,3 +30,10 @@ Physical-device behavior remains a separate validation step. The beta installati
 ### Track replacement and navigation
 
 The TRACKS page now exposes TRACK SETUP; instrument PRESETS exposes PLUG-INS. Track type changes keep patterns, deletion has its own confirmation, and track-owned browsers follow track selection. Cancel and Undo restore the current context and original instrument state. See [track workflow](TRACK_WORKFLOW.md).
+
+
+## Stage entry to sound tools
+
+On an owned instrument’s Stage, B1 still cycles PRESETS / EDIT. On EDIT, the visible PUSH prompt opens the existing sound tools: a single instrument starts on SAVE; Rhythmer Kit starts on PAD SOURCE. B3 cycles PAD SOURCE → SAVE → EDIT for a kit, or SAVE ↔ EDIT for a single instrument. Stage B2 PERFORM / ARP / CHORD and B3 MIX / SENDS / FX are unchanged. Third-party plug-ins without Rhythmer layout metadata retain native Push behavior.
+
+K1 selects a save slot (1–64); turning K2 Save Sound / Save Kit triggers writing. Read Status and wait for Ready. Existing slots are replaced. B2 PRESETS / KIT PRESETS lists the saved User Sound / User Kit; Push / LOAD applies it. Shift + Push returns to the originating Stage edit row. Track selection invalidates the return bookmark and follows normal current-track browser ownership. Project saving remains independent.

@@ -1,7 +1,7 @@
 {
   "upstream": "v0.2.0",
   "commit": "8880d16116ccb3c69f75fb46bf2166b16c51ef0c",
-  "patch_sha256": "60160f7303ea981b65bba65cd5845dabbe36d3d31a70db1bc8bdd6cc26e2e518",
+  "patch_sha256": "418b581528632057cc7f94aab652ed482dd9fe6a8a996456a648a420b70172eb",
   "files": [
     "Makefile",
     "docs/GUIDE.md",
@@ -303,10 +303,10 @@
     "third_party/fm1-break/UPSTREAM_THIRD_PARTY.md": "c10451a1c0b368ec926e86b9296eb0c96c790d4d4768ad07e91b09ca9ea4bfa5",
     "third_party/fm1-break/NOTICE.md": "389efa0545bcd28dc46d62abf184b328983a9627619ef36819c20be7790ca44e",
     "config/update-public-key.txt": "1e54c848e19e113f0beb040d0978610c09d16cbe4509aa20a355485f83869eab",
-    "docs/USER_MANUAL_KO_DRAFT.md": "67532236c64d3014c19602ec6bed07412d1482f07aceb4c2ac84b777c9a94a33",
+    "docs/USER_MANUAL_KO_DRAFT.md": "e21bd3adff8be1332284c0d2c1236ad087f6fc2a6d3fca502dd037e67d5291b8",
     "docs/GEN_WORKFLOW.md": "724211beacd9ef9367255993460a1b334f224ee5811437d72ac6f41f98257b26",
     "docs/BREAK_ACID_GUIDE_KO.md": "0e2382b9f480359a07bb4ecc65e06c87dc2d7b9b268e580ab345f36d49cfc34a",
-    "docs/SD_CARD_GUIDE.md": "9e8516271c6456d6a24f0a5d773a5516145d4697df0544a8dcef10c99ef45e76",
+    "docs/SD_CARD_GUIDE.md": "9c8ec439c8431649b432df36b199c9225ab060df6fff4d2f236e67390d293577",
     "assets/device/mpc-sample.svg": "5fecee227d799be663aa6ce4e50a15a056ec17074ebbf188bdb825106b6cdffe"
   }
 }

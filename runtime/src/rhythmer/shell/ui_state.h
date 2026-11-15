@@ -244,6 +244,8 @@ struct UiState {
     std::array<uint8_t,max_plugins> plugin_design_half {};
     bool kit_common=false;
     std::array<uint16_t, max_plugins> plugin_row {};
+    int sound_tools_track = -1; // transient return bookmark; not project state
+    uint16_t sound_tools_row = 2;
     DrumVoices drum_voices; // the selected track's Drums pads: its drum plug-in's voices (Keys, the pad lights)
     // PRESETS: the entry whose programs it lists, the row under the cursor, and where B1 goes back to.
     uint8_t presets_entry = no_plugin;
