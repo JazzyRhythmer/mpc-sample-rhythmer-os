@@ -12,7 +12,7 @@ Free and open-source custom firmware by **jazzy rhythmer**, built on **Melodee 0
 
 ## Explore the engines
 
-Twenty instrument entries, with different ways to start a sound. The descriptions below follow the [website’s engine collection](https://jazzyrhythmer.github.io/mpc-sample/#engines), with synthesis identities checked against the credited original projects. These are descriptions of the MPC Sample ports, not a claim that every original firmware screen or workstation feature was ported.
+Twenty instrument entries, with different ways to start a sound. The descriptions below follow the [website’s engine collection](https://jazzyrhythmer.github.io/mpc-sample/#engines), with synthesis identities checked against the credited original projects. The descriptions focus on the sound engines and controls available in the MPC Sample ports.
 
 Individual instruments concentrate on **one selected sound per track**, played chromatically or in scale. **Rhythmer Kit** brings independently assigned sounds together on sixteen pads. The native **Sample Kit** remains a separate sampler choice.
 
@@ -48,7 +48,7 @@ The dedicated Acid Generator creates notes, accents, slides and sustained ties; 
 
 Load a one-, two-, three- or four-bar source and declare its length. The whole loop is split into sixteen equal regions and synchronized to the project tempo. Straight, genre, random, mutate and tail-fill operations create different slice arrangements.
 
-The six-page BRK PERF interface adds held rolls, pitch Up/Down, shrinking/building/stretching, A/B source switching and Return. Performance commands can be recorded into the sequence. These are equal loop divisions, not transient detection; bring your own permitted audio.
+The six-page BRK PERF interface adds held rolls, pitch Up/Down, shrinking/building/stretching, A/B source switching and Return. Performance commands can be recorded into the sequence. Bring your own permitted loop and explore its sixteen equal divisions.
 
 **Try it for:** Jungle, chopped breaks, rhythmic fills and live rearrangement. No break recordings are bundled.
 
@@ -82,7 +82,7 @@ The release keeps the engine Init state and the identified Rhythmer-authored Dry
 
 <img src="assets/engines/hortator-still.png" width="400" alt="Hortator — RHYTHMER OS engine screen">
 
-Explore MD-style TRX and EFM models alongside classic drum flavours and less conventional percussion. Choose a model first: its tune, decay, sweep, punch, noise, sub and clip settings define the sound rather than acting as identical macros on every model.
+Explore MD-style TRX and EFM models alongside classic drum flavours and less conventional percussion. Choose a model first: its tune, decay, sweep, punch, noise, sub and clip settings reveal that model’s particular character.
 
 Use Hortator alone for one focused playable drum voice, or use its different models across Rhythmer Kit pads. Hortator ACID is also the synthesis source of the separate Acid Engine entry.
 
@@ -102,11 +102,11 @@ Explore its presets, oscillator settings, filter peaks, modulation, portamento a
 
 ### FM-106
 
-**Juno-106-style subtractive synthesis — not an FM algorithm.**
+**Juno-106-style subtractive synthesis.**
 
 <img src="assets/engines/fm-106-still.png" width="400" alt="FM-106 — RHYTHMER OS engine screen">
 
-The name identifies its FM-1 origin. Its sound architecture combines DCO saw/pulse, pulse-width modulation, sub and noise sources with high-pass filtering, a resonant low-pass filter and an envelope.
+FM-106 combines DCO saw/pulse, pulse-width modulation, sub and noise sources with high-pass filtering, a resonant low-pass filter and an envelope.
 
 Shape the oscillator balance, cutoff, resonance, filter-envelope amount, keyboard tracking, amp envelope and source effects. The original named factory bank is retained, including A11 Brass and A12 Brass Swell.
 
@@ -120,7 +120,7 @@ Shape the oscillator balance, cutoff, resonance, filter-envelope amount, keyboar
 
 An oscillator-and-filter voice for solid low end and expressive lead lines. Its original oscillator, mixer, filter, envelope, modulation and effects controls are exposed through RHYTHMER’s sound editor.
 
-Start from the original named sounds and adjust the source controls rather than treating the FMini name as frequency-modulation synthesis. Its port runs inside RHYTHMER’s sequencing and project environment; the original firmware’s separate workstation interface is not reproduced.
+Start from the original named sounds and adjust the source controls. RHYTHMER supplies the sequencing and project environment around the instrument.
 
 **Try it for:** Weighty mono bass, singing leads, plucks, arpeggiated figures and warm sustained tones.
 
@@ -180,7 +180,7 @@ The original preset workflow and the ported source controls are retained. Its Ju
 
 Choose an algorithm, then explore how Timbre and Color change that model’s spectrum and behaviour. A small set of meaningful controls can produce very different results between algorithms.
 
-Amp and filter envelopes, FM amount, cutoff, resonance and filter-envelope controls shape the chosen oscillator into a playable sound. The model choice describes the synthesis method; it is not automatically a complete preset bank.
+Amp and filter envelopes, FM amount, cutoff, resonance and filter-envelope controls shape the chosen oscillator into a playable sound. Model selection chooses the synthesis method; presets store a fuller sound configuration.
 
 **Try it for:** Plucks, digital bass, bells, sharp stabs and unusual tonal or percussive textures.
 
@@ -204,7 +204,7 @@ The port retains the original 24 models and 96 embedded six-operator FM programs
 
 Choose a machine to change the underlying synthesis approach: the source families span ground tones/noise/percussion, SID-like character, FM, superwave and digital/voice-oriented sounds.
 
-Machine-specific parameters sit alongside amp shaping, filtering, effects and three LFO sections. RHYTHMER hosts the sound source on one track; the separate original firmware’s multi-track sequencer is not another sequencer inside this plug-in.
+Machine-specific parameters sit alongside amp shaping, filtering, effects and three LFO sections. The selected machine runs as an instrument on a RHYTHMER track, using the OS sequencer and project storage.
 
 **Try it for:** Electronic bass, bright digital melodies, synthetic percussion, chiptune-like edges and modulated textures.
 
