@@ -1,5 +1,7 @@
 # Rhythmer OS 사용 설명서
 
+> **처음 사용하는 분:** [트랙 선택·진입·타입 변경부터 읽기](GETTING_STARTED_KO.md). SAMPLE은 Stage로, PAD FX + KNOB FX는 TRACKS로 갑니다. PATTERNS의 패드는 패턴 실행용이며, 연주 녹음은 SAMPLE로 Stage에 돌아와 진행합니다. 별도 PAD SOURCE / SAVE 편집창 진입은 현재 베타의 확인 과제로 표시합니다.
+
 웹사이트 게재용 초안 · 대상 버전 0.4.0-beta.3
 
 Rhythmer OS는 MPC Sample에서 샘플, 신스, 드럼킷과 시퀀서를 사용하는 음악 제작 환경입니다. 개발자는 **jazzy rhythmer**입니다. 실기기 조작·청취·성능은 별도 베타 검증 대상입니다. 아래 버튼 설명은 현재 구현을 기준으로 작성했습니다.
@@ -42,7 +44,7 @@ PRESETS 하단은 해당 엔진의 실제 주 필터·레조넌스와 대표 음
 
 그 뒤의 **P01 … / P11 …** 항목은 선택 패드의 원본 엔진 제어입니다. KIT 항목은 전체 킷, P번호 항목은 해당 패드이므로 구분하여 조정하세요. 다른 패드를 눌러도 전체 필터 값은 유지됩니다. SAVE KIT에는 전체 필터와 패드별 소리가 함께 저장됩니다.
 
-Edit 화면의 B3 **PAD SOURCE**를 열면 `Pad / Engine / Sound`가 나옵니다. B3은 SOURCE → SAVE → EDIT 순서로 전환합니다.
+아래는 별도 전체 편집창의 제어 설명입니다. 현재 Stage에서 이 창으로 들어가는 경로는 [초기 안내의 베타 한계](GETTING_STARTED_KO.md)를 확인하세요. 별도 Edit 화면의 B3 **PAD SOURCE**를 열면 `Pad / Engine / Sound`가 나옵니다. B3은 SOURCE → SAVE → EDIT 순서로 전환합니다.
 
 1. 패드를 누르거나 Pad를 돌려 편집할 패드를 선택합니다.
 2. Engine으로 그 패드의 엔진을 선택합니다.

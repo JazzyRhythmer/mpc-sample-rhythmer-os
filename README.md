@@ -24,6 +24,10 @@ The 0.4 integration adds the new upstream 128-pattern Patterns home, Freeze/Deep
 
 Plaits exposes the original 24 models and 96 embedded 6-Op programs, with model-specific control names and named FM choices. The curated sound catalogue contains 2,616 retained original selections plus 43 explicitly authored Rhythmer selections: 15 Prophet sounds and four seven-voice Elixir kits. External Sequential/Erica/Hrtl banks are excluded. See [Rhythmer presets](docs/RHYTHMER_PRESETS.md) and [bank provenance](docs/ORIGINAL_PRESET_AUDIT_KO.md).
 
+## First session
+
+[Track selection, opening, replacement and type changes](docs/GETTING_STARTED_KO.md) · [Web manual](https://jazzyrhythmer.github.io/mpc-sample/manual/#track-basics) · [First pattern](https://jazzyrhythmer.github.io/mpc-sample/manual/quickstart.html)
+
 ## Install the beta
 
 [Download the latest beta](https://github.com/jazzyrhythmer/mpc-sample-rhythmer-os/releases) · [Installation and recovery guide](docs/SD_CARD_GUIDE.md) · [Website and web manual](https://jazzyrhythmer.github.io/mpc-sample/) · [Engine port sources](https://github.com/jazzyrhythmer/mpc-sample-engine-ports)
