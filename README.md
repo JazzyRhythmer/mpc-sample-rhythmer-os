@@ -22,6 +22,19 @@ The 0.4 integration adds the new upstream 128-pattern Patterns home, Freeze/Deep
 
 Plaits exposes the original 24 models and 96 embedded 6-Op programs, with model-specific control names and named FM choices. The curated sound catalogue contains 2,616 retained original selections plus 43 explicitly authored Rhythmer selections: 15 Prophet sounds and four seven-voice Elixir kits. External Sequential/Erica/Hrtl banks are excluded. See [Rhythmer presets](docs/RHYTHMER_PRESETS.md) and [bank provenance](docs/ORIGINAL_PRESET_AUDIT_KO.md).
 
+
+
+<!-- RHYTHMER FILM START -->
+## Watch the launch film
+
+[![RHYTHMER OS for MPC Sample](assets/preview/launch-film.jpg)](https://jazzyrhythmer.github.io/mpc-sample/#launch-film)
+
+Jungle, Techno, House & IDM — an introduction to RHYTHMER OS, its sound engines and ways to build a groove.
+
+[Watch on the website](https://jazzyrhythmer.github.io/mpc-sample/#launch-film) · [Download 16:9 MP4](https://github.com/JazzyRhythmer/mpc-sample-rhythmer-os/releases/download/v0.4.0-beta.3-r1/RHYTHMER-OS-Launch-YouTube-60s-Acid-Flow.mp4) · [Instagram / Reels 9:16 MP4](https://github.com/JazzyRhythmer/mpc-sample-rhythmer-os/releases/download/v0.4.0-beta.3-r1/RHYTHMER-OS-Launch-Reels-60s-Acid-Flow.mp4)
+<!-- RHYTHMER FILM END -->
+
+
 ## Install the beta
 
 Use the full **0.4.0-beta.3 SD ZIP** when updating from beta.2. App-only UPDATE does not install the revised plug-ins and catalogue.
