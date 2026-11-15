@@ -1,9 +1,6 @@
 # Rhythmer OS 0.4.0-beta.3 — 실기기 검증용 베타
 
-**beta.2 → beta.3에는 전체 SD.zip을 사용하세요.** 이번 수정에는 앱뿐 아니라 플러그인 바이너리·파라미터 표시 정보·프리셋 카탈로그 변경이 포함됩니다. 아래 절차대로 전원을 끄고 백업한 뒤 `autorun`과 플러그인/킷 자료를 함께 갱신하세요. `UPDATE.zip`만 적용하면 이번 수정 전체가 설치되지 않습니다.
-
-
-**Revision 2 (r2):** 확인창의 SHIFT + 인코더 취소, GEN 뒤로 가기, 모든 트랙이 EMPTY일 때 믹서 진입을 개선했습니다. 이번 r2에는 전체 SD ZIP을 사용하세요. 기본 버전 문자열이 beta.3로 같기 때문에 r1 설치에서는 UPDATE ZIP의 자동 업데이트 안내가 나오지 않습니다. 기존 프로젝트·샘플·사용자 프리셋은 보존하세요.
+**첫 설치에는 전체 SD.zip을 사용하세요.** 앱·플러그인·킷·프리셋 카탈로그가 함께 포함됩니다. 전원을 끄고 카드 전체를 백업한 뒤 아래 설치 안내를 따르세요. `UPDATE.zip`은 앱 전용 파일이며 첫 설치용이 아닙니다.
 
 개발자: **jazzy rhythmer**. Instagram: https://www.instagram.com/jazzyrhythmer/ · YouTube: https://www.youtube.com/@jazzyrhythmer
 
@@ -29,7 +26,7 @@
 
 Stage PRESETS에서 엔진·프리셋 이름과 애니메이션을 보고, EDIT에서 소리를 편집한다. B2 PRESETS에서 인코더로 선택하고 Push/LOAD로 로드한다. 현재 프리셋 이름은 EDIT 상단에도 표시된다. 인코더/−/+로 3개씩 이동하며, 6줄 목록 중 K1–K3 표시가 있는 줄을 해당 노브로 조절한다. EDIT 현재/전체 표시로 위치를 확인한다. 일반 악기는 B3 SAVE에서 Save slot과 Save Sound로, 킷은 PAD SOURCE 다음 SAVE에서 Save slot과 Save Kit으로 저장한다. 저장된 항목은 PRESETS의 User Sound / User Kit에 추가된다. 동일 슬롯에 저장하면 해당 슬롯을 교체한다.
 
-프로젝트 저장은 전체 킷의 패드별 엔진·음색·편집 파라미터를 보존한다. 사용자 프리셋은 Rhythmer/Presets에 저장한다. 베타 업데이트 시 autorun과 Rhythmer/Plugins/RHYTHMER - Rhythmer Kit을 포함해 패키지 전체를 복사한다. 자세한 단계는 SOUND_KIT_GUIDE.md를 참고한다.
+프로젝트 저장은 전체 킷의 패드별 엔진·음색·편집 파라미터를 보존한다. 사용자 프리셋은 Rhythmer/Presets에 저장한다. 설치 시 autorun과 Rhythmer/Plugins/RHYTHMER - Rhythmer Kit을 포함해 패키지 전체를 복사한다. 자세한 단계는 SOUND_KIT_GUIDE.md를 참고한다.
 
 ## Generator와 사용자 Break
 
@@ -52,16 +49,14 @@ GEN의 트랙 범위·악기 자동 배정·MIDI 전용 모드와 1–4마디 Br
 [Sound and preset verification](VERIFICATION.md). Stop twice within 400 ms cuts all audio; the next note or Play resumes.
 
 
-## 0.4 기반으로 업데이트
+## 설치와 기본 앱 복구
 
-0.3 베타에서 넘어올 때는 카드의 프로젝트·샘플·사용자 프리셋과 기존 autorun을 먼저 백업하고 전체 SD ZIP을 카드 최상위에 풉니다. 새 정식 저장 위치는 Rhythmer/Plugins입니다. 기존 최상위 Plugins는 호환용으로 읽으며 자동 삭제하거나 이동하지 않습니다. 동일 엔진이 새 위치에도 있으면 새 위치를 우선 사용합니다.
+프로젝트·샘플·카드 전체를 백업하고 MPC Sample의 전원을 끕니다. 전체 SD ZIP을 풀어 `autorun/`, `Rhythmer/`, `Samples/`가 카드 최상위에 오도록 복사합니다. 카드를 안전하게 추출하고 기기에 넣은 뒤 전원을 켜 SD launcher 안내를 따릅니다. 플러그인 저장 위치는 `Rhythmer/Plugins`입니다.
 
-이후 호환 Rhythmer 0.4 빌드에서는 서명된 UPDATE ZIP을 카드 최상위에 놓거나 USB 기기 페이지로 전송합니다. 저장 후 설치를 선택하면 이전 실행 폴더를 autorun/rhythmer.prev에 보존하고 재시작합니다. 시작 확인 실패 시 이전 버전으로 복구하는 원본 절차를 사용합니다. UPDATE는 플러그인·킷 데이터 교체용이 아닙니다. 이 데이터가 바뀐 릴리스는 전체 SD 패키지 안내를 따릅니다. Melodee 정식 ZIP은 Rhythmer OS 업데이트로 수락하지 않습니다.
-
-복구는 기기 전원을 끈 뒤 카드를 분리하고 autorun 폴더를 카드 밖에 보관하면 기존 stock 앱으로 부팅됩니다. 이전 베타로 돌아갈 때는 백업한 autorun과 해당 베타의 플러그인 폴더를 복원합니다. 128패턴·Freeze가 포함된 새 프로젝트는 복사본으로 보관하고 이전 베타에서 덮어쓰지 마세요.
+기본 MPC 앱으로 돌아가려면 전원을 끄고 카드를 분리한 뒤 `autorun/` 폴더를 카드 밖으로 옮깁니다. 프로젝트·샘플은 백업을 유지하세요.
 
 ## 다운로드 선택과 안내
 
-첫 설치와 이번 0.4 전환에는 **SD.zip** 전체 패키지를 사용한다. **UPDATE.zip**은 호환 Rhythmer 설치의 실행 앱만 업데이트하며 플러그인이나 킷을 포함하지 않는다. SOURCE / MOVE-SOURCE / SUPPORT-SOURCE는 재빌드를 위한 소스 배포물로 SD 설치 파일이 아니다. 배포 페이지의 버전과 `.sha256` 값을 다운로드 파일과 대조한다.
+첫 설치에는 **SD.zip** 전체 패키지를 사용한다. **UPDATE.zip**은 호환 Rhythmer 설치의 실행 앱만 업데이트하며 플러그인이나 킷을 포함하지 않는다. SOURCE / MOVE-SOURCE / SUPPORT-SOURCE는 재빌드를 위한 소스 배포물로 SD 설치 파일이 아니다. 배포 페이지의 버전과 `.sha256` 값을 다운로드 파일과 대조한다.
 
 이 프로젝트는 AKAI Professional 또는 inMusic이 승인하거나 지원하는 공식 펌웨어가 아니다. MPC Sample 명칭과 로고의 권리는 각 권리자에게 있다. 소프트웨어는 각 라이선스에 따라 무보증으로 제공된다. 테스트 범위·알려진 한계는 VERIFICATION.md를 확인한다. 제조사 펌웨어를 덮어쓰는 설치가 아니라 SD launcher를 사용하는 방식이다.

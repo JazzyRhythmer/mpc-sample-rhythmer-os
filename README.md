@@ -4,7 +4,7 @@ Developed by **jazzy rhythmer**. [Instagram](https://www.instagram.com/jazzyrhyt
 
 **0.4.0-beta.3**, an MPC Sample beta for owner device testing, based on **Melodee 0.2.0 by Kerem Kiliç (Ellic Studio)**. Existing sampler, sequencer, mixer, effects, driver and recovery foundations are retained.
 
-Revision 2 adds safe confirmation cancellation with Shift + Push, consistent GEN Back navigation and MIX access from all-empty projects. Note Repeat rate-key behavior is preserved.
+This beta includes safe confirmation cancellation with Shift + Push, consistent GEN Back navigation and MIX access from all-empty projects. Note Repeat rate-key behavior is preserved.
 
 The plugin picker contains 20 entries: Rhythmer Kit, Acid Engine, Break Engine, Sophie, Elixir, Aphex, FM-106, FMini-1, CS-1, OberVave, K-WASUB, Hera, Braids, Plaits, Hortator, MONO2K, Prophet, S1Vave, Dexed, Guru-600. The original Sample Kit remains available through the native sampler. See [engine inventory](docs/ENGINE_REGISTRY.md).
 
@@ -28,7 +28,7 @@ Plaits exposes the original 24 models and 96 embedded 6-Op programs, with model-
 
 [Download the latest beta](https://github.com/JazzyRhythmer/mpc-sample-rhythmer-os/releases) · [Installation and recovery guide](docs/SD_CARD_GUIDE.md) · [Website and web manual](https://jazzyrhythmer.github.io/mpc-sample/) · [Engine port sources](https://github.com/JazzyRhythmer/mpc-sample-engine-ports)
 
-Use the complete **SD.zip** for first installation, the 0.4 transition, beta.2 → beta.3, and beta.3 revision 1 → revision 2: this revision also changes plugin binaries and the preset catalog. **Revision 2 retains the beta.3 version number, so revision 1 does not automatically offer the same-version update. Use the full SD package for that transition.** [Current installation steps](https://jazzyrhythmer.github.io/mpc-sample/installer/). **UPDATE.zip** updates only a compatible Rhythmer application; it does not replace plugin/kit data. Back up projects, samples and the card first. Verify the release checksums and the AC50 / stock firmware 1.3.0.12 requirement in the installation guide. SOURCE, MOVE-SOURCE and SUPPORT-SOURCE archives contain corresponding source, not installers.
+Install using the complete **SD.zip**, which includes the app, plug-ins, kits and preset catalogue. **UPDATE.zip** is an app-only archive, not a first-install package. Back up the entire card before installing. Verify the release checksums and the AC50 / stock firmware 1.3.0.12 requirement in the [installation guide](https://jazzyrhythmer.github.io/mpc-sample/installer/). SOURCE, MOVE-SOURCE and SUPPORT-SOURCE archives contain corresponding source, not installers.
 
 This is an unofficial project, not affiliated with or endorsed by AKAI Professional or inMusic. Product names and logos belong to their respective owners. Provided without warranty under the applicable licenses. This beta has offline build, audio-host and UI checks; physical-device behavior, latency and recovery still require owner testing.
 
