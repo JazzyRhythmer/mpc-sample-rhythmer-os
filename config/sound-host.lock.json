@@ -76,7 +76,7 @@
   "input_set_sha256": "36f6d380fba7c163dd26e74d85a88b56286b0d326355d669074e6d2a099b1810",
   "runtime_sha256": "241f90b9b910d5ff5f7fe225907945d199133a2a0ba2bd4a3ec2eebc575e8fa0",
   "files": {
-    "README.md": "731618aef29bae2ccc10730b168a0870b94b42e391d9bc900f779d4af7ea5dd1",
+    "README.md": "6ebd16fdf3a44000ae604f847958d5af83424358e3ba0736ec49833ed15ebedb",
     "VERSION": "c4fbe2c1fae45cea7efcadaf6dddce8d68bc75e875ce07f4ec2791397ab8711d",
     "assets/brand/repository-hero.svg": "c7c1bece26d5baaf997a7a5d9faf6870fae51950b6f1ada05b52d83e6da6d6f2",
     "assets/brand/rhythmer-os.svg": "0275bef589775180d9725da2947db5f6e38c6a71f51be12adf8eea713aaf525d",
@@ -1370,5 +1370,6 @@
   },
   "release_host_passes": 0,
   "current_runtime_tests": 19,
-  "gen_fresh_process_passes": 3
+  "gen_fresh_process_passes": 3,
+  "documentation_followup": "Post-release README download link points to hotfix.2; runtime and distributed archives unchanged."
 }
