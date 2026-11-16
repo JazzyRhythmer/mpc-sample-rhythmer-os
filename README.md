@@ -291,7 +291,7 @@ Use the **complete SD ZIP** from the [installation page](https://jazzyrhythmer.g
 
 Target: **MPC Sample AC50 with stock firmware 1.3.0.12**. Back up the entire card first. **UPDATE.zip is app-only**, not a first-install package. The app version stays beta.3, so the native updater may not offer a same-version hotfix; the full SD package is the installation path here. SOURCE, MOVE-SOURCE and SUPPORT-SOURCE contain corresponding source, not installers.
 
-[Installation / stock-app recovery](docs/SD_CARD_GUIDE.md) · [Hotfix files and notes](https://github.com/jazzyrhythmer/mpc-sample-rhythmer-os/releases/tag/v0.4.0-beta.3-hotfix.1)
+[Installation / stock-app recovery](docs/SD_CARD_GUIDE.md) · [Hotfix files and notes](https://github.com/jazzyrhythmer/mpc-sample-rhythmer-os/releases/tag/v0.4.0-beta.3-hotfix.2)
 
 ## Validation and limits
 
