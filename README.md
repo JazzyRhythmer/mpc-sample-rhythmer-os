@@ -6,12 +6,6 @@ Turn your MPC Sample into an exploratory groovebox: diverse synth engines, hands
 
 Free and open-source custom firmware by **jazzy rhythmer**, built on **Melodee 0.2.0 by Kerem Kiliç (Ellic Studio)** and the work of the original engine authors.
 
-## Break workflow hotfix
-
-Loading a loop now stays in BREAK GEN with BRK PERF selected. CANCEL stops pending assignment; background loads respect track changes and dismissed menus. Pattern Hold (formerly LOOP HOLD) and Grain/Stretch now explain when they affect the sound. Sound/Kit save tools remain included.
-
-[Break navigation and six-page guide](docs/BREAK_WORKFLOW.md) · [Download & installation](https://jazzyrhythmer.github.io/mpc-sample/installer/)
-
 ## Your first groove with RHYTHMER OS.
 
 **Watch the latest guided session. Then make it yours.** Follow drums, bass, FM-106 chords, an acid phrase and a chopped Think break from the first sound to a finished four-bar groove. Shape the sounds, balance the tracks and turn the loop into a mute jam.
@@ -289,13 +283,13 @@ GEN can assign a kit and three complementary melodic roles to a chosen four-trac
 
 Use the **complete SD ZIP** from the [installation page](https://jazzyrhythmer.github.io/mpc-sample/installer/). It includes the app, plug-ins, kits, preset catalogue and current guides. Check the matching SHA-256 before copying the contents to the card root.
 
-Target: **MPC Sample AC50 with stock firmware 1.3.0.12**. Back up the entire card first. **UPDATE.zip is app-only**, not a first-install package. The app version stays beta.3, so the native updater may not offer a same-version hotfix; the full SD package is the installation path here. SOURCE, MOVE-SOURCE and SUPPORT-SOURCE contain corresponding source, not installers.
+Target: **MPC Sample AC50 with stock firmware 1.3.0.12**. Back up the entire card first. **UPDATE.zip is app-only**, not a first-install package. SOURCE, MOVE-SOURCE and SUPPORT-SOURCE contain corresponding source, not installers.
 
-[Installation / stock-app recovery](docs/SD_CARD_GUIDE.md) · [Hotfix files and notes](https://github.com/jazzyrhythmer/mpc-sample-rhythmer-os/releases/tag/v0.4.0-beta.3-hotfix.2)
+[Installation / stock-app recovery](docs/SD_CARD_GUIDE.md) · [Release files and notes](https://github.com/jazzyrhythmer/mpc-sample-rhythmer-os/releases/tag/v0.4.0-beta.3-hotfix.2)
 
 ## Validation and limits
 
-The hotfix passes 19 runtime tests, 161 track-workflow assertions, audio self-test, GEN/Acid/Break integration and 12 × 3,000 random surface inputs. UI checks cover 426 standard and 535 source/save/edit states with zero reported text issues. All 26 source configurations pass fresh-instance preset disk reload; mixed-kit state and unwritable-save errors are checked. The reviewed engine DSP and preset payloads are unchanged.
+Software validation includes 19 runtime tests, 161 track-workflow assertions, audio self-test, three fresh-process GEN/Acid/Break checks and 12 × 3,000 random surface inputs. Current UI checks cover 430 states with zero reported text issues. Prior source/save checks cover 26 source configurations, mixed-kit state and unwritable-save errors; those results are retained for the unchanged engine DSP and preset payloads.
 
 **Physical-device installation/recovery, controls, audible listening, latency and long sessions remain pending owner beta testing.** These software checks do not certify hardware behavior. [Exact verification scope](docs/VERIFICATION.md).
 

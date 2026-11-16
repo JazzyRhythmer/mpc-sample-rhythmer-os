@@ -76,9 +76,9 @@
   "input_set_sha256": "36f6d380fba7c163dd26e74d85a88b56286b0d326355d669074e6d2a099b1810",
   "runtime_sha256": "241f90b9b910d5ff5f7fe225907945d199133a2a0ba2bd4a3ec2eebc575e8fa0",
   "files": {
-    "README.md": "6ebd16fdf3a44000ae604f847958d5af83424358e3ba0736ec49833ed15ebedb",
+    "README.md": "b71fa6ebac10db25018727a4bdb0626384222cb80d2dbd6ae81964f41908dfd8",
     "VERSION": "c4fbe2c1fae45cea7efcadaf6dddce8d68bc75e875ce07f4ec2791397ab8711d",
-    "assets/brand/repository-hero.svg": "c7c1bece26d5baaf997a7a5d9faf6870fae51950b6f1ada05b52d83e6da6d6f2",
+    "assets/brand/repository-hero.svg": "074c1d95f4bbf75cdc821c6fe5a91371352640376f6568a5af5dc859a08d2c23",
     "assets/brand/rhythmer-os.svg": "0275bef589775180d9725da2947db5f6e38c6a71f51be12adf8eea713aaf525d",
     "assets/device/NOTICE.md": "c1f359f1ff8f612a30e24d19d64c6ab38fddacae1ea4cd0a16448f34217f8edd",
     "assets/device/mpc-sample.svg": "5fecee227d799be663aa6ce4e50a15a056ec17074ebbf188bdb825106b6cdffe",
@@ -1371,5 +1371,5 @@
   "release_host_passes": 0,
   "current_runtime_tests": 19,
   "gen_fresh_process_passes": 3,
-  "documentation_followup": "Post-release README download link points to hotfix.2; runtime and distributed archives unchanged."
+  "documentation_followup": "Presentation-only cleanup of website and repository introduction; firmware archives and tested runtime unchanged."
 }
