@@ -48,10 +48,21 @@
         x.gen8_action(3);auto next_seed=x.track().acid_gen.seed;if(next_seed==0xdeadbeef)return gen_failure(413,__LINE__);
         x.undo();if(x.pattern().events!=first||x.track().acid_gen.seed!=0xdeadbeef)return gen_failure(414,__LINE__);
         x.redo();if(x.track().acid_gen.seed!=next_seed)return gen_failure(415,__LINE__);
-        for(unsigned page=0;page<3;page++){auto cards=page_bindings(x.project,x.ui,x.pattern());
-            if(cards[0].kind!=(page<2?Binding::Kind::AcidGenParam:Binding::Kind::AcidGenSeed))return gen_failure(416,__LINE__);
+        for(unsigned page=0;page<2;page++){auto cards=page_bindings(x.project,x.ui,x.pattern());
+            for(unsigned k=0;k<3;++k)if(cards[k].kind!=Binding::Kind::AcidGenParam || cards[k].id!=int(page*3+k))return gen_failure(416,__LINE__);
             patterns_page.soft(x,1);}
         if(x.ui.acid_gen_page)return gen_failure(417,__LINE__);
+        patterns_page.wheel(x,50);if(x.ui.sheet_row!=1)return gen_failure(422,__LINE__);
+        auto keep_seed=x.track().acid_gen.seed;auto keep_edits=x.edits.size();
+        x.ui.sheet_row=2;patterns_page.push(x);
+        if(x.ui.sheet_row || x.track().acid_gen.seed!=keep_seed || x.edits.size()!=keep_edits)return gen_failure(423,__LINE__);
+        x.ui.acid_gen_page=1;patterns_page.soft(x,0);
+        auto normal=page_bindings(x.project,x.ui,x.pattern());
+        if(normal[2].kind!=Binding::Kind::Gen8Seed)return gen_failure(424,__LINE__);
+        x.ui.sheet_row=4;patterns_page.push(x);
+        if(x.ui.gen8_mode!=4 || x.ui.acid_gen_page)return gen_failure(425,__LINE__);
+        auto root_cards=page_bindings(x.project,x.ui,x.pattern());
+        if(root_cards[0].kind!=Binding::Kind::AcidGenParam || root_cards[0].id!=0)return gen_failure(426,__LINE__);
         auto saved=save_project(x.project,x.patterns);auto project=std::make_unique<Project>();auto bank=std::make_unique<PatternBank>();
         if(!load_project(saved,*project,*bank).empty()||project->tracks[0].acid_gen.seed!=next_seed)return gen_failure(418,__LINE__);
         patterns_page.soft(x,0);if(x.ui.gen8_mode||!x.ui.sheet_open)return gen_failure(419,__LINE__);
@@ -62,5 +73,104 @@
         std::array<int32_t,256> audio{};
         for(unsigned n=0;n<400;n++){h.render(audio.data(),128,1);x.gen_break_tick();}
         if(x.project.tracks[0].acid_gen.seed==previous_seed||x.ui.track!=3||x.project.gen8.seed!=song_seed||x.edits.size()!=edits)return gen_failure(421,__LINE__);
-        std::printf("RHYTHMER_ACID settings_pages=3 seed=uint32 deterministic=ok mutate_stream=ok undo_redo=ok save_restore=ok gen_back=ok\n");
+        std::printf("RHYTHMER_ACID settings_pages=2 seed_ui=hidden replay_menu=removed general_gen_seed=retained seed=uint32 deterministic=ok mutate_stream=ok undo_redo=ok save_restore=ok gen_back=ok\n");
     }
+
+    // Initial loop load remains in BREAK; completing an asynchronous load
+    // cannot reopen a dismissed menu or pull the player from another track.
+    for(unsigned route=0;route<5;++route){
+        EngineHost h;Shell s(h);auto& x=s.context();
+        x.ui.track=0;x.ui.page=PageId::Patterns;x.ui.sheet_open=true;x.ui.gen8_mode=2;
+        x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bank=0;x.ui.break_job_bars=2;
+        x.ui.break_job_b=false;x.ui.break_job_from_picker=route!=4;
+        x.project.samples[0].frames=176400;
+        x.ui.sheet_row=1;patterns_page.push(x);if(x.ui.sheet_row!=1||!x.pattern().events.empty())return gen_failure(430,__LINE__);
+        if(route==1)x.ui.track=1;
+        if(route==2)x.ui.sheet_open=false;
+        if(route==3)x.ui.gen8_mode=0;
+        x.gen_break_tick();
+        if(x.project.tracks[0].break_bars!=2||x.ui.page!=PageId::Patterns)return gen_failure(431,__LINE__);
+        if(route==0||route==4){if(!x.ui.sheet_open||x.ui.gen8_mode!=2||x.ui.sheet_row!=6)return gen_failure(432,__LINE__);
+            patterns_page.push(x);if(x.ui.page!=PageId::Edit||x.ui.break_perf_page)return gen_failure(433,__LINE__);
+            edit_page.soft(x,0);if(x.ui.page!=PageId::Patterns||x.ui.gen8_mode!=2)return gen_failure(434,__LINE__);
+        }else if(x.ui.sheet_row!=1||x.ui.track!=(route==1?1:0)||x.ui.sheet_open!=(route!=2)||x.ui.gen8_mode!=(route==3?0:2))return gen_failure(435,__LINE__);
+    }
+    std::printf("RHYTHMER_BREAK_FEEDBACK load_destination=stable pending_apply=blocked async_focus=preserved perf_gen_roundtrip=ok\n");
+
+    // Visible CANCEL and Shift + Push both cancel assignment, not just navigation.
+    for(unsigned back_key=0;back_key<2;++back_key){
+        EngineHost h;Shell s(h);auto& x=s.context();x.ui.track=0;
+        x.ui.page=PageId::Patterns;x.ui.sheet_open=true;x.ui.gen8_mode=2;
+        x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bars=2;
+        x.project.samples[0].frames=176400;auto old_engine=x.track().engine;auto history=x.edits.size();
+        auto cards=page_bindings(x.project,x.ui,x.pattern());for(const auto& b:cards)if(b.kind!=Binding::Kind::None)return gen_failure(436,__LINE__);
+        patterns_page.soft(x,1);if(x.ui.gen8_mode!=2)return gen_failure(437,__LINE__);
+        if(back_key) x.back();else patterns_page.soft(x,0);
+        x.gen_break_tick();if(x.ui.break_pending>=0||x.ui.gen8_mode||!x.ui.sheet_open||x.track().engine!=old_engine||x.track().break_bars||x.edits.size()!=history)return gen_failure(438,__LINE__);
+    }
+    // B completion may return to SOURCE, but never reopen a dismissed menu.
+    for(unsigned route=0;route<4;++route){
+        EngineHost h;Shell s(h);auto& x=s.context();x.ui.track=0;
+        x.track().engine=EngineKind::Sampler;x.track().break_bars=2;
+        x.ui.page=PageId::Patterns;x.ui.sheet_open=true;x.ui.gen8_mode=2;
+        x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bank=0;x.ui.break_job_bars=2;x.ui.break_job_b=true;
+        x.project.samples[0].frames=176400;
+        if(route==1)x.select_track(1);
+        if(route==2)x.ui.sheet_open=false;
+        if(route==3)x.ui.gen8_mode=0;
+        x.gen_break_tick();if(x.project.tracks[0].pads[0].layers[0].sample!=0)return gen_failure(439,__LINE__);
+        if(route==0){if(x.ui.page!=PageId::Edit||x.ui.break_perf_page!=2)return gen_failure(440,__LINE__);}
+        else if(x.ui.page!=PageId::Patterns||x.ui.track!=(route==1?1:0)||x.ui.sheet_open!=(route!=1&&route!=2)||x.ui.gen8_mode!=(route==3?0:2))return gen_failure(441,__LINE__);
+    }
+    // Undo/Redo and project serialization retain A/B, hold, mode and all patterns.
+    {
+        EngineHost h;Shell s(h);auto& x=s.context();x.ui.track=0;x.track().engine=EngineKind::Midi;
+        x.pattern().length=768;Event e;e.key=48;e.length=96;x.pattern().add(e);auto before=x.pattern().events;
+        x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bank=2;x.ui.break_job_bars=3;x.project.samples[0].frames=264600;
+        x.gen_break_tick();auto made=x.pattern().events;x.track().break_perf[4]=1;x.track().break_perf[9]=0;
+        auto saved=save_project(x.project,x.patterns);auto project=std::make_unique<Project>();auto bank=std::make_unique<PatternBank>();
+        if(!load_project(saved,*project,*bank).empty()||project->tracks[0].break_perf[4]!=1||project->tracks[0].break_perf[9]||bank->at[0][0].events!=made)return gen_failure(442,__LINE__);
+        x.undo();if(x.track().engine!=EngineKind::Midi||x.pattern().events!=before)return gen_failure(443,__LINE__);
+        x.redo();if(x.track().break_bars!=3||x.track().bank!=2||x.pattern().events!=made)return gen_failure(444,__LINE__);
+        // A held STRETCH pad must release even after paging to GRAIN.
+        x.ui.page=PageId::Edit;x.ui.break_perf_page=1;edit_page.pad(x,2,100,true);if(x.pad_keys[2][0]!=2)return gen_failure(445,__LINE__);
+        edit_page.wheel(x,3);edit_page.pad(x,2,0,false);if(x.pad_keys[2][0]>=0)return gen_failure(446,__LINE__);
+    }
+    std::printf("RHYTHMER_BREAK_RELEASE cancel_paths=2 B_focus_routes=4 undo_redo=ok saved_hold_mode=compatible held_stretch_page_release=ok\n");
+
+    // General GEN on an Acid track must undo the RNG stream together with MIDI.
+    {
+        EngineHost h;Shell s(h);auto& x=s.context();x.track().engine=EngineKind::Plugin;x.track().plugin=0;
+        std::strcpy(x.project.plugins[0].name,"Acid Engine");std::strcpy(x.project.plugins[0].path,"Plugins/RHYTHMER - Acid Engine");x.project.gen8.assign=0;x.project.gen8.first=x.project.gen8.last=0;
+        x.track().acid_gen.seed=0x1a2b3c4d;auto seed=x.track().acid_gen.seed;auto original=x.pattern().events;
+        x.gen8_action(1);auto changed=x.track().acid_gen.seed;auto made=x.pattern().events;
+        if(changed==seed)return gen_failure(447,__LINE__);
+        x.undo();if(x.track().acid_gen.seed!=seed||x.pattern().events!=original)return gen_failure(448,__LINE__);
+        x.redo();if(x.track().acid_gen.seed!=changed||x.pattern().events!=made)return gen_failure(449,__LINE__);
+    }
+    std::puts("RHYTHMER_GEN_ACID general_mutate_seed_undo_redo=ok algorithm=unchanged");
+
+    // A rejected loop returns to its owned browser for retry, not an unusable
+    // BREAK menu on the previous instrument. Errors never steal another track.
+    for(unsigned route=0;route<3;++route){
+        EngineHost h;Shell s(h);auto& x=s.context();x.ui.track=0;x.track().engine=route==2?EngineKind::Sampler:EngineKind::Midi;
+        if(route==2)x.track().break_bars=2;
+        auto engine=x.track().engine;auto history=x.edits.size();
+        x.ui.page=PageId::Patterns;x.ui.sheet_open=true;x.ui.gen8_mode=2;x.ui.break_pending=0;
+        x.ui.break_job_track=0;x.ui.break_job_bars=2;x.ui.break_job_from_picker=route!=2;x.ui.break_job_b=route==2;
+        x.project.samples[0].frames=8;
+        if(route==1)x.select_track(1);
+        x.gen_break_tick();if(x.ui.break_pending>=0||x.project.tracks[0].engine!=engine||x.edits.size()!=history)return gen_failure(450,__LINE__);
+        if(route!=1){if(x.ui.page!=PageId::Samples||!x.ui.break_browse||x.ui.break_load_b!=(route==2)||x.ui.break_from_picker!=(route!=2))return gen_failure(451,__LINE__);}
+        else if(x.ui.page!=PageId::Patterns||x.ui.track!=1||x.ui.sheet_open)return gen_failure(452,__LINE__);
+    }
+    std::puts("RHYTHMER_BREAK_ERRORS invalid_loop_retry=owned_browser background_error=no_focus_theft previous_track=preserved");
+
+    {
+        EngineHost h;Shell s(h);auto& x=s.context();x.project.tracks[0].engine=EngineKind::Midi;
+        x.ui.track=1;x.ui.page=PageId::Stage;x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bars=2;
+        x.project.samples[0].frames=176400;x.prints.freeze[0].state=FreezeState::Deep;
+        auto history=x.edits.size();x.gen_break_tick();
+        if(x.ui.ask!=UiState::Ask::None||x.ui.page!=PageId::Stage||x.ui.track!=1||x.ui.break_pending>=0||x.project.tracks[0].engine!=EngineKind::Midi||x.edits.size()!=history)return gen_failure(453,__LINE__);
+    }
+    std::puts("RHYTHMER_BREAK_FROZEN late_completion=cancelled no_surprise_unfreeze_dialog=ok");

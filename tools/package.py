@@ -142,6 +142,7 @@ def assemble(stage_only=False):
                               'binary': 'rhythmer', 'sd_runtime': 'autorun/rhythmer'},
         'features': {
             'Upstream_020': '128 patterns A-H; Patterns home and native Step Edit; Freeze/Deep Freeze; LV2/CLAP; USB web/files and UVC mirror; decoder/chop/MIDI fixes; Rhythmer-specific signed autorun updates',
+            'Break_Workflow_Hotfix': 'BREAK GEN stays open after initial load; CANCEL/Shift+Push prevents assignment; completion respects dismissed menus and selected tracks; Pattern Hold and stretched-hit operating hints; saved DSP controls unchanged',
             'Sound_Tools': 'Stage EDIT Push opens PAD SOURCE or SAVE; K1 slot, K2 save, Status Ready; PRESETS reloads User Sound/User Kit; Back restores edit position',
             'Plugin_Transport': 'Forwarded to native child engines; Shift+B3 on Edit',
             'Pad_Sends': 'Native Sample Kit pads A-D; Rhythmer Kit retains track-level sends',
@@ -186,7 +187,7 @@ def assemble(stage_only=False):
         for p in (ROOT/folder).rglob('*'):
             if p.is_file():files['RHYTHMER-GEN-SOURCE/'+p.relative_to(ROOT).as_posix()]=p.read_bytes()
     files['OPEN_MPC_COMPATIBILITY.md'] = (ROOT/'docs/OPEN_MPC_COMPATIBILITY.md').read_bytes()
-    for name in ('GETTING_STARTED_KO.md','TRACK_WORKFLOW.md','RHYTHMER_PRESETS.md','UPSTREAM_020.md','ORIGINAL_PRESET_AUDIT_KO.md','HORTATOR_KITS_KO.md','BREAK_ACID_GUIDE_KO.md','PARAMETER_PAGES.md','NATIVE_PLUGIN_WORKFLOW.md','NATIVE_CONTROL_COVERAGE.md','FINAL_UI_AUDIT.md','VERIFICATION.md','GEN8_BREAK.md','DESIGN.md','ENGINE_REGISTRY.md','DRUM_KITS.md','BETA_READINESS.md','SOUND_KIT_GUIDE.md','GEN_WORKFLOW.md','USER_MANUAL_KO_DRAFT.md','REBRAND.md','SOUND_FIXES_BETA4.md'):
+    for name in ('GETTING_STARTED_KO.md','TRACK_WORKFLOW.md','RHYTHMER_PRESETS.md','UPSTREAM_020.md','ORIGINAL_PRESET_AUDIT_KO.md','HORTATOR_KITS_KO.md','BREAK_ACID_GUIDE_KO.md','BREAK_WORKFLOW.md','PARAMETER_PAGES.md','NATIVE_PLUGIN_WORKFLOW.md','NATIVE_CONTROL_COVERAGE.md','FINAL_UI_AUDIT.md','VERIFICATION.md','GEN8_BREAK.md','DESIGN.md','ENGINE_REGISTRY.md','DRUM_KITS.md','BETA_READINESS.md','SOUND_KIT_GUIDE.md','GEN_WORKFLOW.md','USER_MANUAL_KO_DRAFT.md','REBRAND.md','SOUND_FIXES_BETA4.md'):
         files[name]=(ROOT/'docs'/name).read_bytes()
     files['DEVICE_MARK_NOTICE.md']=(ROOT/'assets/device/NOTICE.md').read_bytes()
     # New installs use the canonical folder. The host also resolves legacy beta paths.

@@ -735,6 +735,7 @@ std::array<Binding, 3> base_bindings(const Project& project, const UiState& ui, 
         return {Binding {Kind::NameSuggest, 0, 0, int(std::max(count, 2u)) - 1, std::min<int>(ui.name.suggestion, int(count) - 1)},
                 Binding {Kind::NameChar, 0, 0, int(NameEntry::charset_size()) - 1, int(ui.name.char_at())}, Binding {}};
     }
+    if(ui.page==PageId::Patterns && ui.sheet_open && ui.gen8_mode==2 && ui.break_pending>=0 && ui.break_job_track==ui.track)return {};
     if (ui.seq_held) return pattern_cards(project, pattern); // Seq held: the pattern's, on any page
     if (auto pads = sample_held_page(project, ui); pads != PageId::Count) { // Sample held: its pads' (Pads, Keys)
         UiState on = ui; on.page = pads; on.sample_held = false;

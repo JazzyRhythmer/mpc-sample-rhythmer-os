@@ -36,20 +36,28 @@ void Context::gen_break_tick(){
     unsigned job_bank=ui.break_job_track>=0?ui.break_job_bank:ui.break_bank;
     bool job_b=ui.break_job_track>=0?ui.break_job_b:ui.break_pending_b;
     bool from_picker=ui.break_job_track>=0?ui.break_job_from_picker:ui.break_from_picker;
-    if(slot>=sample_slots||at>=track_count){ui.break_pending=-1;return;}
-    const auto& sample=project.samples[slot];if(!sample.frames){if(library){auto loaded=library->slot(slot);if(!loaded.error.empty()){ui.break_pending=-1;notice("BREAK: sample load failed");}}return;}
+    auto fail_load=[&](const char* message){
+        ui.break_pending=-1;ui.break_job_track=-1;
+        if(ui.track==at && ui.page==PageId::Patterns && ui.sheet_open && ui.gen8_mode==2){
+            ui.break_load_b=job_b;ui.break_track=uint8_t(at);ui.break_bars=uint8_t(job_bars);
+            ui.break_browse=true;ui.break_from_picker=from_picker;open(PageId::Samples);
+        }
+        notice(message);
+    };
+    if(slot>=sample_slots||at>=track_count){fail_load("BREAK: invalid load target");return;}
+    const auto& sample=project.samples[slot];if(!sample.frames){if(library){auto loaded=library->slot(slot);if(!loaded.error.empty()){fail_load("BREAK: sample load failed");}}return;}
     ui.break_pending=-1;ui.break_job_track=-1;
-    if(frozen_edit(at))return; // a track may have frozen while sample decoding ran
+    if(frozen(at)){notice("BREAK load cancelled: frozen track");return;} // no late Unfreeze dialog on another screen
     unsigned bars=std::clamp<unsigned>(job_bars,1,4);
-    if(sample.instrument()||sample.frames<16){notice("BREAK needs an audio loop");return;}
+    if(sample.instrument()||sample.frames<16){fail_load("BREAK needs an audio loop");return;}
     double bpm=bars*4.0*60.0*44100.0/sample.frames;
-    if(bpm*10<1||bpm*10>65535){notice("BREAK sample duration out of range");return;}
+    if(bpm*10<1||bpm*10>65535){fail_load("BREAK sample duration out of range");return;}
     if(job_b&&project.tracks[at].break_bars){
         Edit edit;edit.what="Load BREAK B";edit.track=uint8_t(at);edit.track_before=std::make_unique<TrackState>(track_state(*this,at));
         auto next=std::make_unique<TrackState>(*edit.track_before);auto& t=next->track;
         auto& layer=t.pads[(job_bank%sampler_banks)*16].layers[0];layer.sample=uint16_t(slot);layer.start=0;layer.end=sample.frames;
         restore_track(*this,at,*next);edit.track_after=std::move(next);edits.push(std::move(edit));dirty=true;
-        if(ui.track==at && ui.page==PageId::Patterns){open(PageId::Edit);ui.edit_page[at]=0;ui.break_perf_page=2;}notice("BREAK B ready");return;
+        if(ui.track==at && ui.page==PageId::Patterns && ui.sheet_open && ui.gen8_mode==2){open(PageId::Edit);ui.edit_page[at]=0;ui.break_perf_page=2;}notice("BREAK B ready");return;
     }
     Edit edit;edit.what="Load BREAK";edit.track=uint8_t(at);
     edit.track_before=std::make_unique<TrackState>(track_state(*this,at));
@@ -70,7 +78,9 @@ void Context::gen_break_tick(){
     BreakMap map;map.bars=bars;for(unsigned i=0;i<16;i++)map.slices[i]=uint8_t(sampler_first_note+t.bank*16+i);
     pat=break_generate(pat,BreakAction::Straight,project.gen8,map,project.tempo/10);
     restore_track(*this,at,*next);edit.track_after=std::move(next);edits.push(std::move(edit));dirty=true;
-    if(from_picker && ui.track==at && ui.page==PageId::Patterns){open(PageId::Stage);ui.back_depth=0;}
+    // Keep the loading screen as a stable BREAK menu; never take focus back
+    // after the player changes track, closes GEN, or opens another GEN mode.
+    if(ui.track==at && ui.page==PageId::Patterns && ui.sheet_open && ui.gen8_mode==2)ui.sheet_row=6;
     notice("BREAK ready: "+std::to_string(bars)+" bars / 16 chops");
 }
 }

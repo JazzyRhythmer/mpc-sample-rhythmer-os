@@ -16,6 +16,10 @@
 
 이 개발판은 자동으로 SD카드나 기기에 복사하지 않았다. 실제 사용을 시작할 때 기존 카드 자료를 백업하고, MPC Sample AC50의 firmware 1.3.0.12 조건을 확인해야 한다. 기존 SD launcher는 다른 firmware에서 실행을 거부한다. ZIP의 최상위 `autorun`과 `Rhythmer`가 카드의 최상위 폴더가 되는 기존 SD 실행 구조를 사용한다. stock MPC 앱 패치나 VST enhancement 패치를 실행하지 않는다.
 
+## 이번 파일 · Break workflow hotfix.2
+
+앱 버전은 0.4.0-beta.3이며 배포 기록은 `v0.4.0-beta.3-hotfix.2`다. Break 로드 후 메뉴 유지·로딩 취소·페이지 안내·PATTERN HOLD 표기를 개선했다. 같은 버전 핫픽스이므로 자동 업데이트 목록에 나타나지 않을 수 있다. 전체 SD ZIP과 해당 SHA-256을 사용한다. [Break 조작 안내](BREAK_WORKFLOW.md)를 참고한다.
+
 ## 첫 조작 안내
 
 처음 사용하는 분은 [GETTING_STARTED_KO.md](GETTING_STARTED_KO.md)의 트랙 선택·진입·타입 변경·녹음·프리셋 저장 순서를 먼저 확인하세요. SAMPLE은 선택 트랙의 악기 메인 화면이며, PAD FX + KNOB FX는 TRACKS입니다.

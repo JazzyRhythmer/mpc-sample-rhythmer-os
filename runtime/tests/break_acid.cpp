@@ -46,6 +46,20 @@ int main(){
         for(unsigned k=0;k<200;k++){float l[128],r[128],ll[128],rr[128];a.render(l,r,128,rate);c.render(ll,rr,128,rate);for(unsigned i=0;i<128;i++)assert(std::isfinite(l[i])&&std::isfinite(ll[i]));}
         a.note(18,127);a.note(16,127);a.stop();assert(!a.sounding());
     }
+    // These controls do not have an audible purpose in every play mode.
+    auto audition=[&](bool chop,bool hold,bool stretch,unsigned grain){
+        BreakManipulator m;m.configure(2,0);m.tempo(1200);m.sources(&loop,&loop);
+        m.param(9,chop);m.param(1,100);m.param(2,90);m.param(4,hold);m.param(6,grain);
+        m.note(36,127);if(stretch)m.note(2,127);
+        std::vector<float> out(220500),right(out.size());m.render(out.data(),right.data(),out.size(),44100);
+        for(float v:out)assert(std::isfinite(v));return out;
+    };
+    auto chop=audition(true,false,false,20);
+    assert(chop==audition(true,true,false,20)); // pattern hold does not hold chop audio
+    assert(chop==audition(true,false,false,60)); // ordinary chops are not stretched
+    assert(audition(false,false,false,20)!=audition(false,true,false,20));
+    assert(audition(true,false,true,20)!=audition(true,false,true,60));
+    std::puts("BREAK_CONDITIONS chop_hold=inaudible loop_hold=audible grain_requires_stretch=ok");
     unsigned checked=0;
     for(auto division:{Division::Eighth,Division::Sixteenth,Division::ThirtySecond})for(unsigned len:{1u,16u,32u,64u})for(unsigned seed=1;seed<=100;seed++)for(bool mutate:{false,true}){
         Pattern source;source.division=division;unsigned grid=source.q();source.length=len*grid;

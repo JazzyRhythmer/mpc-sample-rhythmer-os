@@ -6,6 +6,12 @@ Turn your MPC Sample into an exploratory groovebox: diverse synth engines, hands
 
 Free and open-source custom firmware by **jazzy rhythmer**, built on **Melodee 0.2.0 by Kerem Kiliç (Ellic Studio)** and the work of the original engine authors.
 
+## Break workflow hotfix
+
+Loading a loop now stays in BREAK GEN with BRK PERF selected. CANCEL stops pending assignment; background loads respect track changes and dismissed menus. Pattern Hold (formerly LOOP HOLD) and Grain/Stretch now explain when they affect the sound. Sound/Kit save tools remain included.
+
+[Break navigation and six-page guide](docs/BREAK_WORKFLOW.md) · [Download & installation](https://jazzyrhythmer.github.io/mpc-sample/installer/)
+
 ## Your first groove with RHYTHMER OS.
 
 **Watch the latest guided session. Then make it yours.** Follow drums, bass, FM-106 chords, an acid phrase and a chopped Think break from the first sound to a finished four-bar groove. Shape the sounds, balance the tracks and turn the loop into a mute jam.

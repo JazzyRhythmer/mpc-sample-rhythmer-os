@@ -131,6 +131,8 @@ void draw(Paint& p, const Snapshot& s) {
         if (s.ui.patterns_cards == 1) keys.tints[0] = colour::amber;
         if (s.ui.patterns_cards == 2) keys.tints[1] = colour::amber;
     }
+    if(s.ui.sheet_open && s.ui.gen8_mode==2 && s.ui.break_pending>=0 && s.ui.break_job_track==s.ui.track)
+        keys=SoftKeys{{"CANCEL","",""},-1,c,{KeyIcon::Back,KeyIcon::None,KeyIcon::None}};
     frame(p, s, keys, h);
 
     for (unsigned k = 0; k < pattern_pads; ++k) draw_cell(p, s, k, first);
@@ -168,6 +170,7 @@ void draw(Paint& p, const Snapshot& s) {
                 bool ready=true;for(unsigned i=0;i<16;++i)ready&=s.track().pads[(s.track().bank%sampler_banks)*16+i].used();
                 m.title="T"+juce::String(s.ui.track+1)+(ready?" / 16 CHOPS":" / LOAD A LOOP");
                 if(!ready)for(unsigned i=0;i<5;++i)m.rows[i].off=true;
+                if(s.ui.break_pending>=0 && s.ui.break_job_track==s.ui.track){m.title="LOADING LOOP / PLEASE WAIT";for(unsigned i=0;i<m.count;++i)m.rows[i].off=true;}
             }
             if(s.ui.gen8_mode==4)m.title="T"+juce::String(s.ui.track+1)+" / SETTINGS "+juce::String(s.ui.acid_gen_page%2+1)+" OF 2";
             if(s.ui.gen8_mode==3){m.count=s.project.gen8.assign?4:1;
@@ -184,6 +187,7 @@ void draw(Paint& p, const Snapshot& s) {
 void gen_push(Context& c) { // VARY: Push opens it on the row last used; there Push makes it
     if (c.ui.sheet_open) {
         unsigned mode=c.ui.gen8_mode, row=c.ui.sheet_row;
+        if(mode==2 && c.ui.break_pending>=0 && c.ui.break_job_track==c.ui.track){c.notice("Loading BREAK sample");return;}
         if(mode==3){if(c.project.gen8.assign){c.project.gen8.group=uint8_t(std::min(row,3u));c.dirty=true;}c.ui.gen8_mode=0;c.ui.sheet_row=0;return;}
         if(mode==0&&row>=4) {
             bool br=c.track().engine==EngineKind::Sampler&&c.track().break_bars;
@@ -217,6 +221,7 @@ void push(Context& c) {
 // The wheel: the track (the VARY sheet: its rows; Shift: the playhead).
 void wheel(Context& c, int delta) {
     auto& ui = c.ui;
+    if(c.ui.sheet_open && c.ui.gen8_mode==2 && c.ui.break_pending>=0 && c.ui.break_job_track==c.ui.track)return;
     if (c.ui.sheet_open) { int count=c.ui.gen8_mode==3?(c.project.gen8.assign?4:1):c.ui.gen8_mode==4?2:c.ui.gen8_mode==2?7:6; c.ui.sheet_row = uint8_t(std::clamp<int>(c.ui.sheet_row + delta, 0, count - 1)); return; }
     if (ui.shift) { ui.shift_used = true; c.locate(delta); return; } // Shift: the playhead by Q (stopped: where Shift + Play carries on)
     c.select_track(unsigned(std::clamp<int>(int(ui.track) + delta, 0, int(track_count) - 1)));
@@ -231,6 +236,7 @@ void soft(Context& c, int key) {
     auto& ui = c.ui;
     if (c.ui.sheet_open) { // BACK, -, DO IT
         if(key==0){c.back();return;}
+        if(c.ui.gen8_mode==2 && c.ui.break_pending>=0 && c.ui.break_job_track==c.ui.track){c.notice("Loading BREAK sample");return;}
         if(key==1&&c.ui.gen8_mode==4){c.ui.acid_gen_page=uint8_t((c.ui.acid_gen_page+1)%2);return;}
         if (key == 1) {c.ui.gen8_mode=c.ui.gen8_mode==0?1:c.ui.gen8_mode==1?3:0;c.ui.sheet_row=c.ui.gen8_mode==3&&c.project.gen8.assign?c.project.gen8.group:0;}
         if (key == 2) gen_push(c);

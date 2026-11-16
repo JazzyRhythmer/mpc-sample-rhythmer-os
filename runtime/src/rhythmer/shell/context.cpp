@@ -267,6 +267,10 @@ void Context::open(PageId page) {
 }
 
 void Context::back() {
+    if(ui.page==PageId::Patterns && ui.sheet_open && ui.gen8_mode==2 && ui.break_pending>=0 && ui.break_job_track==ui.track){
+        // Decoder may finish in the cache, but a cancelled load must never commit.
+        ui.break_pending=-1;ui.break_job_track=-1;notice("BREAK load cancelled");
+    }
     if(ui.page==PageId::TrackActions && ui.track_types){ui.track_types=false;ui.track_action=1;return;}
     // The screen BACK and Shift + Push share the same GEN hierarchy.
     // A sub-generator returns to GEN first; only GEN's own Back closes it.

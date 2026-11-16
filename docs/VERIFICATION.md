@@ -18,3 +18,12 @@ Owned plug-ins now open PAD SOURCE / SAVE (kit) or SAVE SOUND (single instrument
 The hotfix passes 161 track-workflow assertions, 19 runtime unit tests, audio self-test, GEN/Acid/Break integration, 12 random-input seeds of 3,000 moves, 426 standard UI states and 535 source/save/edit states with zero reported text issues. Fresh-rack disk reload preserves edited controls for all 26 source configurations; mixed-engine kit save/reload preserves full pad overrides and the whole-kit filter. Unwritable storage reports an error without adding a phantom preset. These finite checks do not claim a new three-pass campaign or physical-device validation.
 
 Installation and corresponding-source ZIPs use the same app version, 0.4.0-beta.3. The hotfix includes the updated first-session guide and save/load manual. Existing instrument DSP payloads are retained unchanged from the reviewed baseline.
+
+
+## Break workflow hotfix.2 — 16 November 2026
+
+The focused runtime changes retain BREAK GEN after an initial source load, expose pending-load cancellation through B1 and Shift + Push, prevent late source A/B completion from reclaiming a dismissed screen, and clarify Pattern Hold / Grain operating conditions. The serialized controls and DSP are unchanged. General GEN also restores Acid RNG state together with notes during Undo/Redo.
+
+The hotfix includes regression fixtures for A/B completion ownership, cancellation, undo/redo, saved hold/mode values and held STRETCH release after paging. Offline DSP tests distinguish CHOP from LOOP hold and ordinary chops from stretched grain processing. Test results are bound to the final runtime in the validation receipt. Existing engine/preset acceptance is retained only for byte-identical source and payloads; it is not presented as a new hardware listening test.
+
+App version: 0.4.0-beta.3. Distribution record: v0.4.0-beta.3-hotfix.2. Physical-device testing remains pending; install the full SD package for this same-version hotfix.

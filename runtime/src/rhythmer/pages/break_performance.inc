@@ -8,7 +8,8 @@ void break_performance(Paint& p,const Snapshot& s){
     const float x=zone::pad,y=zone::picture_y,w=zone::width-2*zone::pad;
     const char* titles[]={"CHOPS","ROLLS / HOLD PADS","SOURCE A / B","LOOP VARIATIONS","GRAIN / STRETCH","TRACK MIX"};
     p.text(juce::String(page+1)+" / 6   "+titles[page],x,y,w,16,plain(colour::text,type::small,Weight::Bold));
-    p.text("Wheel: page   Record + Play: capture",x,y+17,w,14,plain(colour::sec,type::small));
+    const char* hints[]={"Pads: chops / Hold affects LOOP only","Hold a pad / Release ends command","K1: CHOP or LOOP / K2: pattern hold","LOOP + Play / Hold OFF to vary","Hold P3 on ROLLS; wheel here","Track level / Pan / Send A"};
+    p.text(hints[page],x,y+17,w,14,plain(colour::sec,type::small));
     if(page<2){
         const float cw=(w-9)/4,rh=24;
         for(unsigned pad=0;pad<16;pad++){
@@ -27,7 +28,7 @@ void break_performance(Paint& p,const Snapshot& s){
         p.text("PAD 3 / RETURN: straight playback",x,y+126,w,15,plain(colour::sec,type::small));
     }else{
         performance_art(p,s,"Break Engine","User loop",x,y+43,w,56,int(s.track().last_pad));
-        p.text(page==3?(s.track().break_perf[9]?"Select LOOP on SOURCE for variations":"Variation and Drift apply next phrase"):page==4?"Stretch grains at the source pitch":"Level, pan and send for this track",x,y+111,w,17,plain(colour::sec,type::small));
+        p.text(page==3?(s.track().break_perf[9]?"Select LOOP on SOURCE for variations":s.track().break_perf[4]?"PATTERN HOLD ON: variations locked":"Variation / Drift: next internal bar"):page==4?"Grain / Splice / Slow: stretched hits":"Wheel: page / Record + Play: capture",x,y+111,w,17,plain(colour::sec,type::small));
     }
 }
 void break_pad(Context& c,unsigned pad,uint8_t velocity,bool down){

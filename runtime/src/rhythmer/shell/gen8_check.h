@@ -111,7 +111,7 @@ inline int gen8_shell_check() {
         auto browse_engine=std::find_if(available.begin(),available.end(),[](const PluginFile& f){return f.name=="FM-106";});if(browse_engine==available.end())return gen_failure(54,__LINE__);
         c.ui.track=6;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.ui.plugin_back=PageId::Edit;c.choose_plugin(*browse_engine);auto entry=c.track().plugin;
         for(unsigned tries=0;tries<3000&&rack.status(entry)!=PluginStatus::Ready;tries++){std::this_thread::sleep_for(std::chrono::milliseconds(10));}
-        if(rack.status(entry)!=PluginStatus::Ready){return gen_failure(55,__LINE__);}
+        if(rack.status(entry)!=PluginStatus::Ready){PluginPanel failed;rack.panel(entry,0,failed);std::fprintf(stderr,"GEN load failed name=%s status=%d error=%s\n",browse_engine->name.c_str(),int(failed.status),failed.error);return gen_failure(55,__LINE__);}
         auto programs=rack.programs(entry);if(programs.list.size()<3)return gen_failure(56,__LINE__);
         rack.set_param(entry,0,int(std::lround(2000.0/(programs.list.size()-1))));rack.states();if(rack.programs(entry).current!=2)return gen_failure(57,__LINE__);
         auto hortator=std::find_if(available.begin(),available.end(),[](const PluginFile& f){return f.name=="Hortator";});if(hortator==available.end()){return gen_failure(59,__LINE__);}
@@ -282,7 +282,12 @@ inline int gen8_shell_check() {
         x.undo();for(unsigned t=0;t<track_count;t++)if(std::memcmp(&x.project.tracks[t],&before->tracks[t],sizeof(Track))||x.patterns.at[t][0].events!=original[t].events)return gen_failure(85,__LINE__);
         x.redo();for(unsigned n=0;n<4;n++)if(std::memcmp(&x.project.tracks[first+n],&after->tracks[first+n],sizeof(Track))||x.patterns.at[first+n][0].events!=generated[n].events)return gen_failure(86,__LINE__);
         x.gen8_action(1);for(unsigned t=0;t<track_count;t++){
-            if(std::memcmp(&x.project.tracks[t],&after->tracks[t],sizeof(Track)))return gen_failure(87,__LINE__);
+            auto expected=after->tracks[t];
+            // MUTATE advances Acid's RNG state; the instrument and all sound controls stay unchanged.
+            const auto& tr=x.project.tracks[t];
+            if(t>=first&&t<first+4&&tr.engine==EngineKind::Plugin&&tr.plugin<max_plugins&&std::string(x.project.plugins[tr.plugin].name)=="Acid Engine")expected.acid_gen.seed=tr.acid_gen.seed;
+            if(std::memcmp(&tr,&expected,sizeof(Track)))return gen_failure(87,__LINE__);
+
             if((t<first||t>=first+4)&&x.patterns.at[t][0].events!=original[t].events)return gen_failure(88,__LINE__);
         }
         std::printf("RHYTHMER_GEN_GROUP T%u-%u kit=T%u assignment=ok untouched=ok undo_redo=ok mutate=ok\n",first+1,first+4,first+1);x.plugins=nullptr;
