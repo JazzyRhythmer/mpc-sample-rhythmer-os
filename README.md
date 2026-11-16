@@ -40,17 +40,15 @@ Each pad exposes its source’s sound controls. A separate whole-kit LP/BP/HP fi
 
 ### Acid Engine
 
-**Hortator ACID synthesis, with a dedicated bassline generator.**
+**Hortator ACID and Aphex voices, with a dedicated bassline generator.**
 
 <img src="assets/engines/acid-engine-still.png" width="400" alt="Acid Engine — RHYTHMER OS engine screen">
 
-A resonant, squelching voice for basslines and repeating figures. Shape the instrument’s pitch, decay, sweep, punch, noise and clipping, then use its filter to move between a rounded low end and sharper, more driven phrases.
+Choose from 12 original presets: four Hortator ACID sounds and eight Aphex sounds — Acid Squelch, Lead Scream, Whistle Lead, Resonant Spike, Acid Seq, Reso Bass, Filter Cry and Techno Pulse. Each selection uses its original DSP and matching filter, envelope, modulation and sound-design controls. Shape a rounded bassline, a resonant lead or a sharper, more driven phrase.
 
 The dedicated Acid Generator creates notes, accents, slides and sustained ties; mutation varies the line. Its density, accent, slide, octave and auto-mutation settings are separate from the sound itself. The random state is internal; there is no Acid SEED knob.
 
 **Try it for:** Acid techno, house basslines, animated ostinatos and moving filter phrases.
-
-Acid Engine also includes eight original Aphex choices: Acid Squelch, Lead Scream, Whistle Lead, Resonant Spike, Acid Seq, Reso Bass, Filter Cry and Techno Pulse. Their original DSP and complete source controls are retained.
 
 ### Break Engine
 
