@@ -27,6 +27,7 @@
 #include "rhythmer/shell/key_pick.h"
 #include "rhythmer/shell/meter_lights.h"
 #include "rhythmer/shell/new_track.h"
+#include "rhythmer/shell/sample_library.h"
 #include "rhythmer/shell/pad_colour.h"
 #include "rhythmer/shell/sound_list.h"
 #include "rhythmer/shell/print_engine.h"
@@ -519,6 +520,17 @@ ui::SoftKeys layers_keys(const Snapshot& s) {
 
 // A kit page: the last pad's sample, its volume on the left and pan on the right, chips for how it plays,
 // the region tinted; TRIM draws its handles (zoomed as Shift + K asks), the envelopes and the filter lie over it.
+// Empty-pad shortcuts belong only to the source/trim face, never the page map,
+// layers editor or a Break loop. Secondary layers count as playable content too.
+bool empty_source_pad(const Track& t, const StagePage& page) {
+    const auto& pad = t.pads[t.last_pad % sampler_pads];
+    return t.engine == EngineKind::Sampler && !t.break_bars && !pad.used() && !pad.layered()
+        && (page.kind == StageKind::Params || page.kind == StageKind::Trim);
+}
+bool empty_kit(const Track& t) {
+    return std::none_of(t.pads.begin(), t.pads.end(), [](const auto& pad) { return pad.used() || pad.layered(); });
+}
+
 void wave_picture(Paint& p, const Snapshot& s, const StagePage& page) {
     const auto& t = s.track();
     const auto& pad = sampler_pad(s);
@@ -533,6 +545,9 @@ void wave_picture(Paint& p, const Snapshot& s, const StagePage& page) {
         juce::String why = !pad.used() ? juce::String("EMPTY") : s.sample.error.empty() ? juce::String("LOADING") : juce::String(s.sample.error);
         p.text(why, px, wy + 42, pw, 18, p.fit(why, pad.used() && !s.sample.error.empty() ? plain(colour::amber, type::body, Weight::Medium)
                                                                                          : caps_text(colour::mid, type::body), pw, type::floor), juce::Justification::centred);
+        if (empty_source_pad(t, page))
+            p.text(empty_kit(t) ? "PUSH: TRACK TYPE" : "PUSH: LOAD SAMPLE", px, wy + 66, pw, 14,
+                   caps_text(colour::mid), juce::Justification::centred);
         return;
     }
     // How it plays, as glyphs on the bottom row (lit when on): one shot or note on, loop (locked: the lock), reverse;
@@ -1144,6 +1159,20 @@ void push(Context& c) {
     if(t.engine==EngineKind::Sampler&&t.break_bars&&!t.pads[t.last_pad%sampler_pads].used()){
         c.ui.break_browse=true;c.ui.break_load_b=false;c.ui.break_track=c.ui.track;c.ui.break_bars=t.break_bars;c.project.gen8.bars=t.break_bars;c.open(PageId::Samples);c.notice("Choose loop A");return;
     } // the card in the middle
+    if (empty_source_pad(t, page)) {
+        if (c.ui.recording || c.host_recording()) { c.notice("Finish recording first"); return; }
+        if (c.frozen_edit(c.ui.track)) return;
+        if (empty_kit(t)) {
+            open_track_actions(c);
+            c.ui.track_types = true; // direct TRACK TYPE, not TRACK SETUP
+        } else {
+            c.ui.layer_load = -1; // load this pad's primary sample, not a previous layer target
+            c.ui.break_browse = false;
+            c.open(PageId::Samples);
+            if (c.library) c.library->rescan(); // same browser as SAMPLE SELECT
+        }
+        return;
+    }
     if (page.kind == StageKind::PluginEdit && c.ui.plugin_panel.entry == t.plugin && c.ui.plugin_panel.layout_revision && c.ui.plugin_panel.status == PluginStatus::Ready) {
         if (c.frozen_edit(c.ui.track)) return;
         const auto row = c.ui.plugin_row[t.plugin];

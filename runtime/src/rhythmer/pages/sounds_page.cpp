@@ -12,6 +12,8 @@
 #include "rhythmer/ui/widgets.h"
 #include <cstdio>
 
+#include "rhythmer/shell/preset_index.h"
+
 namespace rhythmer {
 namespace {
 using namespace ui;
@@ -56,7 +58,7 @@ void wheel(Context& c, int delta) {
     std::array<uint16_t, max_listed> list {};
     unsigned count = listed(c, list);
     if (!count) return;
-    c.ui.sounds_cursor = uint16_t(std::clamp<int>(int(c.ui.sounds_cursor) + delta, 0, int(count) - 1));
+    c.ui.sounds_cursor = uint16_t(preset_index(int64_t(c.ui.sounds_cursor) + delta, count));
 }
 
 void push(Context& c) {

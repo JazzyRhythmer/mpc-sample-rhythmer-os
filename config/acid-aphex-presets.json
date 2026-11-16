@@ -1,0 +1,14 @@
+{
+  "source": "Aphex",
+  "presets": [
+    "Acid Squelch",
+    "Lead Scream",
+    "Whistle Lead",
+    "Resonant Spike",
+    "Acid Seq",
+    "Reso Bass",
+    "Filter Cry",
+    "Techno Pulse"
+  ],
+  "policy": "Original names and native preset selections; no authored patch values"
+}

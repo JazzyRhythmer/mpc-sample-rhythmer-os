@@ -14,3 +14,8 @@
 - TRACK SETUP opens only with B1 TRACK SETUP on TRACKS. Encoder Push retains native track opening; intentional EMPTY tracks use the native type carousel, preserving patterns. Stage Shift shortcuts retain native behavior.
 
 - Acid GEN keeps its original NEW/MUTATE random policy and saved state. Only its seed knob/readout and Replay menu are removed; six musical settings occupy two pages. General GEN and Break seed controls retain their behavior.
+
+
+### Empty sampler source shortcut — 2026-11-16
+
+DECIDED: On SOUND/TRIM only, encoder Push on a completely empty Sample Kit opens TRACK TYPE. If other pads contain primary or layered samples, Push on an empty pad opens the native SAMPLES browser for that pad. Keep native clicks on loaded/layered pads and other editor pages; preserve recording/Freeze and Break-specific entry. SAMPLE KIT from the direct chooser begins sample loading; cancelling returns to the source face. No release or installation is implied by this source change.

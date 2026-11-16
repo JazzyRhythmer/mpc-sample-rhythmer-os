@@ -4,6 +4,8 @@
 #include "rhythmer/shell/stage_map.h"
 #include "rhythmer/shell/ask.h"
 #include "rhythmer/plugin/plugin_files.h"
+#include "rhythmer/plugin/preset_rows.h"
+#include "rhythmer/shell/preset_index.h"
 #include "rhythmer/shell/track_copy.h"
 
 namespace rhythmer {
@@ -12,6 +14,71 @@ inline int track_workflow_check() {
     auto require=[&](bool ok,const char* what){++checks;if(!ok)std::fprintf(stderr,"TRACK_WORKFLOW FAIL %u: %s\n",checks,what);return ok;};
 #define TRACK_CHECK(x,what) do {if(!require((x),what))return 1;}while(false)
     EngineHost host;Shell shell(host);auto& c=shell.context();
+    // Empty-pad shortcuts use real surface dispatch; native page maps and loaded-pad focus survive.
+    {
+        auto reset_empty=[&](bool elsewhere=false){
+            c.ui=UiState{};c.project.tracks[0]=Track{};c.load_sound(0,EngineKind::Sampler,0);
+            if(elsewhere)c.track().pads[127].sample=0;
+            c.ui.page=PageId::Stage;stage_go(c.ui,0,0);
+        };
+        auto tap=[&](SurfaceButton b){for(bool down:{true,false}){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(b);e.input.pressed=down;shell.surface(e,3000+checks);}};
+        for(auto kind:{StageKind::Params,StageKind::Trim}) {
+            reset_empty();stage_go(c.ui,EngineKind::Sampler,kind);tap(SurfaceButton::WheelPush);
+            TRACK_CHECK(c.ui.page==PageId::TrackActions&&c.ui.track_types,"empty kit source/trim opens TRACK TYPE");
+            TRACK_CHECK(c.track().engine==EngineKind::Sampler,"opening type picker leaves kit intact");
+            tap(SurfaceButton::TopLeft);TRACK_CHECK(c.ui.page==PageId::Stage&&!c.ui.track_types,"direct type screen BACK returns to source");
+            tap(SurfaceButton::WheelPush); // Shift must be held for Back
+            c.ui.shift=true;tap(SurfaceButton::WheelPush);c.ui.shift=false;
+            TRACK_CHECK(c.ui.page==PageId::Stage,"direct type Shift Push returns to source");
+            reset_empty(true);stage_go(c.ui,EngineKind::Sampler,kind);c.ui.layer_load=2;tap(SurfaceButton::WheelPush);
+            TRACK_CHECK(c.ui.page==PageId::Samples&&c.track().last_pad==0&&c.ui.layer_load==-1,"other-bank sample opens selected empty pad browser, clears layer target");
+            c.back();TRACK_CHECK(c.ui.page==PageId::Stage&&c.track().pads[127].used()&&!c.track().pads[0].used(),"browser cancel preserves both pads");
+        }
+        PluginRack picker_rack(host);c.plugins=&picker_rack;
+        for(unsigned pick=0;pick<4;++pick) {
+            reset_empty();tap(SurfaceButton::WheelPush);c.ui.track_action=uint8_t(pick);tap(SurfaceButton::WheelPush);
+            if(pick==0) TRACK_CHECK(c.ui.page==PageId::Plugins,"direct type PLUG-IN opens native picker");
+            if(pick==1) {
+                TRACK_CHECK(c.ui.page==PageId::Samples&&c.track().engine==EngineKind::Sampler,"direct SAMPLE KIT starts first sample load");
+                c.back();TRACK_CHECK(c.ui.page==PageId::Stage,"first-sample browser Back returns to source");
+            }
+            if(pick==2) TRACK_CHECK(c.ui.page==PageId::Stage&&c.track().engine==EngineKind::Midi,"direct MIDI choice lands on track");
+            if(pick==3) TRACK_CHECK(c.ui.page==PageId::Stage&&!c.track().used(),"direct EMPTY choice returns native carousel");
+        }
+        c.plugins=nullptr;
+        reset_empty(true);c.track().last_pad=11;tap(SurfaceButton::WheelPush);
+        std::strcpy(c.project.samples[0].path,"Samples/empty-pad-target.wav");
+        c.load_file("Samples/empty-pad-target.wav","target",false);
+        TRACK_CHECK(c.track().pads[11].sample==0&&!c.track().pads[0].used()&&c.track().pads[127].sample==0,"sample load targets selected pad, preserves other bank");
+        c.undo();TRACK_CHECK(!c.track().pads[11].used()&&c.track().pads[127].sample==0,"sample load Undo restores empty selected pad only");
+        c.project.samples[0]=SampleRef{};
+        reset_empty();c.track().pads[127].layers[0].sample=0;tap(SurfaceButton::WheelPush);
+        TRACK_CHECK(c.ui.page==PageId::Samples,"secondary layer in another bank prevents empty-kit classification");
+        reset_empty();c.track().pads[0].layers[0].sample=0;tap(SurfaceButton::WheelPush);
+        TRACK_CHECK(c.ui.page==PageId::Stage&&!c.ui.track_types,"selected layered pad retains native click");
+        reset_empty();c.track().pads[0].sample=0;tap(SurfaceButton::WheelPush);
+        TRACK_CHECK(c.ui.page==PageId::Stage&&c.ui.last_pot==1,"loaded pad click still advances knob focus");
+        for(auto page:{PageId::PadPage,PageId::LayersPage,PageId::EnvelopePage}) {
+            reset_empty(true);c.ui.page=page;tap(SurfaceButton::WheelPush);
+            TRACK_CHECK(c.ui.page==page&&c.ui.map_open,"legacy sampler page click still opens page map");
+        }
+        reset_empty(true);stage_go(c.ui,2,0);tap(SurfaceButton::WheelPush);
+        TRACK_CHECK(c.ui.page==PageId::Stage,"empty pad MIX click retains native behavior");
+        reset_empty();c.track().break_bars=2;tap(SurfaceButton::WheelPush);
+        TRACK_CHECK(c.ui.page==PageId::Samples&&c.ui.break_browse&&!c.ui.track_types,"Break retains loop A browser");
+        reset_empty();c.ui.recording=true;tap(SurfaceButton::WheelPush);
+        TRACK_CHECK(c.ui.page==PageId::Stage,"empty kit recording blocks replacement shortcut");
+        reset_empty();c.prints.freeze[0].state=FreezeState::Frozen;tap(SurfaceButton::WheelPush);
+        TRACK_CHECK(c.ui.page==PageId::Stage&&c.ui.ask==UiState::Ask::Unfreeze,"frozen kit keeps unfreeze guard");c.prints.freeze[0]={};
+        reset_empty();c.ui.page=PageId::Tracks;open_track_actions(c);c.ui.track_types=true;c.back();
+        TRACK_CHECK(c.ui.page==PageId::TrackActions&&!c.ui.track_types,"TRACK SETUP type submenu still backs to parent");
+        reset_empty(true);tap(SurfaceButton::WheelPush);c.project.tracks[1].engine=EngineKind::Midi;c.select_track(1);
+        TRACK_CHECK(c.ui.page==PageId::Stage&&c.ui.track==1,"browser track switch follows new selected track");
+        c.ui=UiState{};c.project.tracks[0]=Track{};c.project.tracks[1]=Track{};
+    }
+    TRACK_CHECK(preset_index(4,4)==0&&preset_index(-1,4)==3,"preset boundaries wrap both ways");
+    TRACK_CHECK(preset_index(13,4)==1&&preset_index(-9,4)==3,"accelerated preset turns wrap modulo count");
+    TRACK_CHECK(preset_index(1,0)==0&&preset_index(-1,1)==0,"empty and single-item preset lists stay safe");
     // The owned plug-in EDIT face exposes source/save via Push, while PRESETS keeps its native job.
     {
         auto tap_tools=[&](SurfaceButton button){for(bool down:{true,false}){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(button);e.input.pressed=down;shell.surface(e,2000+checks);}};
@@ -120,6 +187,21 @@ inline int track_workflow_check() {
         PluginRack rack(host);rack.set_card(card);c.plugins=&rack;
         auto files=list_plugins(plugin_folder(card));
         auto file=[&](const char* name){return std::find_if(files.begin(),files.end(),[&](const PluginFile& f){return f.name==name;});};
+        for(const auto& f:files) {
+            if(f.name=="Break Engine")continue; // native loop sampler, not a plug-in preset bank
+            c.ui.track=0;c.ui.page=PageId::Stage;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.choose_plugin(f);
+            bool ready=false;for(unsigned n=0;n<2000;++n){if(rack.status(c.track().plugin)==PluginStatus::Ready){ready=true;break;}std::this_thread::sleep_for(std::chrono::milliseconds(10));}
+            TRACK_CHECK(ready,"preset-loop instrument loads");auto programs=rack.programs(c.track().plugin);
+            if(programs.list.empty())continue;
+            c.open_plugin_presets(c.track().plugin);auto rows=preset_rows(programs.list,std::string(c.ui.presets_folder.data()),programs.current);
+            if(!rows.empty()){
+                c.ui.presets_cursor=uint16_t(rows.size()-1);plugin_presets_page.wheel(c,1);TRACK_CHECK(c.ui.presets_cursor==0,"preset list last to first");
+                plugin_presets_page.wheel(c,-1);TRACK_CHECK(c.ui.presets_cursor==rows.size()-1,"preset list first to last");
+            }
+            c.open(PageId::Stage);c.ui.preset_due=1;c.ui.presets_entry=c.track().plugin;c.ui.presets_cursor=uint16_t(programs.list.size()-1);
+            c.plugin_preset_turn(1);TRACK_CHECK(c.ui.presets_cursor==0,"main preset turn last to first");
+            c.plugin_preset_turn(-1);TRACK_CHECK(c.ui.presets_cursor==programs.list.size()-1,"main preset turn first to last");c.ui.preset_due=0;
+        }
         auto first=file("FM-106"),second=file("Sophie"),br=file("Break Engine");
         TRACK_CHECK(first!=files.end() && second!=files.end() && br!=files.end(),"real plugin fixture available");
         auto wait=[&]{for(unsigned n=0;n<2000;++n){if(rack.status(c.track().plugin)==PluginStatus::Ready)return true;std::this_thread::sleep_for(std::chrono::milliseconds(10));}return false;};

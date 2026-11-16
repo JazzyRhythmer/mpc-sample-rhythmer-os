@@ -3,7 +3,7 @@
   "source_views": 25,
   "track_picker_entries": 20,
   "factory_kits": 36,
-  "exposed_sounds": 2659,
+  "exposed_sounds": 2667,
   "missing_source_names": 0,
   "explicit_exclusions": 7,
   "excluded_factory_presets": 4,
@@ -1405,9 +1405,9 @@
       "engine": "Acid Engine",
       "folder": "RHYTHMER - Acid Engine",
       "variant": "",
-      "source_slots": 4,
-      "exposed_sounds": 4,
-      "basis": "Original Hortator factory bank; four sample-dependent presets explicitly excluded",
+      "source_slots": 12,
+      "exposed_sounds": 12,
+      "basis": "Original Hortator factory bank; four sample-dependent presets explicitly excluded; selected original Aphex presets routed to the unmodified Aphex DSP",
       "bank_assets": [
         {
           "file": "firmware/src/preset_bank.h",

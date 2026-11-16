@@ -1,6 +1,6 @@
 # Rhythmer OS user guide
 
-Rhythmer OS 0.4.0-beta.1 for MPC Sample. Developed by jazzy rhythmer, based on Melodee by Kerem Kiliç (Ellic Studio). This owner beta awaits physical-device validation.
+Rhythmer OS 0.4.0-beta.3 for MPC Sample. Developed by jazzy rhythmer, based on Melodee by Kerem Kiliç (Ellic Studio). This owner beta awaits physical-device validation.
 
 ## Contents
 

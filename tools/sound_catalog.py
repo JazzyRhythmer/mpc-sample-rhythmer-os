@@ -291,6 +291,12 @@ def generate():
     acid['voice_parameters']=hortator.get('voice_parameters',{})
     acid['strip_voice_prefix']='Kick '
     for sound in acid['sounds']:sound['note']=60;sound['parameter_indices']=hortator['voice_parameters']['36']
+    aphex=next(e for e in registry if e['name']=='Aphex')
+    for name in json.loads((ROOT/'config/acid-aphex-presets.json').read_text())['presets']:
+        source_index=next(i for i,s in enumerate(aphex['sounds']) if s['name']==name)
+        sound=copy.deepcopy(aphex['sounds'][source_index])
+        sound.update(source_engine=aphex['folder'],source_sound=source_index,origin='Original Aphex factory preset, unmodified native selector')
+        acid['sounds'].append(sound)
     registry.append(acid)
     h_index=next(i for i,e in enumerate(registry) if e['name']=='Hortator')
     by_name={s['name']:i for i,s in enumerate(registry[h_index]['sounds'])}

@@ -271,7 +271,12 @@ void Context::back() {
         // Decoder may finish in the cache, but a cancelled load must never commit.
         ui.break_pending=-1;ui.break_job_track=-1;notice("BREAK load cancelled");
     }
-    if(ui.page==PageId::TrackActions && ui.track_types){ui.track_types=false;ui.track_action=1;return;}
+    if(ui.page==PageId::TrackActions && ui.track_types){
+        ui.track_types=false;ui.track_action=1;
+        // Direct empty-kit entry returns to its source face. TRACK SETUP's
+        // type submenu still returns to its parent on TRACKS.
+        if(back_target(ui)!=PageId::Stage)return;
+    }
     // The screen BACK and Shift + Push share the same GEN hierarchy.
     // A sub-generator returns to GEN first; only GEN's own Back closes it.
     if(ui.page==PageId::Patterns && ui.sheet_open && ui.gen8_mode){ui.gen8_mode=0;ui.sheet_row=0;return;}

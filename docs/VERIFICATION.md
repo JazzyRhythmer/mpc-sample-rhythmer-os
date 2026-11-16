@@ -27,3 +27,8 @@ The focused runtime changes retain BREAK GEN after an initial source load, expos
 The hotfix includes regression fixtures for A/B completion ownership, cancellation, undo/redo, saved hold/mode values and held STRETCH release after paging. Offline DSP tests distinguish CHOP from LOOP hold and ordinary chops from stretched grain processing. Test results are bound to the final runtime in the validation receipt. Existing engine/preset acceptance is retained only for byte-identical source and payloads; it is not presented as a new hardware listening test.
 
 App version: 0.4.0-beta.3. Distribution record: v0.4.0-beta.3-hotfix.2. Physical-device testing remains pending; install the full SD package for this same-version hotfix.
+
+
+## Empty-pad workflow release (0.4.0-beta.3)
+
+The empty native Sample Kit SOUND/TRIM shortcut is covered by the current ARM64 track suite (290 assertions). Native DSP binaries are unchanged. The host adds source-aware aliases for eight original Aphex presets inside Acid Engine; other engine/model/plugin source remains unchanged (137 files). Prior sound audits are retained and supplemented by focused alias/control/state tests; this is not a fresh all-preset listening campaign. Opening type selection, loading onto an empty selected pad, cancellation, Undo, other-bank/layer content, recording/Freeze and existing Break paths are covered. See TRACK_WORKFLOW.md. Physical-device verification remains pending.

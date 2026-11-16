@@ -16,6 +16,7 @@
 #include "rhythmer/shell/project_store.h"
 #include "rhythmer/ui/widgets.h"
 #include "rhythmer/shell/new_track.h"
+#include "rhythmer/shell/sample_library.h"
 #include "rhythmer/shell/stage_map.h"
 #include "rhythmer/shell/pad_bank.h"
 #include <cmath>
@@ -93,6 +94,16 @@ void actions_push(Context& c) {
     unsigned at=c.ui.track_action;
     if(c.ui.track_types) {
         static constexpr EngineKind kinds[]={EngineKind::Plugin,EngineKind::Sampler,EngineKind::Midi,EngineKind::None};
+        // A bare kit's direct chooser already has SAMPLE KIT's engine. Start
+        // loading its first pad instead of returning to the same empty prompt.
+        if (at%4==1 && c.track().engine==EngineKind::Sampler && back_target(c.ui)==PageId::Stage) {
+            if(c.ui.recording || c.host_recording()){c.notice("Finish recording first");return;}
+            if(c.frozen_edit(c.ui.track))return;
+            c.ui.track_types=false;c.ui.layer_load=-1;c.ui.break_browse=false;
+            c.open(PageId::Stage);c.open(PageId::Samples);
+            if(c.library)c.library->rescan();
+            return;
+        }
         change_track_type(c,kinds[at%4]); return;
     }
     if(at==1 || (at==0 && !c.track().used())) {c.ui.track_types=true;c.ui.track_action=0;return;}
@@ -109,7 +120,7 @@ void actions_push(Context& c) {
     else {c.open(PageId::Stage);stage_go(c.ui,0,0);c.notice("MIDI: DEVICE sets port/channel");}
 }
 void actions_soft(Context& c,int key) {
-    if(key==0) {if(c.ui.track_types){c.ui.track_types=false;c.ui.track_action=1;}else c.back();}
+    if(key==0) c.back();
     if(key==2)actions_push(c);
 }
 } // namespace

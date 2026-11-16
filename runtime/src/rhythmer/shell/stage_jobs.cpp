@@ -11,6 +11,8 @@
 #include "rhythmer/shell/stage_map.h"
 #include <algorithm>
 
+#include "rhythmer/shell/preset_index.h"
+
 namespace rhythmer {
 
 void Context::preset_turn(int at) {
@@ -18,7 +20,7 @@ void Context::preset_turn(int at) {
     unsigned count = sound_list(track(), ui, list);
     if (!count || !track().used()) return;
     if (frozen_edit(UndoScope {UndoScope::Kind::Sound, uint8_t(ui.track % track_count), 0})) return; // freeze plan F2c
-    ui.preset_cursor = uint16_t(std::clamp(at, 0, int(count) - 1));
+    ui.preset_cursor = uint16_t(preset_index(at, count));
     ui.preset_due = std::max<uint32_t>(now + stage_preset_ms, 1);
 }
 
@@ -34,7 +36,7 @@ void Context::plugin_preset_turn(int delta) {
     if (ui.preset_due && ui.presets_entry == t.plugin) at = ui.presets_cursor;
     else for (size_t n = 0; n < programs.list.size(); ++n) if (programs.list[n].index == programs.current) at = int(n);
     ui.presets_entry = t.plugin;
-    ui.presets_cursor = uint16_t(std::clamp(at + delta, 0, int(programs.list.size()) - 1));
+    ui.presets_cursor = uint16_t(preset_index(int64_t(at) + delta, programs.list.size()));
     ui.preset_due = std::max<uint32_t>(now + stage_preset_ms, 1);
 }
 

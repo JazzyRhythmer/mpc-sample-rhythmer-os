@@ -1,14 +1,50 @@
 # Rhythmer OS 사용 설명서
 
+> **처음 사용하는 분:** [트랙 선택·진입·타입 변경부터 읽기](GETTING_STARTED_KO.md). SAMPLE은 Stage로, PAD FX + KNOB FX는 TRACKS로 갑니다. PATTERNS의 패드는 패턴 실행용이며, 연주 녹음은 SAMPLE로 Stage에 돌아와 진행합니다. Stage B1 EDIT에서 인코더 Push로 PAD SOURCE / SAVE 도구를 엽니다.
+
 웹사이트 게재용 초안 · 대상 버전 0.4.0-beta.3
 
 Rhythmer OS는 MPC Sample에서 샘플, 신스, 드럼킷과 시퀀서를 사용하는 음악 제작 환경입니다. 개발자는 **jazzy rhythmer**입니다. 실기기 조작·청취·성능은 별도 베타 검증 대상입니다. 아래 버튼 설명은 현재 구현을 기준으로 작성했습니다.
+
+
+### 빈 트랙·빈 패드에서 시작하기
+
+**SAMPLE → SOUND 또는 TRIM → 큰 인코더 클릭(Push)** 으로 시작합니다.
+
+- **악기가 없는 EMPTY 트랙:** 기존 PLUG-IN / KIT / MIDI 선택 카드를 사용합니다.
+- **Sample Kit의 모든 패드가 비어 있음:** `TRACK TYPE`이 열립니다. `PLUG-IN`은 악기 브라우저, `SAMPLE KIT`은 첫 샘플 브라우저로 이어집니다. MIDI·EMPTY도 선택할 수 있습니다.
+- **다른 패드에 샘플이 있고 선택한 패드만 비어 있음:** `SAMPLES`에서 파일을 고르고 Push하면 선택한 패드에 로드합니다. 브라우저에서 다른 패드를 누르면 로드 대상도 그 패드로 바뀌므로 헤더와 패드 번호를 확인하세요.
+- 판정은 **A–H 전체 128패드와 추가 레이어**를 포함합니다. 레이어에 소리가 있는 패드는 빈 패드로 취급하지 않습니다. Rhythmer Kit 플러그인의 PAD SOURCE와는 별도인 네이티브 Sample Kit 동작입니다.
+- 화면에 `PUSH: TRACK TYPE` / `PUSH: LOAD SAMPLE` 안내가 표시됩니다. **SHIFT + 인코더 클릭**은 브라우저를 닫고 이전 화면으로 돌아갑니다. 브라우저의 **B1**은 폴더 안에서는 상위 폴더로, 최상위에서는 이전 화면으로 돌아갑니다. 샘플 로드는 **SHIFT + −**로 되돌릴 수 있습니다.
+
+샘플이 있는 패드, 다른 편집 페이지, Break의 루프 로드 경로는 기존 조작을 유지합니다. 녹음 중이나 Freeze 상태에서는 기존 보호 안내를 따르세요. 악기 교체·삭제는 **TRACKS → B1 TRACK SETUP**을 사용합니다.
+
+
+
+### 프리셋 순환 탐색과 Acid Engine의 Aphex 사운드
+
+프리셋 목록과 메인 PRESETS 화면에서 **인코더 또는 −/+**로 탐색하면 마지막 다음은 첫 항목, 첫 항목 이전은 마지막 항목입니다. 목록 화면은 현재 폴더 안에서 순환하고, 메인 PRESETS는 기존의 전체 프리셋 탐색 범위를 유지합니다. User Sound / User Kit도 포함합니다. K1 같은 절대 위치 노브의 범위, 목록의 Push / LOAD 확정, 메인 화면의 기존 적용 타이밍은 유지합니다. 프리셋이 없는 엔진에서는 새 프리셋을 만들거나 다른 기능을 실행하지 않습니다.
+
+Acid Engine에는 기존 Hortator의 **SQUELCH / DEEPBASS / SCREAMER / SQUAREAC** 외에 Aphex 원본의 **Acid Squelch / Lead Scream / Whistle Lead / Resonant Spike / Acid Seq / Reso Bass / Filter Cry / Techno Pulse**를 추가했습니다. 원본 이름·패치 선택값을 유지하며 Aphex 사운드는 실제 Aphex DSP로 재생합니다. 첫 화면의 컷오프·레조넌스와 EDIT의 ENV·LFO 등은 선택된 소스의 실제 제어를 사용합니다. ACID GEN은 같은 Acid Engine 트랙에서 계속 사용할 수 있고, 프로젝트와 User Sound에 선택한 소스·편집값이 함께 저장됩니다.
+
 
 ## 1. 소리 선택하기
 
 ### Sample Kit — 샘플과 MPC 킷
 
 기존 샘플러 방식입니다. Samples에서 WAV·MP3·FLAC·Ogg Vorbis·AIFF를 패드에 넣거나, 지원되는 MPC `.xpm`·`.xty` 드럼 프로그램을 선택하고 Push로 킷을 로드합니다. MPC Sample `.xpj` 프로젝트에서는 `Load kit (no patterns)`로 킷만 가져올 수도 있습니다. 샘플과 관련 데이터 폴더를 함께 보관하세요. 모든 MPC 효과와 설정이 완전히 재현되는 것은 아닙니다.
+
+### 악기·트랙 타입 바꾸기
+
+PAD BANK + 번호 패드로 트랙을 선택합니다. PAD FX + KNOB FX를 함께 눌러 TRACKS를 열고 B1 **TRACK SETUP**를 누릅니다. 헤더의 트랙 번호를 확인하세요.
+
+- **CHANGE PLUG-IN**: 현재 플러그인을 다른 악기로 교체합니다. 플러그인 프리셋 목록에서도 B2 **PLUG-INS**로 바로 교체할 수 있습니다.
+- Sample Kit의 **LOAD SAMPLE**은 선택 패드에 소리를 넣고, MIDI의 **MIDI DEVICE**는 포트·채널 설정을 엽니다.
+- **TRACK TYPE**: PLUG-IN / SAMPLE KIT / MIDI / EMPTY를 고릅니다. EMPTY는 악기만 비우고 패턴은 남깁니다. 타입 변경은 128개 패턴·현재 패턴·트랙 믹스·인서트를 유지합니다. 음표나 음역을 새 악기에 맞게 자동 변환하지는 않습니다.
+- **LOAD MPC KIT**: 카드 또는 내부 드라이브의 프로젝트·드럼 프로그램에서 킷만 불러옵니다. 이 화면에서는 전체 프로젝트를 여는 대신 킷만 적용합니다.
+- **DELETE TRACK**: 확인 후 소리와 모든 패턴을 지웁니다. 취소가 기본 선택입니다. Shift + Minus로 복원하고 Shift + Plus로 다시 적용합니다.
+
+TRACK SETUP는 TRACKS의 B1 버튼으로만 엽니다. TRACKS에서 인코더를 누르면 악기가 있는 트랙은 기존 메인 화면으로, EMPTY로 비운 트랙은 PLUG-IN / KIT / MIDI 선택 화면으로 들어갑니다. Trim·Layers의 전용 Shift 조작과 Freeze 조작은 기존대로 유지합니다. 프리셋·플러그인·샘플 로드 화면에서 다른 트랙을 선택하면 그 트랙의 메인 화면으로 이동합니다. 악기를 확정하면 해당 트랙의 첫 화면으로 돌아오며, 취소하면 기존 악기가 유지됩니다. 버스·마스터 편집 화면은 공용 화면이므로 트랙을 바꿔도 유지합니다.
 
 ### 개별 엔진 — 한 트랙에 한 음색
 
@@ -30,7 +66,7 @@ PRESETS 하단은 해당 엔진의 실제 주 필터·레조넌스와 대표 음
 
 그 뒤의 **P01 … / P11 …** 항목은 선택 패드의 원본 엔진 제어입니다. KIT 항목은 전체 킷, P번호 항목은 해당 패드이므로 구분하여 조정하세요. 다른 패드를 눌러도 전체 필터 값은 유지됩니다. SAVE KIT에는 전체 필터와 패드별 소리가 함께 저장됩니다.
 
-Edit 화면의 B3 **PAD SOURCE**를 열면 `Pad / Engine / Sound`가 나옵니다. B3은 SOURCE → SAVE → EDIT 순서로 전환합니다.
+Stage에서 B1 EDIT를 선택한 뒤 인코더 Push로 도구를 엽니다. Rhythmer Kit은 PAD SOURCE, 개별 엔진은 SAVE로 시작합니다. 도구 Edit 화면의 B3 **PAD SOURCE**를 열면 `Pad / Engine / Sound`가 나옵니다. B3은 SOURCE → SAVE → EDIT 순서로 전환합니다.
 
 1. 패드를 누르거나 Pad를 돌려 편집할 패드를 선택합니다.
 2. Engine으로 그 패드의 엔진을 선택합니다.
@@ -137,7 +173,7 @@ Sample Kit의 COLOUR는 **실제 패드 조명 색상**을 지정합니다. 화�
 
 ## Break Manipulator와 Acid 상세
 
-[Break/Acid 사용 안내](BREAK_ACID_GUIDE_KO.md)에 BRK PERF, 19개 연주 명령·녹음·재생·A/B/Return, Acid 설정·Seed·Tie와 진입·복귀 경로를 정리했습니다. 루프가 없는 Break 트랙의 Stage에서 Push로 다시 샘플을 고를 수 있습니다.
+[Break/Acid 사용 안내](BREAK_ACID_GUIDE_KO.md)에 BRK PERF, 19개 연주 명령·녹음·재생·A/B/Return, Acid의 두 설정 페이지·내부 난수 상태·Tie와 진입·복귀 경로를 정리했습니다. 루프가 없는 Break 트랙의 Stage에서 Push로 다시 샘플을 고를 수 있습니다.
 
 ## Melodee 0.2.0 기반 기능
 
@@ -167,6 +203,10 @@ Sequential의 외부 Prophet 뱅크와 Erica/Hrtl 외부 Elixir 뱅크는 배포
 킷 패드 EDIT 제목은 `P11 / CS-1 / 사운드명`처럼 선택 패드·실제 엔진·소리를 표시합니다. 킷 전체 필터 행은 `킷 이름 / ALL PADS`를 표시합니다. 패드 소스를 교체해도 킷 프리셋 이름을 현재 소스 엔진으로 오해하지 않도록 구분합니다.
 
 
-## Save a Rhythmer sound or kit
+## 저장한 음색을 다시 쓰기
 
-Tap SAMPLE for the selected track’s Stage. On an owned plug-in, press B1 for EDIT, then Push the encoder at the on-screen prompt. Single instruments open SAVE; Rhythmer Kit opens PAD SOURCE (K1 Pad, K2 Engine, K3 Sound). In the kit tools, B3 cycles SOURCE / SAVE / EDIT. On SAVE, K1 selects slot 1–64, turning K2 saves, and Status must return to Ready. A used slot is overwritten. B2 PRESETS / KIT PRESETS lists User Sound / User Kit items; select one and Push / LOAD. Shift + Push returns to the original Stage edit row. Save the project separately for patterns and arrangement.
+자세한 경로는 [빠른 시작의 User Sound / User Kit 저장](GETTING_STARTED_KO.md)을 따르세요. K1 Save slot 1–64 → K2 Save Sound / Save Kit → K3 Status Ready를 확인합니다. 같은 슬롯은 교체됩니다. B2 PRESETS / KIT PRESETS의 User Sound / User Kit 항목을 Push / LOAD로 다시 불러옵니다. SHIFT + Push는 악기 메인 EDIT의 원래 위치로 돌아갑니다. 프리셋은 음색/킷 재사용용이며 곡은 프로젝트 SAVE로 별도 저장합니다.
+
+## 필수 조작·구조 안내와 핫픽스 저장 도구
+
+[첫 세션 안내](GETTING_STARTED_KO.md)의 필수 키 조합과 OS 구조부터 확인하세요. 뒤로 가기는 SHIFT + 인코더 클릭, 미세 조정은 대상 K1–K3 조작 후 SHIFT + 인코더 회전입니다. Stage EDIT 클릭은 지원 엔진의 SAVE SOUND / PAD SOURCE 진입으로 변경됐고, 도구의 SHIFT + B3는 플러그인 TRANSPORT 수신 설정입니다. 프로젝트 SAVE와 User Sound / User Kit 저장은 별개입니다.

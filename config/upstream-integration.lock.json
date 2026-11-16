@@ -1,7 +1,7 @@
 {
   "upstream": "v0.2.0",
   "commit": "8880d16116ccb3c69f75fb46bf2166b16c51ef0c",
-  "patch_sha256": "b19b98103067d37f3ea791a9eb71331827d386b9bfe45b928d4abcdb30f43f68",
+  "patch_sha256": "ff37c99269f19f503de92165850ce79b0728c8d155a5c48bd63fa26eeaa09afd",
   "files": [
     "Makefile",
     "docs/GUIDE.md",
@@ -54,6 +54,7 @@
     "src/rhythmer/pages/sampler_common.cpp",
     "src/rhythmer/pages/samples_page.cpp",
     "src/rhythmer/pages/settings_page.cpp",
+    "src/rhythmer/pages/sounds_page.cpp",
     "src/rhythmer/pages/stage_page.cpp",
     "src/rhythmer/pages/step_edit_page.cpp",
     "src/rhythmer/pages/track_grid.cpp",
@@ -87,10 +88,12 @@
     "src/rhythmer/shell/new_track.h",
     "src/rhythmer/shell/pad_context.h",
     "src/rhythmer/shell/plugin_jobs.cpp",
+    "src/rhythmer/shell/preset_index.h",
     "src/rhythmer/shell/project_jobs.cpp",
     "src/rhythmer/shell/project_kits.cpp",
     "src/rhythmer/shell/shell.cpp",
     "src/rhythmer/shell/shell.h",
+    "src/rhythmer/shell/stage_jobs.cpp",
     "src/rhythmer/shell/stage_map.h",
     "src/rhythmer/shell/step_edit.cpp",
     "src/rhythmer/shell/step_lane.h",
@@ -137,7 +140,7 @@
     "extensions/shell/gen8_jobs.cpp": "a8e8405854e4f2fadc591c3714907495b9f9233baf0d1e26d0cdc92f57a6e9ef",
     "extensions/shell/upstream_check.inc": "a34b974e5f810910d2da5cb270ea1157372a949ad9d3acf62c701a18d8fc005e",
     "extensions/plugin/sound_rack.h": "55d15a70edfdfd0757a33166c2f6d9a4a26f8dfad48707b11400f7d655f8401e",
-    "extensions/plugin/sound_rack.cpp": "b8be0f9a5356ea08adb8178bb8951d667731bdee4338bfe337e38ff85571f5ae",
+    "extensions/plugin/sound_rack.cpp": "6aa12ab1592d2e78fc83a53b445e6a775317f25ad5f26f47a0214a10e2df6a91",
     "extensions/plugin/design_pages.h": "8b1ed6d424dee7536bf55edecd829e8bc86c897ec1eaaccbe9655878b610da27",
     "extensions/plugin/design_panel.inc": "47f61568d527f684a629d70295a82786e173153220dc1afb6f608a0128efee5e",
     "extensions/model/native_gen_profiles.h": "45195aa20f1607c1c0941b573519633233ca0996b8db981d17a294f9e6787f6e",
@@ -303,10 +306,10 @@
     "third_party/fm1-break/UPSTREAM_THIRD_PARTY.md": "c10451a1c0b368ec926e86b9296eb0c96c790d4d4768ad07e91b09ca9ea4bfa5",
     "third_party/fm1-break/NOTICE.md": "389efa0545bcd28dc46d62abf184b328983a9627619ef36819c20be7790ca44e",
     "config/update-public-key.txt": "1e54c848e19e113f0beb040d0978610c09d16cbe4509aa20a355485f83869eab",
-    "docs/USER_MANUAL_KO_DRAFT.md": "e21bd3adff8be1332284c0d2c1236ad087f6fc2a6d3fca502dd037e67d5291b8",
+    "docs/USER_MANUAL_KO_DRAFT.md": "dcc9258bd7d051187e9b9f8e4e0b3c7b7dfec5858f3b3d7be1b5ad67c72a9471",
     "docs/GEN_WORKFLOW.md": "724211beacd9ef9367255993460a1b334f224ee5811437d72ac6f41f98257b26",
     "docs/BREAK_ACID_GUIDE_KO.md": "cdecf90ab0bfd749af1459041ba2c97c20dd7169a7ef2553db1c19b20c32d63d",
-    "docs/SD_CARD_GUIDE.md": "dd601f02fe53b65132611fcd0dd3490295c290ee8647851f828295433c7a0926",
+    "docs/SD_CARD_GUIDE.md": "1a0e3136d158c62b38bf50b44dd64b8eff89ca4402fb53be871d0d129e56d81e",
     "assets/device/mpc-sample.svg": "5fecee227d799be663aa6ce4e50a15a056ec17074ebbf188bdb825106b6cdffe"
   }
 }

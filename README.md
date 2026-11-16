@@ -50,6 +50,8 @@ The dedicated Acid Generator creates notes, accents, slides and sustained ties; 
 
 **Try it for:** Acid techno, house basslines, animated ostinatos and moving filter phrases.
 
+Acid Engine also includes eight original Aphex choices: Acid Squelch, Lead Scream, Whistle Lead, Resonant Spike, Acid Seq, Reso Bass, Filter Cry and Techno Pulse. Their original DSP and complete source controls are retained.
+
 ### Break Engine
 
 **Turn your own loop into a playable break.**
@@ -285,7 +287,7 @@ Use the **complete SD ZIP** from the [installation page](https://jazzyrhythmer.g
 
 Target: **MPC Sample AC50 with stock firmware 1.3.0.12**. Back up the entire card first. **UPDATE.zip is app-only**, not a first-install package. SOURCE, MOVE-SOURCE and SUPPORT-SOURCE contain corresponding source, not installers.
 
-[Installation / stock-app recovery](docs/SD_CARD_GUIDE.md) · [Release files and notes](https://github.com/jazzyrhythmer/mpc-sample-rhythmer-os/releases/tag/v0.4.0-beta.3-hotfix.2)
+[Installation / stock-app recovery](docs/SD_CARD_GUIDE.md) · [Release files and notes](https://github.com/jazzyrhythmer/mpc-sample-rhythmer-os/releases/tag/v0.4.0-beta.3-hotfix.3)
 
 ## Validation and limits
 

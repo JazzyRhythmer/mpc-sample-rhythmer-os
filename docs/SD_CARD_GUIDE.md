@@ -18,7 +18,7 @@
 
 ## 이번 파일 · Break workflow hotfix.2
 
-앱 버전은 0.4.0-beta.3이며 배포 기록은 `v0.4.0-beta.3-hotfix.2`다. Break 로드 후 메뉴 유지·로딩 취소·페이지 안내·PATTERN HOLD 표기를 개선했다. 같은 버전 핫픽스이므로 자동 업데이트 목록에 나타나지 않을 수 있다. 전체 SD ZIP과 해당 SHA-256을 사용한다. [Break 조작 안내](BREAK_WORKFLOW.md)를 참고한다.
+앱 버전은 0.4.0-beta.3이며 배포 기록은 `v0.4.0-beta.3-hotfix.3`다. Break 로드 후 메뉴 유지·로딩 취소·페이지 안내·PATTERN HOLD 표기를 개선했다. 같은 버전 핫픽스이므로 자동 업데이트 목록에 나타나지 않을 수 있다. 전체 SD ZIP과 해당 SHA-256을 사용한다. [Break 조작 안내](BREAK_WORKFLOW.md)를 참고한다.
 
 ## 첫 조작 안내
 

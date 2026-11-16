@@ -42,6 +42,13 @@ def check():
     full=hortator_presets();excluded=[dict(name=x['name'],reason='Requires original sample assets and sample model, absent from synthesis-only port') for x in full if x['model']=='DM_SMPL']
     source=[x['name'] for x in full if x['model']=='DM_ACID'] if e['name']=='Acid Engine' else [x['name'] for x in full if x['model']!='DM_SMPL']
     basis='Original Hortator factory bank; four sample-dependent presets explicitly excluded'
+    if e['name']=='Acid Engine':
+     aphex=next(x for x in c['engines'] if x['name']=='Aphex');selected=json.loads((ROOT/'config/acid-aphex-presets.json').read_text())['presets']
+     for name in selected:
+      original=next(x for x in aphex['sounds'] if x['name']==name);alias=next(x for x in e['sounds'] if x['name']==name)
+      assert alias['source_engine']==aphex['folder'] and {k:v for k,v in alias.items() if k not in ('source_engine','source_sound','origin')}==original
+     source+=selected;basis+='; selected original Aphex presets routed to the unmodified Aphex DSP'
+
    if p.name=='fm1-elixir':
     params=json.loads((p/'contract.json').read_text())['chain_params'];expected=own_programs('elixir',params);source=[k['name']+' / '+v['name'] for k in expected for v in e['voices']];basis='Original GPL Initkit plus four explicitly authored Rhythmer kits, each seven voices; external Erica/Hrtl kit assets excluded'
     assert [x['values'] for x in e['sounds']]==[k['values'] for k in expected for v in e['voices']]

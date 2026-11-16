@@ -29,7 +29,7 @@ int size(const var& v){auto* a=v.getArray();return a?a->size():0;}
 
 struct Child {
     std::unique_ptr<AudioPluginInstance> synth;
-    int engine=-1,sound=0,source_note=60;
+    int engine=-1,metadata_engine=-1,sound=0,source_note=60;
     bool drums=false, silenced=false, velocity_pressure=false;
     std::vector<int> parameter_order,parameter_ordinals;
     std::vector<float> defaults; // loaded source-preset defaults; VST2 has no default-value ABI
@@ -99,15 +99,15 @@ public:
     uint32_t revision(){std::lock_guard<std::mutex> guard(lock);return layout_revision;}
     bool design_pages(PluginPanel& out){
         std::lock_guard<std::mutex> guard(lock);auto c=focused();if(!c&&single>=0)return false;
-        auto source=c?text(engine(c->engine),"name"):String("Empty");auto variant=c?text(engine(c->engine),"variant"):String();if(variant.isNotEmpty())source+=" / "+variant;
+        auto source=c?text(source_info(*c),"name"):String("Empty");auto variant=c?text(source_info(*c),"variant"):String();if(variant.isNotEmpty())source+=" / "+variant;
         std::snprintf(out.design_source,sizeof out.design_source,"%s",source.toRawUTF8());
         if(design_cache_revision!=layout_revision){
             std::vector<PluginDesignControl> list;if(kit_filter)for(int i=6;i<9;++i)list.push_back({i,-100,single<0?"KIT FILTER":"OUTPUT FILTER"});
-            const auto& order=g_order();auto metadata=c?get(engine(c->engine),"parameters"):var();
+            const auto& order=g_order();auto metadata=c?get(source_info(*c),"parameters"):var();
             for(unsigned i=0;i<order.size();++i){auto p=at(metadata,order[i]);auto group=text(p,"edit_group");int rank=number(p,"edit_group_order",700);
                 // Hortator models reuse eight slots for different functions.
                 // Classify their current native names, never a stale kit label.
-                auto family=text(engine(c->engine),"name");auto* graph=active.load();const auto& names=graph->names[size_t(single<0?focus:0)];
+                auto family=text(source_info(*c),"name");auto* graph=active.load();const auto& names=graph->names[size_t(single<0?focus:0)];
                 if((family=="Hortator"||family=="Acid Engine")&&i<names.size()){
                     auto n=names[i].toLowerCase();
                     if(n.contains("model")){group="MODEL";rank=0;}
@@ -127,11 +127,11 @@ public:
     }
     std::array<int,3> quick_parameters(){
         std::lock_guard<std::mutex> guard(lock);std::array<int,3> out{{-1,-1,-1}};auto c=focused();if(single<0)return {{6,7,8}};if(kit_filter){out[0]=6;out[1]=7;}if(!c)return out;
-        const auto& order=g_order();auto metadata=get(engine(c->engine),"parameters");auto preferred=get(engine(c->engine),"quick_controls");
+        const auto& order=g_order();auto metadata=get(source_info(*c),"parameters");auto preferred=get(source_info(*c),"quick_controls");
         auto used=[&](int shown){return std::find(out.begin(),out.end(),shown)!=out.end();};
         // The original Hortator ACID model exposes its own filter before the
         // additional per-voice insert filter. Scope this to source core slots.
-        auto family=text(engine(c->engine),"name");if(family=="Hortator"||family=="Acid Engine"){
+        auto family=text(source_info(*c),"name");if(family=="Hortator"||family=="Acid Engine"){
             for(unsigned j=0;j<order.size();++j)if(order[j]>0&&order[j]<89){auto name=c->synth->getParameters()[order[j]]->getName(64).fromLastOccurrenceOf(" ",false,false).toUpperCase();int slot=name=="CUTOF"||name=="CUTOFF"?0:name=="RESO"||name=="RESONANCE"?1:name=="ENVMD"?2:-1;if(slot>=0)out[size_t(slot)]=base+int(j);}
         }
         for(int slot=0;slot<3;++slot){if(out[size_t(slot)]>=0)continue;auto candidates=at(preferred,slot);for(int k=0;k<size(candidates)&&out[size_t(slot)]<0;++k)for(unsigned j=0;j<order.size();++j)if(text(at(metadata,order[j]),"key")==at(candidates,k).toString()&&!used(base+int(j))){out[size_t(slot)]=base+int(j);break;}}
@@ -155,7 +155,7 @@ public:
             if(!c){routes.add(-1);continue;}
             auto found=std::find(seen.begin(),seen.end(),c.get());int id=int(found-seen.begin());
             if(found==seen.end()){
-                seen.push_back(c.get());var row=object();put(row,"engine",text(engine(c->engine),"folder"));put(row,"sound",c->sound);
+                seen.push_back(c.get());var row=object();put(row,"engine",text(source_info(*c),"folder"));put(row,"sound",c->sound);
                 MemoryBlock chunk;c->synth->getStateInformation(chunk);put(row,"state",chunk.toBase64Encoding());
                 Array<var> values;for(auto* p:c->synth->getParameters())values.add(p->getValue());put(row,"values",values);Array<var> defaults;for(float value:c->defaults)defaults.add(value);put(row,"reset_defaults",defaults);children.add(row);
             }
@@ -202,9 +202,9 @@ public:
         input.clear();hazard.store(nullptr,std::memory_order_seq_cst);
     }
     String parameter_name(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){static const char* names[]{"KIT CUTOFF","KIT RESONANCE","KIT FILTER TYPE"};return single<0?String(names[i-6]):String(names[i-6]).replace("KIT ","OUTPUT ");}if(i==3)return "Save slot";if(i==4)return single<0?"Save Kit":"Save Sound";if(i==5)return "Status";if(i==0)return single<0?"Pad":"Sound";if(i==1)return single<0?"P"+String(focus+1).paddedLeft('0',2)+" Engine":"Pitch reference";if(i==2)return single<0?"P"+String(focus+1).paddedLeft('0',2)+" Sound":"Pitch mode";auto c=focused();int p=i-base;String name=c&&p>=0&&p<int(g_order().size())?c->synth->getParameters()[g_order()[size_t(p)]]->getName(64):String();
-        if(c&&p>=0&&p<int(g_order().size())){auto metadata=at(get(engine(c->engine),"parameters"),g_order()[size_t(p)]);auto label=text(metadata,"edit_name");if(label.isNotEmpty())name=label;auto dynamic=get(metadata,"dynamic_labels");int selector=number(metadata,"dynamic_selector",-1);if(dynamic.isArray()&&selector>=0&&selector<c->synth->getParameters().size())name=at(dynamic,std::clamp(int(std::lround(c->synth->getParameters()[selector]->getValue()*(size(dynamic)-1))),0,size(dynamic)-1)).toString();}
-        if(c&&(c->drums||get(engine(c->engine),"voice_parameters").isObject())){int reference_note=single<0?active.load()->notes[size_t(focus)]:c->source_note;if(reference_note==60&&number(engine(c->engine),"native_pitch_parameter",-1)>=0)reference_note=36;auto voice=get(engine(c->engine),"voices");for(int n=0;n<size(voice);++n)if(number(at(voice,n),"note")==reference_note||number(at(voice,n),"note")==int(get(get(engine(c->engine),"control_notes"),String(reference_note)))){auto prefix=text(at(voice,n),"name")+" ";if(name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}String prefix="Pad "+String(reference_note-35)+" ";if(name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}
-        if(c){auto prefix=text(engine(c->engine),"strip_voice_prefix");if(prefix.isNotEmpty()&&name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}
+        if(c&&p>=0&&p<int(g_order().size())){auto metadata=at(get(source_info(*c),"parameters"),g_order()[size_t(p)]);auto label=text(metadata,"edit_name");if(label.isNotEmpty())name=label;auto dynamic=get(metadata,"dynamic_labels");int selector=number(metadata,"dynamic_selector",-1);if(dynamic.isArray()&&selector>=0&&selector<c->synth->getParameters().size())name=at(dynamic,std::clamp(int(std::lround(c->synth->getParameters()[selector]->getValue()*(size(dynamic)-1))),0,size(dynamic)-1)).toString();}
+        if(c&&(c->drums||get(source_info(*c),"voice_parameters").isObject())){int reference_note=single<0?active.load()->notes[size_t(focus)]:c->source_note;if(reference_note==60&&number(source_info(*c),"native_pitch_parameter",-1)>=0)reference_note=36;auto voice=get(source_info(*c),"voices");for(int n=0;n<size(voice);++n)if(number(at(voice,n),"note")==reference_note||number(at(voice,n),"note")==int(get(get(source_info(*c),"control_notes"),String(reference_note)))){auto prefix=text(at(voice,n),"name")+" ";if(name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}String prefix="Pad "+String(reference_note-35)+" ";if(name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}
+        if(c){auto prefix=text(source_info(*c),"strip_voice_prefix");if(prefix.isNotEmpty()&&name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}
         if(name.startsWithIgnoreCase("Pad ")){auto tail=name.substring(4);int space=tail.indexOfChar(' ');if(space>0&&tail.substring(0,space).containsOnly("0123456789"))name=tail.substring(space+1);}
         if(c&&c->drums){const int source=single<0?active.load()->notes[size_t(focus)]-35:c->source_note-35;
             for(const auto& prefix:{"Pad"+String(source)+" ","Voice "+String(source)+" ","V"+String(source)+" ","S"+String(source)+" "})if(name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}
@@ -214,12 +214,12 @@ public:
         if(name=="Model")name="Sound model";
         if(name.isEmpty()&&p>=0&&p<int(g_order().size()))name="Parameter "+String(g_order()[size_t(p)]+1);
         if(p>=0){auto* g=active.load();const auto& ordinals=g->ordinals[size_t(single<0?focus:0)];if(p<int(ordinals.size())&&ordinals[size_t(p)]>0)name+=" ("+String(ordinals[size_t(p)])+")";}
-        if(c&&p>=0&&p<int(g_order().size())){auto category=text(at(get(engine(c->engine),"parameters"),g_order()[size_t(p)]),"category");if(c->drums){const int source=single<0?active.load()->notes[size_t(focus)]-35:c->source_note-35;for(const auto& prefix:{"Pad "+String(source),"Pad"+String(source),"Voice "+String(source),"V"+String(source),"S"+String(source)})if(category.equalsIgnoreCase(prefix))category.clear();else if(category.startsWithIgnoreCase(prefix+" "))category=category.substring(prefix.length()+1);}
+        if(c&&p>=0&&p<int(g_order().size())){auto category=text(at(get(source_info(*c),"parameters"),g_order()[size_t(p)]),"category");if(c->drums){const int source=single<0?active.load()->notes[size_t(focus)]-35:c->source_note-35;for(const auto& prefix:{"Pad "+String(source),"Pad"+String(source),"Voice "+String(source),"V"+String(source),"S"+String(source)})if(category.equalsIgnoreCase(prefix))category.clear();else if(category.startsWithIgnoreCase(prefix+" "))category=category.substring(prefix.length()+1);}
             if(single<0&&(category.equalsIgnoreCase("Master")||category.equalsIgnoreCase("General")||category.equalsIgnoreCase("FX")||category.equalsIgnoreCase("Global FX")||category.equalsIgnoreCase("EQ")||category.equalsIgnoreCase("Delay")||category.equalsIgnoreCase("Reverb")||category.equalsIgnoreCase("Output")))category="Source "+category;
             if(category.isNotEmpty()&&!name.equalsIgnoreCase(category)&&!(name=="Sound model"&&category.equalsIgnoreCase("Model"))&&!name.startsWithIgnoreCase(category+" ")){bool joined=false;for(int start=0;start<category.length();++start)if(start==0||category[start-1]==' '){auto suffix=category.substring(start);if(name.equalsIgnoreCase(suffix)||name.startsWithIgnoreCase(suffix+" ")){name=category.substring(0,start)+name;joined=true;break;}}if(!joined)name=category+" "+name;}}
         return single<0&&name.isNotEmpty()?"P"+String(focus+1).paddedLeft('0',2)+" "+name:name;}
-    float parameter_value(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){auto* g=active.load();return g?g->kit_filter[size_t(i-6)]/float(i==8?2:100):0;}auto c=focused();if(i==3)return save_slot/63.0f;if(i==4||i==5)return 0;if(i==0)return single<0?focus/63.0f:current_program()/float(std::max(1,factory_count()+int(saved_slots.size())-1));if(i==1)return single<0&&c?c->engine/float(std::max(1,size(get(catalog,"engines"))-1)):0;if(i==2)return single<0&&c?selection_index(c->engine,current_sound())/float(std::max(1,selection_count(c->engine)-1)):0;int p=i-base;if(!c||p<0||p>=int(g_order().size()))return 0;int index=g_order()[size_t(p)];float value=c->synth->getParameters()[index]->getValue();auto meta=at(get(engine(c->engine),"parameters"),index);auto choices=get(meta,"option_indices");if(size(choices)>1){int source=int(std::lround(value*(size(get(meta,"options"))-1)));for(int n=0;n<size(choices);++n)if(int(at(choices,n))==source)return n/float(size(choices)-1);return 0;}return value;}
-    String parameter_text(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){auto* g=active.load();if(!g)return {};if(i==8){static const char* types[]{"LP","BP","HP"};return types[g->kit_filter[2]];}return String(g->kit_filter[size_t(i-6)])+" %";}auto c=focused();if(i==3)return String(save_slot+1);if(i==4)return "Turn to SAVE";if(i==5)return busy?"Working...":(last_error.isEmpty()?"Ready":last_error);if(i==0)return single<0?String(focus+1):(user_label.isNotEmpty()?user_label:c?sound_name(c->engine,current_sound()):"Empty");if(i==1)return single<0?(c?text(engine(c->engine),"name")+(text(engine(c->engine),"variant").isNotEmpty()?" / "+text(engine(c->engine),"variant"):String()):"Empty"):"C4 / MIDI 60";if(i==2)return single<0?(c?sound_name(c->engine,current_sound()):"Empty"):(c&&c->drums?"Pitch + Length":"Key Pitch");int p=i-base;if(!c||p<0||p>=int(g_order().size()))return {};int index=g_order()[size_t(p)];auto* param=c->synth->getParameters()[index];if(bool(get(at(get(engine(c->engine),"parameters"),index),"display_percentage")))return String(param->getValue()*100,0)+" %";auto options=get(at(get(engine(c->engine),"parameters"),index),"options");if(size(options)>0)return at(options,std::clamp(int(std::lround(param->getValue()*(size(options)-1))),0,size(options)-1)).toString();auto value=param->getText(param->getValue(),96);auto meta=at(get(engine(c->engine),"parameters"),index);auto unit=param->getLabel().trim();if(unit.isEmpty())unit=text(meta,"unit");
+    float parameter_value(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){auto* g=active.load();return g?g->kit_filter[size_t(i-6)]/float(i==8?2:100):0;}auto c=focused();if(i==3)return save_slot/63.0f;if(i==4||i==5)return 0;if(i==0)return single<0?focus/63.0f:current_program()/float(std::max(1,factory_count()+int(saved_slots.size())-1));if(i==1)return single<0&&c?c->engine/float(std::max(1,size(get(catalog,"engines"))-1)):0;if(i==2)return single<0&&c?selection_index(c->engine,current_sound())/float(std::max(1,selection_count(c->engine)-1)):0;int p=i-base;if(!c||p<0||p>=int(g_order().size()))return 0;int index=g_order()[size_t(p)];float value=c->synth->getParameters()[index]->getValue();auto meta=at(get(source_info(*c),"parameters"),index);auto choices=get(meta,"option_indices");if(size(choices)>1){int source=int(std::lround(value*(size(get(meta,"options"))-1)));for(int n=0;n<size(choices);++n)if(int(at(choices,n))==source)return n/float(size(choices)-1);return 0;}return value;}
+    String parameter_text(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){auto* g=active.load();if(!g)return {};if(i==8){static const char* types[]{"LP","BP","HP"};return types[g->kit_filter[2]];}return String(g->kit_filter[size_t(i-6)])+" %";}auto c=focused();if(i==3)return String(save_slot+1);if(i==4)return "Turn to SAVE";if(i==5)return busy?"Working...":(last_error.isEmpty()?"Ready":last_error);if(i==0)return single<0?String(focus+1):(user_label.isNotEmpty()?user_label:c?sound_name(c->engine,current_sound()):"Empty");if(i==1)return single<0?(c?text(source_info(*c),"name")+(text(source_info(*c),"variant").isNotEmpty()?" / "+text(source_info(*c),"variant"):String()):"Empty"):"C4 / MIDI 60";if(i==2)return single<0?(c?sound_name(c->engine,current_sound()):"Empty"):(c&&c->drums?"Pitch + Length":"Key Pitch");int p=i-base;if(!c||p<0||p>=int(g_order().size()))return {};int index=g_order()[size_t(p)];auto* param=c->synth->getParameters()[index];if(bool(get(at(get(source_info(*c),"parameters"),index),"display_percentage")))return String(param->getValue()*100,0)+" %";auto options=get(at(get(source_info(*c),"parameters"),index),"options");if(size(options)>0)return at(options,std::clamp(int(std::lround(param->getValue()*(size(options)-1))),0,size(options)-1)).toString();auto value=param->getText(param->getValue(),96);auto meta=at(get(source_info(*c),"parameters"),index);auto unit=param->getLabel().trim();if(unit.isEmpty())unit=text(meta,"unit");
         if(unit.isNotEmpty()&&!value.containsIgnoreCase(unit)&&value.trim().containsOnly("+-0123456789.eE ")){if(unit=="%"&&double(get(meta,"maximum"))<=1.0&&double(get(meta,"minimum"))>=0.0)value=String(value.getDoubleValue()*100.0,1);value+=" "+unit;}
         if(value.startsWithIgnoreCase("Pad ")){auto tail=value.substring(4);int space=tail.indexOfChar(' ');if(space>0&&tail.substring(0,space).containsOnly("0123456789"))value=(single<0?"P"+String(focus+1).paddedLeft('0',2)+" ":String())+tail.substring(space+1);}return value;}
     void change(int i,float value,uint32_t expected=0){if(!std::isfinite(value))return;value=std::clamp(value,0.0f,1.0f);if((single>=0&&(i==1||i==2))||i==5)return;if(i==4){if(value>=0.5f)enqueue({5,0});return;}if(single<0&&i==0){enqueue({1,0,value});flush();return;}if(single>=0&&i==0){enqueue({0,int(std::lround(value*(getNumPrograms()-1)))});return;}Request request{1,i,value};request.revision=expected;enqueue(std::move(request));}
@@ -240,7 +240,7 @@ private:
         int choices=size(get(meta,"option_indices"));if(choices>1)return choices;
         int options=size(get(meta,"options"));return options>1?options:c->synth->getParameters()[index]->getNumSteps();
     }
-    var at_meta(const Child& c,int index)const{return at(get(engine(c.engine),"parameters"),index);}
+    var at_meta(const Child& c,int index)const{return at(get(source_info(c),"parameters"),index);}
     float parameter_default(int i){
         std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){auto* g=active.load();return g?g->kit_filter_defaults[size_t(i-6)]/float(i==8?2:100):0;}auto c=focused();int p=i-base;
         if(!c||p<0||p>=int(g_order().size()))return 0;
@@ -261,6 +261,7 @@ private:
     private:Rack& rack;int index;
     };
     const var& engine(int i)const{return at(get(catalog,"engines"),i);}
+    const var& source_info(const Child& c)const{return engine(c.metadata_engine);}
     int current_program()const{if(selected_user_slot>=0){auto found=std::find(saved_slots.begin(),saved_slots.end(),selected_user_slot);if(found!=saved_slots.end())return factory_count()+int(found-saved_slots.begin());}auto* g=active.load();return g?(single<0?g->kit:selection_index(single,g->sounds[0])):0;}
     int factory_count()const{return single<0?size(get(catalog,"kits")):selection_count(single);}
     File user_file(int i,bool writing=false)const{auto stem="Slot"+String(i+1).paddedLeft('0',2);auto f=user_directory.getChildFile(stem+".rhythmer.json");if(writing||f.existsAsFile())return f;auto old=user_directory.getChildFile(stem+".groove.json");if(old.existsAsFile())return old;for(const auto& directory:legacy_directories)for(auto extension:{".rhythmer.json",".groove.json"}){auto candidate=directory.getChildFile(stem+extension);if(candidate.existsAsFile())return candidate;}return f;}
@@ -273,14 +274,14 @@ private:
     const std::vector<int>& g_order()const{static const std::vector<int> empty;auto* g=active.load();return g?g->orders[size_t(single<0?focus:0)]:empty;}
     int current_sound()const{auto* g=active.load();return g?g->sounds[size_t(single<0?focus:0)]:0;}
     void initial(Child& c){
-        c.manual_clock=bool(get(engine(c.engine),"manual_clock"));
-        if(auto* values=get(engine(c.engine),"native_initial").getDynamicObject())for(const auto& value:values->getProperties()){auto* native=dynamic_cast<Vst2Instance*>(c.synth.get());if(!native||!native->nativeSet(value.name.toString(),value.value.toString()))throw std::runtime_error("Native clock setup unavailable");}
-        if(auto* values=get(engine(c.engine),"initial_values").getDynamicObject())for(const auto& value:values->getProperties()){
+        c.manual_clock=bool(get(source_info(c),"manual_clock"));
+        if(auto* values=get(source_info(c),"native_initial").getDynamicObject())for(const auto& value:values->getProperties()){auto* native=dynamic_cast<Vst2Instance*>(c.synth.get());if(!native||!native->nativeSet(value.name.toString(),value.value.toString()))throw std::runtime_error("Native clock setup unavailable");}
+        if(auto* values=get(source_info(c),"initial_values").getDynamicObject())for(const auto& value:values->getProperties()){
             int index=value.name.toString().getIntValue();if(index>=0&&index<c.synth->getParameters().size())c.synth->getParameters()[index]->setValue(float(value.value));
         }
     }
     void pitch_policy(Child& c){
-        int pitch_parameter=number(engine(c.engine),"native_pitch_parameter",-1);
+        int pitch_parameter=number(source_info(c),"native_pitch_parameter",-1);
         if(pitch_parameter>=0&&pitch_parameter<c.synth->getParameters().size()){
             c.drums=c.synth->getParameters()[pitch_parameter]->getValue()<0.5f;
             if(!c.drums)c.source_note=60;else if(c.source_note==60)c.source_note=36;
@@ -288,7 +289,7 @@ private:
     }
     void context(Child& c,int note){
         if(!c.drums)return;
-        auto metadata=get(engine(c.engine),"parameters");
+        auto metadata=get(source_info(c),"parameters");
         for(int i=0;i<size(metadata)&&i<c.synth->getParameters().size();++i){auto p=at(metadata,i);auto key=text(p,"key");
             if(key=="pad"||key=="focused_pad"||key=="ui_current_pad"){
                 int minimum=number(p,"minimum"),maximum=number(p,"maximum",15);
@@ -301,24 +302,24 @@ private:
         // controls sort first; the remaining original controls follow in pages.
         std::vector<int> first,rest;int voice=c.drums?c.source_note-35:0;
         String prefix="p"+String(voice).paddedLeft('0',2)+"_";
-        const auto& ps=c.synth->getParameters();if(!ps.isEmpty())(void)ps[0]->getValue();auto metadata=get(engine(c.engine),"parameters");
+        const auto& ps=c.synth->getParameters();if(!ps.isEmpty())(void)ps[0]->getValue();auto metadata=get(source_info(c),"parameters");
         for(int i=0;i<ps.size();++i){if(!ps[i]->isAutomatable())continue;String key=text(at(metadata,i),"key");String name=ps[i]->getName(128);
-            bool preset_control=false;for(int n=0;n<size(get(engine(c.engine),"preset_parameters"));++n)preset_control|=int(at(get(engine(c.engine),"preset_parameters"),n))==i;
+            bool preset_control=false;for(int n=0;n<size(get(source_info(c),"preset_parameters"));++n)preset_control|=int(at(get(source_info(c),"preset_parameters"),n))==i;
             if(!at(metadata,i).isVoid()&&text(at(metadata,i),"name").trim().isEmpty()&&name.startsWith("Parameter "))continue;
             if(preset_control||name.trim().containsOnly("- ")||name.trim().isEmpty()||name.containsIgnoreCase("Unused")||name.startsWithIgnoreCase("Inactive Parameter"))continue;
-            bool hidden=false;auto keys=get(engine(c.engine),"hidden_keys");for(int k=0;k<size(keys);++k)hidden|=at(keys,k).toString()==key;if(hidden)continue;
+            bool hidden=false;auto keys=get(source_info(c),"hidden_keys");for(int k=0;k<size(keys);++k)hidden|=at(keys,k).toString()==key;if(hidden)continue;
             auto dynamic=get(at(metadata,i),"dynamic_labels");int selector=number(at(metadata,i),"dynamic_selector",-1);if(dynamic.isArray()&&selector>=0&&selector<ps.size()&&at(dynamic,std::clamp(int(std::lround(ps[selector]->getValue()*(size(dynamic)-1))),0,size(dynamic)-1)).toString()=="-")continue;
             auto models=get(at(metadata,i),"active_models");
             if(models.isArray()){
-                auto selector=text(engine(c.engine),"model_control_prefix")+String(c.source_note-35);int model=-1;
+                auto selector=text(source_info(c),"model_control_prefix")+String(c.source_note-35);int model=-1;
                 for(int k=0;k<size(metadata)&&k<ps.size();k++)if(text(at(metadata,k),"key")==selector)model=int(std::lround(ps[k]->getValue()*(size(get(at(metadata,k),"options"))-1)));
                 bool keep=false;for(int k=0;k<size(models);k++)keep|=int(at(models,k))==model;if(!keep)continue;
             }
             auto allowed=get(at(get(engine(c.engine),"sounds"),c.sound),"parameter_indices");
-            if(allowed.isVoid())allowed=get(get(engine(c.engine),"voice_parameters"),String(c.source_note));
+            if(allowed.isVoid())allowed=get(get(source_info(c),"voice_parameters"),String(c.source_note));
             if(auto* list=allowed.getArray()){bool keep=false;for(const auto& v:*list)keep|=int(v)==i;if(!keep)continue;}
             if(voice>0&&key.length()>4&&key[0]=='p'&&CharacterFunctions::isDigit(key[1])&&CharacterFunctions::isDigit(key[2])&&key[3]=='_'&&!key.startsWith(prefix))continue;
-            if(bool(get(engine(c.engine),"focus_voice"))){
+            if(bool(get(source_info(c),"focus_voice"))){
                 if(key.length()>2&&key[0]=='v'&&CharacterFunctions::isDigit(key[1])&&key[2]=='_'&&int(key[1]-'0')!=voice)continue;
                 if(key.startsWith("syn")&&key.substring(3).getIntValue()!=voice)continue;
             }
@@ -344,11 +345,21 @@ private:
     }
     std::shared_ptr<Child> load(int e,int sound,const Child* clone=nullptr){
         if(e<0||e>=size(get(catalog,"engines")))throw std::runtime_error("Unknown sound engine");
-        String error;auto p=loader(text(engine(e),"source_folder").isNotEmpty()?text(engine(e),"source_folder").toStdString():text(engine(e),"folder").toStdString(),error);if(!p)throw std::runtime_error(error.toStdString());
+        sound=std::clamp(sound,0,sound_count(e)-1);
+        auto preset=at(get(engine(e),"sounds"),sound);
+        int metadata=e;const auto alias=text(preset,"source_engine");
+        if(alias.isNotEmpty()){
+            metadata=-1;
+            for(int i=0;i<size(get(catalog,"engines"));++i)if(text(engine(i),"folder")==alias){metadata=i;break;}
+            if(metadata<0)throw std::runtime_error("Unknown preset source engine");
+        }
+        // Keep route identity for presets/state; use the original DSP's full metadata.
+        const auto& origin=engine(metadata);
+        String error;auto p=loader(text(origin,"source_folder").isNotEmpty()?text(origin,"source_folder").toStdString():text(origin,"folder").toStdString(),error);if(!p)throw std::runtime_error(error.toStdString());
         p->enableAllBuses();for(bool in:{true,false})for(int b=1;b<p->getBusCount(in);++b)p->getBus(in,b)->enable(false);
         p->prepareToPlay(rate,block);
-        auto c=std::make_shared<Child>(std::move(p));c->engine=e;c->drums=bool(get(engine(e),"drums"));c->sound=std::clamp(sound,0,sound_count(e)-1);
-        auto preset=at(get(engine(e),"sounds"),c->sound);c->source_note=number(preset,"note",60);if(!get(preset,"drums").isVoid())c->drums=bool(get(preset,"drums"));c->velocity_pressure=bool(get(preset,"velocity_pressure"));
+        auto c=std::make_shared<Child>(std::move(p));c->engine=e;c->metadata_engine=metadata;c->drums=bool(get(origin,"drums"));c->sound=sound;
+        c->source_note=number(preset,"note",60);if(!get(preset,"drums").isVoid())c->drums=bool(get(preset,"drums"));c->velocity_pressure=bool(get(preset,"velocity_pressure"));
         if(clone){MemoryBlock state;clone->synth->getStateInformation(state);c->synth->setStateInformation(state.getData(),int(state.getSize()));}
         else {
         for(int n=0;n<size(get(preset,"native_setup"));++n){auto pair=at(get(preset,"native_setup"),n);auto* native=dynamic_cast<Vst2Instance*>(c->synth.get());if(!native||!native->nativeSet(at(pair,0).toString(),at(pair,1).toString()))throw std::runtime_error("Native bank unavailable");}
@@ -393,8 +404,8 @@ private:
             std::shared_ptr<Child> shared;
             for(int j=0;j<i;++j)if(auto candidate=g->routes[size_t(j)];candidate&&candidate->engine==e){
                 const auto before=at(get(engine(e),"sounds"),g->sounds[size_t(j)]);
-                bool same=true;for(const char* key:{"values","native_key","native_value","native_setup","program"})same&=JSON::toString(get(before,key))==JSON::toString(get(preset,key));
-                bool lane=text(engine(e),"lane_preset_key").isNotEmpty();
+                bool same=true;for(const char* key:{"source_engine","source_sound","values","native_key","native_value","native_setup","program"})same&=JSON::toString(get(before,key))==JSON::toString(get(preset,key));
+                bool lane=text(engine(e),"lane_preset_key").isNotEmpty()&&text(preset,"source_engine").isEmpty()&&text(before,"source_engine").isEmpty();
                 if(lane)for(int k=0;k<i;++k)if(g->routes[size_t(k)]==candidate&&g->notes[size_t(k)]==number(preset,"note",60)&&g->sounds[size_t(k)]!=s)lane=false;
                 if(!same&&!lane)continue;
                 shared=candidate;
@@ -473,10 +484,10 @@ private:
                         else if(current){int p=r.index-base;if(p>=0&&p<int(g->orders[size_t(slot)].size())){
                             int parameter=g->orders[size_t(slot)][size_t(p)];int references=0;for(const auto& c:g->routes)if(c==current)++references;
                             if(references>1){current=load(current->engine,g->sounds[size_t(slot)],current.get());g->routes[size_t(slot)]=current;}
-                            auto meta=at(get(engine(current->engine),"parameters"),parameter);auto choices=get(meta,"option_indices");float native_value=r.value;
+                            auto meta=at(get(source_info(*current),"parameters"),parameter);auto choices=get(meta,"option_indices");float native_value=r.value;
                             if(size(choices)>1)native_value=float(int(at(choices,std::clamp(int(std::lround(r.value*(size(choices)-1))),0,size(choices)-1))))/std::max(1,size(get(meta,"options"))-1);
                             current->synth->getParameters()[parameter]->setValue(native_value);g->edited[size_t(slot)]=true;
-                            if(number(engine(current->engine),"native_pitch_parameter",-1)>=0&&parameter>0&&parameter<89&&(parameter-1)%11==0){current=load(current->engine,g->sounds[size_t(slot)],current.get());g->routes[size_t(slot)]=current;g->notes[size_t(slot)]=current->source_note;}
+                            if(number(source_info(*current),"native_pitch_parameter",-1)>=0&&parameter>0&&parameter<89&&(parameter-1)%11==0){current=load(current->engine,g->sounds[size_t(slot)],current.get());g->routes[size_t(slot)]=current;g->notes[size_t(slot)]=current->source_note;}
                             int saved_note=current->source_note,saved_sound=current->sound;current->source_note=g->notes[size_t(slot)];current->sound=g->sounds[size_t(slot)];order(*current);g->orders[size_t(slot)]=current->parameter_order;g->ordinals[size_t(slot)]=current->parameter_ordinals;g->names[size_t(slot)]=current->parameter_names;current->source_note=saved_note;current->sound=saved_sound;
                         }}
                         publish(std::move(g));

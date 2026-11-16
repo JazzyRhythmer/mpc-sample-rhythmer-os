@@ -90947,6 +90947,86 @@
             515,
             516
           ]
+        },
+        {
+          "name": "Acid Squelch",
+          "note": 60,
+          "values": {
+            "8": 0.05
+          },
+          "source_engine": "RHYTHMER - Move - aphex - Aphex",
+          "source_sound": 2,
+          "origin": "Original Aphex factory preset, unmodified native selector"
+        },
+        {
+          "name": "Lead Scream",
+          "note": 60,
+          "values": {
+            "8": 0.225
+          },
+          "source_engine": "RHYTHMER - Move - aphex - Aphex",
+          "source_sound": 9,
+          "origin": "Original Aphex factory preset, unmodified native selector"
+        },
+        {
+          "name": "Whistle Lead",
+          "note": 60,
+          "values": {
+            "8": 0.275
+          },
+          "source_engine": "RHYTHMER - Move - aphex - Aphex",
+          "source_sound": 11,
+          "origin": "Original Aphex factory preset, unmodified native selector"
+        },
+        {
+          "name": "Resonant Spike",
+          "note": 60,
+          "values": {
+            "8": 0.375
+          },
+          "source_engine": "RHYTHMER - Move - aphex - Aphex",
+          "source_sound": 15,
+          "origin": "Original Aphex factory preset, unmodified native selector"
+        },
+        {
+          "name": "Acid Seq",
+          "note": 60,
+          "values": {
+            "8": 0.6
+          },
+          "source_engine": "RHYTHMER - Move - aphex - Aphex",
+          "source_sound": 24,
+          "origin": "Original Aphex factory preset, unmodified native selector"
+        },
+        {
+          "name": "Reso Bass",
+          "note": 60,
+          "values": {
+            "8": 0.125
+          },
+          "source_engine": "RHYTHMER - Move - aphex - Aphex",
+          "source_sound": 5,
+          "origin": "Original Aphex factory preset, unmodified native selector"
+        },
+        {
+          "name": "Filter Cry",
+          "note": 60,
+          "values": {
+            "8": 0.3
+          },
+          "source_engine": "RHYTHMER - Move - aphex - Aphex",
+          "source_sound": 12,
+          "origin": "Original Aphex factory preset, unmodified native selector"
+        },
+        {
+          "name": "Techno Pulse",
+          "note": 60,
+          "values": {
+            "8": 0.625
+          },
+          "source_engine": "RHYTHMER - Move - aphex - Aphex",
+          "source_sound": 25,
+          "origin": "Original Aphex factory preset, unmodified native selector"
         }
       ],
       "kit_names": [],

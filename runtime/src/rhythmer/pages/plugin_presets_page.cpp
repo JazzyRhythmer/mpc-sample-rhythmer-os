@@ -17,6 +17,8 @@
 #include "rhythmer/ui/widgets.h"
 #include "rhythmer/shell/new_track.h"
 
+#include "rhythmer/shell/preset_index.h"
+
 namespace rhythmer {
 namespace {
 using namespace ui;
@@ -79,7 +81,7 @@ void wheel(Context& c, int delta) {
         auto v = c.plugins->programs(c.ui.presets_entry);
         count = preset_rows(v.list, folder_in_view(c.ui), v.current).size();
     }
-    c.ui.presets_cursor = uint16_t(std::clamp<int>(c.ui.presets_cursor + delta, 0, std::max(int(count) - 1, 0)));
+    c.ui.presets_cursor = uint16_t(preset_index(int64_t(c.ui.presets_cursor) + delta, count));
 }
 
 void push(Context& c) { c.push_plugin_preset(); }

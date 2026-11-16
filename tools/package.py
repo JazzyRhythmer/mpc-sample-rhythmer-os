@@ -117,7 +117,7 @@ def assemble(stage_only=False):
         files['Plugins/'+engine['folder']+'/rhythmer-source-name.json']=(json.dumps({'name':engine['name']})+'\n').encode()
         if engine.get('kit_only'):files['Plugins/'+engine['folder']+'/rhythmer-kit-only.json']=b'{"kit_only":true}\n'
     files['Plugins/RHYTHMER - Break Engine/rhythmer-break.json']=(ROOT/'config/break-engine.json').read_bytes()
-    files['Plugins/RHYTHMER - Acid Engine/rhythmer-acid.json']=b'{"name":"Acid Engine","source":"Hortator ACID"}\n'
+    files['Plugins/RHYTHMER - Acid Engine/rhythmer-acid.json']=b'{"name":"Acid Engine","source":"Hortator ACID / Aphex"}\n'
     support_receipt=json.loads((WORK/'support-source-export.json').read_text())
     support_archive=OUTPUT/support_receipt['file']
     if not support_archive.is_file() or digest(support_archive.read_bytes())!=support_receipt['sha256']:raise RuntimeError('Corresponding support-library source is missing or changed')
@@ -143,6 +143,9 @@ def assemble(stage_only=False):
         'features': {
             'Upstream_020': '128 patterns A-H; Patterns home and native Step Edit; Freeze/Deep Freeze; LV2/CLAP; USB web/files and UVC mirror; decoder/chop/MIDI fixes; Rhythmer-specific signed autorun updates',
             'Break_Workflow_Hotfix': 'BREAK GEN stays open after initial load; CANCEL/Shift+Push prevents assignment; completion respects dismissed menus and selected tracks; Pattern Hold and stretched-hit operating hints; saved DSP controls unchanged',
+            'Acid_Sources': 'Four original Hortator ACID presets plus eight original Aphex presets, using their original DSP, source filter/edit controls and saved state; no authored patch values',
+            'Preset_Browsing': 'Encoder and Minus/Plus wrap in the current preset list and main PRESETS face; includes User Sound/User Kit; absolute pot positions and load timing unchanged',
+            'Empty_Pad_Start': 'Native Sample Kit SOUND/TRIM Push: all 128 pads and layers empty opens TRACK TYPE; SAMPLE KIT starts first sample load; otherwise an empty selected pad opens SAMPLES for that pad; recording/Freeze, loaded pads and Break controls retained',
             'Sound_Tools': 'Stage EDIT Push opens PAD SOURCE or SAVE; K1 slot, K2 save, Status Ready; PRESETS reloads User Sound/User Kit; Back restores edit position',
             'Plugin_Transport': 'Forwarded to native child engines; Shift+B3 on Edit',
             'Pad_Sends': 'Native Sample Kit pads A-D; Rhythmer Kit retains track-level sends',

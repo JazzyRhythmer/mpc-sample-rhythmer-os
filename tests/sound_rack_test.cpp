@@ -41,6 +41,7 @@ static void design_view(var& view,AudioPluginInstance* synth,bool state_check=fa
 #include "rhythmer/plugin/kit_filter.h"
 #include "kit_filter_check.inc"
 #include "engine_filter_check.inc"
+#include "acid_aliases.inc"
 int main(int argc,char** argv){try{
     if(argc>3&&String(argv[3])=="transport")return transport_check();
     require(argc>=3,"catalogue and Plugins required");ScopedJuceInitialiser_GUI init;
@@ -64,6 +65,7 @@ int main(int argc,char** argv){try{
     }
     require(hidden==7,"Unexpected kit-only source count");
     String error;
+    if(argc>3&&String(argv[3])=="acidaliases")return acid_aliases(catalog,loader);
     if(argc>3&&String(argv[3])=="qualityreview")return quality_review(catalog,loader,argv[1]);
     if(argc>3&&String(argv[3])=="plaitscontrols")return plaits_controls(catalog,loader,argv[1]);
     if(argc>3&&String(argv[3])=="enginefilter")return engine_filter_check(catalog,loader,argv[1]);

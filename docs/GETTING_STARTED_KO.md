@@ -3,6 +3,28 @@
 첫 공개 베타용 안내입니다. B1/B2/B3는 화면 위쪽의 소프트 버튼, K1/K2/K3는 화면 아래 값과 연결되는 노브입니다. Push는 큰 로터리 인코더를 누르는 동작입니다.
 
 
+
+### 빈 트랙·빈 패드에서 시작하기
+
+**SAMPLE → SOUND 또는 TRIM → 큰 인코더 클릭(Push)** 으로 시작합니다.
+
+- **악기가 없는 EMPTY 트랙:** 기존 PLUG-IN / KIT / MIDI 선택 카드를 사용합니다.
+- **Sample Kit의 모든 패드가 비어 있음:** `TRACK TYPE`이 열립니다. `PLUG-IN`은 악기 브라우저, `SAMPLE KIT`은 첫 샘플 브라우저로 이어집니다. MIDI·EMPTY도 선택할 수 있습니다.
+- **다른 패드에 샘플이 있고 선택한 패드만 비어 있음:** `SAMPLES`에서 파일을 고르고 Push하면 선택한 패드에 로드합니다. 브라우저에서 다른 패드를 누르면 로드 대상도 그 패드로 바뀌므로 헤더와 패드 번호를 확인하세요.
+- 판정은 **A–H 전체 128패드와 추가 레이어**를 포함합니다. 레이어에 소리가 있는 패드는 빈 패드로 취급하지 않습니다. Rhythmer Kit 플러그인의 PAD SOURCE와는 별도인 네이티브 Sample Kit 동작입니다.
+- 화면에 `PUSH: TRACK TYPE` / `PUSH: LOAD SAMPLE` 안내가 표시됩니다. **SHIFT + 인코더 클릭**은 브라우저를 닫고 이전 화면으로 돌아갑니다. 브라우저의 **B1**은 폴더 안에서는 상위 폴더로, 최상위에서는 이전 화면으로 돌아갑니다. 샘플 로드는 **SHIFT + −**로 되돌릴 수 있습니다.
+
+샘플이 있는 패드, 다른 편집 페이지, Break의 루프 로드 경로는 기존 조작을 유지합니다. 녹음 중이나 Freeze 상태에서는 기존 보호 안내를 따르세요. 악기 교체·삭제는 **TRACKS → B1 TRACK SETUP**을 사용합니다.
+
+
+
+### 프리셋 순환 탐색과 Acid Engine의 Aphex 사운드
+
+프리셋 목록과 메인 PRESETS 화면에서 **인코더 또는 −/+**로 탐색하면 마지막 다음은 첫 항목, 첫 항목 이전은 마지막 항목입니다. 목록 화면은 현재 폴더 안에서 순환하고, 메인 PRESETS는 기존의 전체 프리셋 탐색 범위를 유지합니다. User Sound / User Kit도 포함합니다. K1 같은 절대 위치 노브의 범위, 목록의 Push / LOAD 확정, 메인 화면의 기존 적용 타이밍은 유지합니다. 프리셋이 없는 엔진에서는 새 프리셋을 만들거나 다른 기능을 실행하지 않습니다.
+
+Acid Engine에는 기존 Hortator의 **SQUELCH / DEEPBASS / SCREAMER / SQUAREAC** 외에 Aphex 원본의 **Acid Squelch / Lead Scream / Whistle Lead / Resonant Spike / Acid Seq / Reso Bass / Filter Cry / Techno Pulse**를 추가했습니다. 원본 이름·패치 선택값을 유지하며 Aphex 사운드는 실제 Aphex DSP로 재생합니다. 첫 화면의 컷오프·레조넌스와 EDIT의 ENV·LFO 등은 선택된 소스의 실제 제어를 사용합니다. ACID GEN은 같은 Acid Engine 트랙에서 계속 사용할 수 있고, 프로젝트와 User Sound에 선택한 소스·편집값이 함께 저장됩니다.
+
+
 ## 꼭 알아야 할 키 조합
 
 | 목적 | 조작 | 알아둘 점 |
