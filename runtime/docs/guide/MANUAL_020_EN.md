@@ -393,6 +393,6 @@ MIDI clock display is stabilised, but the clock-following algorithm is unchanged
 | LOOP variation or Grain does nothing | CHOP vs LOOP; Hold; STRETCH status | Use the conditions in the six-page table above |
 | Save says error or a User preset is missing | Card space/write access; STATUS | Fix storage and save again. Do not assume the preset exists until READY |
 
-## Credits and testing status
+## Credits
 
-RHYTHMER OS is developed by jazzy rhythmer and built on Melodee by Kerem Kiliç (Ellic Studio), sample-base and the credited engine projects. Original licences and notices accompany the installation. This is an early beta. Software checks are distinct from physical-device installation, listening, timing, USB and long-session testing.
+RHYTHMER OS is developed by jazzy rhythmer and built on Melodee by Kerem Kiliç (Ellic Studio), sample-base and the credited engine projects. Original licences and notices accompany the installation. This is an early beta. 

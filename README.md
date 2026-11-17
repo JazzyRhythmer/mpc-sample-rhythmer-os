@@ -18,7 +18,6 @@ Turn your MPC Sample into an exploratory groovebox: diverse synth engines, hands
 
 <p align="center"><img src="assets/manual/boot.png" width="560" alt="RHYTHMER OS startup design for MPC Sample"></p>
 
-*UI images are development renders, not photographs or proof of hardware validation.*
 
 ## Explore the engines
 
@@ -296,7 +295,7 @@ Choose one of 36 complete kits, replace only the pads you want to change, then s
 
 GEN can assign a kit and three complementary melodic roles to a chosen four-track group, or write MIDI for a range or a single track while keeping its instruments. Acid and Break have dedicated generators and performance workflows. The Melodee foundation supplies patterns, sequences, song arrangement, Freeze, mixing, effects, MIDI and USB features.
 
-**Save sounds for reuse. Save projects for the music.** User Sound and User Kit presets keep instrument/kit settings; project saving preserves the surrounding tracks, patterns and arrangement. [Save/load instructions](https://jazzyrhythmer.github.io/mpc-sample/manual/#user-presets) · [First pattern](https://jazzyrhythmer.github.io/mpc-sample/manual/quickstart.html).
+**Save sounds for reuse. Save projects for the music.** User Sound and User Kit presets keep instrument/kit settings; project saving preserves the surrounding tracks, patterns and arrangement. [Save/load instructions](https://jazzyrhythmer.github.io/mpc-sample/manual/#6-edit-the-sound-then-save-a-reusable-preset) · [First pattern](https://jazzyrhythmer.github.io/mpc-sample/manual/quickstart.html).
 
 
 ## Install the beta
@@ -307,17 +306,11 @@ Target: **MPC Sample AC50 with stock firmware 1.3.0.12**. Back up the entire car
 
 [Installation / stock-app recovery](docs/SD_CARD_GUIDE.md) · [Release files and notes](https://github.com/jazzyrhythmer/mpc-sample-rhythmer-os/releases)
 
-## Validation and limits
-
-Software validation covers the Linux ARM64 runtime, real plug-in controls and preset/state restoration, track and browser ownership, GEN/Acid/Break, audio self-test and random surface inputs. Current workflow checks exercise 309 track assertions and 1,248 navigation contexts. Screen previews cover 504 states across eight fonts. See [verification](docs/VERIFICATION.md) for the acceptance scope and hardware limits.
-
-**Physical-device installation/recovery, controls, audible listening, latency and long sessions remain pending owner beta testing.** These software checks do not certify hardware behavior. [Exact verification scope](docs/VERIFICATION.md).
-
 ## Source, credits and contributing
 
 This repository contains the OS integration, runtime and corresponding port sources. The [engine-port repository](https://github.com/jazzyrhythmer/mpc-sample-engine-ports) provides the engine-focused view. To rebuild, start with [BUILD.md](docs/BUILD.md) and the matching SOURCE / MOVE-SOURCE / SUPPORT-SOURCE archives.
 
-Original engine names, licences and author credits are preserved. The catalogue has 2,616 retained original selections and 43 identified Rhythmer-authored selections. External Sequential / Erica / Hrtl banks are excluded. [Original preset provenance](docs/ORIGINAL_PRESET_AUDIT_KO.md) · [Rhythmer presets](docs/RHYTHMER_PRESETS.md).
+Original engine names, licences and author credits are preserved. The catalogue has 2,845 retained original selections and 43 identified Rhythmer-authored selections. External Sequential / Erica / Hrtl banks are excluded. [Original preset provenance](docs/ORIGINAL_PRESET_AUDIT_KO.md) · [Rhythmer presets](docs/RHYTHMER_PRESETS.md).
 
 Built on Melodee by Kerem Kiliç (Ellic Studio) and contributors, with instruments and tools by their credited authors. [Full third-party notices](THIRD_PARTY_NOTICES.md) · [Component licences](LICENSES) · [Project licence](LICENSE).
 

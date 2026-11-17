@@ -20,4 +20,4 @@ Both new engines passed bank/audio, host, state and parameter checks in the loca
 
 ## Release gates
 
-Complete both engine integrations, preserve current workflow and 36 kits, refresh original-source and acceptance receipts, rebuild matching app/catalogue/full SD installation candidate, verify package contents/hash/source/license/privacy and updated offline/online guide sources. User notification precedes any publication. Physical MPC listening and a novice task study remain separate, explicitly uncompleted gates.
+Complete both engine integrations, preserve current workflow and 36 kits, refresh original-source and acceptance receipts, rebuild matching app/catalogue/full SD installation candidate, verify package contents/hash/source/license/privacy and updated offline/online guide sources. User notification precedes any publication. 

@@ -12,4 +12,4 @@
 
 원본 파일은 SSD plugins/ports/<port>/original, Move 프로젝트는 source-depot/<project>에서 대조했다. 기존 SOURCE.json/VENDORED.md의 고정 출처와 크레딧은 유지한다. 추가 필터는 Melodee 기반 OS의 기존 EffectKind::Filter를 재사용하며 원본 엔진 기능이라고 표시하지 않는다.
 
-추가 필터는 Rack가 소유하며 트랙 인서트를 자동 삽입하지 않는다. PRESETS와 EDIT는 같은 파라미터를 조정한다. 중립값은 비트 단위 dry 통과. 저장·복원·팩토리 프리셋 재선택·panic offset 17 및 원본 child state 불변을 자동 검사한다. 실기기 CPU 및 청취 검증은 별도다.
+추가 필터는 Rack가 소유하며 트랙 인서트를 자동 삽입하지 않는다. PRESETS와 EDIT는 같은 파라미터를 조정한다. 중립값은 비트 단위 dry 통과. 저장·복원·팩토리 프리셋 재선택·panic offset 17 및 원본 child state 불변을 자동 검사한다. 

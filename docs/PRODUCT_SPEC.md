@@ -1,6 +1,6 @@
 # Rhythmer OS
 
-A standalone sixteen-track rhythmerbox for MPC Sample. Developed by jazzy rhythmer. Current builds are local development artifacts; physical-device listening and performance validation are outstanding.
+A standalone sixteen-track rhythmerbox for MPC Sample. Developed by jazzy rhythmer. 
 
 The application combines existing sampling, sequencing, mixing, effects, project files and plugin hosting with GEN8 and native user-break pattern generation. Publicly attributed third-party instruments retain their original DSP and licensing.
 

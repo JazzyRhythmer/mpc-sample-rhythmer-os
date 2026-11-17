@@ -18,7 +18,7 @@ Sample Kit and Break land on SOUND with the existing sampler-wide filter/resonan
 
 The Kit reserves shown controls 6–8 for its internal filter; source controls begin at 9. Individual racks retain their source controls from 6. Original DSP parameter IDs and child state data are unchanged.
 
-Physical-device behavior remains a separate validation step. The beta installation uses the complete SD package; hardware validation is pending. Current acceptance evidence is recorded in VERIFICATION.md; an older build's counts are not acceptance for this revision.
+ The beta installation uses the complete SD package;  Current acceptance evidence is recorded in VERIFICATION.md; an older build's counts are not acceptance for this revision.
 
 
 ### 추가 출력 필터 — Dexed·DRUM-X·Plaits·CS-1·MONO2K

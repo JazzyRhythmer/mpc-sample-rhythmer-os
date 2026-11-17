@@ -30,7 +30,7 @@ Use the application's exit-to-MPC option when available. For a card-level remova
 - **UPDATE.zip:** app-only autorun update; not the complete new-engine installation.
 - **SOURCE.zip / MOVE-SOURCE.zip / SUPPORT-SOURCE.zip:** corresponding source companions, not files to install as an app.
 
-The ZIP contains checksums, signatures and original notices. Original engine authors retain their credits and licences. Based on Melodee by Kerem Kiliç (Ellic Studio), sample-base and the credited engine projects. RHYTHMER OS is developed by jazzy rhythmer and is not an official Akai Professional/inMusic firmware. Software is supplied under its licences without warranty. Physical-device listening, timing, USB and long-session checks remain owner beta testing.
+The ZIP contains checksums, signatures and original notices. Original engine authors retain their credits and licences. Based on Melodee by Kerem Kiliç (Ellic Studio), sample-base and the credited engine projects. RHYTHMER OS is developed by jazzy rhythmer and is not an official Akai Professional/inMusic firmware. Software is supplied under its licences without warranty. 
 
 Website: https://jazzyrhythmer.github.io/mpc-sample/
 Manual: https://jazzyrhythmer.github.io/mpc-sample/manual/

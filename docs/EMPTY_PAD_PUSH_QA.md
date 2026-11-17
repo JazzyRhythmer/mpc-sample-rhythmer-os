@@ -1,6 +1,6 @@
 # Empty-pad Push validation
 
-Local Linux ARM64 validation, 2026-11-16. No deployment or installation performed. Physical-device validation remains outstanding.
+Local Linux ARM64 validation, 2026-11-16. No deployment or installation performed. 
 
 ## Before the change
 

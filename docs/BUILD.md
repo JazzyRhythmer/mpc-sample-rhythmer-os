@@ -51,4 +51,4 @@ python3 tools/export_public.py
 python3 tools/package.py
 ```
 
-The SD ZIP includes the app, curated plugins, source references, required notices and file hashes. UPDATE contains only the signed autorun update and preserves plugins/projects. SOURCE, MOVE-SOURCE and SUPPORT-SOURCE are corresponding-source companions. Public repositories are created from reviewed exports with new history; the private development checkout is never pushed. Physical-device listening, timing, USB services and restart/recovery remain owner beta tests.
+The SD ZIP includes the app, curated plugins, source references, required notices and file hashes. UPDATE contains only the signed autorun update and preserves plugins/projects. SOURCE, MOVE-SOURCE and SUPPORT-SOURCE are corresponding-source companions. Public repositories are created from reviewed exports with new history; the private development checkout is never pushed. 

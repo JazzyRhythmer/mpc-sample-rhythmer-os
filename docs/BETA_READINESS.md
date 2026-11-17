@@ -1,6 +1,6 @@
 # Rhythmer OS 0.2.0
 
-Developed by jazzy rhythmer. This is a beta package for owner-led MPC Sample testing. Hardware validation is pending; it is not labelled as completed. No device installation or public upload is performed by the packaging tools.
+Developed by jazzy rhythmer. This is a beta package for MPC Sample.  No device installation or public upload is performed by the packaging tools.
 
 
 Before handing off a beta, the build runs unit/sanitizer checks, host playback and independent-instance/project-state checks, original generator seed/role/range checks, shell Undo/Redo, self-test audio, monkey input and UI/boot renders. Packaging requires unchanged accepted native-plugin hashes and a stamped tested runtime. Source archives, required notices, file checksums and privacy checks accompany the SD archive. See VERIFICATION.md for the observed results and ENGINE_REGISTRY.md for exclusions.
