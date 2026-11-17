@@ -1,20 +1,23 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
-// PATTERNS (the SEQUENCE hub's B1, SEQ's home): the selected track's sixteen patterns of the bank in view, drawn
+// PATTERNS (the SEQUENCE hub's B1 pressed again, after Sequences): the selected track's sixteen patterns of the bank in view, drawn
 // as the pads sit (pad 1 bottom left, 13 top left), so a cell is the pad that launches it. The pads launch them
 // as Seq held does (shell/seq_layer.h): at the next bar (stopped, at once), hold one and tap another to copy,
 // Erase + pad clears (asked first); they light as the cells. Pad Bank steps the bank (A-H), as Seq held + Pad Bank.
 // In each cell: the number, ▶ playing, NEXT queued, a tinted cell for notes, a dot a track in view for the other
 // tracks (a ring: notes there; filled: playing it), an arrow for a follow action, an amber dot for a scene tempo.
-// Right: the eight tracks in view, each with the pattern it plays and how far along it is.
+// Right: the eight tracks in view, each with the pattern it plays and how far along it is; a track on another
+// number than the selected track's, a pattern of its own, carries a not-equal mark (shell/sequences.h).
 // The wheel selects the track (the list on the right follows it, eight at a time). The selected track's pattern
 // in hand is the scene in view: cell n is scene n too, and Push launches it on every track; Shift + wheel moves the playhead by Q (stopped: where Shift + Play carries on from). Minus / Plus move the track. K1-K3: the pattern's length, Q, swing (Shift: any bars, time signature,
-// the metronome's level). B1-B3 PATTERNS / ROLL / MOTION; Shift + B1 SCENE (K1 the scene's tempo, Push
+// the metronome's level). B1-B3 PATTERNS / ROLL / MOTION (B1 again: SCENES); Shift + B1 SCENE (K1 the scene's tempo, Push
 // names it), Shift + B2 FOLLOW (the pattern's follow action, Shift + K1 OR, Push puts it on its column), Shift + B3
 // VARY (a variation of the pattern into the next empty one; the wheel picks, Push or B3 makes it).
 #include "rhythmer/pages/common.h"
 #include "rhythmer/pages/pages.h"
 #include "rhythmer/model/generators.h"
+#include "rhythmer/shell/features.h"
+#include "rhythmer/shell/sequences.h"
 #include "rhythmer/shell/step_lane.h"
 #include "rhythmer/ui/widgets.h"
 #include <algorithm>
@@ -95,8 +98,10 @@ void draw_tracks(Paint& p, const Snapshot& s, unsigned first) {
             continue;
         }
         icon(p, Icon::Play, list_x + 21, cy - 3.5f, 7, c, 1.2f);
-        p.text(juce::String(live + 1), list_x + 31, y, 22, rh, plain(colour::text, type::small, Weight::SemiBold));
-        float bx = list_x + 54, bw = list_w - 58;
+        float nw = p.text(juce::String(live + 1), list_x + 31, y, 22, rh, plain(colour::text, type::small, Weight::SemiBold));
+        bool own = own_pattern(s.project, s.ui, t); // off the sequence in view, on a pattern of its own
+        if (own) icon(p, Icon::NotEqual, list_x + 33 + nw, cy - 4.5f, 9, colour::text, 1.3f);
+        float bx = list_x + (own ? 66 : 54), bw = list_w - (own ? 70 : 58);
         p.fill(bx, cy - 1, bw, 2, colour::line, 1);
         uint32_t length = std::max<uint32_t>(s.sketches[t][live].length, 1);
         float done = s.playing && s.positions[t] >= 0 ? float(uint32_t(s.positions[t]) % length) / length : 0;
@@ -108,15 +113,17 @@ void draw(Paint& p, const Snapshot& s) {
     unsigned first = s.ui.track / 8 * 8, column = scene_of(s.project, s.ui);
     auto c = colour_of(s);
     Header h = header_of(s);
-    h.left.push_back(bank_pill(s));
+    // After the pads chip (PATTERNS) the header has room for one more: the sequence in view (FOLLOW: the pattern in
+    // hand). The bank follows and shows only where there is room; the cells' numbers say it too (1-16 is bank A).
     const auto& scene = s.project.scenes[column];
     if (s.ui.patterns_cards == 2) // FOLLOW: the pattern in hand's
         h.left.push_back(chip("T" + juce::String(s.ui.track + 1) + " P" + juce::String(s.track().pattern % pattern_count + 1), c));
     else
         {
-        juce::String id = "S" + juce::String(column + 1), name(scene.name);
+        juce::String id = "SEQ " + juce::String(column + 1), name(scene.name);
         h.left.push_back(chip(name.isEmpty() || name == id ? id : id + " " + name, colour::amber)); // a name of its own beside its number
     }
+    h.left.push_back(bank_pill(s));
     // Rec Quantize's grid (Shift + Pad 10), after the scene: the header leaves it out when there is no room.
     h.left.push_back(pill(Icon::Magnet, s.ui.settings.rec_quantize ? juce::String(division_name(grid_division(s.ui.settings.rec_grid, s.pattern.division)))
                                                                  : juce::String("OFF"),
@@ -124,10 +131,11 @@ void draw(Paint& p, const Snapshot& s) {
     if (s.track().speed != speed_normal) // the track plays its patterns at a speed (Tracks, Shift + K1)
         h.right.push_back(pill(juce::String::fromUTF8(speed_name(s.track().speed)), c));
     h.right.push_back(tag_of(s, s.ui.track));
-    SoftKeys keys {{"PATTERNS", "ROLL", "MOTION"}, 0, c};
+    SoftKeys keys {{"PATTERNS", "ROLL", motion_key(s)}, 0, c};
+    keys.dots[0] = 2; keys.dot_at[0] = 1;
     if (s.ui.sheet_open) keys = SoftKeys {{"BACK", s.ui.gen8_mode==0?"VARY":s.ui.gen8_mode==1?"SETUP":s.ui.gen8_mode==4?"SETTINGS":"GEN", s.ui.gen8_mode==3?(s.project.gen8.assign?"SELECT":"DONE"):((s.ui.gen8_mode==0&&s.ui.sheet_row>=4)||(s.ui.gen8_mode==2&&s.ui.sheet_row>=5))?"OPEN":"APPLY"}, 2, c, {KeyIcon::Back, KeyIcon::None, KeyIcon::Check}};
     else if (s.ui.shift) {
-        keys = SoftKeys {{"SCENE", "FOLLOW", "GEN"}, -1, c};
+        keys = SoftKeys {{"SEQUENCE", follow_shown(s.ui) ? "FOLLOW" : "", "GEN"}, -1, c};
         if (s.ui.patterns_cards == 1) keys.tints[0] = colour::amber;
         if (s.ui.patterns_cards == 2) keys.tints[1] = colour::amber;
     }
@@ -157,7 +165,7 @@ void draw(Paint& p, const Snapshot& s) {
             if(s.ui.gen8_mode==0&&!s.project.gen8.assign){m.rows[0]={"GENERATE MIDI",{},false,false,false};m.rows[1]={"MUTATE MIDI",{},false,false,false};}
             if(s.ui.gen8_mode==0)m.rows[4]={br?"BREAK GEN":acid?"ACID GEN":"VARIATIONS",{},false,false,false};
             if(s.ui.gen8_mode==4){m.rows[0]={"GENERATE ACID",{},false,false,false};m.rows[1]={"MUTATE ACID",{},false,false,false};}
-            m.title=s.ui.gen8_mode==4?"HORTATOR ACID / TRACK":s.ui.gen8_mode==2?"16 SLICES / TEMPO SYNC":(s.project.gen8.assign?juce::String("T1 KIT / T2-4 INSTRUMENTS"):"T"+juce::String(s.project.gen8.first+1)+"-"+juce::String(s.project.gen8.last+1)+" MIDI ONLY");
+            m.title=s.ui.gen8_mode==4?"ACID ENGINE / TRACK":s.ui.gen8_mode==2?"16 SLICES / TEMPO SYNC":(s.project.gen8.assign?juce::String("T1 KIT / T2-4 INSTRUMENTS"):"T"+juce::String(s.project.gen8.first+1)+"-"+juce::String(s.project.gen8.last+1)+" MIDI ONLY");
             if(s.ui.gen8_mode==0){
                 const auto target="T"+juce::String(s.ui.track+1);
                 m.rows[2]={"GENERATE "+target,{},false,false,false};m.rows[3]={"MUTATE "+target,{},false,false,false};
@@ -245,11 +253,11 @@ void soft(Context& c, int key) {
     if (ui.shift) { // SCENE, FOLLOW: their cards (again: the pattern's); VARY: its sheet
         ui.shift_used = true;
         if (key == 0) ui.patterns_cards = ui.patterns_cards == 1 ? 0 : 1;
-        if (key == 1) ui.patterns_cards = ui.patterns_cards == 2 ? 0 : 2;
+        if (key == 1 && follow_shown(ui)) ui.patterns_cards = ui.patterns_cards == 2 ? 0 : 2;
         if (key == 2) { ui.patterns_cards = 0; ui.sheet_open = true;ui.gen8_mode=0;ui.sheet_row=0; }
         return;
     }
-    if (key == 0) { ui.patterns_cards = 0; return; } // PATTERNS again: the pattern's cards
+    if (key == 0) { ui.patterns_cards = 0; c.open(PageId::Scenes); return; } // B1 again: round to its first page, Sequences
     seq_hub_soft(c, key);
 }
 } // namespace

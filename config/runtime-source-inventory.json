@@ -9,15 +9,50 @@
     "font_sha256": "1b3a7437ba2af80e465e773ed60c5036d1ba6ace492d89046dbcf18fb31e4e88"
   },
   "native_notice_comparison": {
-    "ports": 18,
-    "named_legal_files": 221,
+    "ports": 20,
+    "named_legal_files": 241,
     "missing_or_changed": 0,
-    "spdx_files": 556
+    "spdx_files": 1345
   },
   "license_audit_complete": false,
   "fm1_upstream_notices": {
     "ports": 12,
     "pinned_documents": 162,
     "source": "ports/*/UPSTREAM_NOTICES/PROVENANCE.json"
+  },
+  "font_faces": {
+    "intertight": {
+      "font_sha256": "b81b73dcb64df3c230cabade7df6c5773bf863233f24c9ee51087519f1f88b6f",
+      "license_sha256": "50240ab035cf1b6b3307940235481d515c4b6de3ab1fa843dbe59e7892cb9d58"
+    },
+    "ibmplexsans": {
+      "font_sha256": "3b031aa4216174205bd8471f88a49b91f093169e9e87bd5262242bc5967fe2e3",
+      "license_sha256": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da"
+    },
+    "vt323": {
+      "font_sha256": "cf4de751ada78ceac033dbe16a687742939995b77bc2a052ae17a4957958594d",
+      "license_sha256": "27d9af34210253e7ca1251fbace86c6f65b40031d6ce1a75493a1b2093631298"
+    },
+    "manrope": {
+      "font_sha256": "3ae11c49db0455a3cc33e37d380f20fdb8c7f8b41dc07625c177e3d87a9d6ae6",
+      "license_sha256": "58172e0c0fac2cda8a37b348164bb55e44b0e69051e557e92b1d3f6910141f7b"
+    },
+    "spacegrotesk": {
+      "font_sha256": "acad6de1fc93436f5c0f1f4137751ef04f1aea3063e7036535970ffcfbd79f72",
+      "license_sha256": "564ce565c371c5e5bbf286006565a7c9aa55a9f56e7ca58d56e05d649dd61a72"
+    },
+    "atkinsonhyperlegiblenext": {
+      "font_sha256": "5a455d1cfa099b601ab70751bb9673e8fe1854dc4500c80e1a220d0d75e31745",
+      "license_sha256": "aca6a428580965d2297d1b718042dd427c2a9443ece3b0d02d758e161e0c4030"
+    }
+  },
+  "Stems": {
+    "origin": "Melodee Sample v0.3.0 unchanged auxiliary helper/model",
+    "asset_lock": "config/upstream-stems.lock.json",
+    "source_folders": [
+      "third_party/runtime/spleeterrt",
+      "third_party/runtime/openblas"
+    ],
+    "notices_retained": true
   }
 }

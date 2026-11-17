@@ -32,11 +32,11 @@ extern const PageSpec stage_page, keys_page, sounds_page, edit_page, roll_page, 
     rack_page, sends_page, bus_page, master_page,
     pads_page, samples_page, chop_page,
     record_page, project_page, tempo_page,
-    pad_edit_page, play_edit_page, envelope_page, filter_page, follow_page, cloud_page, layers_page, mod_page,
+    pad_edit_page, play_edit_page, envelope_page, filter_page, follow_page, cloud_page, layers_page, mod_page, scenes_page,
     punch_page, settings_page, about_page, pad_fx_page, time_correct_page, step_edit_page,
     pad_mix_page, pad_filter_page, filter_env_page, knob_fx_page, compressor_page, flex_beat_page,
     fader_page, midi_config_page, card_access_page, tracks_page, track_actions_page, looper_page, rec_quantize_page, plugins_page,
-    plugin_presets_page, print_page;
+    plugin_presets_page, print_page, auto_sample_page, stems_page;
 // Shift + pad on Samples: the file under the cursor onto the next empty pad (false elsewhere).
 bool samples_shift_pad(Context& c);
 // The sampler's ten pages share their soft keys: B1 / B2 / B3 their groups, as the MPC (sampler_common.cpp, shell/sampler_map.h).

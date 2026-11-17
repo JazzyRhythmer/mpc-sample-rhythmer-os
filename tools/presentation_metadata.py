@@ -33,6 +33,17 @@ def voice_names(name,params,drum):
   if matches:v['name']=titles.get(matches[0],readable(matches[0]))
 
 def enrich(entry,port,params):
+ if port and port.name=='fm1-frodhes':
+  # The original desktop VOICE panel (frui.c draw_voice) changes these
+  # labels with TYPE, including MARIMBA's MUTE rather than DAMPER.
+  labels={20:['Tone']*4+['Strike']*2,21:['Bark']*4+['Mallet']*2,
+          22:['Bell']*4+['Tube']*2,23:['Hammer']*4+['Weight']*2,
+          24:['Decay']*4+['Ring']*2,25:['Release']*4+['Damper','Mute']}
+  for p in entry['parameters']:
+   if p['index'] in labels:p['dynamic_selector']=0;p['dynamic_labels']=labels[p['index']]
+   if 54<=p['index']<=58:
+    p['category']='Motor';p['dynamic_selector']=0
+    p['dynamic_labels']=['-']*4+[p['name'],'-']
  ps=entry['parameters'];name=entry['name'];hidden=entry.setdefault('hidden_keys',[])
  if name in ('6W6','8W8','9W9','CW-78'):
   hidden.extend(p['key'] for p in ps if p['key']=='mutes' or p['key'].startswith('rhy_'))

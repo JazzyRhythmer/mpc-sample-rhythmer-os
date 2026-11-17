@@ -16,7 +16,7 @@ int main(){
     p->gen8.group=3;p->gen8.assign=0;p->gen8.first=p->gen8.last=15;
     auto& br=p->tracks[0];br.engine=EngineKind::Sampler;br.break_bars=4;br.break_source=1;
     br.break_perf[0]=71;br.acid_gen.seed=0xffffffffu;br.acid_gen.slide=71;
-    std::strcpy(p->samples[0].path,"/card/Samples/break.wav");br.pads[3].sample=0;br.pads[3].sends={37,0,0,99};
+    std::strcpy(p->samples.edit(0).path,"/card/Samples/break.wav");br.pads[3].sample=0;br.pads[3].sends={37,0,0,99};
     p->tracks[15].engine=EngineKind::Plugin;p->tracks[15].plugin=0;p->tracks[15].pattern=127;
     std::strcpy(p->plugins[0].path,"Plugins/RHYTHMER - Rhythmer Kit");std::strcpy(p->plugins[0].name,"Rhythmer Kit");p->plugins[0].transport=false;
     Event e;e.tick=24;e.key=60;e.velocity=101;e.length=48;bank->at[15][127].add(e);

@@ -95,4 +95,137 @@ PrintAudio render_print(EngineHost& host, unsigned track, uint32_t ticks, PrintT
     return a;
 }
 
+NoteAudio render_note(EngineHost& host, unsigned track, uint8_t key, uint8_t velocity, uint64_t hold, PrintTap tap,
+                      float most_tail, const std::function<bool()>& keep_going) {
+    NoteAudio a;
+    const float rate = dsp::sample_rate();
+    const unsigned B = EngineHost::block;
+    host.set_print_tap(track, tap == PrintTap::PostFx);
+    std::vector<int32_t> out(B * 2);
+    host.send({Command::Type::NoteOn, uint8_t(track), 0, key, int16_t(std::max<uint8_t>(velocity, 1))});
+    const uint64_t quiet_frames = uint64_t(ring_quiet_seconds * rate);
+    const uint64_t most = uint64_t(std::max(0.0f, most_tail) * rate);
+    uint64_t played = 0, quiet = 0, latency = 0, loud_until = 0;
+    bool planned = false, released = false;
+    while (true) {
+        if (keep_going && !keep_going()) { a.error = "stopped"; break; }
+        // The block split where the key is let go, so the note-off lands on frame `hold`.
+        unsigned n = B;
+        if (!released && hold > played) n = unsigned(std::min<uint64_t>(B, hold - played));
+        if (!released && played >= hold) {
+            host.send({Command::Type::NoteOff, uint8_t(track), 0, key});
+            released = true;
+        }
+        host.render(out.data(), n, 1.0f);
+        drain(host);
+        if (!planned) { // the first block has the note and the track's latency in place
+            latency = tap == PrintTap::PreFx ? host.engine_latency(track) : host.track_latency(track);
+            a.left.reserve(size_t(hold + uint64_t(rate))); a.right.reserve(size_t(hold + uint64_t(rate)));
+            planned = true;
+        }
+        const float* l = host.print_left();
+        const float* r = host.print_right();
+        bool done = false;
+        for (unsigned f = 0; f < n && !done; ++f) {
+            uint64_t at = played + f;
+            if (at < latency) continue;
+            const uint64_t kept = at - latency; // frames since the note-on
+            a.left.push_back(l[f]); a.right.push_back(r[f]);
+            const bool loud = std::fabs(l[f]) >= ring_silence || std::fabs(r[f]) >= ring_silence;
+            if (loud) loud_until = kept + 1;
+            if (kept < hold) continue;
+            quiet = loud ? 0 : quiet + 1;
+            done = quiet >= quiet_frames || kept + 1 - hold >= most;
+        }
+        played += n;
+        if (dsp::sample_rate() != rate) { a.error = "the sample rate changed"; break; }
+        if (done) break;
+    }
+    host.send({Command::Type::AllNotesOff, uint8_t(track)});
+    if (!a.error.empty()) return a;
+    // Its quiet end cut off, with a few milliseconds' fade so it ends on silence.
+    size_t keep = size_t(std::max<uint64_t>(std::min<uint64_t>(loud_until, a.left.size()), std::min<uint64_t>(hold, a.left.size())));
+    keep = std::min(a.left.size(), keep + size_t(0.005f * rate));
+    a.left.resize(keep); a.right.resize(keep);
+    const size_t fade = std::min(keep, size_t(0.005f * rate));
+    for (size_t f = 0; f < fade; ++f) {
+        const float g = float(f) / float(std::max<size_t>(fade, 1));
+        a.left[keep - 1 - f] *= g; a.right[keep - 1 - f] *= g;
+    }
+    a.held = std::min<uint64_t>(hold, keep);
+    a.release = keep > a.held ? keep - a.held : 0;
+    return a;
+}
+
+void trim_silence(NoteAudio& note, float rate, float silence) {
+    size_t last = std::min(note.left.size(), note.right.size());
+    while (last > 0 && std::fabs(note.left[last - 1]) < silence && std::fabs(note.right[last - 1]) < silence) --last;
+    const size_t keep = std::min(std::min(note.left.size(), note.right.size()), last + size_t(0.005f * rate));
+    if (keep >= note.left.size()) return;
+    note.left.resize(keep); note.right.resize(keep);
+    const size_t fade = std::min(keep, size_t(0.005f * rate));
+    for (size_t f = 0; f < fade; ++f) {
+        const float g = float(f) / float(std::max<size_t>(fade, 1));
+        note.left[keep - 1 - f] *= g; note.right[keep - 1 - f] *= g;
+    }
+    note.held = std::min<uint64_t>(note.held, keep);
+    note.release = keep - note.held;
+}
+
+bool remove_dc(std::vector<float>& left, std::vector<float>& right, uint64_t held, float rate) {
+    const size_t n = std::min(left.size(), right.size()), h = size_t(std::min<uint64_t>(held, n));
+    if (!h || rate <= 0) return false;
+    double sum = 0, peak = 0;
+    for (size_t f = 0; f < h; ++f) {
+        const double m = 0.5 * (double(left[f]) + right[f]);
+        sum += m; peak = std::max(peak, std::fabs(m));
+    }
+    // Off zero by more than 2 % of the note's own peak (a quiet plug-in's offset counts as much as a loud one's).
+    if (std::fabs(sum / double(h)) < std::max(0.0002, 0.02 * peak)) return false;
+    const double r = 1.0 - 2.0 * 3.14159265358979 * 5.0 / rate;
+    for (auto* x : {&left, &right}) {
+        double before = 0, out = 0;
+        for (size_t f = 0; f < n; ++f) {
+            const double in = (*x)[f];
+            out = in - before + r * out;
+            before = in;
+            (*x)[f] = float(out);
+        }
+    }
+    return true;
+}
+
+std::vector<float> render_notes(EngineHost& host, unsigned track, std::vector<ProbeNote> notes, uint64_t frames, PrintTap tap,
+                                const std::function<bool()>& keep_going) {
+    const unsigned B = EngineHost::block;
+    host.set_print_tap(track, tap == PrintTap::PostFx);
+    std::stable_sort(notes.begin(), notes.end(), [](const ProbeNote& a, const ProbeNote& b) { return a.at < b.at; });
+    std::vector<int32_t> out(B * 2);
+    std::vector<float> x;
+    x.reserve(size_t(frames));
+    uint64_t played = 0, latency = 0;
+    size_t next = 0;
+    bool planned = false;
+    while (x.size() < frames) {
+        if (keep_going && !keep_going()) { x.clear(); break; }
+        while (next < notes.size() && notes[next].at <= played) { // each note on its own frame: blocks split there
+            const auto& n = notes[next++];
+            if (n.on) host.send({Command::Type::NoteOn, uint8_t(track), 0, n.key, int16_t(std::max<uint8_t>(n.velocity, 1))});
+            else host.send({Command::Type::NoteOff, uint8_t(track), 0, n.key});
+        }
+        unsigned n = B;
+        if (next < notes.size()) n = unsigned(std::clamp<uint64_t>(notes[next].at - played, 1, B));
+        host.render(out.data(), n, 1.0f);
+        drain(host);
+        if (!planned) { latency = tap == PrintTap::PreFx ? host.engine_latency(track) : host.track_latency(track); planned = true; }
+        const float* l = host.print_left();
+        const float* r = host.print_right();
+        for (unsigned f = 0; f < n && x.size() < frames; ++f)
+            if (played + f >= latency) x.push_back(0.5f * (l[f] + r[f]));
+        played += n;
+    }
+    host.send({Command::Type::AllNotesOff, uint8_t(track)});
+    return x;
+}
+
 } // namespace rhythmer

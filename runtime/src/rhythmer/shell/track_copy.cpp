@@ -3,6 +3,8 @@
 #include "rhythmer/shell/track_copy.h"
 #include "rhythmer/engine/engine_host.h"
 #include "rhythmer/shell/context.h"
+#include "rhythmer/shell/sample_library.h"
+#include "rhythmer/shell/print_engine.h"
 #include "rhythmer/plugin/plugin_rack.h"
 #include "rhythmer/shell/track_swap.h"
 #include <cstring>
@@ -17,6 +19,7 @@ void send_track(Context& c, unsigned t) {
     load.track_pack = pack;
     if (!c.host.send(load)) delete pack;
     c.refreeze(t); // freeze plan F2b: the audio thread's new track plays live until its prints are checked again
+    c.audio_stale |= 1u << (t % track_count); // freeze plan F3: and an audio track's takes are sent again
 }
 } // namespace
 
@@ -25,13 +28,21 @@ TrackState track_state(const Context& c, unsigned t) {
     return {c.project.tracks[t], c.patterns.at[t]};
 }
 
-void restore_track(Context& c, unsigned t, const TrackState& state) {
-    t %= track_count;
-    // Whole-track replacement/undo invalidates late sound loads aimed at its previous state.
+void invalidate_track_jobs(Context& c,unsigned t) {
+    t%=track_count;++c.track_epoch[t];
     if(c.kit_target==int(t))c.kit_target=-2;
     if(c.bank_target==int(t))c.bank_target=-2;
-    unsigned break_target=unsigned(c.ui.break_job_track>=0?c.ui.break_job_track:c.ui.break_track);
-    if(c.ui.break_pending>=0 && break_target==t)c.ui.break_pending=-1;
+    unsigned target=unsigned(c.ui.break_job_track>=0?c.ui.break_job_track:c.ui.break_track);
+    if(c.ui.break_pending>=0&&target==t){c.ui.break_pending=-1;c.ui.break_job_track=-1;}
+    for(auto& p:c.pending_files)if(p.slot>=0&&p.track==t)p=Context::PendingFile{};
+    if(c.ui.stems_sheet.running&&c.stems_from.track==t){c.ui.stems_sheet.running=false;if(c.library)c.library->stop_stems();}
+    if(c.printer){auto job=c.printer->progress();if(job.track==t&&((c.autosample_track==int(t)&&job.autosample)||(c.auto_probe_track==int(t)&&job.checking)))c.printer->cancel();}
+    if(c.ui.auto_sheet.track==t&&c.ui.auto_sheet.checking)c.ui.auto_sheet.checking=c.ui.auto_sheet.check_wanted=false;
+}
+
+void restore_track(Context& c, unsigned t, const TrackState& state) {
+    t %= track_count;
+    invalidate_track_jobs(c,t);
     c.project.tracks[t] = state.track;
     c.patterns.at[t] = state.patterns;
     c.free_retired();
@@ -72,6 +83,7 @@ void trade_tracks(Context& c, unsigned a, unsigned b) {
     a %= track_count; b %= track_count;
     if (a == b) return;
     c.stage_tick(UINT32_MAX); // a sound still waiting to load lands on the track it was turned on first
+    invalidate_track_jobs(c,a);invalidate_track_jobs(c,b);
     auto changed = swap_tracks(c.project, c.patterns, a, b);
     swap_track_views(c.ui, a, b);
     { // freeze plan F2b: a frozen track stays frozen where it goes; its prints are made again under its new number

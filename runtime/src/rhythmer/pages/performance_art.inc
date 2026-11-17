@@ -6,9 +6,9 @@
 #include <algorithm>
 #include <cmath>
 inline int performance_kind(const juce::String& name) {
-    static const char* names[]{"Sophie","Aphex","Elixir","FM-106","FMini-1","CS-1","OberVave","K-WASUB","Hera","Braids","Plaits","Hortator","MONO2K","Prophet","S1Vave","Dexed","Guru-600","Acid Engine","Rhythmer Kit","Break Engine"};
-    for(int i=0;i<20;++i)if(name==names[i])return i;
-    return 20;
+    static const char* names[]{"Sophie","Aphex","Elixir","FM-106","FMini-1","CS-1","OberVave","K-WASUB","Hera","Braids","Plaits","Hortator","MONO2K","Prophet","S1Vave","Dexed","Guru-600","Acid Engine","Rhythmer Kit","Break Engine","Frodhes","Tenebrae"};
+    for(unsigned i=0;i<sizeof(names)/sizeof(*names);++i)if(name==names[i])return int(i);
+    return 22;
 }
 template<class Signal>
 inline void performance_art(ui::Paint& p,const Signal& s,const juce::String& name,const juce::String& preset,float x,float y,float w,float h,int selected=-1,float opacity=1.0f,bool fit=false) {
@@ -19,7 +19,8 @@ inline void performance_art(ui::Paint& p,const Signal& s,const juce::String& nam
     const float a=std::clamp(std::sqrt(level)*1.15f+(held?.32f:0.0f),0.0f,1.0f);
 
     const float pitch=float(s.track().last_note%128)/127.0f,pan=s.track().mix.pan/50.0f;
-    unsigned seed=2166136261u;for(auto c:preset)seed=(seed^unsigned(c))*16777619u;
+    const auto motion_name=kind==18 ? preset.upToFirstOccurrenceOf(" / Pad ",false,true).trimCharactersAtEnd(" *") : preset;
+    unsigned seed=2166136261u;for(auto c:motion_name)seed=(seed^unsigned(c))*16777619u;
     const float m=float(seed%997)/997.0f;
     // Bounded screen-only gesture memory: sustain evolves from the actual key
     // press, release follows the existing meter. No audio callback or timer.
@@ -254,6 +255,23 @@ inline void performance_art(ui::Paint& p,const Signal& s,const juce::String& nam
     case 19: // Break: a segmented tape loop, separating and returning.
         for(int i=0;i<16;++i){float q=i*2*pi/16+drive*.18f,r=1.0f+a*.18f*std::sin(i*.7f+drive*1.8f);box({std::cos(q)*r*1.28f,std::sin(q)*r*.63f,std::sin(q*2)*a*.3f},{.12f,.12f,.12f},i==selected%16?1:.55f);}
         break;
+    case 20: // Frodhes: struck tines above a solid resonant soundboard.
+        box({0,-.61f,0},{1.46f,.055f,.28f},.35f);
+        for(int i=0;i<12;++i){float u=float(i)/11.0f,xx=(u-.5f)*2.65f;
+            float height=.31f+.43f*(1-u),bend=a*.12f*std::sin(phrase*2.1f+i*.61f)*std::exp(-age*.8f);
+            box({xx,-.56f+height,bend},{.052f,height,.065f},.4f+.35f*u);
+            box({xx,-.48f,.19f},{.075f,.08f,.075f},.78f);
+        }
+        break;
+    case 21: // Tenebrae: layered, opening folds; a heavy geometric chamber.
+        for(int i=0;i<9;++i){float z=(float(i)-4)*.18f,q=float(i)*.31f;
+            float fold=.25f+.22f*std::sin(q)+a*.16f*std::sin(phrase*.7f+q);
+            float spread=1.12f+a*.10f*std::sin(phrase+q);
+            V l{-spread,-.46f,z},m0{0,-fold,z-.16f},r0{spread,-.46f,z};
+            V lt{-spread,.46f,z},mt{0,fold,z-.16f},rt{spread,.46f,z};
+            add(l,m0,mt,lt,.3f+float(i)*.055f);add(m0,r0,rt,mt,.78f-float(i)*.045f);
+        }
+        break;
     default:lathe({0,0,0},.9f,1.5f,24,8,1);
         break;
     }
@@ -261,7 +279,7 @@ inline void performance_art(ui::Paint& p,const Signal& s,const juce::String& nam
     // pixel inset for antialiasing. Instrument pages retain their original framing.
     auto project=[&](V v){float perspective=3.6f/(3.6f-v.z*.35f);return V{v.x*w*(kind==18?.217f:.29f)*perspective,-v.y*h*(kind==18?.235f:.48f)*perspective,0};};
     float fit_scale=1,centre_x=0,centre_y=0;
-    if(fit&&count&&kind!=18){float left=1e6f,right=-1e6f,top=1e6f,bottom=-1e6f;
+    if((fit||kind==20||kind==21)&&count&&kind!=18){float left=1e6f,right=-1e6f,top=1e6f,bottom=-1e6f;
         for(unsigned i=0;i<count;++i)for(const auto& v:faces[i].v){auto q=project(v);left=std::min(left,q.x);right=std::max(right,q.x);top=std::min(top,q.y);bottom=std::max(bottom,q.y);}
         fit_scale=std::min((w-6)/std::max(1.0f,right-left),(h-6)/std::max(1.0f,bottom-top));centre_x=(left+right)*.5f;centre_y=(top+bottom)*.5f;
     }

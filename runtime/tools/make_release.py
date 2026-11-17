@@ -80,11 +80,14 @@ def readme(version, commit):
     return text.replace("{version}", version).replace("{commit}", commit).replace("{source}", SOURCE_URL).encode()
 
 
-def collect(binary, version, commit):
-    """Every file of the zip, as {path in zip: bytes}."""
+def collect(binary, version, commit, stems=ROOT / "build/stems"):
+    """Every file of the zip, as {path in zip: bytes}. `stems`: the stem separator as tools/stems/build.py leaves it."""
     device = base_device()
     if not binary.is_file():
         raise RuntimeError(f"Missing {binary}; run ./release.sh")
+    for name in ("rhythmer-stems", "spleeter-4stems.f16"):
+        if not (stems / name).is_file():
+            raise RuntimeError(f"Missing {stems / name}; run ./release.sh")
     files = {f"{PACKAGE}/sample-base": binary.read_bytes()}
     for name in ("restore-stock.sh", "sd-boot.sh", "sd-worker.sh", "sd-update.sh"):
         files[f"{PACKAGE}/{name}"] = (BASE / "install" / name).read_bytes()
@@ -101,6 +104,8 @@ def collect(binary, version, commit):
     files[f"{licenses}/LICENSE-AGPL-3.0.txt"] = (ROOT / "LICENSE").read_bytes()
     files[f"{licenses}/THIRD_PARTY.md"] = (ROOT / "THIRD_PARTY.md").read_bytes()
     files[f"{licenses}/Rubik-OFL.txt"] = (ROOT / "build/deps/rubik/OFL.txt").read_bytes()
+    for face in sorted((ROOT / "build/deps/fonts").glob("*/OFL.txt")): # Settings > SCREEN > Font (src/rhythmer/dependencies.py FACES)
+        files[f"{licenses}/fonts/{face.parent.name}-OFL.txt"] = face.read_bytes()
     files[f"{licenses}/JUCE-LICENSE.md"] = (ROOT / "build/deps/JUCE/LICENSE.md").read_bytes()
     # Plug-ins (docs/RHYTHMER.md): the VST3 SDK and LV2 libraries inside JUCE, the CLAP headers, and the armhf runtime inside the binary's support pack.
     files[f"{licenses}/VST3-SDK-LICENSE.txt"] = (ROOT / "build/deps/JUCE/modules/juce_audio_processors_headless/format_types/VST3_SDK/LICENSE.txt").read_bytes()
@@ -110,6 +115,13 @@ def collect(binary, version, commit):
         files[f"{licenses}/LV2-{lib}-COPYING.txt"] = (lv2_sdk / lib / "COPYING").read_bytes()
     for path in sorted((ROOT / "build/plugin-support/licenses").glob("*")):
         files[f"{licenses}/armhf-runtime/{path.name}"] = path.read_bytes()
+    # Stems (src/rhythmer/shell/stems.h): the separating program and its model stay on the card, in a folder of
+    # their own; Rhythmer copies the program into RAM for a job. SpleeterRT, Deezer's Spleeter model and OpenBLAS:
+    # their licences beside the others.
+    files[f"{PACKAGE}/stems/rhythmer-stems"] = (stems / "rhythmer-stems").read_bytes()
+    files[f"{PACKAGE}/stems/spleeter-4stems.f16"] = (stems / "spleeter-4stems.f16").read_bytes()
+    for path in sorted((stems / "licenses").glob("*")):
+        files[f"{licenses}/stems/{path.name}"] = path.read_bytes()
     assert all(name.startswith("autorun/") for name in files), "the zip is the autorun folder alone"
     return files
 

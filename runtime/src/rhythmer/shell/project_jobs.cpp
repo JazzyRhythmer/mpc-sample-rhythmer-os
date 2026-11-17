@@ -7,12 +7,14 @@
 #include "rhythmer/shell/ask.h"
 #include "rhythmer/shell/card_access.h"
 #include "rhythmer/shell/context.h"
+#include "rhythmer/shell/lesson.h"
 #include "rhythmer/shell/project_kits.h"
 #include "rhythmer/shell/project_store.h"
 #include "rhythmer/shell/sample_library.h"
 #include "rhythmer/shell/track_copy.h"
 #include "rhythmer/shell/stage_map.h"
 #include "rhythmer/plugin/plugin_rack.h"
+#include <filesystem>
 #include <memory>
 
 namespace rhythmer {
@@ -21,11 +23,14 @@ void Context::ask_new_project() {
     ask(*this, UiState::Ask::NewProject, !dirty ? 0 : project_path.empty() ? 2 : 1);
 }
 
-void Context::start_new_project() {
+void Context::start_new_project(bool kit) {
     if (dirty && !project_path.empty()) save_project();
     new_project();
     open(PageId::Stage);
     notice("New project");
+    // The pads play at once: the MPC's factory kit on track 1 (shell/lesson.h). Not there (another firmware): the
+    // track stays an empty kit, as EMPTY leaves it.
+    if (kit && store && std::filesystem::exists(factory_kit_path)) load_kit_file(factory_kit_path, factory_kit_name);
 }
 
 void Context::load_kit_file(const std::string& path, const std::string& name) {

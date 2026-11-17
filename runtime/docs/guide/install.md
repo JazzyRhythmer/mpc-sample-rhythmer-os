@@ -1,4 +1,4 @@
-# Rhythmer OS 0.4.0-beta.3 — 실기기 검증용 베타
+# Rhythmer OS 0.2.0 — 실기기 검증용 베타
 
 beta.2 → beta.3은 플러그인과 카탈로그도 바뀌므로 전체 SD.zip을 사용한다. UPDATE.zip은 앱만 바꾸며 이 수정 전체를 설치하지 않는다. SD_CARD_GUIDE.md의 전원 종료·백업·전체 파일 복사 절차를 따른다.
 

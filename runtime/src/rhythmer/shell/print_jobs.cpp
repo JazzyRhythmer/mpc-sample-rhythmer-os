@@ -14,6 +14,11 @@ namespace rhythmer {
 void Context::print(const PrintAsk& ask) {
     if (ask.mode == PrintAsk::Freeze) { freeze(ask); return; } // freeze plan F2b, `rhythmer-freeze` and `rhythmer-unfreeze`
     if (ask.mode == PrintAsk::Unfreeze) { unfreeze(ask.track); return; }
+    if (ask.mode == PrintAsk::AutoSample) {
+        if (ask.check) { if (!autosample_check(ask.track, ask.sampling)) notice("A print is under way"); }
+        else autosample(ask.track, ask.sampling, ask.probe_first);
+        return;
+    }
     if (!printer) return;
     if (project_path.empty()) { printer->note("save the project first: its prints go beside its file"); return; }
     const unsigned t = ask.track % track_count;
@@ -108,7 +113,9 @@ void Context::go_live(unsigned track) {
 }
 
 void Context::print_tick() {
+    audio_tick(); // freeze plan F3: audio tracks' regions and takes (shell/audio_jobs.cpp)
     if (!printer) return;
+    autosample_tick();
     // Freeze plan F2b: packs the audio thread is done with, freed on the print thread; prints ready to play, sent to
     // switch on the next bar; and the next track waiting for its prints, started once the print engine is free.
     FreezePack* done = nullptr;

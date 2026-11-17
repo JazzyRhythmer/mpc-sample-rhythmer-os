@@ -51,9 +51,7 @@ void tempo_draw(Paint& p, const Snapshot& s) {
         p.g.setColour(n % 2 ? knob_shade(s.ui.track, 1) : n % 4 == 0 ? colour::text : colour::mid);
         p.g.strokePath(tick, juce::PathStrokeType(n % 4 == 0 ? 2.0f : 1.4f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
     }
-    char text[16];
-    std::snprintf(text, sizeof(text), "%u.%u", s.tempo / 10, s.tempo % 10);
-    p.text(text, cx - 40, cy - 16, 80, 30, plain(colour::text, 24, Weight::Medium), juce::Justification::centred);
+    p.text(tempo_text(s,true), cx - 40, cy - 16, 80, 30, plain(colour::text, 24, Weight::Medium), juce::Justification::centred);
     p.text("BPM", cx - 30, cy + 12, 60, 14, caps_text(colour::mid), juce::Justification::centred);
 }
 void tempo_soft(Context& c, int key) {

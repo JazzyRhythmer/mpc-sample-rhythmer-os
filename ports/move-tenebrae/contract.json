@@ -1,0 +1,885 @@
+{
+  "chain_params": [
+    {
+      "key": "preset",
+      "name": "Factory Program",
+      "type": "int",
+      "min": 0,
+      "max": 163,
+      "default": 0
+    },
+    {
+      "key": "model",
+      "name": "Osc Model",
+      "short_name": "MODEL",
+      "type": "enum",
+      "options": [
+        "Saw",
+        "Pulse",
+        "Sync",
+        "FM",
+        "Bell",
+        "Wave",
+        "Vox",
+        "Zap"
+      ],
+      "short_options": [
+        "SAW",
+        "PLS",
+        "SNC",
+        "FM",
+        "BEL",
+        "WAV",
+        "VOX",
+        "ZAP"
+      ],
+      "default": 0
+    },
+    {
+      "key": "shape",
+      "name": "Shape",
+      "short_name": "SHAPE",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.5,
+      "unit": "%"
+    },
+    {
+      "key": "shape_env",
+      "name": "Shape Env",
+      "short_name": "S.ENV",
+      "type": "float",
+      "min": -1,
+      "max": 1,
+      "step": 0.01,
+      "default": 0,
+      "unit": "%"
+    },
+    {
+      "key": "stack",
+      "name": "Stack",
+      "short_name": "STACK",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0,
+      "unit": "%"
+    },
+    {
+      "key": "layer",
+      "name": "Layer",
+      "short_name": "LAYER",
+      "type": "enum",
+      "options": [
+        "Sub Sine",
+        "Sub Square",
+        "Sub -2 Oct",
+        "Octave Down",
+        "Fifth Up",
+        "Octave Up",
+        "2 Oct Up",
+        "Noise"
+      ],
+      "short_options": [
+        "SIN",
+        "SQR",
+        "-2",
+        "-12",
+        "+7",
+        "+12",
+        "+24",
+        "NSE"
+      ],
+      "default": 1
+    },
+    {
+      "key": "blend",
+      "name": "Layer Blend",
+      "short_name": "BLEND",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0,
+      "unit": "%"
+    },
+    {
+      "key": "age",
+      "name": "Age",
+      "short_name": "AGE",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.2,
+      "unit": "%"
+    },
+    {
+      "key": "voice",
+      "name": "Voice / Glide",
+      "short_name": "GLIDE",
+      "type": "enum",
+      "options": [
+        "Poly",
+        "Mono",
+        "Glide 10ms",
+        "Glide 20ms",
+        "Glide 30ms",
+        "Glide 45ms",
+        "Glide 60ms",
+        "Glide 80ms",
+        "Glide 110ms",
+        "Glide 150ms",
+        "Glide 200ms",
+        "Glide 270ms",
+        "Glide 360ms",
+        "Glide 480ms",
+        "Glide 650ms",
+        "Glide 900ms",
+        "Glide 1.2s",
+        "Glide 1.6s"
+      ],
+      "short_options": [
+        "POLY",
+        "MONO",
+        "10",
+        "20",
+        "30",
+        "45",
+        "60",
+        "80",
+        "110",
+        "150",
+        "200",
+        "270",
+        "360",
+        "480",
+        "650",
+        "900",
+        "1.2s",
+        "1.6s"
+      ],
+      "default": 0
+    },
+    {
+      "key": "flt_type",
+      "name": "Filter Type",
+      "short_name": "TYPE",
+      "type": "enum",
+      "options": [
+        "LP24",
+        "LP12",
+        "BP",
+        "HP"
+      ],
+      "short_options": [
+        "LP24",
+        "LP12",
+        "BP",
+        "HP"
+      ],
+      "default": 0,
+      "viz": {
+        "group": "flt",
+        "role": "mode"
+      }
+    },
+    {
+      "key": "cutoff",
+      "name": "Cutoff",
+      "short_name": "CUT",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.62,
+      "unit": "%",
+      "viz": {
+        "group": "flt",
+        "role": "cutoff"
+      }
+    },
+    {
+      "key": "reso",
+      "name": "Resonance",
+      "short_name": "RES",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.15,
+      "unit": "%",
+      "viz": {
+        "group": "flt",
+        "role": "resonance"
+      }
+    },
+    {
+      "key": "drive",
+      "name": "Drive",
+      "short_name": "DRIVE",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.2,
+      "unit": "%"
+    },
+    {
+      "key": "flt_env",
+      "name": "Filter Env Amt",
+      "short_name": "ENV",
+      "type": "float",
+      "min": -1,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.3,
+      "unit": "%"
+    },
+    {
+      "key": "flt_a",
+      "name": "Filter Attack",
+      "short_name": "ATK",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0,
+      "unit": "%",
+      "viz": {
+        "group": "fenv",
+        "role": "attack"
+      }
+    },
+    {
+      "key": "flt_d",
+      "name": "Filter Decay",
+      "short_name": "DCY",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.45,
+      "unit": "%",
+      "viz": {
+        "group": "fenv",
+        "role": "decay"
+      }
+    },
+    {
+      "key": "flt_s",
+      "name": "Filter Sustain",
+      "short_name": "SUS",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.3,
+      "unit": "%",
+      "viz": {
+        "group": "fenv",
+        "role": "sustain"
+      }
+    },
+    {
+      "key": "amp_a",
+      "name": "Amp Attack",
+      "short_name": "ATK",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.02,
+      "unit": "%",
+      "viz": {
+        "group": "aenv",
+        "role": "attack"
+      }
+    },
+    {
+      "key": "amp_d",
+      "name": "Amp Decay",
+      "short_name": "DCY",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.5,
+      "unit": "%",
+      "viz": {
+        "group": "aenv",
+        "role": "decay"
+      }
+    },
+    {
+      "key": "amp_s",
+      "name": "Amp Sustain",
+      "short_name": "SUS",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.8,
+      "unit": "%",
+      "viz": {
+        "group": "aenv",
+        "role": "sustain"
+      }
+    },
+    {
+      "key": "amp_r",
+      "name": "Amp Release",
+      "short_name": "REL",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.35,
+      "unit": "%",
+      "viz": {
+        "group": "aenv",
+        "role": "release"
+      }
+    },
+    {
+      "key": "spread",
+      "name": "Spread",
+      "short_name": "SPREAD",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0,
+      "unit": "%"
+    },
+    {
+      "key": "lfo_dest",
+      "name": "LFO Target",
+      "short_name": "LFO",
+      "type": "enum",
+      "options": [
+        "Pitch",
+        "Shape",
+        "Filter",
+        "Amp",
+        "Pan",
+        "Filter S&H",
+        "Filter Sync Ramp"
+      ],
+      "short_options": [
+        "PIT",
+        "SHP",
+        "FLT",
+        "AMP",
+        "PAN",
+        "S&H",
+        "RMP"
+      ],
+      "default": 0
+    },
+    {
+      "key": "lfo_rate",
+      "name": "LFO Rate",
+      "short_name": "RATE",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.55,
+      "unit": "%",
+      "viz": {
+        "group": "lfo",
+        "role": "rate"
+      }
+    },
+    {
+      "key": "lfo_depth",
+      "name": "LFO Depth",
+      "short_name": "DEPTH",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0,
+      "unit": "%",
+      "viz": {
+        "group": "lfo",
+        "role": "depth"
+      }
+    },
+    {
+      "key": "lfo_delay",
+      "name": "LFO Delay",
+      "short_name": "L.DLY",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0,
+      "unit": "%"
+    },
+    {
+      "key": "vel",
+      "name": "Velocity",
+      "short_name": "VEL",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.5,
+      "unit": "%"
+    },
+    {
+      "key": "press",
+      "name": "Pressure",
+      "short_name": "PRESS",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.5,
+      "unit": "%"
+    },
+    {
+      "key": "press_dest",
+      "name": "Pressure Target",
+      "short_name": "P.TGT",
+      "type": "enum",
+      "options": [
+        "Vib + Filter",
+        "Vibrato",
+        "Filter",
+        "LFO Depth"
+      ],
+      "short_options": [
+        "V+F",
+        "VIB",
+        "FLT",
+        "LFO"
+      ],
+      "default": 0
+    },
+    {
+      "key": "wheel",
+      "name": "Mod Wheel",
+      "short_name": "WHEEL",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.5,
+      "unit": "%"
+    },
+    {
+      "key": "cho_mode",
+      "name": "Chorus Type",
+      "short_name": "CHORUS",
+      "type": "enum",
+      "options": [
+        "I",
+        "II",
+        "I+II",
+        "Ensemble",
+        "Dimension"
+      ],
+      "short_options": [
+        "I",
+        "II",
+        "I+II",
+        "ENS",
+        "DIM"
+      ],
+      "default": 0
+    },
+    {
+      "key": "cho_mix",
+      "name": "Chorus Mix",
+      "short_name": "MIX",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0,
+      "unit": "%"
+    },
+    {
+      "key": "phs_rate",
+      "name": "Phaser Rate",
+      "short_name": "RATE",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.3,
+      "unit": "%"
+    },
+    {
+      "key": "phs_depth",
+      "name": "Phaser Depth",
+      "short_name": "PHASER",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0,
+      "unit": "%"
+    },
+    {
+      "key": "pump_rate",
+      "name": "Pump Rate",
+      "short_name": "DIV",
+      "type": "enum",
+      "options": [
+        "1/2",
+        "1/4",
+        "1/8",
+        "1/16"
+      ],
+      "short_options": [
+        "1/2",
+        "1/4",
+        "1/8",
+        "1/16"
+      ],
+      "default": 1
+    },
+    {
+      "key": "pump",
+      "name": "Pump Depth",
+      "short_name": "PUMP",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0,
+      "unit": "%"
+    },
+    {
+      "key": "vhs",
+      "name": "VHS",
+      "short_name": "VHS",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0,
+      "unit": "%"
+    },
+    {
+      "key": "tone",
+      "name": "Tone",
+      "short_name": "TONE",
+      "type": "float",
+      "min": -1,
+      "max": 1,
+      "step": 0.01,
+      "default": 0,
+      "unit": "%"
+    },
+    {
+      "key": "dly_time",
+      "name": "Delay Time",
+      "short_name": "TIME",
+      "type": "enum",
+      "options": [
+        "1/16",
+        "1/8T",
+        "1/8",
+        "1/8 Dot",
+        "1/4",
+        "1/4 Dot",
+        "1/2"
+      ],
+      "short_options": [
+        "1/16",
+        "1/8T",
+        "1/8",
+        "1/8.",
+        "1/4",
+        "1/4.",
+        "1/2"
+      ],
+      "default": 3
+    },
+    {
+      "key": "dly_fb",
+      "name": "Delay Feedback",
+      "short_name": "FDBK",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.4,
+      "unit": "%"
+    },
+    {
+      "key": "dly_mix",
+      "name": "Delay Mix",
+      "short_name": "DELAY",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0,
+      "unit": "%"
+    },
+    {
+      "key": "level",
+      "name": "Level",
+      "short_name": "LEVEL",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.7,
+      "unit": "%",
+      "viz": {
+        "kind": "fader"
+      }
+    },
+    {
+      "key": "rev_size",
+      "name": "Reverb Size",
+      "short_name": "SIZE",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.5,
+      "unit": "%"
+    },
+    {
+      "key": "rev_tone",
+      "name": "Reverb Color",
+      "short_name": "COLOR",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.5,
+      "unit": "%"
+    },
+    {
+      "key": "shimmer",
+      "name": "Shimmer",
+      "short_name": "SHIM",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0,
+      "unit": "%"
+    },
+    {
+      "key": "rev_mix",
+      "name": "Reverb Mix",
+      "short_name": "REVERB",
+      "type": "float",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "default": 0.15,
+      "unit": "%"
+    }
+  ],
+  "ui_hierarchy": {
+    "pad_layout": "chromatic",
+    "levels": {
+      "root": {
+        "name": "Tenebrae",
+        "list_param": "preset",
+        "count_param": "preset_count",
+        "name_param": "preset_name",
+        "params": [
+          {
+            "level": "osc",
+            "label": "Osc"
+          },
+          {
+            "level": "filter",
+            "label": "Filter"
+          },
+          {
+            "level": "amp",
+            "label": "Amp"
+          },
+          {
+            "level": "mod",
+            "label": "Mod"
+          },
+          {
+            "level": "motion",
+            "label": "FX Motion"
+          },
+          {
+            "level": "space",
+            "label": "FX Space"
+          },
+          {
+            "level": "random",
+            "label": "Random"
+          }
+        ]
+      },
+      "random": {
+        "name": "Random",
+        "knobs": [
+          "rnd_osc",
+          "rnd_flt",
+          "rnd_amp",
+          "rnd_mod",
+          "rnd_mot",
+          "rnd_spc",
+          "rnd_wild",
+          "rnd_fresh"
+        ],
+        "params": [
+          "rnd_osc",
+          "rnd_flt",
+          "rnd_amp",
+          "rnd_mod",
+          "rnd_mot",
+          "rnd_spc",
+          "rnd_wild",
+          "rnd_fresh",
+          "rnd_page"
+        ]
+      },
+      "osc": {
+        "name": "Osc",
+        "knobs": [
+          "model",
+          "shape",
+          "shape_env",
+          "stack",
+          "layer",
+          "blend",
+          "age",
+          "voice"
+        ],
+        "params": [
+          "model",
+          "shape",
+          "shape_env",
+          "stack",
+          "layer",
+          "blend",
+          "age",
+          "voice"
+        ]
+      },
+      "filter": {
+        "name": "Filter",
+        "knobs": [
+          "flt_type",
+          "cutoff",
+          "reso",
+          "drive",
+          "flt_env",
+          "flt_a",
+          "flt_d",
+          "flt_s"
+        ],
+        "params": [
+          "flt_type",
+          "cutoff",
+          "reso",
+          "drive",
+          "flt_env",
+          "flt_a",
+          "flt_d",
+          "flt_s"
+        ]
+      },
+      "amp": {
+        "name": "Amp",
+        "knobs": [
+          "amp_a",
+          "amp_d",
+          "amp_s",
+          "amp_r",
+          "spread"
+        ],
+        "params": [
+          "amp_a",
+          "amp_d",
+          "amp_s",
+          "amp_r",
+          "spread"
+        ]
+      },
+      "mod": {
+        "name": "Mod",
+        "knobs": [
+          "lfo_dest",
+          "lfo_rate",
+          "lfo_depth",
+          "lfo_delay",
+          "vel",
+          "press",
+          "press_dest",
+          "wheel"
+        ],
+        "params": [
+          "lfo_dest",
+          "lfo_rate",
+          "lfo_depth",
+          "lfo_delay",
+          "vel",
+          "press",
+          "press_dest",
+          "wheel"
+        ]
+      },
+      "motion": {
+        "name": "FX Motion",
+        "knobs": [
+          "cho_mode",
+          "cho_mix",
+          "phs_depth",
+          "phs_rate",
+          "pump",
+          "pump_rate",
+          "vhs",
+          "tone"
+        ],
+        "params": [
+          "cho_mode",
+          "cho_mix",
+          "phs_depth",
+          "phs_rate",
+          "pump",
+          "pump_rate",
+          "vhs",
+          "tone"
+        ]
+      },
+      "space": {
+        "name": "FX Space",
+        "knobs": [
+          "dly_mix",
+          "dly_time",
+          "dly_fb",
+          "level",
+          "rev_mix",
+          "rev_size",
+          "rev_tone",
+          "shimmer"
+        ],
+        "params": [
+          "dly_mix",
+          "dly_time",
+          "dly_fb",
+          "level",
+          "rev_mix",
+          "rev_size",
+          "rev_tone",
+          "shimmer"
+        ]
+      }
+    }
+  }
+}

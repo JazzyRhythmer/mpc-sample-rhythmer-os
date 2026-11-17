@@ -8,6 +8,8 @@ def enrich(entry):
         if name == 'Aphex' and p['key'] in ('lpf_reso','hpf_reso'):p['edit_name']=('LPF' if p['key']=='lpf_reso' else 'HPF')+' Resonance'
 
     profiles = {
+        'Frodhes': [['p41'], ['p42'], ['p40']],
+        'Tenebrae': [['cutoff'], ['reso'], ['shape']],
         'CS-1': [['p58'], ['p59'], ['p61']],
         'FM-106': [['p11'], ['p12'], ['p13']],
         'FMini-1': [['p105'], ['p106'], ['p107']],

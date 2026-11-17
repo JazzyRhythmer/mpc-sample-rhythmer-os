@@ -56,7 +56,8 @@ def assemble(stage_only=False):
     files = release.collect(app / 'build/rhythmer.release', 'v'+VERSION, commit)
     # Product guide names our developer and correctly scopes this local build;
     # upstream's unmodified-release issue/source wording is not ours.
-    files[release.PACKAGE + '/README.txt'] = (ROOT / 'docs/SD_CARD_GUIDE.md').read_bytes()
+    files[release.PACKAGE + '/README.txt'] = (ROOT / 'docs/INSTALL_020_EN.md').read_bytes()
+    files['README.txt'] = (ROOT / 'docs/INSTALL_020_EN.md').read_bytes()
     downloads = json.loads((ROOT / 'config/releases.lock.json').read_text())
     for item in downloads:
         if item['repo'] == 'keremimo/melodee-sample':
@@ -125,24 +126,28 @@ def assemble(stage_only=False):
     source_archive=OUTPUT/source_receipt['file']
     if not source_archive.is_file() or digest(source_archive.read_bytes())!=source_receipt['sha256']:
         raise RuntimeError('Corresponding Move source ZIP is missing or changed')
+    upstream=json.loads((ROOT/'config/upstream-integration.lock.json').read_text())
     status = {
         'product': 'Rhythmer OS', 'version': VERSION, 'source_commit': commit,
         'runtime_sha256': digest((app/'build/rhythmer').read_bytes()),
         'release_binary_sha256': digest((app/'build/rhythmer.release').read_bytes()),
-        'distribution': 'public-beta-hotfix' if os.environ.get('RHYTHMER_PUBLIC_RELEASE') == '1' else 'first-public-beta-candidate',
+        'distribution': 'public-beta' if os.environ.get('RHYTHMER_PUBLIC_RELEASE') == '1' else 'local-beta-installation-candidate',
         'release_tag': os.environ.get('RHYTHMER_RELEASE_TAG'),
         'developer': 'jazzy rhythmer',
         'instagram': 'https://www.instagram.com/jazzyrhythmer/',
         'youtube': 'https://www.youtube.com/@jazzyrhythmer',
         'origin': 'Melodee by Kerem Kilic (Ellic Studio)',
         'beta': True, 'hardware_validated': False, 'hardware_validation': 'Pending owner beta testing', 'public_release': os.environ.get('RHYTHMER_PUBLIC_RELEASE') == '1',
-        'upstream': {'melodee': 'v0.2.0', 'commit': '8880d16116ccb3c69f75fb46bf2166b16c51ef0c', 'base': '7e2d15d9ca086608b942599f6471a82f48c139f7'},
-        'behavior_changes': ['Melodee 0.2.0 foundation: 128 patterns, Freeze, LV2/CLAP, USB web/mirror, native sample-pad sends and signed Rhythmer updates', 'branding and monochrome UI', 'original FM-1 four-track GEN and engine-scoped Acid/Break actions', 'single-sound and Rhythmer Kit plugin host', 'named presets and selected empty-track indication', '20 track entries and seven kit-only source variants', 'native PRESETS/EDIT, source-ordered sound controls, focused-pad editing, host mixer and stale-card protection'],
+        'upstream': {'melodee': upstream['upstream'], 'commit': upstream['commit'], 'base': '7e2d15d9ca086608b942599f6471a82f48c139f7'},
+        'behavior_changes': ['branding and monochrome UI', 'original FM-1 four-track GEN and engine-scoped Acid/Break actions', 'single-sound and Rhythmer Kit plugin host', 'named presets and selected empty-track indication', '22 track entries and seven kit-only source variants', 'native PRESETS/EDIT, source-ordered sound controls, focused-pad editing, host mixer and stale-card protection'],
         'mechanical_rename': {'source': 'src/rhythmer', 'namespace': 'rhythmer', 'class': 'RhythmerApp',
                               'binary': 'rhythmer', 'sd_runtime': 'autorun/rhythmer'},
         'features': {
-            'Upstream_020': '128 patterns A-H; Patterns home and native Step Edit; Freeze/Deep Freeze; LV2/CLAP; USB web/files and UVC mirror; decoder/chop/MIDI fixes; Rhythmer-specific signed autorun updates',
-            'Break_Workflow_Hotfix': 'BREAK GEN stays open after initial load; CANCEL/Shift+Push prevents assignment; completion respects dismissed menus and selected tracks; Pattern Hold and stretched-hit operating hints; saved DSP controls unchanged',
+            'New_Engines': 'Frodhes original 57 programs; Tenebrae eight oscillator models and 164 programs; FMini-1 original 2.6.0 engine and 200 programs',
+            'Pad_Mix': 'Selected pad native Volume first, related controls aligned by three; whole-kit filter next; native sound parameters and saved states retained',
+            'Break_Audition': 'Original or synchronised dry preview, independent from track state; source replacement preserves patterns and performance settings; explicit source-bar confirmation and undo',
+            'Tempo_Display': 'Stabilised external MIDI tempo presentation; actual sync algorithm unchanged',
+            'Break_Workflow': 'BREAK GEN stays open after initial load; CANCEL/Shift+Push prevents assignment; completion respects dismissed menus and selected tracks; Pattern Hold and stretched-hit operating hints; saved DSP controls unchanged',
             'Acid_Sources': 'Four original Hortator ACID presets plus eight original Aphex presets, using their original DSP, source filter/edit controls and saved state; no authored patch values',
             'Preset_Browsing': 'Encoder and Minus/Plus wrap in the current preset list and main PRESETS face; includes User Sound/User Kit; absolute pot positions and load timing unchanged',
             'Empty_Pad_Start': 'Native Sample Kit SOUND/TRIM Push: all 128 pads and layers empty opens TRACK TYPE; SAMPLE KIT starts first sample load; otherwise an empty selected pad opens SAMPLES for that pad; recording/Freeze, loaded pads and Break controls retained',
@@ -153,20 +158,20 @@ def assemble(stage_only=False):
             'TR-MPC': 'Unmodified upstream prebuilt; four-family modular kit only',
             'Generator': 'Original FM-1 GEN: select tracks 1-4, 5-8, 9-12 or 13-16; first track Rhythmer Kit, next three instruments/MIDI; original genre order and seeded streams, recent-eight seed reroll, MONK excluded from automatic assignment; MIDI-only T1-16 range or one track; Undo/Redo; engine-scoped Acid and Break',
             'Break': 'Browse 1-4-bar loops; tempo sync and 16 chops; genre/straight/random/mutate/fill; six-page BRK PERF with 19 roll/source commands, A/B/Return, recording/replay and saved state; no bundled audio',
-            'Skin': 'Monochrome solid geometric startup, vector marks without a wordmark backplate, numeric glyphs and segmented gauges; 20 distinct pitch/sustain-reactive sculptures',
+            'Skin': 'Monochrome solid geometric startup, vector marks without a wordmark backplate, numeric glyphs and segmented gauges; 22 distinct pitch/sustain-reactive sculptures',
             'Startup': 'Official MPC Sample vector device mark, minimal pixel Rhythmer OS vector wordmark and four unlabeled abstract machine panels and eased vector-letter animation',
             'Native_instruments': str(len(native))+' native ports plus Sophie and five original drum packages; source and host receipts in NATIVE_ENGINES_LOCK.json',
-            'Single_sound': '25 engine source views (24 original engines plus Hortator Acid) play one selected sound; named presets and source-ordered sound-design controls. Percussion uses C4-referenced tape pitch; melodic engines retain native MIDI/polyphony.',
+            'Single_sound': '27 engine source views (26 original engines plus Hortator Acid) play one selected sound; named presets and source-ordered sound-design controls. Percussion uses C4-referenced tape pitch; melodic engines retain native MIDI/polyphony.',
             'Drum_kits': f"Rhythmer Kit: {len(json.loads((ROOT/'config/sound-catalog.json').read_text())['kits'])} named presets, every preset fills pads 1-16; original voices plus original Sophie supplementary percussion",
             'Hybrid': 'Rhythmer Kit supports per-pad engine/sound changes, independent sound design, 64-pad routing, user preset slots and complete project state',
             'TB-3PO': 'Original FM-1 TB-3PO and scale-mask wrapper integrated for Acid GEN',
             'Turing_Grids': 'Not integrated',
         },
         'known_limits': ['No device/listening/latency/USB/mirror/install-restart/rollback validation',
-                         'Initial 0.3-to-0.4 upgrade is a manual full SD package; signed UPDATE changes autorun only',
+                         'Use the complete 0.2.0 SD package for its matching engines and catalogue; signed UPDATE changes autorun only',
                          'Rhythmer Kit has track sends, not native sample-pad send buses',
                          'Open MPC third-party wrapper serialises DSP with a mutex; hard real-time audit remains',
-                         'Pad engine selection covers the 25 curated views backed by 24 aarch64 VST2 instruments; external VST3/armv7 plugins are not Rhythmer Kit sources',
+                         'Pad engine selection covers the 27 curated views backed by 26 aarch64 VST2 instruments; external VST3/armv7 plugins are not Rhythmer Kit sources',
                          'Single percussion tape pitch changes the shared sound tail and duration; it does not add independent pitched drum voices'],
     }
     files['RHYTHMER_OS.json'] = (json.dumps(status, indent=2) + '\n').encode()
@@ -182,6 +187,16 @@ def assemble(stage_only=False):
     for image in ('essential-controls.png','os-structure.png'):
         files['Documentation/'+image]=(ROOT/'assets/manual'/image).read_bytes()
     files['CORRESPONDING_SOURCE.json']=(json.dumps(dict(runtime_and_ports='RHYTHMER-OS-'+VERSION+'-SOURCE.zip',move_sources=source_receipt,support_libraries=support_receipt),indent=2)+'\n').encode()
+    offline=WORK/'manual-020-offline'
+    manual_manifest=json.loads((offline/'guide-020-source.json').read_text())
+    for page,entry in manual_manifest.items():
+        if digest((ROOT/'docs'/entry['source']).read_bytes())!=entry['source_sha256']:
+            raise RuntimeError('Offline manual is stale: '+page)
+    for path in offline.rglob('*'):
+        if path.is_file():files['Documentation/'+path.relative_to(offline).as_posix()]=path.read_bytes()
+    files['Documentation/LICENSE.txt']=(ROOT/'vendor/rhythmer/LICENSE').read_bytes()
+    for name in ('MANUAL_020_EN.md','FIRST_GROOVE_020_EN.md','FIRST_GROOVE_020_KO.md','QUICK_REFERENCE_020_EN.md','SYSTEM_MAP_020_EN.md','INSTALL_020_EN.md'):
+        files['Documentation/'+name]=(ROOT/'docs'/name).read_bytes()
     files['THIRD_PARTY_NOTICES.md'] = (ROOT / 'THIRD_PARTY_NOTICES.md').read_bytes()
     files['JUCE_COMPONENTS.spdx.json']=(app/'build/deps/JUCE/JUCE.spdx.json').read_bytes()
     files['CREDITS_AUDIT.md']=(ROOT/'docs/CREDITS_AUDIT.md').read_bytes()
@@ -190,8 +205,8 @@ def assemble(stage_only=False):
         for p in (ROOT/folder).rglob('*'):
             if p.is_file():files['RHYTHMER-GEN-SOURCE/'+p.relative_to(ROOT).as_posix()]=p.read_bytes()
     files['OPEN_MPC_COMPATIBILITY.md'] = (ROOT/'docs/OPEN_MPC_COMPATIBILITY.md').read_bytes()
-    for name in ('GETTING_STARTED_KO.md','TRACK_WORKFLOW.md','RHYTHMER_PRESETS.md','UPSTREAM_020.md','ORIGINAL_PRESET_AUDIT_KO.md','HORTATOR_KITS_KO.md','BREAK_ACID_GUIDE_KO.md','BREAK_WORKFLOW.md','PARAMETER_PAGES.md','NATIVE_PLUGIN_WORKFLOW.md','NATIVE_CONTROL_COVERAGE.md','FINAL_UI_AUDIT.md','VERIFICATION.md','GEN8_BREAK.md','DESIGN.md','ENGINE_REGISTRY.md','DRUM_KITS.md','BETA_READINESS.md','SOUND_KIT_GUIDE.md','GEN_WORKFLOW.md','USER_MANUAL_KO_DRAFT.md','REBRAND.md','SOUND_FIXES_BETA4.md'):
-        files[name]=(ROOT/'docs'/name).read_bytes()
+    for name in ('RELEASE_020_NOTES_EN.md','GETTING_STARTED_KO.md','TRACK_WORKFLOW.md','RHYTHMER_PRESETS.md','UPSTREAM_030.md','ORIGINAL_PRESET_AUDIT_KO.md','HORTATOR_KITS_KO.md','BREAK_ACID_GUIDE_KO.md','BREAK_WORKFLOW.md','PARAMETER_PAGES.md','NATIVE_PLUGIN_WORKFLOW.md','NATIVE_CONTROL_COVERAGE.md','FINAL_UI_AUDIT.md','VERIFICATION.md','GEN8_BREAK.md','DESIGN.md','ENGINE_REGISTRY.md','DRUM_KITS.md','BETA_READINESS.md','SOUND_KIT_GUIDE.md','GEN_WORKFLOW.md','USER_MANUAL_KO_DRAFT.md','REBRAND.md','SOUND_FIXES_BETA4.md'):
+        files['Documentation/Reference/'+name]=(ROOT/'docs'/name).read_bytes()
     files['DEVICE_MARK_NOTICE.md']=(ROOT/'assets/device/NOTICE.md').read_bytes()
     # New installs use the canonical folder. The host also resolves legacy beta paths.
     files={('Rhythmer/'+name if name.startswith('Plugins/') else name):data for name,data in files.items()}

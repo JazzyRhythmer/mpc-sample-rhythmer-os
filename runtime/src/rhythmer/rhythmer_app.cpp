@@ -265,6 +265,34 @@ std::string RhythmerApp::command(const std::string& action, const std::string& a
         for (unsigned t = 0; t < rhythmer::track_count; ++t) s += (t ? "," : "") + std::to_string(int(std::lround(host.track_load(t) * 1000)));
         return s + " | " + printer.status();
     }
+    if (action == "rhythmer-autosample") { // the auto sampler: rhythmer-autosample TRACK [LOW-HIGH] [step N] [layers N] [hold S] [tail S] [pre|post] [loop|noloop] [raw] [check|auto]
+        std::istringstream words(argument);
+        int track = 0;
+        const std::string usage = "ERR rhythmer-autosample TRACK [LOW-HIGH] [step N] [layers 1-4] [hold S] [tail S] [pre|post] [loop|noloop] [raw] [check|auto]";
+        if (!(words >> track) || track < 1 || track > int(rhythmer::track_count)) return usage;
+        rhythmer::Context::PrintAsk ask;
+        ask.track = uint8_t(track - 1);
+        ask.mode = rhythmer::Context::PrintAsk::AutoSample;
+        auto& set = ask.sampling;
+        std::string word;
+        while (words >> word) {
+            int low = 0, high = 0;
+            if (std::sscanf(word.c_str(), "%d-%d", &low, &high) == 2 && low >= 0 && high <= 127 && low <= high) { set.low = uint8_t(low); set.high = uint8_t(high); continue; }
+            if (word == "pre" || word == "post") { set.post_fx = word == "post"; continue; }
+            if (word == "loop" || word == "noloop") { set.loop_auto = false; set.loop = word == "loop"; continue; } // else Auto
+            if (word == "raw" || word == "peak") { set.normalize = word == "peak"; continue; } // the level as played (as it comes), or loudest at -1 dB
+            if (word == "check") { ask.check = true; continue; }    // the check alone: what the plug-in is (rhythmer-print status)
+            if (word == "auto") { ask.probe_first = true; continue; } // the check, then sampled as it heard
+            std::string value;
+            if (!(words >> value)) return usage;
+            if (word == "step") set.step = uint8_t(std::clamp(std::atoi(value.c_str()), 1, 24));
+            else if (word == "layers") set.layers = uint8_t(std::clamp(std::atoi(value.c_str()), 1, 4));
+            else if (word == "hold") { set.hold_auto = false; set.hold = std::clamp(float(std::atof(value.c_str())), 0.05f, 30.0f); } // else Auto
+            else if (word == "tail") set.tail = std::clamp(float(std::atof(value.c_str())), 0.0f, 30.0f);
+            else return usage;
+        }
+        return remote_print.push(ask) ? "OK rhythmer-autosample " + argument : "ERR busy";
+    }
     if (action == "rhythmer-print" || action == "rhythmer-freeze") { // freeze plan F2a / F2b: prints of one track's patterns, or the track frozen on them
         const bool freezing = action == "rhythmer-freeze";
         if (!freezing && (argument.empty() || argument == "status")) return "OK " + printer.status();
@@ -428,6 +456,8 @@ void RhythmerApp::draw(juce::Graphics& g) {
         m.plugins = machine.plugins.load(std::memory_order_relaxed);
         m.plugins_load = machine.plugins_load.load(std::memory_order_relaxed);
     }
+    ui::use_palette(frame->ui.settings.palette); // Settings > SCREEN: the colours and the face this frame is drawn in
+    ui::use_face(ui::palette().face >= 0 ? unsigned(ui::palette().face) : frame->ui.settings.font); // LCD sets its own
     ui::Paint p(g);
     g.fillAll(ui::colour::bg);
     page_spec(frame->ui.page).draw(p, *frame);
@@ -481,7 +511,7 @@ void RhythmerApp::service(Hardware& hardware) {
     card_update(hardware);
     web_service(hardware);
     // The card is Rhythmer's only while the base has it home: nothing reads or writes it meanwhile.
-    if (hardware.card.status().state == CardShareState::Home) {
+    if (hardware.card.status().state == CardShareState::Home && !warm_card(hardware)) {
         library.service(hardware);
         store.service(hardware);
     }
@@ -503,6 +533,31 @@ void RhythmerApp::service(Hardware& hardware) {
     }
 }
 
+// The card's folders read into memory before anything else walks them (shell/card_warm.h). On the MPC's card that
+// is a second or two, and it saves the minute the first walk of a plug-in's data folder otherwise costs every reader.
+bool RhythmerApp::warm_card(Hardware& hardware) {
+    const uint32_t now = now_ms();
+    if (!card_looked_at || now - card_looked_at >= 2000 || card_warmed.empty()) { // the mounts read every two seconds, at once after a return
+        if (card_warmed.empty() && card_looked_at && now - card_looked_at < 250) return false; // no card: looked for four times a second
+        card_looked_at = now ? now : 1;
+        std::string card;
+        for (const auto& space : hardware.platform.storage())
+            if (space.path.rfind("/media/", 0) == 0) { card = space.path; break; }
+        if (card != card_warmed) { // a card found, another one, or the same one back
+            card_warmed = card;
+            card_warm_at = now;
+            if (!card.empty()) card_warm.start(card);
+        }
+    }
+    // And before each project is loaded: a tenth of a second when its folders are still in memory, and the whole
+    // read again when the system has let them go since (it does when memory runs short).
+    if (unsigned loads = store.loads_asked(); loads != card_loads_seen) {
+        card_loads_seen = loads;
+        if (!card_warmed.empty() && !card_warm.running()) { card_warm_at = now; card_warm.start(card_warmed); }
+    }
+    return card_warm.running() && now - card_warm_at < card_warm_patience_ms;
+}
+
 // SD card access (shell/card_access.h): what the shell asked, done through the
 // base's CardShare, and what came of it copied back for the shell.
 void RhythmerApp::card_access(Hardware& hardware) {
@@ -513,6 +568,7 @@ void RhythmerApp::card_access(Hardware& hardware) {
     switch (CardRequest(link.request.exchange(0))) {
     case CardRequest::Lend:
         card_note = CardNote::None;
+        card_warm.stop(); // nothing of Rhythmer's reads the card's device while it is lent
         if (gadget_mirror_live()) card_note = CardNote::Camera; // nothing let go: the camera would be unplugged under the computer
         else if (library.busy()) card_note = CardNote::Writing; // a take or a render still writes to it
         else if (!library.release_instruments()) card_note = CardNote::Failed;
@@ -526,6 +582,8 @@ void RhythmerApp::card_access(Hardware& hardware) {
     if (now.state == CardShareState::Home && library.instruments_away()) library.restore_instruments(); // back, or never lent
     if (now.returns != card_returns) { // back: its projects and samples read again
         card_returns = now.returns;
+        card_warmed.clear(); // and its folders read ahead again: the cache went with the mount
+        card_looked_at = 0;
         library.rescan();
         store.rescan();
     }

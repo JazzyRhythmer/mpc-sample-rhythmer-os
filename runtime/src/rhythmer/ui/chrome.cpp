@@ -136,7 +136,8 @@ void header(Paint& p, const Header& h) {
         p.fill(x + 1, header_mid - 3, 6, 6, colour::mid, 1);
     }
     x += 13;
-    x += p.text(h.bpm, x, zone::header_y, 50, zone::header_h, plain(colour::text, type::bpm, Weight::Medium)) + 5;
+    float bpm_width = p.text(h.bpm, x, zone::header_y, 50, zone::header_h, plain(colour::text, type::bpm, Weight::Medium));
+    x += (h.fixed_bpm_width ? 50 : bpm_width) + 5;
     // Two chips at most: the state chips come first (header_of), a page's own after them.
     std::vector<HeaderItem> left(h.left.begin(), h.left.begin() + std::min<size_t>(h.left.size(), 2));
     float left_end = x;

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 inline int upstream_shell_check(){
-    EngineHost host;Shell shell(host);auto& c=shell.context();
+    auto host_owner=std::make_unique<EngineHost>();auto& host=*host_owner;
+    auto shell_owner=std::make_unique<Shell>(host);auto& shell=*shell_owner;auto& c=shell.context();
     for(auto& track:c.project.tracks)track.engine=EngineKind::Midi;
     c.ui.track=7;c.project.gen8.assign=1;c.project.gen8.group=1;
     c.prints.freeze[6].state=FreezeState::Deep;

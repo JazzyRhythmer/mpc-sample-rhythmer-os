@@ -6,6 +6,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace rhythmer {
 // Original VSTs remain the synthesis/state authority. The loader runs only on
@@ -16,6 +17,7 @@ std::unique_ptr<juce::AudioPluginInstance> make_sound_rack(const juce::var& cata
 // Used by the existing parameter pages: no fixed truncation of original controls.
 int sound_rack_parameter_count(juce::AudioPluginInstance*);
 int sound_rack_source_parameter_begin(juce::AudioPluginInstance*);
+std::vector<int> sound_rack_edit_order(juce::AudioPluginInstance*);
 bool sound_rack_design_pages(juce::AudioPluginInstance*,PluginPanel&);
 juce::String sound_rack_source_name(juce::AudioPluginInstance*);
 juce::String sound_rack_preset_name(juce::AudioPluginInstance*);

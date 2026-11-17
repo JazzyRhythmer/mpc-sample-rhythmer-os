@@ -113,6 +113,7 @@ Reply WebApp::handle(const Request& request, const Body& body) {
     if (get && request.path == "/plugins") return plugins();
     if (request.method == "POST" && request.path == "/update") return upload_update(request, body);
     if (request.method == "POST" && request.path == "/plugin") return upload_plugin(request, body);
+    if (request.method == "POST" && request.path == "/plugin/delete") return delete_plugin(request);
     if (get && request.path == "/list") return list_files(request);
     if (get && request.path == "/file") return send_file(request);
     if (request.method == "POST" && request.path == "/upload") return upload_file(request, body);
@@ -152,7 +153,7 @@ Reply WebApp::plugins() {
 
 Reply WebApp::upload_update(const Request& request, const Body& body) {
     Facts f = current();
-    if (f.card.empty()) return fail(409, "No SD card in the MPC, or it is lent to a computer");
+    if (f.card.empty()) return fail(409, "No SD card in the MPC, or it is mounted on a computer");
     if (update_running(f.phase)) return fail(409, "An update is installing");
     auto name = request.query.count("name") ? safe_name(request.query.at("name"), ".zip") : std::string();
     if (name.empty()) return fail(400, "Choose the Rhythmer release .zip");
@@ -182,7 +183,7 @@ Reply WebApp::upload_update(const Request& request, const Body& body) {
 
 Reply WebApp::upload_plugin(const Request& request, const Body& body) {
     Facts f = current();
-    if (f.card.empty()) return fail(409, "No SD card in the MPC, or it is lent to a computer");
+    if (f.card.empty()) return fail(409, "No SD card in the MPC, or it is mounted on a computer");
     auto name = request.query.count("name") ? safe_name(request.query.at("name"), ".zip") : std::string();
     if (name.empty()) return fail(400, "Choose a plug-in .zip");
     if (request.length == 0) return fail(400, "The file is empty");
@@ -213,6 +214,25 @@ Reply WebApp::upload_plugin(const Request& request, const Body& body) {
     return {200, "application/json; charset=utf-8", out + "]}"};
 }
 
+Reply WebApp::delete_plugin(const Request& request) {
+    Facts f = current();
+    if (f.card.empty()) return fail(409, "No SD card in the MPC, or it is mounted on a computer");
+    auto file = request.query.count("file") ? safe_name(request.query.at("file"), "") : std::string();
+    if (file.empty()) return fail(400, "No such plug-in");
+    const fs::path place = fs::path(plugin_folder(f.card)) / file; // one entry straight in Rhythmer/Plugins, no further
+    std::error_code error;
+    if (!fs::exists(fs::symlink_status(place, error))) return fail(404, "No such plug-in");
+    fs::remove_all(place, error);
+    if (error) return fail(500, "Could not delete it");
+    ::sync();
+    files_changed.store(true);
+    {
+        std::lock_guard<std::mutex> held(lock);
+        note = "Plug-in removed";
+    }
+    return {200, "application/json; charset=utf-8", "{}"};
+}
+
 // ---- Files: the card's folders, read and changed from the page's Files tab ----
 
 namespace {
@@ -231,7 +251,7 @@ Reply WebApp::list_files(const Request& request) {
     std::error_code error;
     if (!fs::is_directory(folder, error)) return fail(404, "Not a folder");
     return {200, "application/json; charset=utf-8", "{\"path\":" + json_text(rel) + ",\"writable\":"
-        + (card_writable(rel) ? "true" : "false") + ",\"entries\":" + folder_json(folder) + "}"};
+        + (card_writable(rel) ? "true" : "false") + ",\"entries\":" + folder_json(folder, rel.empty()) + "}"};
 }
 
 Reply WebApp::send_file(const Request& request) {

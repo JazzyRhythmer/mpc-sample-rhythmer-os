@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
 // SETTINGS (Shift + Pad 8): Rhythmer's own settings, kept on the card next
-//   to the projects, as seven doors (four by two): PADS (response, pressure,
-//   lights, what Double Seq puts in the new half, how many bars Capture keeps
-//   and how it puts them on the grid), KNOBS (how the knobs,
+//   to the projects, as eight doors (four by two): PADS (response, pressure,
+//   Repeat velocity, the pad lights, their fade, the Tap Tempo light), SEQ
+//   (Follow: Step Edit and Roll with the playhead; what Double Seq puts in the
+//   new half, how many bars Capture keeps and how it puts them on the grid),
+//   KNOBS (how the knobs,
 //   Knob FX and the fader take over a value: Pickup, Scaled, Instant),
 //   SCREEN (palette, brightness, where the place bar sits, and Screen Mirror:
 //   the screen as a USB webcam for a computer, on or off, its size and rate;
@@ -13,7 +15,7 @@
 //   crackle, shorter is heard sooner), SAMPLING (how Audio Recall cuts the
 //   ring and when a Free take ends on its own), MIDI (MIDI Config's page)
 //   and ABOUT. The wheel picks a door, Push or B3 opens it, B1 goes back.
-//   Behind a door its rows, one screen each: the wheel moves, Push opens a
+//   Behind a door its rows, scrolling past six (a bar and arrows at the right edge): the wheel moves, Push opens a
 //   value and the wheel changes it, Push keeps it; Minus / Plus change the
 //   one under the cursor straight away; B1 back to the doors. The header of
 //   the doors and of AUDIO says what the audio device runs at, and its
@@ -39,21 +41,26 @@ namespace rhythmer {
 namespace {
 using namespace ui;
 
-struct Door { Icon icon; const char* name; std::array<int8_t, 6> rows; };
+// A door's rows, as many as it needs: past list_rows they scroll.
+constexpr unsigned door_max = 12;
+struct Door { Icon icon; const char* name; std::array<int8_t, door_max> rows; };
 constexpr int8_t none = -1;
-const std::array<Door, 7> doors {{
-    {Icon::Pads, "PADS", {Settings::PadResponse, Settings::PadPressure, Settings::PadLights, Settings::DoubleSeq, Settings::CaptureBars,
-                          Settings::CaptureQuantize}},
-    {Icon::Knob, "KNOBS", {Settings::KnobTakeover, Settings::KnobFxTakeover, Settings::FaderTakeover, none, none, none}},
-    {Icon::Screen, "SCREEN", {Settings::Palette, Settings::Screen, Settings::PlaceBarRow, Settings::Mirror, Settings::MirrorSize,
-                              Settings::MirrorRate}},
-    {Icon::Speaker, "AUDIO", {Settings::SampleRate, Settings::AudioBuffer, none, none, none, none}},
-    {Icon::Mic, "SAMPLING", {Settings::RecallGrabRow, Settings::RecallGap, Settings::RecallTrimEnd, Settings::TakeAutoEnd, Settings::AutoEndAfter,
-                             Settings::SilenceBelow}},
-    {Icon::Din, "MIDI", {none, none, none, none, none, none}},  // MIDI Config's own page
-    {Icon::Info, "ABOUT", {none, none, none, none, none, none}}, // the About page
+#define ROWS(...) {__VA_ARGS__, none}
+const std::array<Door, 8> doors {{
+    {Icon::Pads, "PADS", ROWS(Settings::PadResponse, Settings::PadPressure, Settings::RepeatVelocity, Settings::PadLights, Settings::PadFade,
+                              Settings::TapLight)},
+    {Icon::Pattern, "SEQ", ROWS(Settings::SeqFollow, Settings::DoubleSeq, Settings::CaptureBars, Settings::CaptureQuantize)},
+    {Icon::Knob, "KNOBS", ROWS(Settings::KnobTakeover, Settings::KnobFxTakeover, Settings::FaderTakeover)},
+    {Icon::Screen, "SCREEN", ROWS(Settings::Palette, Settings::Font, Settings::Screen, Settings::PlaceBarRow, Settings::Mirror, Settings::MirrorSize,
+                                  Settings::MirrorRate)},
+    {Icon::Speaker, "AUDIO", ROWS(Settings::SampleRate, Settings::AudioBuffer)},
+    {Icon::Mic, "SAMPLING", ROWS(Settings::RecallGrabRow, Settings::RecallGap, Settings::RecallTrimEnd, Settings::TakeAutoEnd, Settings::AutoEndAfter,
+                                 Settings::SilenceBelow)},
+    {Icon::Din, "MIDI", {none}},  // MIDI Config's own page
+    {Icon::Info, "ABOUT", {none}}, // the About page
 }};
-constexpr unsigned screen_door = 2, audio_door = 3, midi_door = 5, about_door = 6;
+#undef ROWS
+constexpr unsigned screen_door = 3, audio_door = 4, midi_door = 6, about_door = 7;
 void trouble(Paint& p, float right, float cy, unsigned count);
 
 // Screen Mirror, under SCREEN's rows while it is on: how it goes (the runtime's state). Amber when it waits on the card or failed, and
@@ -70,7 +77,7 @@ void mirror_line(Paint& p, const Snapshot& s, float x, float y, float w) {
     case MirrorState::Starting: word = "STARTING"; break;
     case MirrorState::Waiting: word = "READY"; c = colour::text; break;
     case MirrorState::Streaming: word = "LIVE"; c = colour::play; break;
-    case MirrorState::CardShared: word = "CARD SHARED"; c = colour::amber; break;
+    case MirrorState::CardShared: word = "CARD MOUNTED"; c = colour::amber; break;
     case MirrorState::Failed: word = "FAILED"; c = colour::amber; break;
     }
     if (s.mirror_held) { word = "IN USE"; c = colour::amber; }
@@ -87,6 +94,11 @@ void mirror_line(Paint& p, const Snapshot& s, float x, float y, float w) {
 }
 
 unsigned door_rows(const Door& d) { unsigned n = 0; while (n < d.rows.size() && d.rows[n] >= 0) ++n; return n; }
+// The first row in view: the cursor kept on the third row once the rows scroll, as on the Sounds list.
+unsigned first_row(unsigned place, unsigned count) {
+    constexpr unsigned visible = list_rows;
+    return place < 2 ? 0 : std::min(place - 2, count > visible ? count - visible : 0u);
+}
 const Door& door_of(const UiState& ui) { return doors[ui.settings_door % doors.size()]; }
 // Where the row in hand sits behind its door (0 when it is not one of them).
 unsigned place_of(const UiState& ui) {
@@ -126,9 +138,10 @@ void rows_draw(Paint& p, const Snapshot& s) {
     frame(p, s, {{"BACK", "", ""}, -1, colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::None}}, h);
     const auto& set = s.ui.settings;
     float x = zone::pad, w = zone::width - 2 * zone::pad;
-    for (unsigned n = 0; n < door_rows(d); ++n) {
-        unsigned row = unsigned(d.rows[n]);
-        float y = zone::picture_y + 1 + n * (list_row_h + list_row_gap);
+    unsigned count = door_rows(d), first = first_row(place_of(s.ui), count), shown = std::min(count - first, unsigned(list_rows));
+    for (unsigned k = 0; k < shown; ++k) {
+        unsigned row = unsigned(d.rows[first + k]);
+        float y = zone::picture_y + 1 + k * (list_row_h + list_row_gap);
         bool cursor = row == s.ui.settings_cursor, editing = cursor && s.ui.settings_editing;
         if (cursor) { p.fill(x, y, w, list_row_h, colour::raised, 3); p.fill(x, y, 2.5f, list_row_h, colour::text, 1); }
         p.text(Settings::row_name(row), x + 10, y, w / 2, list_row_h, plain(cursor ? colour::text : colour::sec, type::list, cursor ? Weight::Medium : Weight::Regular));
@@ -143,14 +156,38 @@ void rows_draw(Paint& p, const Snapshot& s) {
         if (row == Settings::Palette) // the palette's first track colours
             for (unsigned t = 0; t < 4; ++t) p.fill(vx - 10 - (4 - t) * 9.5f, y + 8, 7, 7, track_colour(t), 2);
     }
+    if (count > shown) { // more rows than the screen: a bar in the right margin, an arrow where more waits
+        float top = zone::picture_y + 1, height = shown * (list_row_h + list_row_gap) - list_row_gap;
+        float bx = zone::width - 4, ty = top + 9, th = height - 18;
+        p.fill(bx, ty, 2, th, colour::line, 1);
+        p.fill(bx, ty + th * float(first) / float(count), 2, std::max(8.0f, th * float(shown) / float(count)), colour::text, 1);
+        auto arrow = [&](float y, bool down) {
+            juce::Path a;
+            if (down) a.addTriangle(bx - 3, y, bx + 5, y, bx + 1, y + 5);
+            else a.addTriangle(bx - 3, y + 5, bx + 5, y + 5, bx + 1, y);
+            p.g.setColour(colour::text);
+            p.g.fillPath(a);
+        };
+        if (first > 0) arrow(top, false);
+        if (first + shown < count) { // and the next row, dim, under the list
+            arrow(top + height - 5, true);
+            unsigned next = unsigned(d.rows[first + shown]);
+            float y = top + shown * (list_row_h + list_row_gap);
+            p.text(Settings::row_name(next), x + 10, y, w / 2, list_row_h, plain(colour::dim, type::list, Weight::Regular));
+            juce::String value = set.value_text(next);
+            auto style = plain(colour::dim, type::body, Weight::Medium);
+            float vw = p.width(value, style);
+            p.text(value, x + w - 9 - vw, y, vw + 1, list_row_h, style);
+        }
+    }
     if (s.ui.settings_door % doors.size() == screen_door) { // Screen Mirror, while it is on or a change waits
         if (MirrorState(s.mirror_state) != MirrorState::Off || s.mirror_held)
-            mirror_line(p, s, x, zone::picture_y + 1 + door_rows(d) * (list_row_h + list_row_gap) + 6, w);
+            mirror_line(p, s, x, zone::picture_y + 1 + shown * (list_row_h + list_row_gap) + 6, w);
         return;
     }
     if (s.ui.settings_door % doors.size() != audio_door) return;
     // AUDIO (roadmap P2): what the blocks take of their time, beside the dropouts (a check while there are none).
-    float y = zone::picture_y + 1 + door_rows(d) * (list_row_h + list_row_gap) + 6, cy = y + list_row_h / 2, right = x + w - 9;
+    float y = zone::picture_y + 1 + shown * (list_row_h + list_row_gap) + 6, cy = y + list_row_h / 2, right = x + w - 9;
     float load = s.machine.render_load;
     icon(p, Icon::Chip, x + 10, cy - 7, 14, colour::sec, 1.4f);
     p.text("DSP", x + 30, y, 40, list_row_h, caps_text(colour::mid));
@@ -168,8 +205,35 @@ void rows_draw(Paint& p, const Snapshot& s) {
     p.text(juce::String(ms, 1) + " ms", x + 70, py, 80, list_row_h, plain(colour::text, type::body, Weight::SemiBold));
 }
 
+// SCREEN's Palette and Font as cards over the rows: the screen is drawn in the one lit while the wheel turns, so
+// each is seen on the real page; Push keeps it, BACK goes back to the one there was.
+bool look_row(unsigned row) { return row == Settings::Palette || row == Settings::Font; }
+void look_draw(Paint& p, const Snapshot& s) {
+    bool palette = s.ui.settings_cursor == Settings::Palette;
+    frame(p, s, {{"BACK", "", "KEEP"}, 2, colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::Check}}, header_of(s));
+    CardSheet m;
+    m.chip = "SCREEN";
+    m.title = palette ? "Palette" : "Font";
+    const auto& set = s.ui.settings;
+    if (palette) {
+        m.count = unsigned(palettes.size());
+        m.current = set.palette % m.count;
+        for (unsigned n = 0; n < m.count; ++n)
+            m.items[n] = card_item(Icon::Screen, palettes[n].name, palettes[n].light ? "LIGHT" : "DARK", n == m.current);
+    } else {
+        m.count = face_choices;
+        m.current = set.font % m.count;
+        for (unsigned n = 0; n < m.count; ++n)
+            m.items[n] = card_item(Icon::None, faces[n].name, faces[n].em > 0 ? "PIXEL" : "", n == m.current);
+    }
+    m.detail = juce::String(m.current + 1) + " / " + juce::String(m.count);
+    m.accent = track_colour(0);
+    card_sheet(p, m);
+}
+
 void settings_draw(Paint& p, const Snapshot& s) {
-    if (s.ui.settings_in && door_rows(door_of(s.ui))) rows_draw(p, s);
+    if (s.ui.settings_in && s.ui.settings_look && look_row(s.ui.settings_cursor)) look_draw(p, s);
+    else if (s.ui.settings_in && door_rows(door_of(s.ui))) rows_draw(p, s);
     else doors_draw(p, s);
 }
 
@@ -183,8 +247,15 @@ void open_door(Context& c) {
     ui.settings_cursor = uint8_t(doors[n].rows[0]);
 }
 
+void look_turn(Context& c, int delta) {
+    bool palette = c.ui.settings_cursor == Settings::Palette;
+    int count = palette ? int(palettes.size()) : int(face_choices), at = palette ? c.ui.settings.palette : c.ui.settings.font;
+    c.set_look(c.ui.settings_cursor, unsigned(std::clamp(at + delta, 0, count - 1)));
+}
+
 void settings_wheel(Context& c, int delta) {
     auto& ui = c.ui;
+    if (ui.settings_in && ui.settings_look) { look_turn(c, delta); return; }
     if (!ui.settings_in) { ui.settings_door = uint8_t(std::clamp(int(ui.settings_door % doors.size()) + delta, 0, int(doors.size()) - 1)); return; }
     if (ui.settings_editing) { c.change_setting(ui.settings_cursor, delta > 0 ? 1 : -1); return; }
     const auto& d = door_of(ui);
@@ -192,15 +263,28 @@ void settings_wheel(Context& c, int delta) {
     ui.settings_cursor = uint8_t(d.rows[at]);
 }
 void settings_push(Context& c) {
-    if (!c.ui.settings_in) { open_door(c); return; }
-    c.ui.settings_editing = !c.ui.settings_editing && c.ui.settings_cursor != Settings::Palette;
+    auto& ui = c.ui;
+    if (!ui.settings_in) { open_door(c); return; }
+    if (ui.settings_look) { ui.settings_look = false; return; } // kept: it was saved as it turned
+    if (look_row(ui.settings_cursor)) {
+        ui.settings_look = true;
+        ui.settings_look_before = ui.settings_cursor == Settings::Palette ? ui.settings.palette : ui.settings.font;
+        return;
+    }
+    ui.settings_editing = !ui.settings_editing;
 }
 void settings_nudge(Context& c, int way) {
     if (!c.ui.settings_in) { settings_wheel(c, way); return; }
+    if (c.ui.settings_look) { look_turn(c, way); return; }
     c.change_setting(c.ui.settings_cursor, way);
 }
 void settings_soft(Context& c, int key) {
     auto& ui = c.ui;
+    if (ui.settings_in && ui.settings_look) { // BACK: the look there was; KEEP: this one
+        if (key == 0) c.set_look(ui.settings_cursor, ui.settings_look_before);
+        if (key == 0 || key == 2) ui.settings_look = false;
+        return;
+    }
     if (ui.settings_in) { if (key == 0) { ui.settings_in = false; ui.settings_editing = false; } return; }
     if (key == 0) c.back();
     if (key == 2) open_door(c);

@@ -1,13 +1,13 @@
 {
-  "checked_on": "2026-11-14",
+  "checked_on": "2026-11-17",
   "timezone": "Asia/Seoul",
   "repositories": {
     "melodee-sample": {
       "url": "https://github.com/keremimo/melodee-sample.git",
-      "commit": "8880d16116ccb3c69f75fb46bf2166b16c51ef0c",
+      "commit": "6d6ad5efff4cef9b7b04f3aee3c3f386ee717c16",
       "role": "pinned origin in vendor/rhythmer; product snapshot mechanically renamed to Rhythmer",
       "shallow": true,
-      "tag": "v0.2.0"
+      "tag": "v0.3.0"
     },
     "sample-base": {
       "url": "https://github.com/keremimo/sample-base.git",
@@ -47,5 +47,6 @@
   },
   "native_engine_acceptance": "config/native-engines.lock.json",
   "baseline_release_source_pins": "config/baseline-source.lock.json",
-  "license_audit_scope": "Accepted native code grants, required notices and sound-data exclusions recorded per engine; not a blanket legal certification for external branding or future releases"
+  "license_audit_scope": "Accepted native code grants, required notices and sound-data exclusions recorded per engine; not a blanket legal certification for external branding or future releases",
+  "authoritative_runtime_pin": "config/upstream-integration.lock.json"
 }

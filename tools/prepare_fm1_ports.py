@@ -30,7 +30,7 @@ PORTS={
     'fmini':('FMini-1','fmini_native.c','GFM1',
         [str(p.relative_to(DEPOT/'fmini')) for path in ('firmware/src','firmware/engines/src') for p in (DEPOT/'fmini'/path).glob('*') if p.suffix in ('.c','.h')]
         +[str(p.relative_to(DEPOT/'fmini')) for p in (DEPOT/'fmini/firmware/engines/tools').glob('*.py')]
-        +['tests/hostsim.c','tools/gen_tables.py','tools/gen_fm6_patches.py','firmware/engines/LICENSE']),
+        +['tests/hostsim.c','tools/gen_tables.py','tools/gen_fm6_patches.py','tools/gen_fmini_presets.py','tools/fmini_bank.py','tools/fmini_levels.json','tools/fmini_filter.py','firmware/engines/LICENSE']),
 }
 PORTS['kwasub-kit']=('K-WASUB Kit','kwasub_native.c','GKWK',PORTS['kwasub'][3])
 for ident,source,name,uid in [('prophet','melodee','Prophet','GP51')]:

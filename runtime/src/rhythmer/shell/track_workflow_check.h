@@ -34,24 +34,36 @@ inline int track_workflow_check() {
             TRACK_CHECK(c.ui.page==PageId::Samples&&c.track().last_pad==0&&c.ui.layer_load==-1,"other-bank sample opens selected empty pad browser, clears layer target");
             c.back();TRACK_CHECK(c.ui.page==PageId::Stage&&c.track().pads[127].used()&&!c.track().pads[0].used(),"browser cancel preserves both pads");
         }
+        // The upstream long hold owns the press; releasing it must not also
+        // invoke Rhythmer's short-click type/load/save shortcut.
+        reset_empty();
+        SurfaceEvent hold;hold.input.kind=SurfaceInput::Kind::Button;hold.input.index=uint8_t(SurfaceButton::WheelPush);hold.input.pressed=true;
+        shell.surface(hold,5000);SurfaceLights menu_lights;shell.lights(menu_lights,5400);
+        TRACK_CHECK(c.ui.menu!=0,"encoder hold opens native MENU on empty sample kit");
+        hold.input.pressed=false;shell.surface(hold,5401);
+        TRACK_CHECK(c.ui.page==PageId::Stage&&!c.ui.track_types,"MENU release does not trigger empty-kit short click");
+        menu_button(c,SurfaceButton::TopLeft);
+        TRACK_CHECK(!c.ui.menu&&c.ui.page==PageId::Stage,"MENU Back returns to original track");
         PluginRack picker_rack(host);c.plugins=&picker_rack;
-        for(unsigned pick=0;pick<4;++pick) {
+        for(unsigned pick=0;pick<6;++pick) {
             reset_empty();tap(SurfaceButton::WheelPush);c.ui.track_action=uint8_t(pick);tap(SurfaceButton::WheelPush);
             if(pick==0) TRACK_CHECK(c.ui.page==PageId::Plugins,"direct type PLUG-IN opens native picker");
             if(pick==1) {
                 TRACK_CHECK(c.ui.page==PageId::Samples&&c.track().engine==EngineKind::Sampler,"direct SAMPLE KIT starts first sample load");
                 c.back();TRACK_CHECK(c.ui.page==PageId::Stage,"first-sample browser Back returns to source");
             }
-            if(pick==2) TRACK_CHECK(c.ui.page==PageId::Stage&&c.track().engine==EngineKind::Midi,"direct MIDI choice lands on track");
-            if(pick==3) TRACK_CHECK(c.ui.page==PageId::Stage&&!c.track().used(),"direct EMPTY choice returns native carousel");
+            if(pick==2) TRACK_CHECK(c.ui.page==PageId::Stage&&c.track().engine==EngineKind::Keygroup,"direct KEYGROUP choice lands on track");
+            if(pick==4) TRACK_CHECK(c.ui.page==PageId::Stage&&c.track().engine==EngineKind::Audio&&c.ui.stage_group[c.ui.track]==1,"direct AUDIO choice opens INPUT");
+            if(pick==3) TRACK_CHECK(c.ui.page==PageId::Stage&&c.track().engine==EngineKind::Midi,"direct MIDI choice lands on track");
+            if(pick==5) TRACK_CHECK(c.ui.page==PageId::Stage&&!c.track().used(),"direct EMPTY choice returns native carousel");
         }
         c.plugins=nullptr;
         reset_empty(true);c.track().last_pad=11;tap(SurfaceButton::WheelPush);
-        std::strcpy(c.project.samples[0].path,"Samples/empty-pad-target.wav");
+        std::strcpy(c.project.samples.edit(0).path,"Samples/empty-pad-target.wav");
         c.load_file("Samples/empty-pad-target.wav","target",false);
         TRACK_CHECK(c.track().pads[11].sample==0&&!c.track().pads[0].used()&&c.track().pads[127].sample==0,"sample load targets selected pad, preserves other bank");
         c.undo();TRACK_CHECK(!c.track().pads[11].used()&&c.track().pads[127].sample==0,"sample load Undo restores empty selected pad only");
-        c.project.samples[0]=SampleRef{};
+        c.project.samples.edit(0)=SampleRef{};
         reset_empty();c.track().pads[127].layers[0].sample=0;tap(SurfaceButton::WheelPush);
         TRACK_CHECK(c.ui.page==PageId::Samples,"secondary layer in another bank prevents empty-kit classification");
         reset_empty();c.track().pads[0].layers[0].sample=0;tap(SurfaceButton::WheelPush);
@@ -126,7 +138,7 @@ inline int track_workflow_check() {
     c.undo();TRACK_CHECK(c.track().engine==EngineKind::Midi && patterns_kept(),"type undo");
     c.redo();TRACK_CHECK(c.track().engine==EngineKind::Sampler && patterns_kept(),"type redo");
     change_track_type(c,EngineKind::None);TRACK_CHECK(!c.track().used() && patterns_kept(),"empty retains patterns");
-    TRACK_CHECK(c.ui.page==PageId::Stage && c.ui.new_for==0 && c.ui.new_pick==uint8_t(NewChoice::Plugin),"intentional EMPTY opens native type carousel");
+    TRACK_CHECK(c.ui.page==PageId::Stage && c.ui.new_for==0 && c.ui.new_pick==uint8_t(NewType::Plugin),"intentional EMPTY opens native type carousel");
     c.open(PageId::Tracks);tracks_page.push(c);
     TRACK_CHECK(c.ui.page==PageId::Stage && c.ui.new_for==0 && patterns_kept(),"intentional EMPTY encoder opens type selection, not actions");
     c.ui.page=PageId::Edit;edit_page.push(c);
@@ -149,7 +161,7 @@ inline int track_workflow_check() {
     c.ui.recording=true;change_track_type(c,EngineKind::Midi);TRACK_CHECK(c.track().engine==EngineKind::Sampler,"recording guard");c.ui.recording=false;
     c.prints.freeze[0].state=FreezeState::Frozen;change_track_type(c,EngineKind::Midi);
     TRACK_CHECK(c.track().engine==EngineKind::Sampler && c.ui.ask==UiState::Ask::Unfreeze,"freeze guard");c.ui.ask=UiState::Ask::None;c.prints.freeze[0]={};
-    const PageId owned[]={PageId::PluginPresets,PageId::Plugins,PageId::Samples,PageId::Sounds,PageId::Edit,PageId::Chop,PageId::PadPage,PageId::LayersPage,PageId::Print,PageId::TrackActions};
+    const PageId owned[]={PageId::AutoSample,PageId::Stems,PageId::PluginPresets,PageId::Plugins,PageId::Samples,PageId::Sounds,PageId::Edit,PageId::Chop,PageId::PadPage,PageId::LayersPage,PageId::Print,PageId::TrackActions};
     for(auto page:owned){c.ui.track=0;c.ui.page=page;c.ui.presets_back=PageId::Stage;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.ui.sheet_open=true;
         c.select_track(1);TRACK_CHECK(c.ui.track==1 && c.ui.page==PageId::Stage && !c.ui.sheet_open,"track-owned screen follows selected track");
         c.back();TRACK_CHECK(c.ui.page==PageId::Stage,"Back cannot resurrect previous track's browser");}
@@ -170,8 +182,8 @@ inline int track_workflow_check() {
     TRACK_CHECK(!new_track_lock(c,SurfaceButton::PadBank,true),"empty plug-in picker permits track switching");
     // Async whole-kit load belongs to the original target, never whichever track is selected later.
     auto source=std::make_unique<Project>();source->tracks[0].engine=EngineKind::Sampler;source->tracks[0].set_name("TEST KIT");
-    source->tracks[0].pads[0].sample=0;std::strcpy(source->samples[0].path,"Samples/workflow.wav");
-    c.project.samples[0]=source->samples[0];
+    source->tracks[0].pads[0].sample=0;std::strcpy(source->samples.edit(0).path,"Samples/workflow.wav");
+    c.project.samples.edit(0)=source->samples[0];
     c.ui.track=4;c.project.tracks[4].engine=EngineKind::Midi;c.kit_target=5;c.load_kit(*source,"TEST KIT");
     TRACK_CHECK(c.ui.track==4 && c.project.tracks[4].engine==EngineKind::Midi && c.project.tracks[5].engine==EngineKind::Sampler,"async kit target captured");
     BankFile bank;bank.pads[0].sample=0;std::strcpy(bank.samples[0].path,"Samples/workflow.wav");
@@ -181,7 +193,7 @@ inline int track_workflow_check() {
     c.kit_target=4;c.bank_target=4;auto restored=std::make_unique<TrackState>(track_state(c,4));restore_track(c,4,*restored);
     TRACK_CHECK(c.kit_target==-2 && c.bank_target==-2,"whole-track undo/replacement invalidates late loads");
     c.kit_target=-2;c.load_kit(*source,"TEST KIT");TRACK_CHECK(c.project.tracks[4].engine==EngineKind::Midi,"invalidated request discarded");
-    c.ui.track=4;c.ui.break_pending=0;c.ui.break_pending_b=true;c.ui.break_track=5;c.ui.break_bars=2;c.project.tracks[5].break_bars=2;c.project.samples[0].frames=176400;
+    c.ui.track=4;c.ui.break_pending=0;c.ui.break_pending_b=true;c.ui.break_track=5;c.ui.break_bars=2;c.project.tracks[5].break_bars=2;c.project.samples.edit(0).frames=176400;
     c.gen_break_tick();TRACK_CHECK(c.ui.track==4,"Break B completion does not steal selected track");
     if(const char* card=std::getenv("RHYTHMER_GEN_CARD")){
         PluginRack rack(host);rack.set_card(card);c.plugins=&rack;
@@ -189,9 +201,9 @@ inline int track_workflow_check() {
         auto file=[&](const char* name){return std::find_if(files.begin(),files.end(),[&](const PluginFile& f){return f.name==name;});};
         for(const auto& f:files) {
             if(f.name=="Break Engine")continue; // native loop sampler, not a plug-in preset bank
-            c.ui.track=0;c.ui.page=PageId::Stage;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.choose_plugin(f);
+            c.ui.track=0;c.ui.page=PageId::Stage;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.ui.plugin_replace=true;c.choose_plugin(f);
             bool ready=false;for(unsigned n=0;n<2000;++n){if(rack.status(c.track().plugin)==PluginStatus::Ready){ready=true;break;}std::this_thread::sleep_for(std::chrono::milliseconds(10));}
-            TRACK_CHECK(ready,"preset-loop instrument loads");auto programs=rack.programs(c.track().plugin);
+            TRACK_CHECK(ready && std::string(c.project.plugins[c.track().plugin].path)==f.path,"preset-loop correct instrument loads");auto programs=rack.programs(c.track().plugin);
             if(programs.list.empty())continue;
             c.open_plugin_presets(c.track().plugin);auto rows=preset_rows(programs.list,std::string(c.ui.presets_folder.data()),programs.current);
             if(!rows.empty()){
@@ -205,12 +217,12 @@ inline int track_workflow_check() {
         auto first=file("FM-106"),second=file("Sophie"),br=file("Break Engine");
         TRACK_CHECK(first!=files.end() && second!=files.end() && br!=files.end(),"real plugin fixture available");
         auto wait=[&]{for(unsigned n=0;n<2000;++n){if(rack.status(c.track().plugin)==PluginStatus::Ready)return true;std::this_thread::sleep_for(std::chrono::milliseconds(10));}return false;};
-        c.ui.track=0;c.ui.page=PageId::Stage;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.choose_plugin(*first);
+        c.ui.track=0;c.ui.page=PageId::Stage;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.ui.plugin_replace=true;c.choose_plugin(*first);
         TRACK_CHECK(c.track().engine==EngineKind::Plugin && wait() && patterns_kept(),"load real plugin over kit, keep patterns");
         auto entry=c.track().plugin;auto old_ref=c.project.plugins[entry];auto old_state=rack.states()[entry];
         c.open_plugin_presets(entry);TRACK_CHECK(c.ui.page==PageId::PluginPresets,"native preset list opens from Stage");
         plugin_presets_page.soft(c,1);TRACK_CHECK(c.ui.page==PageId::Plugins,"preset list exposes replacement");
-        c.choose_plugin(*second);TRACK_CHECK(wait() && c.ui.page==PageId::Stage && c.ui.back_depth==0 && patterns_kept(),"replacement lands at selected track");
+        c.ui.plugin_replace=true;c.choose_plugin(*second);TRACK_CHECK(wait() && c.ui.page==PageId::Stage && c.ui.back_depth==0 && patterns_kept(),"replacement lands at selected track");
         c.undo();bool undo_ready=wait();auto restored_state=rack.states()[entry];
         if(!undo_ready || std::strcmp(c.project.plugins[entry].path,old_ref.path) || restored_state!=old_state){
             std::fprintf(stderr,"BEFORE %.180s\nAFTER %.180s\n",std::string(old_state.begin(),old_state.end()).c_str(),std::string(restored_state.begin(),restored_state.end()).c_str());
@@ -225,7 +237,7 @@ inline int track_workflow_check() {
         auto engine=c.track().engine;auto history=c.edits.size();c.choose_plugin(*br);
         TRACK_CHECK(c.track().engine==engine && c.edits.size()==history && c.ui.break_browse,"choosing Break defers destructive conversion");
         samples_page.soft(c,0);TRACK_CHECK(c.track().engine==engine && c.ui.page==PageId::Plugins,"Break browser cancel preserves instrument");
-        c.ui.track=0;c.ui.page=PageId::PluginPresets;c.ui.presets_back=PageId::Stage;c.select_track(6);offer_new_track(c);make_new_track(c,NewChoice::Plugin);c.choose_plugin(*first);
+        c.ui.track=0;c.ui.page=PageId::PluginPresets;c.ui.presets_back=PageId::Stage;c.select_track(6);offer_new_track(c);make_new_track(c,NewChoice::Plugin);c.ui.plugin_replace=true;c.choose_plugin(*first);
         TRACK_CHECK(c.ui.track==6 && c.ui.page==PageId::Stage && wait(),"preset A to empty B to plugin B");
         c.back();TRACK_CHECK(c.ui.page==PageId::Stage,"loaded B Back cannot return to A");
         c.plugins=nullptr;

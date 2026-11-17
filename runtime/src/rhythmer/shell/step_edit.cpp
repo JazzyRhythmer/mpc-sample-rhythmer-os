@@ -62,6 +62,46 @@ bool select_key(Context& c, int key) {
     return false;
 }
 
+bool seq_following(const Context& c) {
+    const auto& ui = c.ui;
+    return ui.settings.seq_follow % 3 && (ui.page == PageId::Roll || ui.page == PageId::StepEdit) && c.host.playing() &&
+           c.host.position_of(ui.track) >= 0;
+}
+
+void seq_follow(Context& c) {
+    auto& ui = c.ui;
+    unsigned mode = ui.settings.seq_follow % 3;
+    bool roll = ui.page == PageId::Roll;
+    int position = c.host.position_of(ui.track);
+    if (!seq_following(c)) { ui.follow_step = -1; return; }
+    const auto& pattern = c.pattern();
+    unsigned steps = pattern.steps();
+    int lane = steps_lane(c.track());
+    uint32_t loop = std::max<uint32_t>(lane >= 0 ? pattern.lane_length(unsigned(lane)) : pattern.length, 1);
+    uint64_t elapsed = uint64_t(c.host.pass_of(ui.track)) * std::max<uint32_t>(pattern.length, 1) + uint32_t(position);
+    unsigned at = unsigned(elapsed % loop / pattern.q()); // the step that plays, on a kit lane of its own length too
+    if (at >= steps) return;
+    int mark = int(mode == 2 ? at : at / bar_steps);
+    if (mark == ui.follow_step) return;
+    ui.follow_step = int16_t(mark);
+    if (ui.held_step >= 0 || ui.held_note >= 0 || ui.sheet_open) return; // in the middle of an edit: it stays
+    unsigned caret = cursor_step(pattern, ui), to = at;
+    if (mode == 1 && roll) { // the playing bar in view, the cursor where it sat in the view
+        unsigned first = roll_first(pattern, ui);
+        if (at >= first && at < first + roll_columns) return;
+        int offset = std::clamp(int(caret) - int(first), int(roll_margin), int(roll_columns - 1 - roll_margin));
+        ui.roll_view = int16_t(at / bar_steps * bar_steps);
+        to = std::min(roll_first(pattern, ui) + unsigned(offset), steps - 1);
+    } else if (mode == 1) { // the same step of the playing bar
+        if (caret / bar_steps == at / bar_steps) return;
+        to = std::min(at / bar_steps * bar_steps + caret % bar_steps, steps - 1);
+    }
+    ui.step_cursor = int16_t(std::min(to, 0x7fffu));
+    ui.steps_bar = uint8_t(std::min(to / bar_steps, 255u));
+    ui.step_event = 0;
+    if (roll) { roll_follow(pattern, ui); roll_select(pattern, ui, roll_lane(c.track())); }
+}
+
 void step_move(Context& c, int way) {
     const auto& pattern = c.pattern();
     int step = std::clamp<int>(int(cursor_step(pattern, c.ui)) + way, 0, int(pattern.steps()) - 1);
@@ -234,11 +274,22 @@ void entry_pad(Context& c, unsigned pad, uint8_t velocity, bool down) {
     const auto& t = c.track();
     int key = pad_key(c.project, t, pad);
     if (key < 0 || !t.used()) return;
-    Level level; // 16 Levels on a kit: its pad at this pad's pitch, velocity and cutoff, as Seq Record keeps it
-    if (t.engine == EngineKind::Sampler && t.levels) { level = levels_of(c.project, t, pad); key = int(sampler_first_note + t.levels_pad % sampler_pads); }
-    if (level.none) return; // Zones: a pad past the instrument's last key
+    if (t.engine == EngineKind::Sampler && t.levels) { // 16 Levels on a kit: its pad at this pad's pitch, velocity and cutoff, as Seq Record keeps it
+        Level level = levels_of(c.project, t, pad);
+        if (level.none) return; // Zones: a pad past the instrument's last key
+        ui.entry_held = uint16_t(ui.entry_held | bit);
+        entry_write(c, int(sampler_first_note + t.levels_pad % sampler_pads), level, velocity);
+        return;
+    }
+    // Any other track: the keys the pad played (a chord's, 16 Levels' on a synth), at the velocity heard.
+    Level level;
+    if (t.engine != EngineKind::Sampler && t.levels) level.velocity = levels_of(c.project, t, pad).velocity;
+    else if (t.engine != EngineKind::Sampler && t.layout == PadLayout::Levels) level.velocity = level_velocity(pad);
+    bool wrote = false;
+    for (auto k : c.pad_keys[pad % 16])
+        if (k >= 0 && k <= 127) { entry_write(c, k, level, velocity); wrote = true; }
+    if (!wrote) entry_write(c, key, level, velocity);
     ui.entry_held = uint16_t(ui.entry_held | bit);
-    entry_write(c, key, level, velocity);
 }
 
 void midi_entry(Context& c, int key, int pitch, uint8_t velocity, bool down) {

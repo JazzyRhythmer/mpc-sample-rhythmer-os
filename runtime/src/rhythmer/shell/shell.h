@@ -3,6 +3,8 @@
 #pragma once
 #include "rhythmer/engine/voice_tap.h"
 #include "rhythmer/model/project.h"
+#include "rhythmer/shell/tap_hold.h"
+#include "rhythmer/shell/menu.h"
 #include "rhythmer/shell/card_access.h"
 #include "rhythmer/shell/update.h"
 #include "rhythmer/shell/context.h"
@@ -10,11 +12,14 @@
 #include "rhythmer/shell/light_show.h"
 #include "rhythmer/shell/looper_jobs.h"
 #include "rhythmer/shell/meter_lights.h"
+#include "rhythmer/shell/pad_lights.h"
 #include "rhythmer/shell/midi_io.h"
 #include "rhythmer/shell/pad_context.h"
 #include "rhythmer/shell/project_store.h"
 #include "rhythmer/shell/sample_library.h"
+#include "rhythmer/shell/zoom_view.h"
 #include "rhythmer/shell/snapshot.h"
+#include "rhythmer/shell/tempo_display.h"
 #include "rhythmer/shell/ui_state.h"
 #include "runtime/app.h"
 #include "surface/leds.h"
@@ -115,6 +120,7 @@ private:
     std::atomic<uint32_t> loading_now {0}, load_us_now {0}; // the Loading sheet (bit 0) and samples left; the last parked build
     std::atomic<uint64_t> button_levels {0};
     std::atomic<uint64_t> pad_rungs {0}, pad_hues {0}; // each pad's rung and hue (shell/pad_light.h), 4 bits a pad, for `status`
+    PadGlow pad_glow; // each pad's sound as last lit, fading (shell/pad_lights.h)
     std::array<uint32_t, 16> pad_let_go {}; // when each pad was let go, ms + 1: its flare fades from there (shell/pad_lights.h)
     unsigned count_beat_seen = 0;           // the count-in's beat the pads last pulsed for
     uint32_t count_beat_at = 0;             // and when it began, ms
@@ -141,6 +147,7 @@ private:
     // Presses the Loading sheet took (ui.loading): their releases are taken too, even after it has gone.
     std::array<bool, 256> eaten_buttons {};
     std::array<bool, 128> eaten_pads {};
+    TempoDisplay tempo_display; // screen-thread number presentation; no MIDI/audio feedback
     CompTrail comp_trail; // the screen thread's, in snapshot(): the Compressor page's picture over time
     CompBar comp_bar;     // and over one bar of the song (round 2, compressor B)
     HeadTrail trail; // the screen thread's, in snapshot(): heads kept while their wakes fade
@@ -158,9 +165,16 @@ private:
     std::atomic<bool> leave {false}, power_off {false};
     SampleLibrary* library_ = nullptr;
     unsigned library_seen = ~0u;
+    uint32_t holds_at = 0;      // when the long samples' held chunks were last looked at (lights.cpp)
+    FrameView zoomed_view() const; // Trim's or Chop's view zoomed in, in 44.1 kHz frames; none when not zoomed
+    StreamHolds holds_sent;     // what the library was last asked to hold
     unsigned format_seen = 0; // the engine's format_changes() the project was last sent again for
-    uint32_t tap_down = 0;
-    bool tap_held = false;
+    EncoderHold enc; // the encoder's push: a tap is the page's, a hold opens the MENU (shell/menu.h)
+    TapHold tap; // Tap Tempo held: the tempo on the encoder, or the Tempo page (shell/tap_hold.h)
+    // Background save (shell/autosave.h): when a control or a note last came in, and the last save that found no card.
+    uint32_t last_input_ = 0, autosave_try_ = 0;
+    bool autosave_failed_ = false;
+    void autosave_tick(uint32_t now); // MIDI thread, from lights()
     ProjectStore* store_ = nullptr;
     InputRoute* input_ = nullptr;
     CardLink card_link;

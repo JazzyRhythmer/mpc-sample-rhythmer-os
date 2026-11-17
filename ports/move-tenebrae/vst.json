@@ -1,0 +1,16 @@
+{
+  "name": "Tenebrae",
+  "vendor": "legsmechanical",
+  "uid": "RTnb",
+  "version": 10101,
+  "so": "rhythmer-tenebrae.so",
+  "module": "contract.json",
+  "custom_skin": true,
+  "targets": [
+    "aarch64"
+  ],
+  "defines": {
+    "MODULE_SUBDIR": "\"module\"",
+    "HAS_SONG_POS": 1
+  }
+}

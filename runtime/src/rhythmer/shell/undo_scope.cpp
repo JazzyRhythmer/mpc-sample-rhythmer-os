@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
 #include "rhythmer/shell/undo_scope.h"
+#include "rhythmer/shell/features.h"
 #include "rhythmer/shell/stage_map.h"
 
 namespace rhythmer {
@@ -9,7 +10,7 @@ using Kind = Binding::Kind;
 namespace {
 UndoScope pad_scope(const UiState& ui, const Project& project) {
     const auto& t = project.tracks[ui.track % track_count];
-    if (t.engine != EngineKind::Sampler) return {};
+    if (!t.sampled()) return {};
     return {UndoScope::Kind::Pad, uint8_t(ui.track % track_count), uint16_t(t.last_pad % sampler_pads)};
 }
 UndoScope of(UndoScope::Kind kind, const UiState& ui, unsigned index = 0) { return {kind, uint8_t(ui.track % track_count), uint16_t(index)}; }
@@ -63,7 +64,7 @@ UndoScope binding_scope(const Project& project, const UiState& ui, const Binding
     case Kind::PadFilterType: case Kind::PadCutoff: case Kind::PadResonance: case Kind::PadFAttack: case Kind::PadFDecay:
     case Kind::PadFSustain: case Kind::PadFRelease: case Kind::PadFAmount: case Kind::PadWarp: case Kind::PadBeats:
     case Kind::LayerLow: case Kind::LayerHigh: case Kind::LayerPitch: case Kind::LayerGain: case Kind::LayerPlayMode: case Kind::PadLoopXfade:
-    case Kind::PadColour: case Kind::PadSend:
+    case Kind::PadColour: case Kind::PadSend: case Kind::PadCloud:
     case Kind::ZoneTune: case Kind::ZoneLevel: // round 3 "instrument C": the pad's state holds its trims
         return pad_scope(ui, project);
     case Kind::ChopMode: case Kind::ChopAmount: case Kind::ChopStart: case Kind::ChopEnd: return of(S::Chop, ui);
@@ -105,7 +106,7 @@ UndoScope freeze_scope(const Project& project, const UiState& ui, const Binding&
     case Kind::PatternBars: case Kind::PatternLength: case Kind::Division: case Kind::Swing: case Kind::TcShift: case Kind::TcSwing:
         return pattern_scope(project, ui);
     case Kind::BreakPerfParam: case Kind::TrackSpeed: case Kind::StageSound: case Kind::PluginParam: case Kind::ArpMode: case Kind::ArpRate: case Kind::ArpOctaves:
-    case Kind::ArpGate: case Kind::ArpHold: case Kind::ChordType: case Kind::ChordVoicing: case Kind::ChordInvert: case Kind::ChordOn:
+    case Kind::ArpGate: case Kind::ArpHold: case Kind::ArpOn: case Kind::ChordType: case Kind::ChordVoicing: case Kind::ChordInvert: case Kind::ChordOn:
         return of(UndoScope::Kind::Sound, ui); // the plug-in's values, the arp and chords play into the print
     default: return binding_scope(project, ui, b);
     }
@@ -136,7 +137,7 @@ UndoScope press_scope(const Project& project, const UiState& ui, SurfaceButton b
     case PageId::Roll: case PageId::StepEdit: return pattern_scope(project, ui); // notes written, toggled, moved
     case PageId::Stage: { // a kit's TRIM: Shift + B1 Loop Lock and Shift + B2 Normalize, as on the old Trim
         const auto& t = project.tracks[ui.track % track_count];
-        bool kit_page = stage_kit_page(stage_page_now(ui, t, stage_instrument(project, t)).kind) != PageId::Count;
+        bool kit_page = stage_kit_page(stage_page_now(ui, t, stage_skip(project, ui, t)).kind) != PageId::Count;
         return kit_page && ui.shift && !pad ? pad_scope(ui, project) : UndoScope {};
     }
     default: return {};

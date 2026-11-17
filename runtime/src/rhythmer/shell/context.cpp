@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
 #include "rhythmer/shell/note_jobs.h"
+#include "rhythmer/shell/menu.h"
+#include "rhythmer/shell/ask.h"
+#include "rhythmer/shell/new_track.h"
+#include "rhythmer/shell/levels_keys.h"
 #include "rhythmer/shell/mod_jobs.h"
 #include "rhythmer/shell/midi_track_jobs.h"
 #include "rhythmer/shell/context.h"
@@ -14,6 +18,7 @@
 #include <cmath>
 #include "rhythmer/engine/take_recorder.h"
 #include "rhythmer/model/chords.h"
+#include "rhythmer/shell/progression_jobs.h"
 #include "rhythmer/model/scales.h"
 #include "rhythmer/model/project_file.h"
 #include "rhythmer/plugin/plugin_rack.h"
@@ -30,6 +35,7 @@
 #include "rhythmer/shell/looper_jobs.h"
 #include "rhythmer/shell/page_stack.h"
 #include "rhythmer/shell/pad_colour.h"
+#include "rhythmer/shell/mpc_wav_slices.h"
 #include <filesystem>
 #include <chrono>
 #include <cstdio>
@@ -53,7 +59,7 @@ void Context::send(const Command& command) {
     }
     // A note played by hand or by MIDI in plays at the frame it came in, a block late, not at the next block's start.
     switch (command.type) {
-    case Type::NoteOn: case Type::NoteOff: case Type::PadNote: case Type::ArpKey: case Type::Pressure: case Type::Control: case Type::Audition:
+    case Type::NoteOn: case Type::NoteOff: case Type::PadNote: case Type::ArpKey: case Type::RepeatKey: case Type::Pressure: case Type::Control: case Type::Audition:
         host.send_at(command, hit_ns);
         break;
     default: host.send(command);
@@ -65,13 +71,17 @@ void Context::save_project_to(const std::string& path) {
     auto name = std::filesystem::path(path).stem().string();
     std::snprintf(project.name, sizeof(project.name), "%s", name.c_str());
     save_loop_files(*this, path); // the loops' lengths into the project, their audio beside it (docs/LOOPER.md)
-    keep_chop();                  // Chop's slices with it (roadmap P3)
+    keep_chop();                  // Chop's slices into their WAV files (and older projects' chops)
     free_unused_samples();        // and no slot nothing uses (roadmap P3)
     PluginStates states;
     if (plugins) states = plugins->states(); // each plug-in's state as it is now, beside the project
-    store->save(path, rhythmer::save_project(project, patterns, &states, &prints), project_path); // Save As: its prints copied (F2d)
+    // Save As: its prints copied (F2d); an imported project's first save: its takes copied in (F3)
+    const std::string from = project_path.empty() ? audio_staging_from : project_path;
+    store->save(path, rhythmer::save_project(project, patterns, &states, &prints), from);
+    if (project_path.empty() && !audio_staging_from.empty()) audio_sent_path = path; // its takes play on from where they are
     project_path = path;
     dirty = false;
+    import_unsaved = false;
 }
 
 // Roadmap P3: a sample slot no pad's layer plays, no undo or redo could bring back onto one, no file being made
@@ -84,8 +94,8 @@ unsigned Context::free_unused_samples() {
     unsigned freed = 0;
     for (unsigned n = 0; n < sample_slots; ++n) {
         if (!project.samples[n].used() || used[n]) continue;
-        project.samples[n] = SampleRef {};
-        project.chops[n] = SampleChop {};
+        project.samples.edit(n) = SampleRef {};
+        if (project.chops[n].used()) project.chops.edit(n) = SampleChop {};
         if (library) library->load(n, ""); // its audio let go (a full queue: replaced when the slot is next used)
         ++freed;
     }
@@ -93,6 +103,20 @@ unsigned Context::free_unused_samples() {
 }
 
 void Context::save_project() { save_project_to(project_path.empty() && store ? store->free_path("") : project_path); }
+
+// Background save (shell/autosave.h): into its own file; with none yet, a new one named after the project
+// (an imported project keeps its name), else Project N. False when there is no card to save to.
+bool Context::autosave() {
+    if (!store) return false;
+    std::string path = project_path;
+    if (path.empty()) {
+        const std::string name = project.name;
+        path = name.empty() || name == "Untitled" ? store->free_path("") : store->named_path(name);
+    }
+    if (path.empty()) return false;
+    save_project_to(path);
+    return true;
+}
 
 void Context::new_project() {
     if(!kit_from.empty())kit_target=-2;
@@ -110,12 +134,19 @@ void Context::switch_to(const Project& next, const PatternBank& bank, const std:
     if(!bank_from.empty())bank_target=-2;
     ui.break_pending=-1;ui.break_from_picker=false;
     send({Type::AllNotesOff, 255});
+    import_unsaved = false; // an MPC project's load sets it again once this is done (Shell::lights)
     prints = next_prints ? *next_prints : PrintTable {}; // a print still under way for the last project is dropped (print_tick)
     freeze_waiting = 0; // freeze plan F2b: its frozen tracks play live until their prints are checked and mapped again
     deep_hold = thawing = 0; // freeze plan F2d: its deep-frozen tracks' plug-ins are never loaded (plugins_asleep())
     deep_sent.fill(0);
     for (unsigned t = 0; t < track_count; ++t) { ++freeze_serial[t]; if (frozen(t)) freeze_waiting |= 1u << t; }
+    audio_stale = 0xffff; // freeze plan F3: its audio tracks' regions mapped again (the audio thread lets the last go)
+    audio_peaks.reset();  // and their takes' overviews read again (another folder's)
+    audio_prune = true;   // and its takes no pattern plays removed (nothing in its history can bring them back)
+    audio_staging_from.clear(); // an import's own are set by its loader
+    for (auto& serial : audio_serial) ++serial;
     if (plugins) plugins->set_states(plugin_states ? *plugin_states : PluginStates {});
+    for(unsigned t=0;t<track_count;++t)invalidate_track_jobs(*this,t);
     project = next;
     patterns = bank;
     auto keep = ui.pots;
@@ -127,17 +158,24 @@ void Context::switch_to(const Project& next, const PatternBank& bank, const std:
     ui.settings = settings;
     for (auto& pot : ui.pots) pot.bound = 0; // pick the new values up again
     edits.clear();                            // its edits were made to another project
+    chain_lead = -1;                          // and its chain of sequences
     take_edit.reset(); take_track = -1;
     for (auto& h : held_notes) h.key = -1;
     ui.lead_pattern = project.tracks[0].pattern; // as the audio thread starts it
     free_retired();
     send_reload(new ProjectPack(project, patterns), false);
     ui.loading = true; // the Loading sheet until it is built and its samples are in (reload_tick)
-    ui.loading_since = now;
-    ui.loading_total = 0;
-    for (const auto& ref : project.samples) ui.loading_total += ref.used() && ref.path[0] == '/';
-    ui.loading_left = ui.loading_total;
+    ui.loading_since = loading_moved = now;
+    loading_instruments.reset();
+    for (unsigned n = 0; n < sample_slots; ++n) {
+        const auto& ref = project.samples[n];
+        if (!ref.used() || ref.path[0] != '/') continue;
+        if (SampleLibrary::instrument_path(ref.path)) { loading_instruments.set(n); ++ui.loading_instruments; ++ui.loading_files; }
+        else ++ui.loading_samples;
+    }
+    ui.loading_total = ui.loading_left = uint16_t(ui.loading_samples + ui.loading_files);
     send_click(); // the metronome is Rhythmer's, and no take is running now
+    send_repeat_velocity();
     project_path = path;
     if (store) store->opened(path); // a file of its own: the one the next start resumes
     dirty = false;
@@ -200,17 +238,32 @@ void Context::reload_tick() {
         }
     }
     if (!ui.loading) return;
-    // Built: the Loading sheet stays until every sample slot has been asked for again and read (or 20 s have gone).
+    // Built: the Loading sheet stays until every sample slot has been asked for again and read, its instruments'
+    // files landed with them (or nothing has come in for 20 s). What is in is counted for its rows and its bar.
     // (No library, no samples to wait for: the host tests' and the monkey's shells.)
     unsigned waiting = library ? library->loads_waiting() : 0;
     unsigned asked = library ? std::min<unsigned>(samples_to_load, sample_slots) : sample_slots;
     unsigned unasked = sample_slots - asked;
-    unsigned left = 0; // of the project's samples, those not asked for yet, and as many as are still being read
-    for (unsigned n = asked; n < sample_slots; ++n) left += project.samples[n].used() && project.samples[n].path[0] == '/';
-    left += std::min<unsigned>(waiting, ui.loading_total);
-    ui.loading_left = uint16_t(std::min<unsigned>(left, ui.loading_total));
+    unsigned samples_in = 0, files = 0, files_in = 0;
+    for (unsigned n = 0, span = unsigned(project.samples.span()); n < span; ++n) {
+        const auto& ref = project.samples[n];
+        if (!ref.used() || ref.path[0] != '/') continue;
+        const SampleLibrary::SlotLoad load = library && n < asked ? library->slot_load(n) : SampleLibrary::SlotLoad {};
+        if (!loading_instruments.test(n)) { samples_in += load.settled; continue; }
+        if (load.parts) { files += load.parts; files_in += load.parts_in; } // its own file read: its files counted
+        else { files += 1; files_in += load.settled; }                      // not read yet, or it could not be
+    }
+    if (!library) { samples_in = ui.loading_samples; files_in = files; }
+    if (samples_in != ui.loading_samples_in || files_in != ui.loading_files_in || files != ui.loading_files) loading_moved = now;
+    ui.loading_samples_in = uint16_t(samples_in);
+    ui.loading_files = uint16_t(files);
+    ui.loading_files_in = uint16_t(files_in);
+    ui.loading_total = uint16_t(ui.loading_samples + files);
+    ui.loading_left = uint16_t(ui.loading_total - std::min<unsigned>(samples_in + files_in, ui.loading_total));
+    if (ui.loading_total) ui.loading_bar = std::max<uint16_t>(ui.loading_bar, uint16_t(1000u * (ui.loading_total - ui.loading_left) / ui.loading_total));
+    ui.loading_slot = library ? int16_t(library->loading_now()) : int16_t(-1);
     bool in = !reloading.pack && !unasked && slots_waiting.empty() && !waiting;
-    if (!in && now - ui.loading_since < loading_most_ms) return;
+    if (!in && now - loading_moved < loading_most_ms) return;
     ui.loading = false;
     ui.loading_left = 0;
 #if defined(__GLIBC__)
@@ -219,12 +272,15 @@ void Context::reload_tick() {
 }
 
 void Context::open(PageId page) {
+    if(ui.page==PageId::Edit && page!=PageId::Edit && track().break_bars)
+        for(unsigned n=0;n<16;++n)if(pad_track[n]==ui.track && pad_keys[n][0]>=0 && pad_keys[n][0]<19)release_pad(n);
     if(page==PageId::Edit&&track().engine==EngineKind::Plugin&&ui.page!=PageId::PluginPresets){
         ui.edit_page[ui.track]=1;ui.edit_row[ui.track]=0;ui.kit_common=false;
         if(track().plugin<max_plugins){ui.plugin_row[track().plugin]=0;}plugin_panel_at=0;
     }
     if(page!=PageId::Samples){ui.break_browse=false;ui.break_from_picker=false;}
     if(page!=PageId::Project)ui.project_kit_only=false;
+    if (page != PageId::Scenes) ui.scene_capture = false; // CAPTURE waits for a pad on Scenes only
     // A PLUGIN track's sounds are the plug-ins on the card (Sample Select, or Sounds from anywhere).
     if (page == PageId::Sounds && track().engine == EngineKind::Plugin && plugins) { open_plugin_picker(UiState::PluginTarget::Instrument); return; }
     if (page == PageId::Trim) { // Trim lives on Stage now: a kit's B1 TRIM (the sampler pages' B1 and Chop come here)
@@ -267,6 +323,10 @@ void Context::open(PageId page) {
 }
 
 void Context::back() {
+    if(ui.ask!=UiState::Ask::None){ask_button(*this,SurfaceButton::TopLeft);return;}
+    if(ui.menu){menu_button(*this,SurfaceButton::TopLeft);return;}
+    if(ui.name.open()){cancel_name();return;}
+    if(ui.page==PageId::Stage&&!track().used()){if(ui.new_sources)new_track_types(*this);else cancel_new_track(*this);return;}
     if(ui.page==PageId::Patterns && ui.sheet_open && ui.gen8_mode==2 && ui.break_pending>=0 && ui.break_job_track==ui.track){
         // Decoder may finish in the cache, but a cancelled load must never commit.
         ui.break_pending=-1;ui.break_job_track=-1;notice("BREAK load cancelled");
@@ -305,15 +365,29 @@ void Context::select_track(unsigned t) {
     if (ui.page == PageId::Sounds) audition(-1);
     stage_tick(UINT32_MAX); // a sound still waiting to load lands on the track it was turned on
     bool changed = ui.track != t % track_count;
+    if(changed && ui.page==PageId::Edit && track().break_bars)for(unsigned n=0;n<16;++n)if(pad_track[n]==ui.track && pad_keys[n][0]>=0 && pad_keys[n][0]<19)release_pad(n);
+    if(changed && ui.page==PageId::Samples){stop_preview();if(library)library->preview("");}
     bool bound = (ui.page==PageId::Project && ui.project_kit_only) || ui.page==PageId::Print || ui.page == PageId::Samples || ui.page == PageId::Sounds || ui.page == PageId::TrackActions
-        || ui.page == PageId::Edit || ui.page == PageId::Chop || ui.page == PageId::PadPage
+        || ui.page == PageId::AutoSample || ui.page == PageId::Stems || ui.page == PageId::Edit || ui.page == PageId::Chop || ui.page == PageId::PadPage
         || ui.page == PageId::PlayPage || ui.page == PageId::EnvelopePage || ui.page == PageId::FilterPage
         || ui.page == PageId::FollowPage || ui.page == PageId::CloudPage || ui.page == PageId::PadMix
         || ui.page == PageId::PadFilterPage || ui.page == PageId::FilterEnvPage || ui.page == PageId::LayersPage
         || (ui.page == PageId::PluginPresets && (ui.presets_back == PageId::Stage || ui.presets_back == PageId::Edit || ui.presets_back == PageId::Rack || ui.presets_back == PageId::PadFx))
         || (ui.page == PageId::Plugins && (ui.plugin_target == UiState::PluginTarget::Instrument || ui.plugin_chain < track_count));
+    if(changed){
+        bool owned=false;
+        switch(ui.ask){
+        case UiState::Ask::EraseKeyEvents:case UiState::Ask::EraseLane:case UiState::Ask::ErasePunches:case UiState::Ask::ClearPattern:case UiState::Ask::ClearTrack:case UiState::Ask::Unfreeze:case UiState::Ask::BreakLength:owned=true;break;
+        case UiState::Ask::ReplacePlugin:owned=ui.plugin_target==UiState::PluginTarget::Instrument||ui.plugin_chain<track_count;break;
+        case UiState::Ask::DeleteFile:owned=bound;break;
+        default:break;
+        }
+        if(owned){ask_button(*this,SurfaceButton::TopLeft);ui.plugin_replace=false;}
+        ui.menu=menu_closed;
+    }
     ui.track = uint8_t(t % track_count);
     if(changed) {
+        if (bound && ui.ask == UiState::Ask::ReplacePlugin) { ui.ask=UiState::Ask::None; ui.plugin_replace=false; }
         ui.sheet_open=ui.map_open=ui.picker_open=ui.move_open=false;
         ui.new_for=-1;ui.new_back=PageId::Stage;
         ui.new_kit=-1;ui.layer_load=-1;ui.zone=0;ui.held_note=-1;ui.kit_common=false;
@@ -322,7 +396,7 @@ void Context::select_track(unsigned t) {
         unsigned kept=0;
         for(unsigned i=0;i<ui.back_depth;++i){auto p=ui.back_stack[i];
             bool stale=p==PageId::PluginPresets || p==PageId::Plugins || p==PageId::Samples || p==PageId::Sounds
-                || p==PageId::Edit || p==PageId::TrackActions || p==PageId::Chop || p==PageId::PadPage
+                || p==PageId::AutoSample || p==PageId::Stems || p==PageId::Edit || p==PageId::TrackActions || p==PageId::Chop || p==PageId::PadPage
                 || p==PageId::PlayPage || p==PageId::EnvelopePage || p==PageId::FilterPage || p==PageId::FollowPage
                 || p==PageId::CloudPage || p==PageId::PadMix || p==PageId::PadFilterPage || p==PageId::FilterEnvPage
                 || p==PageId::LayersPage || p==PageId::Print;
@@ -353,12 +427,17 @@ void Context::follow_zone(unsigned kit, int semitones, int velocity) {
     if (zone >= 0) ui.zone = uint16_t(zone);
 }
 
-// One key of a pad press, to the arp when it is on, else straight to the
-// engine; every press also goes into the ring Capture reads (roadmap P5).
+// One key of a pad press: to Note Repeat when it is on, else to the arp when
+// that is on, else straight to the engine; every press also goes into the ring
+// Capture reads (roadmap P5).
 void Context::key(int k, int velocity, bool down, int cutoff) {
     auto& t = track();
     if(down&&t.engine==EngineKind::Sampler&&t.break_bars)t.last_note=uint8_t(k);
-    if (t.arp) {
+    if (t.repeat) {
+        Command c {Type::RepeatKey, ui.track, 0, uint16_t(k), int16_t(down ? velocity : 0)};
+        c.position = uint32_t(cutoff + 1); // a 16 Levels Filter pad's cutoff, kept on its repeats
+        send(c);
+    } else if (t.arp) {
         Command c {Type::ArpKey, ui.track, 0, uint16_t(k), int16_t(down ? velocity : 0)};
         c.position = uint32_t(cutoff + 1); // a 16 Levels Filter pad's cutoff, kept on its repeats
         if (down || !t.arp_latch) send(c);
@@ -366,7 +445,7 @@ void Context::key(int k, int velocity, bool down, int cutoff) {
         note(ui.track, k, down ? velocity : 0);
     }
     if (!down) record_release(k);
-    if (down && !t.arp) record(k, velocity); // with the arp on the press is not heard: its notes are written as they play (take_arp_notes)
+    if (down && !t.repeat && !t.arp) record(k, velocity); // repeated or arpeggiated, the press is not heard: its notes are written as they play (take_arp_notes)
     keep_played(ui.track, k, velocity, down); // roadmap P5: always, for Capture
 }
 
@@ -381,7 +460,7 @@ void Context::release_pad(unsigned pad) {
     auto& t = track();
     for (auto& k : keys)
         if (k >= 0) {
-            if (t.arp && t.arp_latch && t.engine != EngineKind::Sampler) send({Type::Pressure, ui.track, 0, uint16_t(k), 0});
+            if (!t.repeat && t.arp && t.arp_latch && t.engine != EngineKind::Sampler) send({Type::Pressure, ui.track, 0, uint16_t(k), 0});
             key(k, 0, false); k = -1;
         }
     ui.track = selected;
@@ -393,17 +472,28 @@ void Context::play_pad(unsigned pad, uint8_t velocity, bool down) {
     if (!down) return;
     pad_track[pad] = ui.track;
     auto& t = track();
-    if (t.arp && t.arp_latch && !held_pads()) { // a fresh latch: the old keys go
+    if (!t.repeat && t.arp && t.arp_latch && !held_pads()) { // a fresh latch: the old keys go
         send({Type::Arp, ui.track, 0, 0, 0}); send({Type::Arp, ui.track, 0, 0, 1});
     }
     if (t.engine == EngineKind::Sampler) { // the pads are the kit's, in the bank in view
         if (t.levels) { // 16 Levels: one kit pad, soft to loud, its filter swept, or in pitch
             auto level = levels_of(project, t, pad);
             ui.levels_hit = int8_t(pad); ui.levels_value = int16_t(level.shown);
-            if (level.none) return; // Zones: a pad past the instrument's last key
+            if (level.none) return; // Zones: a pad past the instrument's last key; Chords: a pad with no chord
+            if (LevelsKind(t.levels_kind % unsigned(LevelsKind::Count)) == LevelsKind::Chords && !drum_pads(t)) {
+                // Chords: the pad's sample at each note of the progression's chord, as so many notes of the pad
+                std::array<int, notes_per_step> chord {};
+                unsigned count = levels_chord(t, pad, chord);
+                for (unsigned n = 0; n < count; ++n) {
+                    pad_keys[pad][n] = pad_note(int(sampler_first_note + t.levels_pad), levels_chord_semitones(chord[n]));
+                    key(pad_keys[pad][n], velocity, true); // played, recorded and kept as any pad's note
+                }
+                follow_zone(t.levels_pad, level.semitones, velocity);
+                return;
+            }
             pad_keys[pad][0] = pad_note(int(sampler_first_note + t.levels_pad), level.semitones); // what it plays, so Seq Record keeps it
             int v = level.velocity ? level.velocity : velocity;
-            if (t.arp) { // Note Repeat: the level repeats, its release lets go of it (a Note On pad too)
+            if (t.repeat || t.arp) { // Note Repeat or the arp: the level repeats, its release lets go of it (a Note On pad too)
                 key(pad_keys[pad][0], v, true, level.cutoff);
                 follow_zone(t.levels_pad, level.semitones, v);
                 return;
@@ -428,9 +518,20 @@ void Context::play_pad(unsigned pad, uint8_t velocity, bool down) {
         plugins->set_param(t.plugin,0,int(std::lround(slot*1000.0/63)));
         refresh_plugin_panel(t.plugin);
     }
+    if (ui.prog_storing) prog_store_pad(*this, pad); // Keys storing a chord: it goes on this pad, then the pad plays it
     if (t.levels) { // 16 Levels on a synth: the last note on all sixteen, soft to loud or in pitch; Scale the key's notes
         auto level = levels_of(project, t, pad);
         ui.levels_hit = int8_t(pad); ui.levels_value = int16_t(level.shown);
+        if (level.none) return; // Chords: a pad with no chord
+        if (LevelsKind(t.levels_kind % unsigned(LevelsKind::Count)) == LevelsKind::Chords && !drum_pads(t)) { // the progression's chord
+            std::array<int, notes_per_step> chord {};
+            unsigned count = levels_chord(t, pad, chord);
+            for (unsigned n = 0; n < count; ++n) {
+                pad_keys[pad][n] = int16_t(std::clamp(chord[n], 0, 127));
+                key(pad_keys[pad][n], velocity, true);
+            }
+            return;
+        }
         pad_keys[pad][0] = int16_t(level.key >= 0 ? level.key : std::clamp(int(t.last_note) + level.semitones, 0, 127));
         key(pad_keys[pad][0], level.velocity ? level.velocity : velocity, true);
         return;
@@ -441,7 +542,8 @@ void Context::play_pad(unsigned pad, uint8_t velocity, bool down) {
     unsigned count = 1;
     keys[0] = pad_note(project, t, pad).key;
     if (drum_pads(t) && t.engine == EngineKind::Midi) t.last_pad = uint8_t(16 * drum_bank(t) + pad % 16); // the drum PADS' K2 maps (roadmap P4)
-    if (t.chord && t.layout != PadLayout::Levels) count = chord_notes(project, t, pad, keys);
+    if ((t.chord || t.layout == PadLayout::Prog) && t.layout != PadLayout::Levels) count = chord_notes(project, t, pad, keys); // Prog: the pad's chord
+    if (!count) return; // a Prog pad with no chord on it
     if (t.layout != PadLayout::Levels) t.last_note = uint8_t(std::clamp(keys[0], 0, 127));
     for (unsigned n = 0; n < count; ++n) {
         pad_keys[pad][n] = int16_t(std::clamp(keys[n], 0, 127));
@@ -519,6 +621,7 @@ void Context::set_param(unsigned t, int id, int value) {
 }
 
 void Context::load_sound(unsigned t, EngineKind kind, unsigned sound) {
+    invalidate_track_jobs(*this,t);
     auto& tr = project.tracks[t % track_count];
     tr.break_bars=0; // an explicit ordinary sound load leaves Break Engine
     bool engine_changed = tr.engine != kind;
@@ -569,6 +672,7 @@ void Context::audition(int sound) {
 void Context::apply(const Binding& b, int value) {
     using Kind = Binding::Kind;
     value = std::clamp(value, b.min, b.max);
+    if(b.kind==Kind::BreakPreviewMode){ui.break_preview_sync=value!=0;preview_cursor();return;}
     if (frozen_edit(freeze_scope(project, ui, b))) return; // freeze plan F2c: what a frozen track's prints hold asks "Unfreeze track N?" first
     touch_gesture(b); // one undo step per control's turns (shell/undo_scope.cpp)
     learn_lane(*this, b); // roadmap P4: what ADD on the MOD page takes
@@ -598,7 +702,14 @@ void Context::apply(const Binding& b, int value) {
     case Kind::Layout:
         if (PadLayout(value) == PadLayout::Drums) use_drum_pads(t);
         else t.layout = PadLayout(value);
+        ui.prog_storing = false;
+        if (t.layout == PadLayout::Prog) prog_layout_on(*this);
         break;
+    case Kind::ProgKey: t.prog_shift = int8_t(((value - int(t.prog.root)) % 12 + 12 + 6) % 12 - 6); break; // the nearest way: -6..5
+    case Kind::ProgVoicing: t.prog_voicing = uint8_t(value % int(ProgVoicing::Count)); break;
+    case Kind::BuildRoot: levels_chord_card(*this, 0, value); break; // 16 Levels' SET (shell/levels_keys.h)
+    case Kind::BuildChord: levels_chord_card(*this, 1, value); break;
+    case Kind::BuildInvert: levels_chord_card(*this, 2, value); break;
     case Kind::Transpose: t.transpose = int8_t(std::clamp(value, -12, 12)); break;
     case Kind::Engine: {
         std::array<EngineKind, size_t(EngineKind::Count)> engines {};
@@ -665,6 +776,10 @@ void Context::apply(const Binding& b, int value) {
         send({Type::Swing, 0, 0, 0, int16_t(value)});
         break;
     case Kind::SongZoom: ui.song_zoom = uint8_t(value); break;
+    case Kind::RegionGain: case Kind::RegionStart: case Kind::RegionEnd: case Kind::RegionFadeIn: case Kind::RegionFadeOut:
+    case Kind::RegionReverse: case Kind::RegionWarp: case Kind::RegionBpm: case Kind::RegionSemi: case Kind::RegionFine:
+        set_region_value(b, value); // freeze plan F3 (shell/audio_jobs.cpp)
+        break;
     case Kind::SongPattern:
     case Kind::SongLength:
         if (b.id >= 0) { // the clip under the cursor
@@ -698,6 +813,14 @@ void Context::apply(const Binding& b, int value) {
         pad().sends[bus] = uint8_t(std::clamp(value, 0, 100));
         send_pad(ui.track, t.last_pad);
         record_pad_motion(PadParam(unsigned(PadParam::SendA) + bus), pad().sends[bus]); // its lane on the pad
+        break;
+    }
+    case Kind::PadCloud: { // the pad's cloud: on or off, or a value Motion records as a lane of the pad
+        if (!b.id) { pad().cloud = value != 0; send_pad(ui.track, t.last_pad); break; }
+        auto which = PadParam(int(PadParam::CloudPosition) + std::clamp(b.id, 1, 5) - 1);
+        set_pad_param(pad(), which, value);
+        send_pad(ui.track, t.last_pad);
+        record_pad_motion(which, pad_param_value(pad(), which));
         break;
     }
     case Kind::PadStart: { // Trim's handles, in frames
@@ -746,7 +869,7 @@ void Context::apply(const Binding& b, int value) {
         (b.kind == Kind::ZoneTune ? tune : level) = value;
         if (!set_trim(t.zone_trims, kit, zone, slot, tune, level)) { notice("Zone trims full"); break; }
         ZoneTrim sent;
-        sent.pad = uint8_t(kit); sent.zone = uint16_t(zone); sent.slot = uint8_t(slot);
+        sent.pad = uint8_t(kit); sent.zone = uint16_t(zone); sent.slot = uint16_t(slot);
         if (const ZoneTrim* kept = find_trim(t.zone_trims, kit, zone, slot)) sent = *kept;
         else { sent.tune = 0; sent.level = 0; } // none left: the engine lets it go
         send(zone_trim_command(ui.track, sent));
@@ -833,6 +956,12 @@ void Context::apply(const Binding& b, int value) {
         ui.settings.rec_grid = uint8_t(std::clamp(value, 0, int(Division::Count)));
         settings_save_at = std::max<uint32_t>(now, 1) + 1000;
         break;
+    case Kind::Features: // Settings' K1: Basic or Full; nothing in the project changes
+        if (ui.settings.full_features == (value != 0)) break;
+        ui.settings.full_features = value != 0;
+        notice(value ? "Full: every page" : "Basic: the stock app's pages");
+        settings_save_at = std::max<uint32_t>(now, 1) + 1000;
+        break;
     case Kind::ClickLevel:
         ui.settings.click_level = uint8_t(value);
         send_click();
@@ -851,6 +980,8 @@ void Context::apply(const Binding& b, int value) {
         break;
     }
     case Kind::RecTap: set_input_tap(value != 0); break;
+    case Kind::AudioSource: t.audio.source = audio_sources[unsigned(value) % audio_source_count]; dirty = true; break; // freeze plan F3
+    case Kind::AudioMonitorMode: t.audio.monitor = TrackMonitor(unsigned(value) % unsigned(TrackMonitor::Count)); dirty = true; break;
     case Kind::KnobParam: knob_fx_param(unsigned(b.id), value); break;
     case Kind::PadFxParam: set_pad_fx_param(unsigned(b.id) / 4, unsigned(b.id) % 4, value); break;
     case Kind::FlexMode: set_flex(1, value); break;
@@ -880,13 +1011,16 @@ void Context::apply(const Binding& b, int value) {
     case Kind::GenLast:project.gen8.last=uint8_t(std::clamp(value,0,15));project.gen8.first=std::min(project.gen8.first,project.gen8.last);break;
     case Kind::GenGroup:project.gen8.group=uint8_t(std::clamp(value,0,3));if(ui.gen8_mode==3)ui.sheet_row=project.gen8.group;break;
     case Kind::GenAssign:project.gen8.assign=uint8_t(value!=0);break;
-    case Kind::GenBars:project.gen8.bars=uint8_t(std::clamp(value,1,4));break;
+    case Kind::BreakPreviewMode:break;
+    case Kind::GenBars:if(ui.page==PageId::Samples && ui.break_browse){ui.break_bars=uint8_t(std::clamp(value,1,4));if(ui.break_preview_sync)preview_cursor();}else project.gen8.bars=uint8_t(std::clamp(value,1,4));break;
     case Kind::Gen8Amount: project.gen8.amount=uint8_t(std::clamp(value,0,100)); break;
     case Kind::Gen8Genre: project.gen8.genre=uint8_t(std::clamp(value,0,60)); break;
     case Kind::Gen8Seed: project.gen8.seed=uint16_t(std::clamp(value,0,9999)); break;
     case Kind::VaryAmount: if(ui.gen8_mode==4){project.gen8.complexity=uint8_t(std::clamp(value,0,100));break;} ui.vary_amount = uint8_t(std::clamp(value, 0, 100)); break;
     case Kind::FollowAction: case Kind::FollowOther: case Kind::FollowAfter: case Kind::FollowChance: set_follow(b.kind, value); break; // roadmap P5
     case Kind::SceneTempo: set_scene_tempo(unsigned(b.id), value * 10); break; // Patterns' SCENE: below 30, none of its own
+    case Kind::AutoLow: case Kind::AutoHigh: case Kind::AutoStep: case Kind::AutoLayers: case Kind::AutoHold: case Kind::AutoTail:
+    case Kind::AutoTap: case Kind::AutoLoop: case Kind::AutoLevel: auto_sheet_set(b.kind, value); break; // shell/auto_sample.cpp
     case Kind::PrintTapPick: ui.print_sheet.tap = value ? PrintTap::PreFx : PrintTap::PostFx; break; // freeze plan F2c
     case Kind::PrintTailPick: ui.print_sheet.tail = PrintTail(std::clamp(value, 0, 2)); break;
     case Kind::PatternProgram:
@@ -920,9 +1054,10 @@ void Context::apply(const Binding& b, int value) {
         t.arp_latch = value != 0;
         if (!t.arp_latch) { send({Type::Arp, ui.track, 0, 0, 0}); if (t.arp) send({Type::Arp, ui.track, 0, 0, 1}); }
         break;
+    case Kind::ArpOn: set_arp(value != 0); break; // Shift + K2 on Stage's ARP
     case Kind::ChordOn: t.chord = value != 0; break; // Shift + K1 on Stage's CHORD
     case Kind::LevelsType: { // K1 on 16 Levels: Scale, Tune, Velocity (and Filter on a kit, Zones on an instrument's pad)
-        std::array<LevelsKind, 5> types {};
+        std::array<LevelsKind, 6> types {};
         unsigned count = levels_types(project, t, types);
         t.levels_kind = uint8_t(types[unsigned(std::clamp(value, 0, int(count) - 1))]);
         ui.levels_hit = -1;
@@ -969,6 +1104,14 @@ void Context::set_route(unsigned r, const ModRoute& value) {
 
 void Context::change_setting(unsigned row, int way) {
     ui.settings.step(row, way);
+    if (row == Settings::RepeatVelocity || row == Settings::PadResponse || row == Settings::PadPressure) send_repeat_velocity();
+    if (store) store->save_settings(ui.settings.text());
+}
+
+void Context::set_look(unsigned row, unsigned value) {
+    if (row == Settings::Palette) ui.settings.palette = uint8_t(value % ui::palettes.size());
+    else if (row == Settings::Font) ui.settings.font = uint8_t(value % ui::face_choices);
+    else return;
     if (store) store->save_settings(ui.settings.text());
 }
 
@@ -1007,7 +1150,7 @@ void Context::name_marker(unsigned bar) {
 
 void Context::save_sound() {
     auto& t = track();
-    if (t.engine == EngineKind::None || t.engine == EngineKind::Sampler || !store) return;
+    if (t.engine == EngineKind::None || t.sampled() || !store) return; // a kit's or keygroup's sounds are files
     open_name(NameTarget::Sound, t.name, name_length - 1, true);
 }
 
@@ -1020,6 +1163,7 @@ bool Context::refuse_instrument(const char* job) {
     notice(std::string(job) + ": not on an instrument");
     return true;
 }
+
 
 void Context::save_sample() {
     auto& t = track();
@@ -1076,7 +1220,7 @@ void Context::finish_name() {
     }
     case NameTarget::Sound: {
         auto& t = track();
-        if (!store || t.engine == EngineKind::None || t.engine == EngineKind::Sampler) break;
+        if (!store || t.engine == EngineKind::None || t.sampled()) break;
         t.set_name(text.c_str());
         store->save_sound(text, rhythmer::save_sound(sound_of(t, text.c_str())));
         break;
@@ -1096,7 +1240,7 @@ void Context::finish_name() {
 
 void Context::toggle_favourite() {
     auto& t = track();
-    if (t.engine == EngineKind::Sampler || t.engine == EngineKind::None) return;
+    if (t.sampled() || t.engine == EngineKind::None) return;
     unsigned sound = t.preset;
     if (ui.page == PageId::Sounds) {
         std::array<uint16_t, max_listed> list {};
@@ -1207,7 +1351,7 @@ void Context::flush_motion() {
 
 // A kit pad's own value turned while recording: a lane of that pad (the last hit).
 void Context::record_pad_motion(PadParam which, int value) {
-    if (track().engine != EngineKind::Sampler) return;
+    if (!track().sampled()) return;
     record_motion(motion_lane(motion_pad_param(which), track().last_pad % sampler_pads), value);
 }
 
@@ -1223,7 +1367,10 @@ void Context::clear_lane(int lane) {
 
 void Context::launch(unsigned t, unsigned p) {
     auto& tr = project.tracks[t % track_count];
-    if (!chaining) { tr.chain_count = 0; chain_queued[t % track_count] = false; } // a pattern launched by hand: the chain ends
+    if (!chaining) { // a pattern launched by hand: the chain ends
+        tr.chain_count = 0; chain_queued[t % track_count] = false;
+        if (chain_lead == int(t % track_count)) chain_lead = -1;
+    }
     tr.pattern = uint8_t(p % pattern_count);
     ui.lead_pattern = tr.pattern; // BPM per pattern: the one launched last leads
     send({Type::Pattern, uint8_t(t), 0, 0, int16_t(tr.pattern)});
@@ -1599,13 +1746,13 @@ int Context::sample_slot(const std::string& path, const std::string& name) {
         if (project.samples[n].used() && path == project.samples[n].path) return int(n); // already in the project
         if (free < 0 && !project.samples[n].used()) free = int(n);
     }
-    if (free < 0 || !library) return -1;
-    auto& ref = project.samples[size_t(free)];
-    project.chops[size_t(free)] = SampleChop {}; // a chop of what the slot held before is not this file's
+    if (free < 0 || !library || path.size() >= sizeof(SampleRef::path)) return -1; // a path cut short opens nothing
+    auto& ref = project.samples.edit(size_t(free));
+    project.chops.edit(size_t(free)) = read_mpc_slices(path); // the file's own slices (an MPC's), not the slot's last file's
     std::strncpy(ref.path, path.c_str(), sizeof(ref.path) - 1);
     std::strncpy(ref.name, name.c_str(), sizeof(ref.name) - 1);
     ref.frames = 0; // known once loaded
-    if (!library->load(unsigned(free), path)) slots_waiting.push_back(uint8_t(free)); // a kit of many: the rest as the queue drains
+    if (!library->load(unsigned(free), path)) slots_waiting.push_back(uint16_t(free)); // a kit of many: the rest as the queue drains
     return free;
 }
 
@@ -1648,11 +1795,13 @@ void Context::chop_to_pads() {
     auto& t = track();
     uint32_t frames = ui.chop_sample < sample_slots ? project.samples[ui.chop_sample].frames : 0;
     if (!frames) return;
-    // The pad chopped (the last pad, else the first holding the region): each slice takes its values.
+    // The pad chopped (the last pad, a region of the sample inside the chop's or the region itself; else the first
+    // holding the region): each slice takes its values.
     auto chopped = [&](const PadSound& p) { return p.sample == ui.chop_sample && p.start == ui.chop_from && p.end == ui.chop_to; };
     PadSound parent;
     parent.sample = ui.chop_sample;
-    if (chopped(t.pads[t.last_pad % sampler_pads])) parent = t.pads[t.last_pad % sampler_pads];
+    const auto& last = t.pads[t.last_pad % sampler_pads];
+    if (last.used() && last.sample == ui.chop_sample) parent = last;
     else for (const auto& p : t.pads) if (chopped(p)) { parent = p; break; }
     unsigned pad = 0;
     for (unsigned n = 0; n < ui.slices.count; ++n) {
@@ -1792,9 +1941,22 @@ void Context::set_arp(unsigned track, bool on) {
         send({Type::Arp, n, 0, 1, t.arp_mode}); send({Type::Arp, n, 0, 2, t.arp_rate});
         send({Type::Arp, n, 0, 3, int16_t(t.engine == EngineKind::Sampler ? 1 : t.arp_octaves)}); // a kit repeats its pad
         send({Type::Arp, n, 0, 4, t.arp_gate});
-        send({Type::Arp, n, 0, 5, int16_t(!ui.settings.full_level())}); // pressure sets the repeats' velocity, unless Full Level
     }
     send({Type::Arp, n, 0, 0, int16_t(on)});
+}
+
+void Context::set_repeat(unsigned track, bool on) {
+    uint8_t n = uint8_t(track % track_count);
+    auto& t = project.tracks[n];
+    t.repeat = on;
+    // Notes the pads hold on that track stop; Note Repeat starts with what is pressed next.
+    for (unsigned p = 0; p < pad_keys.size(); ++p)
+        if (pad_track[p] == n) for (auto& k : pad_keys[p]) if (k >= 0) { note(n, k, 0); k = -1; }
+    if (on) {
+        send({Type::Repeat, n, 0, 2, t.repeat_rate});
+        send({Type::Repeat, n, 0, 5, int16_t(ui.settings.repeats_by_pressure())}); // Settings > PADS: Repeat velocity
+    }
+    send({Type::Repeat, n, 0, 0, int16_t(on)});
 }
 
 void Context::set_click(unsigned mode) {
@@ -1804,6 +1966,11 @@ void Context::set_click(unsigned mode) {
 }
 
 // The audio thread only hears on or off: Rec is on while Seq Record is.
+// Note Repeat's velocity on every track: the pad's strike, or its pressure (Settings > PADS: Repeat velocity).
+void Context::send_repeat_velocity() {
+    for (unsigned t = 0; t < track_count; ++t) send({Type::Repeat, uint8_t(t), 0, 5, int16_t(ui.settings.repeats_by_pressure())});
+}
+
 void Context::send_click() {
     const auto& set = ui.settings;
     bool on = set.click == 1 || (set.click == 2 && (ui.recording || loop_click)); // a loop recording counts (docs/LOOPER.md)
@@ -1910,6 +2077,14 @@ void Context::time_correct() {
 // Off: the clips being written end, and the take goes into the history.
 void Context::set_recording(bool on) {
     if (on == ui.recording) return;
+    if (track().is_audio() || (!on && audio_take_track >= 0)) { // freeze plan F3: an audio track's take (shell/audio_jobs.cpp)
+        ui.rec_armed = false;
+        if (on && !record_audio(ui.track)) return;
+        if (!on) end_audio(true);
+        ui.recording = on;
+        if (ui.settings.click == 2) send_click();
+        return;
+    }
     ui.recording = on;
     send({Type::SongRecord, 0, 0, 0, int16_t(on)});
     if (ui.settings.click == 2) send_click(); // the Rec metronome follows Seq Record

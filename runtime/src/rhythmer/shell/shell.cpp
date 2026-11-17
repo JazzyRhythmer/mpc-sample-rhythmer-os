@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
 #include "rhythmer/shell/shell.h"
+#include "rhythmer/shell/features.h"
 #include "rhythmer/crash_log.h"
 #include "rhythmer/shell/erase_copy.h"
 #include "rhythmer/shell/key_pick.h"
 #include "rhythmer/shell/p4_status.h"
 #include "rhythmer/plugin/plugin_rack.h"
+#include "rhythmer/shell/lesson_jobs.h"
+#include "rhythmer/shell/levels_keys.h"
 #include "rhythmer/shell/looper_jobs.h"
 #include "rhythmer/shell/looper_chord.h"
 #include "rhythmer/shell/input_route.h"
@@ -30,6 +33,7 @@
 #include "rhythmer/shell/stage_map.h"
 #include "rhythmer/shell/zoom_view.h"
 #include "rhythmer/shell/sample_mode.h"
+#include "rhythmer/shell/progression_jobs.h"
 #include "rhythmer/shell/seq_layer.h"
 #include "rhythmer/shell/shift_pads.h"
 #include "surface/controls.h"
@@ -88,6 +92,7 @@ struct HitStamp {
 void Shell::midi(const MidiPortInfo& port, const MidiPacket& packet, uint32_t now) {
     std::lock_guard<std::mutex> guard(lock);
     context_.now = now;
+    if (packet.size && packet.bytes[0] < 0xF8) last_input_ = now; // notes and controllers, not the clock: the background save waits
     HitStamp stamp(context_, packet.timestamp_ns);
     midi_io.receive(context_, port, packet);
 }
@@ -121,6 +126,7 @@ void Shell::midi_output(MidiOutput& out, MidiIo::Clock::time_point at, uint32_t 
 void Shell::surface(const SurfaceEvent& event, uint32_t now) {
     std::lock_guard<std::mutex> guard(lock);
     context_.now = now;
+    last_input_ = now; // a hand on the controls: the background save waits (shell/autosave.h)
     HitStamp stamp(context_, event.timestamp_ns);
     const auto& input = event.input;
     { // the crash report's last presses (rhythmer/crash_log.h), with the page and track they were made on
@@ -153,9 +159,14 @@ void Shell::surface(const SurfaceEvent& event, uint32_t now) {
         if (held_off && down) { eaten = true; return; }
         if (eaten) { if (up) eaten = false; return; }
         if (held_off && !up) return;
+        // A lesson (shell/lesson.h): only the step's pad acts; any other does nothing, its release neither.
+        if (ui_.lesson && down && !lesson_takes_pad(ui_, unsigned(event.pad))) { eaten = true; return; }
+        if (ui_.lesson && kind == 0xa0 && !lesson_takes_pad(ui_, unsigned(event.pad))) return;
+        const bool lesson_hit = ui_.lesson && down && !ui_.menu;
         if (down) pad(unsigned(event.pad), event.midi.value, true);
         else if (up) pad(unsigned(event.pad), 0, false);
         else if (kind == 0xa0) context_.pressure(unsigned(event.pad), event.midi.value); // to the mod matrix
+        if (lesson_hit) lesson_pad(ui_, unsigned(event.pad), now); // the step's pad, hit: the next step
         return;
     }
     if (input.kind == SurfaceInput::Kind::Button) {
@@ -169,7 +180,11 @@ void Shell::surface(const SurfaceEvent& event, uint32_t now) {
             return;
         }
         if (eaten && !input.pressed) { eaten = false; return; }
+        // A lesson: only the step's button, the one held with it and the encoder act (held, the MENU: the way out).
+        if (ui_.lesson && input.pressed && !lesson_takes_button(ui_, Button(input.index))) { eaten = true; return; }
+        const bool in_lesson = ui_.lesson && !ui_.menu;
         button(Button(input.index), input.pressed);
+        if (in_lesson && ui_.lesson) lesson_button(ui_, Button(input.index), input.pressed, now);
         return;
     }
     if (input.kind != SurfaceInput::Kind::Control) return;
@@ -185,6 +200,24 @@ void Shell::surface(const SurfaceEvent& event, uint32_t now) {
     }
     // SD card access: the card is on a computer; only the main volume still turns (as the MPC, other modes wait).
     if (card_owns_controls(ui_) && SurfaceControl(input.index) != SurfaceControl::MainVolume) return;
+    if (ui_.lesson) { // a lesson: the step's knob or the encoder; the other knobs and the fader keep their positions
+        switch (SurfaceControl(input.index)) {
+        case SurfaceControl::K1: case SurfaceControl::K2: case SurfaceControl::K3: {
+            unsigned n = unsigned(input.index) - unsigned(SurfaceControl::K1);
+            if (!lesson_takes_knob(ui_, n)) { pot(n, input.value, true); return; }
+            pot(n, input.value, event.syncing);
+            if (!event.syncing) lesson_knob(ui_, n, input.value, now);
+            return;
+        }
+        case SurfaceControl::Fader: fader_move(context_, input.value, true); return;
+        case SurfaceControl::Wheel:
+            if (!input.delta || !lesson_takes_wheel(ui_)) return;
+            wheel(input.delta);
+            lesson_wheel(ui_, now);
+            return;
+        default: break; // the main volume
+        }
+    }
     switch (SurfaceControl(input.index)) {
     case SurfaceControl::MainVolume: main_volume.store(main_volume_gain(input.value), std::memory_order_relaxed); break;
     case SurfaceControl::K1: pot(0, input.value, event.syncing); break;
@@ -211,7 +244,7 @@ void Shell::button(Button b, bool pressed) {
     if (card_owns_controls(ui_)) { // SD card access (shell/card_access.h): B1, the question's B3, Play and Stop
         if (!pressed) { // a button held as the card went away lets go, doing nothing
             if (b == Button::Shift) ui_.shift = false;
-            if (b == Button::TapTempo) tap_held = false;
+            if (b == Button::TapTempo) tap.down = false;
             if (b == Button::Play || b == Button::Stop) press(b, pressed);
             else let_go(context_, b);
             return;
@@ -224,7 +257,8 @@ void Shell::button(Button b, bool pressed) {
     }
     if (pressed && b != Button::Erase && b != Button::Shift && ui_.erase) ui_.erase_used = true; // Erase + a button: its release erases nothing
     // Erase's release is a press of its own (a tap erases the thing in focus): one undo step, as any page press.
-    if ((!pressed && b != Button::Erase) || b == Button::Shift || ((b == Button::Minus || b == Button::Plus) && ui_.shift)) { press(b, pressed); return; }
+    // The encoder's too: its tap acts when it is let go (held, it opens the MENU: shell/menu.h).
+    if ((!pressed && b != Button::Erase && b != Button::WheelPush) || b == Button::Shift || ((b == Button::Minus || b == Button::Plus) && ui_.shift)) { press(b, pressed); return; }
     PageEdit step(context_, b, false);
     press(b, pressed);
     step.finish();
@@ -240,14 +274,26 @@ void Shell::press(Button b, bool pressed) {
     }
     if (b == Button::Play && !pressed && ui.fill) context_.fill(false); // Fill lasts while Play is held
     if (b == Button::Sample && !pressed) { sample_button(context_, false); return; } // always heard, so Sample is never left held
+    if (b == Button::WheelPush && !pressed) { // the encoder let go: a tap is the page's Push; held, it opened the MENU
+        bool tap = encoder_release(enc) && enc.track==ui.track && enc.page==uint8_t(ui.page);
+        if (ui.lesson && !lesson_takes_push(ui)) return; // a lesson: Push acts only as its step
+        if (tap && !ui.menu && ui.ask == UiState::Ask::None && !ui.name.open() && !ui.exit_open && !card_owns_controls(ui)) {
+            page_spec(ui.page).push(context_);
+            if (ui.lesson) lesson_push(ui, context_.now);
+        }
+        return;
+    }
     if (pressed && ask_button(context_, b)) return; // a question open (shell/ask.cpp): B1 Cancel, B3 Do it
+    // 16 Levels' FILE or SET open (shell/levels_keys.h): B1 back, B3 or Push picks or is done; the other buttons wait.
+    if (pressed && ui.levels_sheet && !ui.exit_open && !ui.name.open() && levels_sheet_button(context_, b)) return;
     if (new_track_lock(context_, b, pressed)) return; // an empty track in hand: made or left first (shell/new_track.h)
     if (ui.name.open()) { // the Name sheet takes the controls it uses; Play and Stop still work
-        if (!pressed) { if (b == Button::TapTempo) tap_held = false; let_go(context_, b); return; }
+        if (!pressed) { if (b == Button::TapTempo) tap.down = false; let_go(context_, b); return; }
         switch (b) {
         case Button::TopLeft: context_.cancel_name(); return;
         case Button::TopMiddle: if (!ui.name.caps_only) ui.name.lower = !ui.name.lower; return;
-        case Button::TopRight: case Button::WheelPush: context_.finish_name(); return;
+        case Button::TopRight: context_.finish_name(); return;
+        case Button::WheelPush: if(ui.shift){ui.shift_used=true;context_.cancel_name();}else context_.finish_name(); return;
         case Button::Erase: if (ui.shift) { ui.shift_used = true; ui.name.clear(); } else ui.name.erase(); return;
         case Button::Minus: ui.name.move(-1); return;
         case Button::Plus: ui.name.move(1); return;
@@ -255,6 +301,9 @@ void Shell::press(Button b, bool pressed) {
         default: return;
         }
     }
+    // The MENU over the page (shell/menu.h): B1 back, B2 HERE, B3 GO, Push the lit card or tile; any other
+    // button closes it and does its own job.
+    if (pressed && ui.menu && !ui.exit_open && menu_button(context_, b)) return;
     if (b == Button::Seq && (!ui.exit_open || !pressed)) { seq_press(context_, pressed); return; } // tap, hold or Shift (shell/seq_layer.cpp)
     if (pressed && !ui.exit_open && seq_button(context_, b)) return; // Seq held: B1-B3, Minus / Plus, Seq Record, Push
     if (pressed && !ui.exit_open && (b == Button::TopLeft || b == Button::TopMiddle || b == Button::TopRight) &&
@@ -298,7 +347,10 @@ void Shell::press(Button b, bool pressed) {
         }
         if (b == Button::SixteenLevels && !pressed && ui.levels_held && context_.now - ui.levels_down >= levels_hold_ms) ui.levels_used = true;
         switch (looper_chord(ui, b, pressed)) {
-        case ChordAct::Looper: if (ui.shift) ui.shift_used = true; context_.open(PageId::Looper); end_copy_away(); return;
+        case ChordAct::Looper: // Loop + 16 Levels: the Looper (Full's, shell/features.h; Basic: nothing)
+            if (ui.shift) ui.shift_used = true;
+            if (looper_shown(ui)) { context_.open(PageId::Looper); end_copy_away(); }
+            return;
         case ChordAct::Levels:
             if (ui.shift) ui.shift_used = true;
             if (!pressed && (ui.exit_open || ui.ask != UiState::Ask::None)) return; // let go under a sheet: nothing
@@ -334,7 +386,8 @@ void Shell::press(Button b, bool pressed) {
         return;
     }
     if (!pressed) {
-        if (b == Button::TapTempo) tap_held = false;
+        // Tap Tempo let go: the Tempo page it showed for a turn of the encoder goes back (shell/tap_hold.h)
+        if (b == Button::TapTempo && tap_release(tap, ui.page == PageId::Tempo) == TapDo::Close) context_.back();
         return;
     }
     if (ui.shift) ui.shift_used = true;
@@ -342,7 +395,7 @@ void Shell::press(Button b, bool pressed) {
     if (ui.exit_open) {
         // Only the soft keys answer: B1 stays (even while a save to leave after is on its way), B2 turns
         // the MPC off, B3 leaves for the stock app. Push presses the key the wheel highlights.
-        if (b == Button::WheelPush && !ui.exit_off) b = ui.exit_pick == 2 ? Button::TopRight : ui.exit_pick == 1 ? Button::TopMiddle : Button::TopLeft;
+        if (b == Button::WheelPush && !ui.exit_off) b = ui.shift ? Button::TopLeft : ui.exit_pick == 2 ? Button::TopRight : ui.exit_pick == 1 ? Button::TopMiddle : Button::TopLeft;
         if (b == Button::TopLeft) { ui.exit_open = ui.exit_off = ui.exit_saved = false; leave_after_save = -1; off_after_save = false; }
         if ((b == Button::TopMiddle || b == Button::TopRight) && leave_after_save < 0) {
             off_after_save = ui.exit_off = b == Button::TopMiddle;
@@ -365,11 +418,16 @@ void Shell::press(Button b, bool pressed) {
         break;
     case Button::KnobFx:
         if (!ui.shift) { context_.knob_fx_button(); break; } // Knob FX, as on the MPC: the mode on or off (shell/knob_fx.cpp)
-        // Shift + Knob FX (FX SELECT): Rhythmer's effects along the signal, track, sends, bus, master;
-        // on the Looper the selected loop track's chain
+        // Shift + Knob FX (FX SELECT): the effect chains, the same cycle as MIX's B3 FX (track, bus, master,
+        // a kit's pad); on the Looper the selected loop track's chain
         if (ui.page == PageId::Looper && context_.project.looper.on) { int8_t l = int8_t(ui.loop % loop_tracks); context_.open(PageId::Rack); ui.fx_loop = l; break; }
-        context_.open(ui.page == PageId::Rack && ui.fx_loop < 0 ? PageId::Sends : ui.page == PageId::Sends ? PageId::Bus
-                      : ui.page == PageId::Bus ? PageId::Master : PageId::Rack);
+        {
+            bool kit = context_.track().engine == EngineKind::Sampler;
+            bool own_chain = mix_section(ui.page) == MixSection::Fx && !(ui.page == PageId::Rack && ui.fx_loop >= 0);
+            PageId next = own_chain ? mix_next(ui.page, 2, kit) : PageId::Rack;
+            if (next == PageId::Rack) ui.fx_loop = -1; // the track's own chain, not a loop's
+            context_.open(next);
+        }
         break;
     case Button::SampleSelect: // on a sampler track it lists samples
         if (ui.shift) { // by engine: on Sounds a star; on Samples Save Bank; a kit: Save Sample; a synth: Save sound
@@ -380,14 +438,22 @@ void Shell::press(Button b, bool pressed) {
             break;
         }
         if (!ui.shift) {
-            bool kit = context_.track().engine == EngineKind::Sampler;
-            context_.open(kit ? PageId::Samples : PageId::Sounds);
+            bool kit = context_.track().sampled(); // a kit's or a keygroup's sounds are files
+            PageId list = kit ? PageId::Samples : PageId::Sounds;
+            if (ui.page == list) { context_.back(); break; } // its opener closes it (HUBS_PLAN T-a)
+            context_.open(list);
             if (kit && library_) library_->rescan();
         }
         break;
     case Button::SampleRecord: // a sampler track: the Record page; there, a take ends and Sample Mode has its pad
         if (ui.shift) { context_.audio_recall(); break; } // Audio Recall: the input ring's last 25 s
-        if (ui.page == PageId::Print) { context_.print_sheet_cancel(); break; } // again: the sheet closes (calling off its prints)
+        if (ui.page == PageId::AutoSample && ui.auto_sheet.sampling) break; // AUTO SAMPLE (Shift + Pad 11) runs: B1 calls it off
+        if (ui.page == PageId::Print) { context_.print_sheet_cancel(); break; } // again: the sheet closes, calling off its prints
+        if (context_.track().is_audio()) { // freeze plan F3: an audio track's input, on Stage's INPUT (Seq Record records)
+            stage_go(ui, 1, 0);
+            if (ui.page != PageId::Stage) context_.open(PageId::Stage);
+            break;
+        }
         if (context_.track().engine != EngineKind::Sampler) { context_.open_print_sheet(); break; } // freeze plan F2c: PRINT
         if (ui.page != PageId::Record) context_.open(PageId::Record);
         else context_.record_button();
@@ -420,7 +486,7 @@ void Shell::press(Button b, bool pressed) {
             break;
         }
         context_.tap_tempo();
-        tap_down = context_.now; tap_held = true; // held, it opens the Tempo page
+        tap_press(tap, context_.now); // held: the tempo on the encoder, or the Tempo page (shell/tap_hold.h)
         break;
     // Shift + Minus / Plus: undo and redo, as printed, on every page.
     // Pad Bank held: Minus / Plus jump banks.
@@ -440,16 +506,24 @@ void Shell::press(Button b, bool pressed) {
         break;
     // The pads the tracks (Pad Bank held, a track move or copy): B2 MOVE, B3 COPY, B1 back (shell/pad_bank.h).
     // Note Repeat on: B1-B3 are its rate (Shift: triplets), except on Arp and Chord.
-    case Button::TopLeft: if (!track_soft(context_, 0) && !repeat_soft(context_, 0)) page.soft(context_, 0); break;
-    case Button::TopMiddle: if (!track_soft(context_, 1) && !repeat_soft(context_, 1)) page.soft(context_, 1); break;
-    case Button::TopRight: if (!track_soft(context_, 2) && !repeat_soft(context_, 2)) page.soft(context_, 2); break;
+    case Button::TopLeft: case Button::TopMiddle: case Button::TopRight: {
+        int key = b == Button::TopLeft ? 0 : b == Button::TopMiddle ? 1 : 2;
+        if (levels_held_cards(*project_, ui)) { // 16 Levels held: its keys, by the type (shell/levels_keys.h); its release toggles nothing
+            ui.levels_used = true;
+            levels_key(context_, unsigned(key));
+            break;
+        }
+        ui.key_list_key = uint8_t(key); ui.key_list_at = context_.now; // a key of several pages names them for a moment
+        if (!track_soft(context_, key) && !repeat_soft(context_, key)) page.soft(context_, key);
+        break;
+    }
     case Button::WheelPush:
         if (ui.shift && ui.page == PageId::Song) song_marker(context_);
         else if (ui.shift && ui.page == PageId::Project && ui.project_list && !ui.sheet_open && !ui.move_open && project_folder_up(context_)) {
             // up a folder, done
         }
         else if (ui.shift) context_.back();
-        else page.push(context_);
+        else { encoder_press(enc, context_.now);enc.track=ui.track;enc.page=uint8_t(ui.page); } // its job waits for the release: held, it opens the MENU (shell/menu.h)
         break;
     default: break;
     }
@@ -473,6 +547,7 @@ void Shell::check_pickup(unsigned n, const Binding& binding) {
 }
 
 void Shell::pot(unsigned n, int position, bool syncing) {
+    if (ui_.menu && !syncing) return; // the MENU is up: the cards under it wait
     const auto& selected=project_->tracks[ui_.track];
     const bool break_gen=selected.engine==EngineKind::Sampler&&selected.break_bars;
     const bool acid_gen=selected.engine==EngineKind::Plugin&&selected.plugin<max_plugins&&std::string(project_->plugins[selected.plugin].name)=="Acid Engine";
@@ -528,8 +603,26 @@ void Shell::wheel(int delta) {
         if (ui_.shift) { ui_.shift_used = true; ui_.name.step_char(delta); } else ui_.name.move(delta);
         return;
     }
+    if (ui_.menu) { menu_wheel(context_, delta); return; } // the MENU: the wheel walks its cards or tiles
+    if (ui_.levels_sheet) { levels_sheet_wheel(context_, delta); return; } // 16 Levels' FILE: its rows (SET: nothing)
+    if (levels_held_cards(*project_, ui_) && LevelsKind(context_.track().levels_kind % unsigned(LevelsKind::Count)) == LevelsKind::Chords) {
+        ui_.levels_used = true; // 16 Levels held, of type Chords: the encoder picks the progression from the card, as on Keys' Prog layout
+        prog_wheel(context_, delta);
+        if (const auto& prog = context_.track().prog; prog.file[0]) context_.notice(std::string(prog.file).substr(0, 28)); // which one
+        return;
+    }
+    if (tap.down) { // Tap Tempo held, as on the stock app: the tempo by a whole BPM, the Tempo page showing meanwhile
+        if (tap_turn(tap, ui_.page == PageId::Tempo) == TapDo::Open) context_.open(PageId::Tempo);
+        context_.set_tempo(int(context_.tempo_now()) + delta * 10);
+        return;
+    }
     if (seq_wheel(context_, delta)) return;     // Seq held: the tempo
     if (pad_bank_move(context_, delta)) return; // Pad Bank held: the wheel jumps banks
+    if (sample_held_page(*project_, ui_) == PageId::Keys && prog_pads(context_.track())) { // Keys on Prog: the progression
+        ui_.sample_used = true;
+        if (!ui_.prog_storing) prog_wheel(context_, delta);
+        return;
+    }
     if (ui_.shift && ui_.last_pot >= 0 && ui_.page != PageId::Patterns && ui_.page != PageId::Roll) { // Patterns: locates by Q; Roll: marks notes
         // Shift + wheel: fine edit of the last pot touched, one step a detent.
         ui_.shift_used = true;
@@ -556,12 +649,14 @@ void Shell::pad(unsigned pad, uint8_t velocity, bool down) {
         // Whatever took the release (another page's pads, the Loop grid, the Name sheet), the pad lets go of
         // all it started: its notes, the step it held on Steps, the pattern it held under Seq.
         context_.release_pad(pad);
+        context_.live_erase_release(pad); // Erase + pad while playing: the erasing stops
         if (ui_.held_step >= 0 && unsigned(ui_.held_step) % bar_steps == pad % 16) ui_.held_step = -1;
         if (ui_.held_note == int(pad % 16)) ui_.held_note = -1; // Roll's note held for its locks
         if (ui_.pattern_held >= 0 && unsigned(ui_.pattern_held) % pattern_pads == pad % 16) ui_.pattern_held = -1; // a pattern of any bank
         context_.close_hold(pad);
         return;
     }
+    if (ui_.levels_sheet == levels_sheet_pad) levels_set_pad(context_, pad); // 16 Levels' SET: this pad takes the chord (and plays what it has)
     context_.open_hold(pad); // Roll, Steps, Step Edit: press to release is one step (then PageEdit stands aside)
     PageEdit step(context_, Button::Count, true);
     hit(pad, velocity, down);
@@ -581,6 +676,7 @@ void Shell::hit(unsigned pad, uint8_t velocity, bool down) {
         pad_job(ui_)(context_, pad, velocity, false);
         return;
     }
+    if (ui_.menu && !ui_.exit_open && ui_.ask == UiState::Ask::None) { menu_pad(context_, pad); return; } // the MENU: GO's pads open their places
     if (ui_.shift && new_track_locked(context_)) return; // Shift + pad's pages wait while an empty track is in hand
     // A press: what the pads are now, the same choice their lights make (shell/pad_context.h, shell/pad_lights.cpp).
     unsigned kit = context_.track().bank % sampler_banks * 16 + pad % 16;
@@ -604,7 +700,8 @@ void Shell::hit(unsigned pad, uint8_t velocity, bool down) {
     case PadContext::StepCopy: step_copy_pad(context_, pad); return; // a step onto another step
     case PadContext::KeyErase: key_erase_pad(context_, pad); return; // that key's notes, once B3 says so
     case PadContext::PadErase: // stopped, the pad empty; playing or recording, its notes out of the pattern
-        if (host.playing() || ui_.recording) context_.erase_pad_notes(kit);
+        if (host.playing()) context_.live_erase_press(pad, kit); // as on the MPC: only the notes passed while held
+        else if (ui_.recording) context_.erase_pad_notes(kit);
         else context_.delete_pad(kit);
         return;
     case PadContext::PadCopy:
@@ -666,8 +763,16 @@ void Shell::end_copy_away() {
     if (ui_.copying != UiState::Copying::Off && !here) ui_.stop_copying();
 }
 
+FrameView Shell::zoomed_view() const {
+    const auto& t = project_->tracks[ui_.track % track_count];
+    if (ui_.page == PageId::Chop && ui_.chop_zoom) return chop_view(*project_, ui_);
+    if (ui_.page == PageId::Stage && ui_.trim_zoom && stage_page_now(ui_, t, stage_skip(*project_, ui_, t)).kind == StageKind::Trim) return trim_view(*project_, ui_);
+    return {};
+}
+
 void Shell::snapshot(Snapshot& out, uint32_t now) {
     std::lock_guard<std::mutex> guard(lock);
+    out.break_activity=uint8_t(host.break_activity_of(ui_.track));
     const auto& selected=project_->tracks[ui_.track];
     const bool break_gen=selected.engine==EngineKind::Sampler&&selected.break_bars;
     const bool acid_gen=selected.engine==EngineKind::Plugin&&selected.plugin<max_plugins&&std::string(project_->plugins[selected.plugin].name)=="Acid Engine";
@@ -677,7 +782,12 @@ void Shell::snapshot(Snapshot& out, uint32_t now) {
     fader_check(context_);
     edit_loop_check(context_); // an editor's loop ends with the editor (shell/note_jobs.h)
     out.ui = ui_;
-    out.project = *project_;
+    { // The project, without each sample's chop: no page draws one (Chop draws the slices in hand, UiState's).
+        SlotTable<SampleChop> chops = std::move(project_->chops);
+        out.project = *project_;
+        project_->chops = std::move(chops);
+    }
+    out.audio_peaks = context_.audio_peaks; // freeze plan F3
     out.pattern = context_.pattern();
     for (unsigned t = 0; t < track_count; ++t)
         out.has_notes[t] = !patterns_->at[t][project_->tracks[t].pattern].empty();
@@ -695,6 +805,8 @@ void Shell::snapshot(Snapshot& out, uint32_t now) {
     out.following = midi_io.following();
     out.following_mtc = midi_io.following_mtc();
     if (ui_.settings.midi.sync_in == MidiSync::Clock && midi_io.tempo_in()) out.tempo = host.tempo_now();
+    out.display_tempo=tempo_display.sample(out.tempo,now,
+        ui_.settings.midi.sync_in==MidiSync::Clock && midi_io.tempo_in()!=0,unsigned(ui_.settings.midi.port));
     {
         const auto& r = host.recorder();
         out.take.state = uint8_t(r.state()); out.take.frames = r.frames(); out.take.length = r.length(); out.take.level = r.level();
@@ -722,9 +834,7 @@ void Shell::snapshot(Snapshot& out, uint32_t now) {
         out.sample = slot < sample_slots ? library_->slot(slot) : LoadedSample {};
         out.zone_file = out.sample.instrument && ui_.page != PageId::Chop ? library_->zone_file(slot, ui_.zone) : std::string();
         // Trim and Chop zoomed in: the view's own peaks, from the audio (the overview's 512 are too few that close).
-        FrameView view;
-        if (ui_.page == PageId::Chop && ui_.chop_zoom) view = chop_view(*project_, ui_);
-        if (ui_.page == PageId::Stage && ui_.trim_zoom && stage_page_now(ui_, t, stage_instrument(*project_, t)).kind == StageKind::Trim) view = trim_view(*project_, ui_);
+        const FrameView view = zoomed_view();
         out.detail_from = out.detail_to = 0;
         uint8_t* const sides[2] = {out.detail_sides[0].data(), out.detail_sides[1].data()};
         if (view.width() && slot < sample_slots && library_->detail(slot, view.from, view.to, out.detail.data(), unsigned(out.detail.size()), sides)) {
@@ -738,7 +848,8 @@ void Shell::snapshot(Snapshot& out, uint32_t now) {
                     out.pad_waves_shown = uint16_t(out.pad_waves_shown | 1u << n);
             }
         if (ui_.page == PageId::Samples) {
-            out.files = library_->files(); out.sample_root = library_->root(); out.files_folder = library_->folder(); out.files_top = library_->top();
+            auto preview=library_->preview_info();out.preview_seconds=preview.seconds;out.preview_complete=preview.complete;out.preview_path=preview.path;
+            out.files = sample_browser_files(library_->files(), ui_.break_browse); out.sample_root = library_->root(); out.files_folder = library_->folder(); out.files_top = library_->top();
         }
     }
     for (unsigned t = 0; t < track_count; ++t)
@@ -751,6 +862,7 @@ void Shell::snapshot(Snapshot& out, uint32_t now) {
             sketch.moves = uint16_t(std::min<size_t>(pattern.motion.size(), 0xffff));
             sketch.follows = pattern.follow.on(); // roadmap P5
             sketch.program = pattern.program;
+            sketch.audio = pattern.audio; // freeze plan F3: an audio track's take
             for (const auto& e : pattern.events) { // the first note of each of the first 64 sixteenths
                 unsigned k = e.tick / sixteenth_ticks;
                 if (k >= sketch.keys.size() || e.tick >= pattern.length) break;
@@ -761,6 +873,7 @@ void Shell::snapshot(Snapshot& out, uint32_t now) {
     out.prints_kept = {};
     for (const auto& r : context_.prints.records) ++out.prints_kept[r.track % track_count];
     out.print = context_.printer ? context_.printer->progress() : PrintProgress {};
+    out.stems = library_ ? library_->stems_progress() : StemsProgress {};
     out.live_load = context_.live_load;
     out.printing_tracks = host.printing_tracks();
     out.thawing = context_.thawing; // freeze plan F2d
@@ -945,13 +1058,19 @@ std::string Shell::input_summary() const {
          + " rhythmer_threshold=" + std::to_string(int8_t(r >> 24)) + " rhythmer_speaker=" + std::to_string(input_ ? int(input_->speaker_on()) : -1)
          + " rhythmer_recall_frames=" + std::to_string(uint64_t(host.recall().filled()) * 44100 / std::max(1u, host.recall().rate()))
          + " rhythmer_render=" + renders[unsigned(host.bounce().state()) % 7] + " rhythmer_render_frames=" + std::to_string(host.bounce().frames())
-         + " rhythmer_rendering=" + std::to_string((r >> 21) & 3) + " rhythmer_resample_pick=" + std::to_string((r >> 23) & 1);
+         + " rhythmer_rendering=" + std::to_string((r >> 21) & 3) + " rhythmer_resample_pick=" + std::to_string((r >> 23) & 1)
+         // Stems (shell/stems.h): the job's percent done, or idle.
+         + " rhythmer_stems=" + (library_ && library_->stems_progress().busy ? std::to_string(int(library_->stems_progress().fraction * 100)) : std::string("idle"))
+         // Freeze plan F3: an audio track's take (its ring's state, frames at the device's rate, track) and its regions' runs.
+         + " rhythmer_audio_take=" + renders[unsigned(host.audio_take().state()) % 7] + " rhythmer_audio_take_frames=" + std::to_string(host.audio_take().taken())
+         + " rhythmer_audio_take_track=" + std::to_string(host.audio_take_track()) + " rhythmer_audio_underruns=" + std::to_string(host.audio_underruns())
+         + " rhythmer_audio_waits=" + std::to_string(host.audio_waits());
 }
 
 // Phase 4: the last pad's Sample Mode values, for remote checks.
 std::string Shell::pad_summary() const {
     uint32_t b = pad_bits.load(std::memory_order_relaxed);
-    static const char* const kinds[] {"velocity", "scale", "tune", "filter", "loop", "zones", "-", "-"};
+    static const char* const kinds[] {"velocity", "scale", "tune", "filter", "chords", "zones", "-", "-"};
     return " rhythmer_last_pad=" + std::to_string(((b >> 8) & 0xff) + 1) + " rhythmer_pad_loop=" + std::to_string(b & 1) +
            " rhythmer_pad_lock=" + std::to_string((b >> 1) & 1) + " rhythmer_pad_note_on=" + std::to_string((b >> 2) & 1) +
            " rhythmer_pad_reverse=" + std::to_string((b >> 3) & 1) + " rhythmer_pad_mono=" + std::to_string((b >> 4) & 1) +

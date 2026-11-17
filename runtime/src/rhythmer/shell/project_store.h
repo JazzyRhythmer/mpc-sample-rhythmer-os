@@ -8,6 +8,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <thread>
 #include <vector>
 
 struct Hardware;
@@ -48,6 +49,9 @@ struct LoadedProject {
     std::vector<uint8_t> bytes;
     bool imported = false; // from an MPC project: the bytes are a Rhythmer project, with no file of its own yet
     std::string note;      // what the import did, or why it could not
+    // Freeze plan F3: an import's audio takes, copied beside the projects as "<audio_from without .mldp> Audio" (a
+    // hidden folder) until the project is first saved: Save copies them in as a Save As would ("" none).
+    std::string audio_from;
 };
 
 class ProjectStore {
@@ -60,6 +64,9 @@ public:
     // `from`: the file it was saved as before (Save As, freeze plan F2d): its Prints folder copied beside the new one.
     void save(const std::string& path, std::vector<uint8_t> bytes, const std::string& from = "");
     void load(const std::string& path);
+    // Any thread: how many loads have been asked for. The app reads the card's folders ahead before it serves each
+    // (shell/card_warm.h), so a project's plug-ins and samples never meet folders that have gone from memory.
+    unsigned loads_asked() const { return load_count.load(std::memory_order_acquire); }
     void duplicate(const std::string& path);
     void remove(const std::string& path);
     void new_folder();
@@ -69,6 +76,12 @@ public:
     void rename(const std::string& path, const std::string& name); // a project, in its folder
     void save_sound(const std::string& name, std::vector<uint8_t> bytes); // Rhythmer/Sounds/<name>.mlds
     void move(const std::string& path, const std::string& folder); // a project into a folder ("" the top), its name kept (" 2" on a clash)
+    // The project (`bytes` as save_project() makes them, its file `path` for its prints, "" unsaved) as an MPC 3
+    // project, Rhythmer/MPC 3/<name>.xpj on the card (" 2" on a clash; shell/mpc3_export.h), on a thread of its own:
+    // copying its samples can take a while. What came of it comes back through take_note().
+    void export_mpc3(const std::string& path, std::vector<uint8_t> bytes, const std::string& name);
+    std::unique_ptr<std::string> take_note(); // MIDI thread: an export's outcome, if one is waiting
+    bool exporting() const { return export_busy.load(std::memory_order_acquire); }
     // A project path in the folder in view for a typed name: the name itself,
     // or with " 2", " 3"... when a project has it already.
     std::string named_path(const std::string& name) const;
@@ -107,10 +120,10 @@ public:
 
 private:
     struct Request {
-        enum class Kind : uint8_t { List, Save, Load, Duplicate, Remove, NewFolder, OpenAtStart, Opened, Settings, Rename, SaveSound, Move } kind;
+        enum class Kind : uint8_t { List, Save, Load, Duplicate, Remove, NewFolder, OpenAtStart, Opened, Settings, Rename, SaveSound, Move, ExportMpc3 } kind;
         std::string path;
         std::vector<uint8_t> bytes;
-        std::string from = {}; // Save: the project's file before (Save As), whose prints come along
+        std::string from = {}; // Save: the project's file before (Save As), whose prints come along; ExportMpc3: its file
     };
     void push(Request* request);
     void run(Request& request);
@@ -119,6 +132,10 @@ private:
 
     MidiQueue<32, Request*> requests;           // MIDI thread produces
     MidiQueue<4, LoadedProject*> loaded;        // service thread produces
+    MidiQueue<4, std::string*> notes;           // the export thread produces
+    std::thread exporter;                       // service thread starts and joins it
+    std::atomic<bool> export_busy {false};
+    void start_export(Request& request);        // service thread
     std::string root, folder, start, settings;  // service thread
     std::string last;                           // service thread: the project last opened or saved
     void remember(const std::string& path);     // service thread: `last`, written to the card when it changes
@@ -129,10 +146,11 @@ private:
     mutable std::mutex lock;
     View known;
     std::atomic<unsigned> changes {0}, saved {0};
+    std::atomic<unsigned> load_count {0};
 };
 
 // The Project list's rows, the one count its list, K1's range and the shell agree on: SD card access at the
-// top folder, then the folder's entries (New project and Save are tiles before the list).
-inline unsigned project_rows(size_t entries, const std::string& folder) { return unsigned(entries) + (folder.empty() ? 1 : 0); }
+// top of every folder, then the folder's entries (New project and Save are tiles before the list).
+inline unsigned project_rows(size_t entries) { return unsigned(entries) + 1; }
 
 } // namespace rhythmer

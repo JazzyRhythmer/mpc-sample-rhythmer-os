@@ -28,19 +28,24 @@ struct PatternSketch {
     bool follows = false; // it has a follow action (roadmap P5)
     uint8_t program = 0;  // a MIDI track's own program for it (Pattern::program)
     std::array<uint8_t, 64> keys {};
+    AudioRegion audio; // freeze plan F3: an audio track's pattern's take (Pattern::audio)
 };
 
 struct Snapshot {
+    std::shared_ptr<const TakePeaks> audio_peaks; // freeze plan F3: the takes' overviews (Context::audio_peaks)
     UiState ui;
     Project project;
     Pattern pattern;                         // the selected track's pattern playing
     std::array<bool, track_count> has_notes {}; // the playing pattern of each track holds notes
     bool playing = false;
+    uint8_t break_activity=0;
+    double preview_seconds=0;bool preview_complete=false;std::string preview_path;
     uint32_t position = 0;                   // where the selected track is in its pattern, ticks
     uint32_t pass = 0;                       // and its pattern's passes since it began (a kit lane's place, roadmap P1)
     std::array<int, track_count> positions {}; // each track's, -1 none
     unsigned count_in = 0;                   // the Count-In's beat, 0 none
     unsigned tempo = 1200;                   // tenths of a BPM, as it plays (BPM per pattern or global, or MIDI clock in's)
+    unsigned display_tempo = 0;              // UI-only smoothed external BPM; 0 uses tempo. Never used for calculations.
     bool following = false;                  // MIDI clock in leads the transport (parity phase 9)
     bool following_mtc = false;              // and MTC in (parity phase 9b)
     std::array<uint8_t, track_count> playing_patterns {};
@@ -130,6 +135,7 @@ struct Snapshot {
     std::array<TrackFreeze, track_count> freeze {};
     std::array<uint16_t, track_count> prints_kept {};
     PrintProgress print {};
+    StemsProgress stems {}; // the STEMS sheet's job (shell/stems.h)
     std::array<float, track_count> live_load {};
     uint32_t printing_tracks = 0;
     uint32_t thawing = 0; // freeze plan F2d: deep-frozen tracks whose plug-ins load again (a bit each)

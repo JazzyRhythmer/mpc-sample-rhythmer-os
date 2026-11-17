@@ -41,13 +41,14 @@ void commit_loop(Context& c, unsigned loop, bool note) {
     std::string name = "L" + std::to_string(loop + 1);
     if (t.engine != EngineKind::Sampler) { c.notice("Commit: pick a kit track"); return; }
     if (!v.length || (v.state != Looper::State::Playing && v.state != Looper::State::Stopped)) { c.notice(name + ": nothing to commit now"); return; }
-    if (to_model(v.length, v.rate) > TakeRecorder::max_frames) { c.notice(name + ": too long for a pad"); return; }
     if (!c.library) return;
+    // Without a card a pad's sample is kept in memory, 60 s at most; with one, a long loop is written and played from it.
+    if (c.library->root().empty() && to_model(v.length, v.rate) > TakeRecorder::max_frames) { c.notice(name + ": too long for a pad"); return; }
     int kit = c.next_empty_pad(t.last_pad);
     if (kit < 0) { c.notice("No empty pad"); return; }
     int slot = c.hold_file(name + " Loop", c.ui.track, kit, 1);
     if (slot < 0) { c.notice("Commit: samples full"); return; }
-    if (!c.library->commit_loop({uint8_t(slot), uint8_t(loop)})) { c.drop_file(slot); c.notice("Commit: busy"); return; }
+    if (!c.library->commit_loop({uint16_t(slot), uint8_t(loop)})) { c.drop_file(slot); c.notice("Commit: busy"); return; }
     if (note) { // one note at bar 1, as long as the loop (the pattern made long enough), and the loop stops: the pad plays it now
         unsigned ticks = unsigned(std::max(1.0, std::round(v.ticks)));
         unsigned bar = c.project.bar_ticks();
@@ -115,9 +116,8 @@ void SampleLibrary::loop_service() {
             auto v = looper.view(loop);
             uint32_t frames = std::min<uint32_t>(v.length, looper.held_frames(loop));
             auto data = std::make_unique<SampleData>();
-            data->left.assign(looper.held_left(loop), looper.held_left(loop) + frames);
-            data->right.assign(looper.held_right(loop), looper.held_right(loop) + frames);
-            data->frames = frames;
+            adopt(*data, std::vector<float>(looper.held_left(loop), looper.held_left(loop) + frames),
+                  std::vector<float>(looper.held_right(loop), looper.held_right(loop) + frames), v.rate);
             looper.release(loop);
             committing.on = false;
             std::string stem = "L" + std::to_string(loop + 1) + " Loop";
@@ -146,14 +146,13 @@ void SampleLibrary::loop_service() {
             if (wanted) {
                 SampleData data;
                 const float device = dsp::sample_rate();
-                auto failed = read_wav(file, data, 70, nullptr, device);
+                auto failed = read_wav(file, data, 70);
                 if (failed.empty() && data.frames) {
-                    // The file's own frames (the device's rate, or 44.1 kHz from before), else its copy at the device's.
-                    const bool own = data.plays_own(), model = !own && data.source_rate == 44100, copy = !own && !model && data.play_frames;
-                    const unsigned rate = own ? data.source_rate : copy ? unsigned(std::lround(data.play_rate)) : 44100;
-                    const auto& from_l = own || copy ? data.play_left : data.left;
-                    const auto& from_r = own || copy ? data.play_right : data.right;
-                    uint32_t frames = uint32_t(std::min(from_l.size(), from_r.size()));
+                    // The file's own frames at its rate (the device's when it was saved, or 44.1 kHz from before).
+                    const unsigned rate = data.rate;
+                    const auto& from_l = data.left;
+                    const auto& from_r = data.right;
+                    uint32_t frames = data.frames;
                     if (loop_job.loops[n].frames) frames = std::min(frames, from_model(loop_job.loops[n].frames, rate) + 2);
                     auto* buffer = new LoopBuffer(std::max(frames, looper::frames_at(device)));
                     std::copy(from_l.begin(), from_l.begin() + frames, buffer->left.get());
@@ -179,12 +178,11 @@ void SampleLibrary::loop_service() {
         auto v = looper.view(n);
         SampleData data;
         uint32_t frames = std::min<uint32_t>(v.length, looper.held_frames(n));
-        data.left.assign(looper.held_left(n), looper.held_left(n) + frames);
-        data.right.assign(looper.held_right(n), looper.held_right(n) + frames);
-        data.frames = frames;
+        adopt(data, std::vector<float>(looper.held_left(n), looper.held_left(n) + frames),
+              std::vector<float>(looper.held_right(n), looper.held_right(n) + frames), v.rate);
         looper.release(n);
         fs::create_directories(loop_job.dir, error);
-        auto failed = write_wav(file + ".new", data, v.rate); // at the loop's own rate
+        auto failed = write_wav(file + ".new", data); // at the loop's own rate
         if (failed.empty()) fs::rename(file + ".new", file, error);
         if (!failed.empty() || error) finish("L" + std::to_string(n + 1) + ": not saved");
         ++loop_at; loop_passes = 0;

@@ -70,6 +70,8 @@ struct Header {
     bool playing = false, recording = false, armed = false;
     juce::String bpm = "120";
     std::vector<HeaderItem> left, right;
+    bool fixed_bpm_width = false; // external clock: decimal digits cannot shift neighbouring chips
+    unsigned lead = 0; // how many of `left` come first on every page (states, the pads chip): a page's own follow
 };
 void header(Paint& p, const Header& h);
 

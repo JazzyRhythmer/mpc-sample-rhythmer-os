@@ -9,7 +9,7 @@ def run():
  if not os.path.ismount('/Volumes/SSD'):raise SystemExit('SSD absent')
  result=[]
  for port in ports():
-  pin=json.loads((port/'SOURCE.json').read_text());source=WORK/'source-depot-releases'/pin['id'] if port.name.startswith('move-') else port;stage=folder_for(port);expected={};spdx={};copyrights=set()
+  pin=json.loads((port/'SOURCE.json').read_text());source=(port/'original' if pin.get('source_built') else WORK/'source-depot-releases'/pin['id']) if port.name.startswith('move-') else port;stage=folder_for(port);expected={};spdx={};copyrights=set()
   for folder,dirs,names in os.walk(source):
    dirs[:]=[n for n in dirs if n not in ('.git','build','dist','out','node_modules') and not (Path(folder)/n).is_symlink()]
    for name in names:

@@ -127,7 +127,7 @@
         EngineHost h;Shell s(h);auto& x=s.context();x.ui.track=0;x.track().engine=EngineKind::Midi;
         x.pattern().length=768;Event e;e.key=48;e.length=96;x.pattern().add(e);auto before=x.pattern().events;
         x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bank=2;x.ui.break_job_bars=3;x.project.samples[0].frames=264600;
-        x.gen_break_tick();auto made=x.pattern().events;x.track().break_perf[4]=1;x.track().break_perf[9]=0;
+        x.gen_break_tick();auto made=x.pattern().events;if(made!=before)return gen_failure(466,__LINE__);x.track().break_perf[4]=1;x.track().break_perf[9]=0;
         auto saved=save_project(x.project,x.patterns);auto project=std::make_unique<Project>();auto bank=std::make_unique<PatternBank>();
         if(!load_project(saved,*project,*bank).empty()||project->tracks[0].break_perf[4]!=1||project->tracks[0].break_perf[9]||bank->at[0][0].events!=made)return gen_failure(442,__LINE__);
         x.undo();if(x.track().engine!=EngineKind::Midi||x.pattern().events!=before)return gen_failure(443,__LINE__);
@@ -174,3 +174,55 @@
         if(x.ui.ask!=UiState::Ask::None||x.ui.page!=PageId::Stage||x.ui.track!=1||x.ui.break_pending>=0||x.project.tracks[0].engine!=EngineKind::Midi||x.edits.size()!=history)return gen_failure(453,__LINE__);
     }
     std::puts("RHYTHMER_BREAK_FROZEN late_completion=cancelled no_surprise_unfreeze_dialog=ok");
+
+    // Replacing a source is not pattern generation. The complete track edit
+    // restores source B and the old declared length together on Undo.
+    for(unsigned bars : {2u,3u}){
+        EngineHost h;Shell s(h);auto& x=s.context();x.track().engine=EngineKind::Sampler;x.track().break_bars=2;
+        x.track().pads[0].sample=1;x.track().pads[0].layers[0].sample=2;
+        x.track().pads[0].pitch=7;x.track().pads[0].cutoff=42;x.track().break_perf[4]=1;
+        x.pattern().length=1152;Event note;note.key=42;note.tick=96;note.length=48;x.pattern().add(note);
+        auto original=x.pattern();
+        x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bars=uint8_t(bars);x.project.samples[0].frames=264600;
+        x.gen_break_tick();
+        if(!(x.pattern()==original)||x.track().pads[0].sample!=0||x.track().pads[0].pitch!=7||x.track().pads[0].cutoff!=42||x.track().break_perf[4]!=1)return gen_failure(454,__LINE__);
+        if(x.track().pads[0].layers[0].sample!=(bars==2?2:no_sample))return gen_failure(455,__LINE__);
+        x.undo();
+        if(!(x.pattern()==original)||x.track().pads[0].sample!=1||x.track().pads[0].layers[0].sample!=2||x.track().break_bars!=2)return gen_failure(456,__LINE__);
+        x.redo();if(!(x.pattern()==original)||x.track().pads[0].sample!=0||x.track().break_bars!=bars)return gen_failure(457,__LINE__);
+        auto saved=save_project(x.project,x.patterns);auto restored=std::make_unique<Project>();auto bank=std::make_unique<PatternBank>();
+        if(!load_project(saved,*restored,*bank).empty()||!(bank->at[0][0]==original)||restored->tracks[0].pads[0].layers[0].sample!=(bars==2?2:no_sample))return gen_failure(458,__LINE__);
+    }
+    for(unsigned cancel=0;cancel<3;++cancel){
+        EngineHost h;Shell s(h);auto& x=s.context();x.ui.page=PageId::Samples;x.ui.break_browse=true;
+        x.track().engine=EngineKind::Sampler;x.track().break_bars=2;x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bars=3;
+        x.project.samples[0].frames=264600;auto history=x.edits.size();ask(x,UiState::Ask::BreakLength,0);x.gen_break_tick();
+        if(x.edits.size()!=history||x.track().break_bars!=2)return gen_failure(459,__LINE__);
+        if(cancel==2)x.ui.shift=true;
+        ask_button(x,cancel==2?SurfaceButton::WheelPush:cancel?SurfaceButton::TopLeft:SurfaceButton::TopRight);x.gen_break_tick();
+        if(cancel){if(x.ui.page!=PageId::Samples||x.edits.size()!=history||x.ui.break_pending>=0)return gen_failure(460,__LINE__);}
+        else if(x.ui.page!=PageId::Patterns||x.track().break_bars!=3||x.edits.size()!=history+1)return gen_failure(461,__LINE__);
+    }
+    {
+        std::vector<SampleFile> files(10);files[0].folder=true;files[0].path="folder";files[1].path="loop.wav";
+        files[2].bank=true;files[3].instrument=true;files[4].kit=true;files[5].expansion=true;
+        files[6].presets=true;files[6].folder=true;files[7].midi=true;files[8].path="loop.flac";files[9].path="loop.mp3";
+        auto loops=sample_browser_files(files,true),all=sample_browser_files(files,false);
+        if(loops.size()!=4||loops[0].path!="folder"||loops[1].path!="loop.wav"||loops[2].path!="loop.flac"||all.size()!=10)return gen_failure(462,__LINE__);
+    }
+    // Existing source actions remain visible; generic Shift+pad never assigns a
+    // previewed loop to an arbitrary kit pad while the Break browser owns it.
+    {
+        EngineHost h;Shell s(h);auto& x=s.context();x.track().engine=EngineKind::Sampler;x.track().break_bars=2;
+        for(unsigned page=0;page<6;++page){x.ui.page=PageId::Edit;x.ui.break_perf_page=page;edit_page.soft(x,1);
+            if(x.ui.page!=PageId::Samples||!x.ui.break_browse||x.ui.break_load_b!=(page==2))return gen_failure(463,__LINE__);}
+    }
+    std::puts("RHYTHMER_BREAK_P0 replace_A=patterns_and_design_kept length_confirmation=cancel_and_load B_length_policy=undo_redo_atomic save_restore=ok browser_projection=consistent source_routes=6");
+
+    {
+        EngineHost h;Shell s(h);auto& x=s.context();x.ui.page=PageId::Samples;x.ui.break_browse=true;x.ui.break_bars=2;
+        auto settings=x.project.gen8.bars;auto cards=page_bindings(x.project,x.ui,x.pattern());x.apply(cards[0],4);
+        if(x.ui.break_bars!=4||x.project.gen8.bars!=settings)return gen_failure(464,__LINE__);
+        x.ui.page=PageId::Patterns;x.ui.sheet_open=true;x.ui.gen8_mode=2;
+        if(page_bindings(x.project,x.ui,x.pattern())[0].kind!=Binding::Kind::PatternLength)return gen_failure(465,__LINE__);
+    }

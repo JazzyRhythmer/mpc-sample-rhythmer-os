@@ -14,6 +14,9 @@ from prepare_drumx import function
 def build(ident):
     from release_profile import require_port
     require_port("fm1-"+ident)
+    if ident=='frodhes':
+        from compile_source_synths import build as original_build
+        return original_build(ident)
     p=ROOT/'ports'/('fm1-'+ident);cfg=json.loads((p/'vst.json').read_text());pin=json.loads((p/'SOURCE.json').read_text())
     out=p/'build';out.mkdir(parents=True,exist_ok=True)
     flags=['-std=gnu11','-O2','-fwrapv','-fPIC','-fvisibility=hidden','-DFM1_S1='+str(int(ident=='s1vave')),
@@ -70,6 +73,16 @@ static const preset_t SMP_PRESET_TABLE[1]={{0}};
             ui=(p/'original/firmware/src/ui.c').read_text()
             (out/'original_preset_params.h').write_text('/* GPL-3.0-only: original Guru-600 preset loading */\n'+function(ui,'param_kept')+function(ui,'preset_params'))
         if ident=='fmini':
+            # The generic hostsim loader omits FMini's separate factory extras.
+            # Keep the original sound loader, excluding the device's sequencer
+            # and keyboard-octave ownership: Rhythmer supplies those controls.
+            app=(p/'original/firmware/src/fmini_app.c').read_text()
+            extras=function(app,'fa_factory_extras')
+            extras=re.sub(r'    t->p\[P_AMODE\].*?    t->p\[P_AORDER\] = 0;\n','',extras,flags=re.S)
+            extras=extras.replace('fm_bend_mode','bend_mode')
+            extras=re.sub(r'    song.octave = x->oct;\n    fa_ar_last = x->arp\[1\] \? x->arp\[1\] : 1u;\n','',extras)
+            globals_line=re.search(r'static const uint8_t FA_XG\[12\] = \{[^;]+;',app).group(0)
+            (out/'factory_extras.h').write_text('/* GPL-3.0-only: original FMini sound loader; device ARP/octave excluded. */\n'+globals_line+'\n'+extras)
             src=re.sub(r'/\*.*?\*/','',(p/'original/firmware/src/eng_fmini.c').read_text(),flags=re.S)
             group=re.search(r'enum\s*\{\s*FG_R1(.*?)FG_NUM',src,re.S)
             names=['FG_R1']+re.findall(r'\bFG_[A-Z0-9]+\b',group.group(1))
@@ -114,7 +127,7 @@ static const preset_t SMP_PRESET_TABLE[1]={{0}};
             '\n'.join('{'+json.dumps(n)+','+o+','+str(m)+'},' for n,o,m in controls)+'\n};\n')
     (out/'compile_flags.json').write_text(json.dumps(flags))
     sp.run(['gcc',*flags,'-shared',str(ROOT/'ports/common'/pin['adapter']),'-lm','-Wl,--no-undefined','-o',str(out/'dsp.so')],check=True)
-    if ident in ('mono2k','fm106','s1vave','obervave','elixir','hortator','prophet','guru600','cs1'):
+    if ident in ('mono2k','fm106','s1vave','obervave','elixir','hortator','prophet','guru600','cs1','fmini'):
         sp.run([sys.executable,str(ROOT/'tools/check_factory_data.py'),ident],check=True)
     probe=WORK/'move-probes/probe'
     result=sp.run([str(probe),str(out/'dsp.so'),str(out)],capture_output=True,text=True,timeout=60,check=True)

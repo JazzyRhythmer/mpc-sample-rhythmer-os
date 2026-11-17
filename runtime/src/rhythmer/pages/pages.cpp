@@ -17,6 +17,7 @@ const PageSpec& page_spec(PageId page) {
     case PageId::Roll: return roll_page;
     case PageId::Motion: return motion_page;
     case PageId::Patterns: return patterns_page;
+    case PageId::Scenes: return scenes_page; // roadmap P5: B1 again on Patterns
     case PageId::Song: return song_page;
     case PageId::InputConfig: return input_config_page;
     case PageId::Rack: return rack_page;
@@ -59,6 +60,8 @@ const PageSpec& page_spec(PageId page) {
     case PageId::TrackActions: return track_actions_page;
     case PageId::Looper: return looper_page;
     case PageId::Print: return print_page; // freeze plan F2c
+    case PageId::AutoSample: return auto_sample_page;
+    case PageId::Stems: return stems_page;
     case PageId::Trim: // lives on Stage now (Context::open lands there)
     case PageId::Stage:
     default: return stage_page;

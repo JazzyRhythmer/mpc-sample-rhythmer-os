@@ -17,7 +17,7 @@ def main():
         for port in ports():
             if not port.name.startswith('move-'):continue
             pin=json.loads((port/'SOURCE.json').read_text());pins.append(pin)
-            source=WORK/'source-depot-releases'/pin['id']
+            source=port/'original' if pin.get('source_built') else WORK/'source-depot-releases'/pin['id']
             for folder,dirs,names in os.walk(source):
                 dirs[:]=sorted(n for n in dirs if n not in SKIP and not (Path(folder)/n).is_symlink())
                 for name in sorted(names):

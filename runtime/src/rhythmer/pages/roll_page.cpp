@@ -64,6 +64,7 @@ void draw(Paint& p, const Snapshot& s) {
     const bool marks = roll_selection(ui, track.pattern); // Shift + wheel's marks (shell/roll.h)
     bool kit = lane < 0 && (track.engine == EngineKind::Sampler || drum_pads(track)); // lanes of pads, not keys (Drums pads too: 36 is A01)
     Header h = header_of(s);
+    h.left.push_back(edit_pattern_chip(s));
     if (!ui.recording) {
         if (focused && ui.held_note >= 0) h.left.push_back(pill("LOCK", c)); // its pad held: the pots lock it (roadmap P1)
         if (focused) // where it sits: the place bar's
@@ -78,7 +79,7 @@ void draw(Paint& p, const Snapshot& s) {
     if (ui.copying == UiState::Copying::Notes) h.left.push_back(pill("COPY", c));          // Push pastes the marked notes
     h.right.push_back(tag_of(s, ui.track));
     bool sheet = ui.sheet_open && focused;
-    SoftKeys keys {{"PATTERNS", "ROLL", "MOTION"}, 1, c};
+    SoftKeys keys {{"SEQUENCES", "ROLL", motion_key(s)}, 1, c};
     keys.dots[1] = 2; keys.dot_at[1] = ui.trig_cards ? 1 : 0; // ROLL again: the TRIG row of cards
     if (sheet) keys = SoftKeys {{"BACK", "", ""}, -1, c, {KeyIcon::Back, KeyIcon::None, KeyIcon::None}}; // the cards: wheel and Push
     frame(p, s, keys, h);
@@ -244,6 +245,7 @@ void wheel(Context& c, int delta) {
         return;
     }
     if (roll_selection_wheel(c, delta)) return; // Shift: marks notes; marked, the wheel moves them (Shift: their pitch)
+    if (seq_following(c)) return;               // Settings > SEQ > Follow has the cursor while it plays
     roll_step(c.pattern(), c.ui, delta, roll_lane(c.track()));
 }
 

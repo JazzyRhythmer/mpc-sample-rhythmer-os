@@ -60,6 +60,8 @@ struct Command {
         Click,       // value: on; index: level 0..100
         Arp,         // track; index = 0 on, 1 mode, 2 rate, 3 octaves, 4 gate; value
         ArpKey,      // track, index = key, value = velocity (0: let go)
+        Repeat,      // Note Repeat: track; index = 0 on, 2 rate, 5 pressure as velocity; value
+        RepeatKey,   // Note Repeat: track, index = key, value = velocity (0: let go), position = a 16 Levels cutoff + 1
         // Punch: track = the target (255 the master), index = PunchKind | pad << 8
         // (pad 1..64: that pad alone on a sampler track, 0: the whole target),
         // value = depth 0..100, pattern = snap (0 1/4 .. 3 1/32) | tail << 4 | 64 when it starts at
@@ -136,7 +138,15 @@ struct Command {
         Freeze,
         // A controller from MIDI in on a kit or PLUGIN track (a MIDI track's goes out as MidiEcho): track, index = the
         // CC number, value 0..127. Not CC 1: the mod wheel is Wheel.
-        Control
+        Control,
+        // Freeze plan F3: track, audio = its patterns' takes (engine/audio_player.h) to play from now; the pack it
+        // replaces goes back to be freed (EngineHost::take_done_audio). None: it plays nothing.
+        AudioRegions,
+        // Freeze plan F3: a take for audio track `track` (EngineHost::audio_take()): value 0 arms it (it records one
+        // pass of the track's pattern from where the pattern next comes round), -1 lets one armed go, -2 ends it here.
+        AudioRecord,
+        // Freeze plan F3: audio track `track`'s takes heard (value 0) or not (1: its monitor hears the input instead).
+        AudioQuiet
 
     };
     Command() = default;
@@ -156,6 +166,7 @@ struct Command {
     union { // Reload's, or Freeze's (freeze plan F2b): one pointer, so a Command (thousands queued) stays as small
         struct ProjectPack* pack = nullptr;
         struct FreezePack* freeze;
+        struct AudioPack* audio; // AudioRegions (freeze plan F3)
     };
     struct TrackPack* track_pack = nullptr;
     // A note played by hand or by MIDI in (EngineHost::send_at): it plays at frame `at` (the low 32 bits of the

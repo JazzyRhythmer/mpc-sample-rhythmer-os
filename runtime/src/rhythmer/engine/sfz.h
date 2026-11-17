@@ -37,6 +37,12 @@ struct SfzRead {
     std::set<std::string> left_by; // the opcodes that kept them from a press
     SfzEnvelope envelope;
     double velocity = 100;         // percent: its first region's amp_veltrack
+    // An MPC keygroup program's Mono and Portamento: one note at a time; the pitch slides to a new key over `glide`
+    // seconds (0: it jumps); with `legato` only from a key still held. `tied`: a key pressed while another is held
+    // carries that note on without a new attack (else it starts again).
+    bool mono = false, legato = false, tied = false;
+    uint8_t mono_low = 0, mono_high = 127; // the keys Mono holds for: all, or one side of a split
+    double glide = 0;
 };
 
 // Reads an #include's text; nullopt leaves it out.

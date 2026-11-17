@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Check export/package bytes without printing potentially sensitive values."""
 import re
+import hashlib
 
 BLOCKED_PARTS = {'.git','.codex-private','.githooks','__pycache__','.DS_Store'}
 PATTERNS = {
@@ -20,7 +21,11 @@ def findings(name, data, own_document=True):
             or parts[-1].startswith('.env') or parts[-1].endswith(('.pem','.key','.p12'))):
         result.append('private-file')
     for kind,pattern in PATTERNS.items():
-        if pattern.search(data):result.append(kind)
+        if pattern.search(data):
+            # Pinned, public upstream unit-test fixture uses a fictional home.
+            # Keep corresponding source byte-identical; this is not a developer path.
+            public_fixture=(kind=='personal-home' and name.endswith('ports/fm1-frodhes/original/plugin/tests/test_paths.c') and hashlib.sha256(data).hexdigest()=='d3288d2394d66284c83cece3b57f5f89da82f7794d1566c577536041cf7a3b1b')
+            if not public_fixture:result.append(kind)
     if own_document and name.lower().endswith(('.md','.txt','.json')):
         if DISCUSSION.search(data.decode('utf-8',errors='ignore')):result.append('discussion-record')
     return result

@@ -55,6 +55,9 @@ def compile_wrapper(port,cfg,ident):
 def build(ident):
     from release_profile import require_port
     require_port("move-"+ident)
+    if ident=='tenebrae':
+        from compile_source_synths import build as original_build
+        return original_build(ident)
     port=ROOT/'ports'/('move-'+ident);cfg=json.loads((port/'vst.json').read_text());pin=json.loads((port/'SOURCE.json').read_text())
     out=compile_wrapper(port,cfg,ident)
     folder='RHYTHMER - Move - '+ident+' - '+re.sub(r'[\\/:*?"<>|]','-',cfg['name'])

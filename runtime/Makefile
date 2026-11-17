@@ -29,6 +29,9 @@ build/gen/web_bundle.bin: $(WEB_INPUTS)
 	python3 tools/web_bundle.py $@
 build/obj/rhythmer/web/web_bundle.o: build/gen/web_bundle.bin
 
+# The MPC 3 export's template (tools/mpc3_template.py), carried in the binary.
+build/obj/rhythmer/shell/mpc3_export.o: src/rhythmer/shell/mpc3_template.json
+
 # JUCE's decoders, for an SFZ's FLAC, Ogg and AIFF samples and an MPC
 # expansion's MP3 previews. Rhythmer's alone, so the base stays as it is.
 FORMATS := $(JUCE)/juce_audio_formats
@@ -75,3 +78,11 @@ $(TARGET): $(FM1_GEN_OBJ)
 $(FM1_GEN_OBJ): $(shell find fm1-gen -type f)
 	@mkdir -p build/obj
 	$(CC) -O1 -w -ffunction-sections -fdata-sections -DFM1_HOST_TEST=1 -Ifm1-gen/generated -Ifm1-gen/firmware/src -Ifm1-gen/tests -c fm1-gen/bridge.c -o $@
+# Stems (src/rhythmer/shell/stems.h): the separating program and its model, files of their own in the release, not
+# linked into Rhythmer (tools/stems/build.py: stems_engine.c on SpleeterRT's network code and OpenBLAS, and Deezer's
+# 4-stem model, from build/deps). `make stems` builds them; the first time takes a few minutes.
+STEMS := build/stems/rhythmer-stems
+.PHONY: stems
+stems: $(STEMS)
+$(STEMS): tools/stems/build.py tools/stems/stems_engine.c tools/stems/convert_model.py
+	python3 tools/stems/build.py build/stems

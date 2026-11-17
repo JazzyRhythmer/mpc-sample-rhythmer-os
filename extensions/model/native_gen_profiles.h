@@ -10,6 +10,7 @@ inline constexpr NativeGenProfile native_gen_profiles[] = {
 {"rhythmer - fm1 - elixir - ",true,false,24,96,{{36,38,255,42,46,45,255,47}}},
 {"rhythmer - fm1 - fm106 - ",false,false,24,96,{{255,255,255,255,255,255,255,255}}},
 {"rhythmer - fm1 - fmini - ",false,false,24,96,{{255,255,255,255,255,255,255,255}}},
+{"rhythmer - fm1 - frodhes - ",false,false,24,96,{{255,255,255,255,255,255,255,255}}},
 {"rhythmer - fm1 - guru600 - ",false,false,24,96,{{255,255,255,255,255,255,255,255}}},
 {"rhythmer - fm1 - hortator - ",true,false,24,96,{{36,38,39,42,46,45,37,49}}},
 {"rhythmer - fm1 - kwasub - ",false,true,24,96,{{255,255,255,255,255,255,255,255}}},
@@ -23,6 +24,7 @@ inline constexpr NativeGenProfile native_gen_profiles[] = {
 {"rhythmer - move - dexed - ",false,false,24,96,{{255,255,255,255,255,255,255,255}}},
 {"rhythmer - move - hera - ",false,false,24,96,{{255,255,255,255,255,255,255,255}}},
 {"rhythmer - move - plaits - ",false,false,24,96,{{255,255,255,255,255,255,255,255}}},
+{"rhythmer - move - tenebrae - ",false,false,24,96,{{255,255,255,255,255,255,255,255}}},
 };
 inline const NativeGenProfile* native_gen_profile(const std::string& path) {
 for(const auto& p:native_gen_profiles) { if(path.find(p.needle)!=std::string::npos)return &p; }

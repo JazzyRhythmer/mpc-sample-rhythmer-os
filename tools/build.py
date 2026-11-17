@@ -106,16 +106,24 @@ if __name__ == '__main__':
         check_selection()
         from stage_test_catalog import stage as stage_test_catalog
         stage_test_catalog()
+        os.environ.setdefault("RHYTHMER_GEN_CARD", str(WORK / "sd-stage"))
         kept = snapshot_times()
         copy_sources()
         sp.run(['python3', str(ROOT / 'tools/rename_runtime.py'), str(WORK / 'runtime')], check=True)
         sp.run(['python3', str(ROOT / 'tools/apply_upstream.py'), str(WORK / 'runtime')], check=True)
+        sp.run(['python3', str(ROOT / 'tools/sync_runtime_guides.py'), str(WORK / 'runtime')], check=True)
         sp.run(['python3', 'tools/dependencies.py'], cwd=WORK / 'runtime', check=True)
+        from prepare_runtime_assets import prepare as prepare_assets
+        prepare_assets(WORK / 'runtime')
         restore_times(kept)
         container('make -j1 && python3 -m unittest discover -s tests -v && '
                   'build/rhythmer --self-test build/rhythmer-self-test.wav && '
+                  'build/rhythmer --rhythmer-navigation-check && '
+                  'build/rhythmer --rhythmer-track-check && '
                   'build/rhythmer --rhythmer-gen8-check && '
                   'build/rhythmer --rhythmer-monkey && '
                   'mkdir -p build/rhythmer-preview && build/rhythmer --rhythmer-preview build/rhythmer-preview && '
+                  'python3 tools/sync_guide_screens.py build/rhythmer-preview docs/images/screens && make -j1 && '
+                  'build/rhythmer --self-test build/rhythmer-self-test.wav && '
                   'cp build/rhythmer build/rhythmer.release && strip --strip-unneeded build/rhythmer.release && '
                   'sha256sum build/rhythmer > build/rhythmer.release.source-sha256')

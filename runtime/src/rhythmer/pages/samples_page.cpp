@@ -43,8 +43,14 @@ void draw(Paint& p, const Snapshot& s) {
     auto drive_chip = chip(drive_name(drive), c);
     drive_chip.spare = true; // a long folder name keeps its room: B2 names the other drive
     h.left.push_back(drive_chip);
-    h.left.push_back(pill(folder_title(s) + juce::String::fromUTF8(" \xc2\xb7 ") + juce::String(s.files.size()), c));
-    if(s.ui.break_browse)h.left.push_back(pill("BREAK / "+juce::String(s.project.gen8.bars)+" BARS",c));
+    h.left.push_back(pill(s.ui.break_browse
+        ? juce::String(s.ui.break_load_b ? "LOAD B / " : "LOAD A / ") + juce::String(s.ui.break_load_b ? track.break_bars : s.ui.break_bars) + " BARS"
+        : folder_title(s) + juce::String::fromUTF8(" \xc2\xb7 ") + juce::String(s.files.size()), c));
+    if (track.engine == EngineKind::Sampler) { // a kit: the pad Push loads onto, the last one hit
+        char label[8];
+        pad_label(track.last_pad % sampler_pads, label);
+        h.right.push_back(pill(Icon::ArrowRight, juce::String(label), c)); // an arrow: the rows' pad glyph marks files already on a pad
+    }
     h.right.push_back(tag_of(s, s.ui.track));
     juce::String other = drive == Drive::Card ? "INTERNAL" : "CARD";
     // The file under the cursor as it previews (mock 7): its row fills as it plays; B3 lit while there is sound.
@@ -59,9 +65,10 @@ void draw(Paint& p, const Snapshot& s) {
         p.text(no_card ? "NO CARD" : "EMPTY", 0, zone::picture_y + 76, zone::width, 14, caps_text(colour::dim), juce::Justification::centred);
         return;
     }
+    const unsigned shown=s.ui.break_browse?5:visible;
     unsigned count = unsigned(s.files.size()), cursor = std::min<unsigned>(s.ui.files_cursor, count - 1);
-    unsigned first = cursor < 2 ? 0 : std::min(cursor - 2, count > visible ? count - visible : 0);
-    for (unsigned row = 0; row < visible && first + row < count; ++row) {
+    unsigned first = cursor < 2 ? 0 : std::min(cursor - 2, count > shown ? count - shown : 0);
+    for (unsigned row = 0; row < shown && first + row < count; ++row) {
         const auto& file = s.files[first + row];
         ListRow r;
         r.name = name_case(juce::String(file.name)); r.accent = c; r.current = first + row == cursor;
@@ -81,10 +88,13 @@ void draw(Paint& p, const Snapshot& s) {
             else if (path.endsWithIgnoreCase(".flac")) r.fact = "FLAC";
             else if (path.endsWithIgnoreCase(".ogg") || path.endsWithIgnoreCase(".oga")) r.fact = "OGG";
             else if (path.endsWithIgnoreCase(".aif") || path.endsWithIgnoreCase(".aiff")) r.fact = "AIFF";
-            for (unsigned n = 0; n < sample_slots && r.pad.isEmpty(); ++n) // which pad of this kit plays it
-                if (file.path == s.project.samples[n].path)
-                    for (unsigned k = 0; k < sampler_pads; ++k)
-                        if (track.pads[k].plays(uint16_t(n))) { char label[4]; pad_label(k, label); r.pad = juce::String(label); break; }
+            for (unsigned k = 0; k < sampler_pads && r.pad.isEmpty(); ++k) // which pad of this kit plays it, on any layer
+                for (unsigned l = 0; l < pad_layers; ++l) {
+                    const PadLayer layer = track.pads[k].layer(l);
+                    if (!layer.used() || file.path != s.project.samples[layer.sample].path) continue;
+                    char label[4]; pad_label(k, label); r.pad = juce::String(label);
+                    break;
+                }
         }
         if (r.current && heard.shown && !file.folder && !file.bank) { // the time heard of its length
             char now[16], of[24];
@@ -97,6 +107,21 @@ void draw(Paint& p, const Snapshot& s) {
         list_row(p, zone::pad, zone::picture_y + 0.5f + row * (list_row_h + list_row_gap), zone::width - 2 * zone::pad, r);
         p.g.restoreState();
     }
+    if(s.ui.break_browse){
+        juce::String status="PREVIEW reads source / K2 audition";
+        const auto& file=s.files[cursor];
+        if(file.path==s.preview_path && s.preview_complete && s.preview_seconds<=0)status="PREVIEW UNAVAILABLE / choose audio";
+        if(file.path==s.preview_path && s.preview_seconds>0){
+            unsigned bars=s.ui.break_load_b?track.break_bars:s.ui.break_bars;
+            double bpm=bars*240.0/s.preview_seconds;
+            auto source_bpm=juce::String(bpm,1);if(source_bpm.endsWith(".0"))source_bpm=source_bpm.dropLastCharacters(2);
+            status="CALC "+source_bpm+" BPM / "+juce::String(bars)+" bars";
+            if(s.ui.break_preview_sync && s.preview_complete)status="CALC "+source_bpm+" BPM / SYNC "+tempo_text(s);
+            if(s.ui.preview && s.ui.break_preview_sync && !s.preview_complete)status="READING SYNC / "+source_bpm+" BPM calc";
+            if(s.preview_seconds>=30)status="30s PREVIEW LIMIT / ORIGINAL ONLY";
+        }
+        p.text(status,zone::pad,zone::picture_y+122,zone::width-2*zone::pad,18,plain(colour::sec,type::small));
+    }
 }
 
 void wheel(Context& c, int delta) {
@@ -107,7 +132,7 @@ void wheel(Context& c, int delta) {
 
 void push(Context& c) {
     if (!c.library) return;
-    auto files = c.library->files();
+    auto files = sample_browser_files(c.library->files(), c.ui.break_browse);
     if (c.ui.files_cursor >= files.size()) return;
     const auto& file = files[c.ui.files_cursor];
     if (file.folder) c.library->browse(Drive(c.ui.files_drive), file.path);
@@ -139,7 +164,8 @@ void soft(Context& c, int key) {
 // Shift + pad on the browser: the file under the cursor onto the next empty pad.
 bool samples_shift_pad(Context& c) {
     if (c.ui.page != PageId::Samples || !c.library || c.track().engine != EngineKind::Sampler) return false;
-    auto files = c.library->files();
+    if (c.ui.break_browse) { c.notice("Push loads the selected BREAK source"); return true; }
+    auto files = sample_browser_files(c.library->files(), c.ui.break_browse);
     if (c.ui.files_cursor >= files.size() || files[c.ui.files_cursor].folder) { c.notice("Shift + pad: a file first"); return true; }
     const auto& file = files[c.ui.files_cursor];
     if (file.bank) { c.notice("Push loads a bank"); return true; }

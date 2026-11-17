@@ -71,6 +71,38 @@ own code, under the same licence; the MP3 patents ran out in 2017.
 - Plug-ins themselves are not part of Melodee and none ship with it: each
   is the user's own, under its own licence.
 
+## Stem separator
+
+Stems (`src/melodee/shell/stems.h`) runs a program of its own,
+`melodee-stems`, with a model file beside it. Release zips carry both as
+files beside Melodee (`autorun/melodee/stems/`); neither is linked into
+Melodee's binary. `tools/stems/build.py` builds them from sources
+`src/melodee/dependencies.py` fetches into ignored `build/deps/` at pinned
+commits and checksums:
+
+- The program's driver, `tools/stems/stems_engine.c`, is Melodee's own
+  (AGPL-3.0-only). It is linked with the network and STFT code of
+  SpleeterRT, James Fung, GPL-3.0, commit
+  `d818fb9ca826d31cb7dda60409f3f14e6e789597` of
+  https://github.com/james34602/SpleeterRT, unchanged (`spleeter.c`,
+  `gemm.c`, `im2col_dilated.c`, `codelet.c`, `stftFix.c`, `cpthread.c`), and
+  with dr_wav (David Reid, public domain or MIT No Attribution), which
+  SpleeterRT carries.
+- OpenBLAS 0.3.28, the OpenBLAS project, BSD-3-Clause, commit
+  `5ef8b1964658f9cb6a6324a06f6a1a022609b0c5`, linked in statically.
+- The model, `spleeter-4stems.f16`: the 4-stem model of Spleeter, trained by
+  Deezer, MIT licence, from
+  https://github.com/deezer/spleeter/releases/download/v1.4.0/4stems.tar.gz
+  (checked against a pinned SHA-256). `tools/stems/convert_model.py` lays
+  its weights out as SpleeterRT's network code reads them, as 16-bit
+  floats; the weights themselves are Deezer's.
+
+Release zips carry the GPL, MIT and BSD texts and these addresses in
+`licenses/stems/`. The idea of running Spleeter on a sampler this way
+comes from Charles Vestal's Stems module for Schwung
+(https://github.com/charlesvestal/schwung-stems, MIT); none of its code or
+binaries is used.
+
 ## Rubik
 
 Melodee embeds Rubik, Copyright 2015 The Rubik Project Authors, under the
@@ -79,6 +111,19 @@ SIL Open Font License 1.1, from google/fonts commit
 `src/melodee/dependencies.py` fetches it and its `OFL.txt` into ignored
 `build/deps/rubik/` and checks both against pinned SHA-256 digests; the
 font is not tracked here. Release zips include `OFL.txt`.
+
+## Screen fonts
+
+Settings > SCREEN > Font offers these, each under the SIL Open Font License
+1.1, from the same google/fonts commit: Inter Tight (The Inter Project
+Authors), Atkinson Hyperlegible Next (The Atkinson Hyperlegible Next Project
+Authors), Space Grotesk (The Space Grotesk Project Authors), IBM Plex Sans
+(IBM Corp., Reserved Font Name "Plex"; embedded unchanged), Manrope (The
+Manrope Project Authors), VT323 (The VT323 Project Authors).
+`src/melodee/dependencies.py` fetches each with its `OFL.txt` into ignored
+`build/deps/fonts/` against pinned SHA-256 digests. Release zips include
+each `OFL.txt`. Melodee Pixel is Melodee's own (`src/melodee/ui/fonts/`,
+`tools/gen_pixel_font.py`).
 
 ## Engines
 

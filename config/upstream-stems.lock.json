@@ -1,0 +1,33 @@
+{
+  "tag": "v0.3.0",
+  "commit": "6d6ad5efff4cef9b7b04f3aee3c3f386ee717c16",
+  "archive": "Melodee-MPC-Sample-v0.3.0.zip",
+  "url": "https://github.com/keremimo/melodee-sample/releases/download/v0.3.0/Melodee-MPC-Sample-v0.3.0.zip",
+  "archive_sha256": "4638cfd0fc4f33bf050b55eb3963d40a0af2fe46ab8a1faa8b0e3365fef82535",
+  "files": {
+    "spleeter-4stems.f16": {
+      "member": "autorun/melodee/stems/spleeter-4stems.f16",
+      "sha256": "01863fd00fa5c78aa4200c04a6e8d9f0e81e56d0e1c0bc3a057d11459b559dd4"
+    },
+    "rhythmer-stems": {
+      "member": "autorun/melodee/stems/melodee-stems",
+      "sha256": "a69a9c412187344cdcd806156f93524f611c12a0ac27ae4fa158fe3ea04a444b"
+    },
+    "licenses/Spleeter-model-MIT.txt": {
+      "member": "autorun/melodee/licenses/stems/Spleeter-model-MIT.txt",
+      "sha256": "2087d50b26616ddb94416f4f18f173ea40bd6614b132316ed515dfe22a4e066d"
+    },
+    "licenses/OpenBLAS-LICENSE.txt": {
+      "member": "autorun/melodee/licenses/stems/OpenBLAS-LICENSE.txt",
+      "sha256": "190b5a9c8d9723fe958ad33916bd7346d96fab3c5ea90832bb02d854f620fcff"
+    },
+    "licenses/SpleeterRT-GPL-3.0.txt": {
+      "member": "autorun/melodee/licenses/stems/SpleeterRT-GPL-3.0.txt",
+      "sha256": "605e9047a563c5c8396ffb18232aa4304ec56586aee537c45064c6fb425e44ad"
+    },
+    "licenses/README.txt": {
+      "member": "autorun/melodee/licenses/stems/README.txt",
+      "sha256": "e5197e201e1d731afcfc94918e9229bd4bc058c31416b1296d3942ff0b5a9288"
+    }
+  }
+}

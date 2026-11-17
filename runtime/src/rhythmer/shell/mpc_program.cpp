@@ -69,21 +69,59 @@ KeygroupTags leaves_of(const juce::XmlElement& element) {
 // The project's sample slots, each path once; -1 when full.
 int slot_for(Project& project, const std::string& path, const std::string& name) {
     if (path.size() >= sizeof(SampleRef::path)) return -1;
+    int free = -1;
     for (unsigned n = 0; n < sample_slots; ++n) {
-        auto& ref = project.samples[n];
+        const auto& ref = project.samples[n];
         if (ref.used() && path == ref.path) return int(n);
-        if (ref.used()) continue;
-        std::snprintf(ref.path, sizeof(ref.path), "%s", path.c_str());
-        std::snprintf(ref.name, sizeof(ref.name), "%s", name.c_str());
-        return int(n);
+        if (free < 0 && !ref.used()) free = int(n);
     }
-    return -1;
+    if (free < 0) return -1;
+    auto& ref = project.samples.edit(size_t(free));
+    std::snprintf(ref.path, sizeof(ref.path), "%s", path.c_str());
+    std::snprintf(ref.name, sizeof(ref.name), "%s", name.c_str());
+    return free;
+}
+// An MPC program writes all 128 of its pads or keygroups, four layers each, some two hundred elements a pad, whether
+// a layer has a sample or not: 1.2 MB of text for a keygroup of forty files, and a third of a second for the XML
+// reader on the MPC. Nothing reads a layer that names no sample, nor a pad without one (keygroup_layers()), so
+// those are left out of the text before it is parsed.
+bool names_sample(const std::string& text, size_t from, size_t to) {
+    for (const char* tag : {"<SampleName>", "<SampleFile>"}) {
+        const size_t length = std::strlen(tag);
+        for (size_t at = text.find(tag, from); at != std::string::npos && at < to; at = text.find(tag, at + length)) {
+            size_t end = text.find('<', at + length);
+            if (end == std::string::npos || end > to) end = to;
+            if (text.find_first_not_of(" \t\r\n", at + length) < end) return true;
+        }
+    }
+    return false;
+}
+
+// `text` without its elements from `open` to `close` that name no sample.
+std::string sampled_only(const std::string& text, const char* open, const char* close) {
+    std::string out;
+    out.reserve(text.size());
+    const size_t close_length = std::strlen(close);
+    size_t at = 0;
+    for (;;) {
+        const size_t begin = text.find(open, at);
+        if (begin == std::string::npos) break;
+        size_t end = text.find(close, begin);
+        if (end == std::string::npos) break;
+        end += close_length;
+        out.append(text, at, begin - at);
+        if (names_sample(text, begin, end)) out.append(text, begin, end - begin);
+        at = end;
+    }
+    out.append(text, at, std::string::npos);
+    return out;
 }
 } // namespace
 
-std::string parse_mpc_program(const std::string& text, KeygroupProgram& program) {
-    size_t first = text.find_first_not_of(" \t\r\n\xef\xbb\xbf");
-    if (first == std::string::npos || text[first] != '<') return "Not an MPC program";
+std::string parse_mpc_program(const std::string& whole, KeygroupProgram& program) {
+    size_t first = whole.find_first_not_of(" \t\r\n\xef\xbb\xbf");
+    if (first == std::string::npos || whole[first] != '<') return "Not an MPC program";
+    const std::string text = sampled_only(sampled_only(whole, "<Layer ", "</Layer>"), "<Instrument ", "</Instrument>");
     auto xml = juce::XmlDocument::parse(juce::String::fromUTF8(text.data(), int(text.size())));
     if (!xml || !xml->hasTagName("MPCVObject")) return "Unreadable";
     auto* found = xml->getChildByName("Program");
@@ -128,8 +166,13 @@ bool is_drum_program(const std::string& path) {
 
 std::string program_preview(const std::string& path) {
     const fs::path where(path);
-    auto found = found_beside(where.parent_path(), "[Previews]/" + where.filename().string() + ".mp3");
-    return found.empty() ? std::string() : found.string();
+    // Expansions name it after the program file ("Kit.xpm.mp3", "Kit.xpm.wav"); some after its name alone.
+    for (const auto& name : {where.filename().string(), where.stem().string()})
+        for (const char* kind : {".mp3", ".wav"}) {
+            auto found = found_beside(where.parent_path(), "[Previews]/" + name + kind);
+            if (!found.empty()) return found.string();
+        }
+    return {};
 }
 
 std::string import_mpc_program(const std::vector<uint8_t>& file, const std::string& path, Project& project, MpcImport& report) {
@@ -223,7 +266,7 @@ unsigned layers_from_programs(Project& project) {
             to_model.fill(1.0);
             PadSound made = pad;
             if (!keygroup_pad_layers(found->second, slots, to_model, made)) continue; // a note-off pad: as it was
-            if (sharing == 1) project.samples[own] = SampleRef {};
+            if (sharing == 1) project.samples.edit(own) = SampleRef {};
             for (size_t n = 0; n < layers.size(); ++n) {
                 slots[n] = uint16_t(slot_for(project, paths[n], fs::path(paths[n]).stem().string()));
                 if (unsigned rate = mpc_wav_rate(paths[n])) to_model[n] = double(dsp::model_rate) / rate;

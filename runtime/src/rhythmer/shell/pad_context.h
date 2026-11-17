@@ -2,6 +2,7 @@
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
 #pragma once
 #include "rhythmer/model/project.h"
+#include "rhythmer/shell/features.h"
 #include "rhythmer/shell/pad_bank.h"
 #include "rhythmer/shell/seq_layer.h"
 #include "rhythmer/shell/ui_state.h"
@@ -43,10 +44,10 @@ struct PadFacts {
 inline PadContext pad_context(const UiState& ui, const Track& track, const PadFacts& facts, unsigned pad) {
     using C = PadContext;
     if (facts.card) return C::Page;
-    if (ui.exit_open || ui.ask != UiState::Ask::None) return C::Sheet;
+    if (ui.exit_open || ui.ask != UiState::Ask::None || ui.menu) return C::Sheet; // the MENU too (shell/menu.h)
     if (tracks_on_pads(ui)) return C::Tracks;
     if (ui.name.open()) return C::Name;
-    if (ui.loop_held && ui.page != PageId::Looper) return C::LoopHeld;
+    if (loop_grid_held(ui)) return C::LoopHeld; // Full's (shell/features.h)
     if (ui.copying == UiState::Copying::Patterns) return C::PatternCopy;
     if (ui.seq_held) return C::SeqLayer;
     if (facts.record_keys && !ui.shift) return C::RecordKeys; // Shift + pad jobs stay
@@ -55,6 +56,7 @@ inline PadContext pad_context(const UiState& ui, const Track& track, const PadFa
     if (ui.shift && ui.page == PageId::Looper && pad % 16 >= 8 && pad % 16 < 12) return C::LoopNow;
     if (ui.shift) return C::Shift;
     if (ui.page == PageId::Patterns && !ui.sheet_open) return C::SeqLayer; // Patterns' pads are the track's patterns, as Seq held's
+    if (ui.page == PageId::Scenes) return C::Page;
     if (ui.resample_pick) return C::ResamplePick;
     if (facts.kit_pads && ui.copying == UiState::Copying::Pads) return C::PadCopy;
     if (ui.copying == UiState::Copying::Keys && (facts.key_pads || ui.page == PageId::Roll || (ui.page == PageId::StepEdit && !ui.step_pads)))

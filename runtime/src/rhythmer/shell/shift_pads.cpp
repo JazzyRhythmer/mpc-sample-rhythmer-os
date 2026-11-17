@@ -22,8 +22,7 @@ void shift_pad(Context& c, unsigned pad) {
     case 0: // Full Level: every hit at 127, or back to the pad response it came from
         settings.toggle_full_level();
         toggled(c, job.name, settings.full_level());
-        for (unsigned t = 0; t < track_count; ++t) // Note Repeat's velocity: the pads' pressure, or 127 with Full Level
-            c.send({Command::Type::Arp, uint8_t(t), 0, 5, int16_t(!settings.full_level())});
+        c.send_repeat_velocity(); // Note Repeat's velocity: 127 with Full Level
         return;
     case 1: // Half Seq: the first half of the pattern
         c.half_length();
@@ -62,7 +61,7 @@ void shift_pad(Context& c, unsigned pad) {
         break;
     case 7: // Settings, as doors (MIDI Config one of them; Kerem's choice over the printed MIDI Config)
         if (c.ui.page == PageId::SettingsPage || c.ui.page == PageId::MidiConfig || c.ui.page == PageId::About) { c.back(); return; }
-        c.ui.midi_editing = false; c.ui.settings_editing = false; c.ui.settings_in = false;
+        c.ui.midi_editing = false; c.ui.settings_editing = false; c.ui.settings_in = false; c.ui.settings_look = false;
         c.open(PageId::SettingsPage);
         return;
     case 8: // Fader: what the selected track's fader follows, PIN, on / off (parity phase 8; round 2 fader C)

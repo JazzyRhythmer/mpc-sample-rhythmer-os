@@ -39,8 +39,8 @@ def run():
   assert hashes['low']!=hashes['high'],(name,'no pitch response')
   assert len({digest(i) for i in frames[name]})>=24,(name,'sustain animation stalled')
   results.append(dict(engine=name,hashes=hashes,frames=frames[name]))
- assert len({r['hashes']['active0'] for r in results})==20,'Shared active graphic between engines'
- assert len({r['hashes']['idle0'] for r in results})==20,'Shared idle graphic between engines'
- report=dict(engine_profiles=20,idle_stable=True,unique_active_graphics=20,unique_idle_graphics=20,note_response=True,pitch_response=True,sustain_frames=32,level_response=True,source='production performance_art; image hashes exclude names and control text',renderer=marker,engines=results)
- (QA/'animation-check.json').write_text(json.dumps(report,indent=2)+'\n');print('20 unique geometric sculptures: stable idle, input and level response, animated active frames passed',flush=True)
+ assert len({r['hashes']['active0'] for r in results})==len(names),'Shared active graphic between engines'
+ assert len({r['hashes']['idle0'] for r in results})==len(names),'Shared idle graphic between engines'
+ report=dict(engine_profiles=len(names),idle_stable=True,unique_active_graphics=len(names),unique_idle_graphics=len(names),note_response=True,pitch_response=True,sustain_frames=32,level_response=True,source='production performance_art; image hashes exclude names and control text',renderer=marker,engines=results)
+ (QA/'animation-check.json').write_text(json.dumps(report,indent=2)+'\n');print(str(len(names))+' unique geometric sculptures: stable idle, input and level response, animated active frames passed',flush=True)
 if __name__=='__main__':run()

@@ -24,9 +24,9 @@ def collect_tree(root,prefix,files):
             p=Path(folder)/name
             if name in EXCLUDE or p.is_symlink() or name.endswith(('.pyc','.pem','.key','.p12')) or name.startswith('.env'):continue
             data=p.read_bytes()
-            if prefix.startswith(('third_party/mpc-original/','third_party/runtime/JUCE/')) and PATTERNS['personal-home'].search(data):
+            if prefix.startswith(('third_party/mpc-original/','third_party/runtime/JUCE/','third_party/runtime/openblas/')) and PATTERNS['personal-home'].search(data):
                 data.decode('utf-8')
-                EXPORT_CHANGES[prefix+p.relative_to(root).as_posix()]={'original_sha256':hashlib.sha256(data).hexdigest(),'change':'Generic upstream home-path example in comment/documentation normalized; executable expressions and copyright retained'}
+                EXPORT_CHANGES[prefix+p.relative_to(root).as_posix()]={'original_sha256':hashlib.sha256(data).hexdigest(),'change':'Generic upstream machine-specific build/example home path normalized; DSP algorithms and copyright retained'}
                 data=PATTERNS['personal-home'].sub(b'/upstream-home/',data)
             # Source exports omit compiled executables/libraries and their embedded build-machine paths.
             if data[:4] in (b'\x7fELF',b'\xcf\xfa\xed\xfe',b'\xce\xfa\xed\xfe',b'\xca\xfe\xba\xbe') or data[:2]==b'MZ':continue
@@ -56,11 +56,14 @@ def main():
     collect_tree(WORK/'runtime/build/deps/JUCE','third_party/runtime/JUCE/',files)
     collect_tree(WORK/'runtime/build/deps/clap','third_party/runtime/clap/',files)
     collect_tree(WORK/'runtime/build/deps/rubik','third_party/runtime/rubik/',files)
+    for component in ('fonts','spleeterrt','openblas'):
+        dependency=WORK/'runtime/build/deps'/component
+        if dependency.is_dir():collect_tree(dependency,'third_party/runtime/'+component+'/',files)
     # Include the reviewed manual inputs needed to rebuild the embedded web bundle.
     public_runtime_docs={'runtime/docs/'+n for n in ('QUICKSTART.md','GUIDE.md','guide/rhythmer.md','guide/gen.md','guide/break-acid.md','guide/install.md')}
     # Other upstream development/planning docs are outside the public surface.
     for name in list(files):
-        if (name.startswith('runtime/docs/') and name not in public_runtime_docs) or name.startswith('runtime/tools/') and name.endswith('.md'):
+        if (name.startswith('runtime/docs/') and name not in public_runtime_docs and not name.startswith('runtime/docs/guide/') and not name.startswith('runtime/docs/images/')) or name.startswith('runtime/tools/') and name.endswith('.md'):
             del files[name]
     files['RHYTHMER_SOURCE.json']=(json.dumps(dict(product='Rhythmer OS',version=VERSION,source_commit=subprocess.check_output(['git','-C',str(ROOT),'rev-parse','HEAD'],text=True).strip(),hardware_validated=False),indent=2)+'\n').encode()
     files['SOURCE_EXPORT_ADJUSTMENTS.json']=(json.dumps(EXPORT_CHANGES,indent=2)+'\n').encode()

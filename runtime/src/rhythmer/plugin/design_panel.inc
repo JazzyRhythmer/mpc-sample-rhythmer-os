@@ -16,8 +16,8 @@ void PluginRack::edit_panel(unsigned entry,unsigned page,unsigned half,PluginPan
     }
     const auto& selected=out.design_pages[out.design_page];out.design_half=uint8_t(selected.shown[3]>=0?std::min(half,1u):0u);
     const auto& params=h->instance->getParameters();out.window={};out.params={};
-    for(unsigned k=0;k<6;++k){int at=selected.shown[k];if(at<0||unsigned(at)>=h->shown.size())continue;
-        auto& card=out.window[k];auto* p=params[h->shown[size_t(at)]];card.used=true;card.shown=int16_t(at);
+    for(unsigned k=0;k<6;++k){int at=selected.shown[k];if(at<0||at>=params.size())continue;
+        auto& card=out.window[k];auto* p=params[size_t(at)];auto found=std::find(h->shown.begin(),h->shown.end(),at);if(found==h->shown.end())continue;card.used=true;card.shown=int16_t(found-h->shown.begin());
         put(card.name,sizeof card.name,p->getName(int(sizeof card.name)-1).trim().toStdString());float v=p->getValue();
         put(card.text,sizeof card.text,tidy(p->getText(v,96).trim().toStdString()));card.value=int16_t(std::lround(std::clamp(v,0.0f,1.0f)*plugin_param_max));
         card.initial=int16_t(std::lround(std::clamp(p->getDefaultValue(),0.0f,1.0f)*plugin_param_max));

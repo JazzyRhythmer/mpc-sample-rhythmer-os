@@ -147,38 +147,49 @@ static void track_dist(track_t *t, int32_t *b, uint32_t n)
     k = 32000 - d * 95 + ((int32_t)song.g[G_DRLVL] - 64) * 150;   /* tone: transparent at low drive .. ~3 kHz, Q15; G_DRLVL (TONE) moves it */
     k = clamp(k, 2500, 32500);
     mk = 30000 - d * 120;                                /* make-up */
+    /* the states in locals for the block (t->dist_* are read and written per sample otherwise) */
+    {
+        int32_t hp = t->dist_hp, lp1 = t->dist_lp1, lp2 = t->dist_lp2;
 #if FELUCCA_FMINI_ONLY
-    mk = (int32_t)(((int64_t)mk * song.g[G_MIDI] * 512) >> 15);   /* OUTPUT: 64 = as before (x1), 127 = x1.98, 0 = silent */
-    if (song.g[G_INFO] == 1) {
-        /* TUBE: two triode stages with a coupling capacitor between them: the first biased (a grid bias: even harmonics, a soft, lopsided clip),
-         * the second biased too (more even harmonics: a warm 2nd): rounder, thicker than SOFT, and
-         * it compresses before it clips. Each stage gains: GAIN raises the first 1 .. 9x, the second 1 .. 2.5x */
-        int32_t g1 = 4096 + d * d * 2, g2 = 4096 + d * 48, bias1 = 6500, bias2 = 1500, c1 = softclip(bias1), c2 = softclip(bias2);
-        int32_t *cap = &tube_cap[t - trk];
+        mk = (int32_t)(((int64_t)mk * song.g[G_MIDI] * 512) >> 15);   /* OUTPUT: 64 = as before (x1), 127 = x1.98, 0 = silent */
+        if (song.g[G_INFO] == 1) {
+            /* TUBE: two triode stages with a coupling capacitor between them: the first biased (a grid bias: even harmonics, a soft, lopsided clip),
+             * the second biased too (more even harmonics: a warm 2nd): rounder, thicker than SOFT, and
+             * it compresses before it clips. Each stage gains: GAIN raises the first 1 .. 9x, the second 1 .. 2.5x */
+            int32_t g1 = 4096 + d * d * 2, g2 = 4096 + d * 48, bias1 = 6500, bias2 = 1500, c1 = softclip(bias1), c2 = softclip(bias2);
+            int32_t *cap = &tube_cap[t - trk], cp = *cap;
+            for (i = 0; i < (int32_t)n; i++) {
+                int32_t x = b[i], y;
+                hp += (x - hp + 64) >> 7;
+                x = clamp(x - hp, -230000, 230000);
+                y = softclip((((x >> 2) * g1) >> 10) + bias1) - c1;
+                cp += (y - cp + 128) >> 8;                       /* the coupling capacitor (~30 Hz) */
+                y -= cp;
+                y = softclip((((y >> 2) * g2) >> 10) + bias2) - c2;
+                lp1 += mulq15(y - lp1, k);
+                lp2 += mulq15(lp1 - lp2, k);
+                b[i] = mulq15(lp2, mk);
+            }
+            *cap = cp;
+            t->dist_hp = hp;
+            t->dist_lp1 = lp1;
+            t->dist_lp2 = lp2;
+            return;
+        }
+#endif
+        b0 = softclip(bias);
         for (i = 0; i < (int32_t)n; i++) {
             int32_t x = b[i], y;
-            t->dist_hp += (x - t->dist_hp + 64) >> 7;
-            x = clamp(x - t->dist_hp, -230000, 230000);
-            y = softclip((((x >> 2) * g1) >> 10) + bias1) - c1;
-            *cap += (y - *cap + 128) >> 8;                       /* the coupling capacitor (~30 Hz) */
-            y -= *cap;
-            y = softclip((((y >> 2) * g2) >> 10) + bias2) - c2;
-            t->dist_lp1 += mulq15(y - t->dist_lp1, k);
-            t->dist_lp2 += mulq15(t->dist_lp1 - t->dist_lp2, k);
-            b[i] = mulq15(t->dist_lp2, mk);
+            hp += (x - hp + 64) >> 7;                       /* ~55 Hz low cut: keep the bass out of the clipper */
+            x = clamp(x - hp, -230000, 230000);             /* (x >> 2) * g fits 32 bits; the clip is flat out there */
+            y = softclip((((x >> 2) * g) >> 10) + bias) - b0;   /* >> 2 first: no overflow for loud poly */
+            lp1 += mulq15(y - lp1, k);                      /* two poles: tames the fizz */
+            lp2 += mulq15(lp1 - lp2, k);
+            b[i] = mulq15(lp2, mk);
         }
-        return;
-    }
-#endif
-    b0 = softclip(bias);
-    for (i = 0; i < (int32_t)n; i++) {
-        int32_t x = b[i], y;
-        t->dist_hp += (x - t->dist_hp + 64) >> 7;           /* ~55 Hz low cut: keep the bass out of the clipper */
-        x = clamp(x - t->dist_hp, -230000, 230000);         /* (x >> 2) * g fits 32 bits; the clip is flat out there */
-        y = softclip((((x >> 2) * g) >> 10) + bias) - b0;   /* >> 2 first: no overflow for loud poly */
-        t->dist_lp1 += mulq15(y - t->dist_lp1, k);         /* two poles: tames the fizz */
-        t->dist_lp2 += mulq15(t->dist_lp1 - t->dist_lp2, k);
-        b[i] = mulq15(t->dist_lp2, mk);
+        t->dist_hp = hp;
+        t->dist_lp1 = lp1;
+        t->dist_lp2 = lp2;
     }
 }
 
@@ -344,20 +355,32 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
 {
     uint32_t i, k;
     int32_t size = 25000 + song.g[G_RSIZE] * 50, damp = 32767 - RDAMP * 200;
+    uint16_t ci[4], cir[4], ai[2], air[2];              /* the indices and the combs' low-passes, in locals for the block */
+    int32_t clp[4], clpr[4];
+    for (k = 0; k < 4u; k++) {
+        ci[k] = fx.comb_i[k];
+        cir[k] = fx.comb_ir[k];
+        clp[k] = fx.comb_lp[k];
+        clpr[k] = fx.comb_lpr[k];
+    }
+    for (k = 0; k < 2u; k++) {
+        ai[k] = fx.ap_i[k];
+        air[k] = fx.ap_ir[k];
+    }
     for (i = 0; i < n; i++) {
         int32_t a = 0, b = 0;
         int16_t *c = rev_comb, *cr = rev_x.s;
         int32_t in = mulq15(rev_in[i], 2580);
         for (k = 0; k < 4u; k++) {
-            int32_t o = c[fx.comb_i[k]], q = cr[fx.comb_ir[k]];
-            fx.comb_lp[k] = o + mulq15(fx.comb_lp[k] - o, 32767 - damp);
-            c[fx.comb_i[k]] = (int16_t)clamp(in + mulq15(fx.comb_lp[k], size), -32768, 32767);
-            fx.comb_lpr[k] = q + mulq15(fx.comb_lpr[k] - q, 32767 - damp);
-            cr[fx.comb_ir[k]] = (int16_t)clamp(in + mulq15(fx.comb_lpr[k], size), -32768, 32767);
-            if (++fx.comb_i[k] >= REV_COMB[k])
-                fx.comb_i[k] = 0;
-            if (++fx.comb_ir[k] >= REV_COMB_R[k])
-                fx.comb_ir[k] = 0;
+            int32_t o = c[ci[k]], q = cr[cir[k]];
+            clp[k] = o + mulq15(clp[k] - o, 32767 - damp);
+            c[ci[k]] = (int16_t)clamp(in + mulq15(clp[k], size), -32768, 32767);
+            clpr[k] = q + mulq15(clpr[k] - q, 32767 - damp);
+            cr[cir[k]] = (int16_t)clamp(in + mulq15(clpr[k], size), -32768, 32767);
+            if (++ci[k] >= REV_COMB[k])
+                ci[k] = 0;
+            if (++cir[k] >= REV_COMB_R[k])
+                cir[k] = 0;
             a += o;
             b += q;
             c += REV_COMB[k];
@@ -366,20 +389,30 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
         c = rev_ap;
         cr = rev_x.s + (1139 + 1211 + 1300 + 1379);
         for (k = 0; k < 2u; k++) {
-            int32_t o = c[fx.ap_i[k]], q = cr[fx.ap_ir[k]];
-            c[fx.ap_i[k]] = (int16_t)clamp(a + (o >> 1), -32768, 32767);
+            int32_t o = c[ai[k]], q = cr[air[k]];
+            c[ai[k]] = (int16_t)clamp(a + (o >> 1), -32768, 32767);
             a = o - a;
-            cr[fx.ap_ir[k]] = (int16_t)clamp(b + (q >> 1), -32768, 32767);
+            cr[air[k]] = (int16_t)clamp(b + (q >> 1), -32768, 32767);
             b = q - b;
-            if (++fx.ap_i[k] >= REV_AP[k])
-                fx.ap_i[k] = 0;
-            if (++fx.ap_ir[k] >= REV_AP_R[k])
-                fx.ap_ir[k] = 0;
+            if (++ai[k] >= REV_AP[k])
+                ai[k] = 0;
+            if (++air[k] >= REV_AP_R[k])
+                air[k] = 0;
             c += REV_AP[k];
             cr += REV_AP_R[k];
         }
         out[i] += (a + b) >> 1;
         rev_side[i] = (a - b) >> 1;
+    }
+    for (k = 0; k < 4u; k++) {
+        fx.comb_i[k] = ci[k];
+        fx.comb_ir[k] = cir[k];
+        fx.comb_lp[k] = clp[k];
+        fx.comb_lpr[k] = clpr[k];
+    }
+    for (k = 0; k < 2u; k++) {
+        fx.ap_i[k] = ai[k];
+        fx.ap_ir[k] = air[k];
     }
     hl.side = 1;
 }
@@ -1040,20 +1073,20 @@ static __attribute__((noinline)) void cho_block(const int32_t *cho_in, int32_t *
 
 /* FMini-1: the delay's seven TYPEs (params.c N_DLYTYPE: ANALOG DIGITAL TAPE P-PONG MULTI SLAP REVERSE), one loop each over the block, all on
  * dly_buf: the sample d back (1 .. 65535), or silence if the delay started less than d samples ago (older ones are from before) */
-static inline int32_t dly_at(uint32_t d)
+/* the delay's taps and write, on the block's locals (w: the next write index, st: the start: older samples are silence) */
+static inline int32_t dly_at_w(uint32_t w, uint32_t st, uint32_t d)
 {
-    return d <= fx.dly_w - fx.dly_start ? dly_buf[(fx.dly_w - d) & (DLY_LEN - 1u)] : 0;
+    return d <= w - st ? dly_buf[(w - d) & (DLY_LEN - 1u)] : 0;
 }
-static inline int32_t dly_atq(uint32_t dq)                  /* Q8 samples back, linear between two samples */
+static inline int32_t dly_atq_w(uint32_t w, uint32_t st, uint32_t dq)   /* Q8 samples back, linear between two samples */
 {
     uint32_t d = dq >> 8;
-    int32_t a = dly_at(d), b = dly_at(d + 1u);
+    int32_t a = dly_at_w(w, st, d), b = dly_at_w(w, st, d + 1u);
     return a + (((b - a) * (int32_t)(dq & 255u)) >> 8);
 }
-static inline void dly_put(int32_t v)                       /* the loop's input (clamped) */
+static inline void dly_put_w(uint32_t w, int32_t v)                     /* the loop's input (clamped) at the write index w */
 {
-    dly_buf[fx.dly_w & (DLY_LEN - 1u)] = (int16_t)clamp(v, -32768, 32767);
-    fx.dly_w++;
+    dly_buf[w & (DLY_LEN - 1u)] = (int16_t)clamp(v, -32768, 32767);
 }
 #define DLY_MAXQ ((int32_t)(DLY_LEN - 4u) << 8)
 /* ANALOG: a BBD chain's echo: dark (the loop's low-pass ~2.6 kHz: every repeat darker), a slow drift of the clock (+-12 samples at 1 Hz), the
@@ -1063,91 +1096,117 @@ static inline void dly_put(int32_t v)                       /* the loop's input 
  *   P-PONG: one line of 2T: the left is the line's T, the right its 2T (the feedback's source): echoes alternate L R L R from T. MULTI: four taps
  *   at T/4 T/2 3T/4 T spread over the two sides, the feedback from the last. REVERSE: two heads read the last T backwards through triangles (a
  *   chunk of T played backwards, crossfaded), the feedback takes the reversed sound (the next repeat is forward again). P-PONG and REVERSE
- *   reach 743 ms (the line's 65 k samples hold 2T). */
+ *   reach 743 ms (the line's 65 k samples hold 2T).
+ * The TYPE is chosen once a block (a loop per type, the state in locals and written back at the end) */
 static __attribute__((noinline)) void dly_block(const int32_t *dly_in, int32_t *wet, uint32_t n, int32_t fb)
 {
-    uint32_t i, ty = dly_kind(), w;
-    int32_t dmix = song.g[G_DMIX] * 258, tgt = (int32_t)delay_samples() << 8, st = tgt - fx.dl_q, slap;
-    fx.dl_q += clamp(st, -2048, 2048);                  /* up to 8 samples a block: +-25 % speed: a quick, smooth bend */
-    slap = (1323 << 8) + (((fx.dl_q >> 6) * 3277) >> 9);   /* SLAP's time, 30 ms + TIME / 10 */
-    for (i = 0; i < n; i++) {
-        int32_t x, in = dly_in[i] >> 1, y;
-        switch (ty) {
-        case 0u:                                        /* ANALOG */
-            fx.dly_ph += 97392u;
-            x = dly_atq((uint32_t)clamp(fx.dl_q + ((osc_sine(fx.dly_ph) * 12) >> 7), 4096, DLY_MAXQ));
-            fx.dly_lp += mulq15(x - fx.dly_lp, 11500);
-            dly_put(in + mulq15(softclip(fx.dly_lp), fb));
-            wet[i] += mulq15(fx.dly_lp << 1, dmix);
-            break;
-        case 1u:                                        /* DIGITAL */
-            x = dly_atq((uint32_t)clamp(fx.dl_q, 4096, DLY_MAXQ));
-            fx.dly_lp += mulq15(x - fx.dly_lp, 28000);
-            dly_put(in + mulq15(fx.dly_lp, fb));
+    uint32_t i, ty = dly_kind(), w = fx.dly_w, st = fx.dly_start, ph = fx.dly_ph, ph2 = fx.dly_ph2;
+    int32_t dmix = song.g[G_DMIX] * 258, tgt = (int32_t)delay_samples() << 8, slew = tgt - fx.dl_q, slap, dl, lp = fx.dly_lp, hp = fx.dly_hp;
+    fx.dl_q += clamp(slew, -2048, 2048);                /* up to 8 samples a block: +-25 % speed: a quick, smooth bend */
+    dl = fx.dl_q;
+    slap = (1323 << 8) + (((dl >> 6) * 3277) >> 9);     /* SLAP's time, 30 ms + TIME / 10 */
+    switch (ty) {
+    case 0u:                                            /* ANALOG */
+        for (i = 0; i < n; i++) {
+            int32_t in = dly_in[i] >> 1, x;
+            ph += 97392u;
+            x = dly_atq_w(w, st, (uint32_t)clamp(dl + ((osc_sine(ph) * 12) >> 7), 4096, DLY_MAXQ));
+            lp += mulq15(x - lp, 11500);
+            dly_put_w(w, in + mulq15(softclip(lp), fb));
+            w++;
+            wet[i] += mulq15(lp << 1, dmix);
+        }
+        break;
+    case 1u:                                            /* DIGITAL */
+        for (i = 0; i < n; i++) {
+            int32_t in = dly_in[i] >> 1, x;
+            x = dly_atq_w(w, st, (uint32_t)clamp(dl, 4096, DLY_MAXQ));
+            lp += mulq15(x - lp, 28000);
+            dly_put_w(w, in + mulq15(lp, fb));
+            w++;
             wet[i] += mulq15(x << 1, dmix);
-            break;
-        case 2u:                                        /* TAPE */
-            fx.dly_ph += 58437u;
-            fx.dly_ph2 += 629846u;
-            x = dly_atq((uint32_t)clamp(fx.dl_q + ((osc_sine(fx.dly_ph) * 24 + osc_sine(fx.dly_ph2) * 3 / 2) >> 7), 4096, DLY_MAXQ));
-            fx.dly_lp += mulq15(x - fx.dly_lp, 8800);
-            fx.dly_hp += (fx.dly_lp - fx.dly_hp) >> 6;
-            dly_put(in + mulq15((softclip((fx.dly_lp - fx.dly_hp) * 3 >> 1) * 21845) >> 15, fb));   /* (unity at small signals: the loop's gain stays fb) */
-            wet[i] += mulq15(fx.dly_lp << 1, dmix);
-            break;
-        case 3u: {                                      /* P-PONG */
-            uint32_t t = (uint32_t)clamp(fx.dl_q >> 8, 16, 32767);
-            int32_t l = dly_at(t), r = dly_at(2u * t);
-            fx.dly_lp += mulq15(r - fx.dly_lp, 22000);
-            dly_put(in + mulq15(fx.dly_lp, fb));
+        }
+        break;
+    case 2u:                                            /* TAPE */
+        for (i = 0; i < n; i++) {
+            int32_t in = dly_in[i] >> 1, x;
+            ph += 58437u;
+            ph2 += 629846u;
+            x = dly_atq_w(w, st, (uint32_t)clamp(dl + ((osc_sine(ph) * 24 + osc_sine(ph2) * 3 / 2) >> 7), 4096, DLY_MAXQ));
+            lp += mulq15(x - lp, 8800);
+            hp += (lp - hp) >> 6;
+            dly_put_w(w, in + mulq15((softclip((lp - hp) * 3 >> 1) * 21845) >> 15, fb));   /* (unity at small signals: the loop's gain stays fb) */
+            w++;
+            wet[i] += mulq15(lp << 1, dmix);
+        }
+        break;
+    case 3u:                                            /* P-PONG */
+        for (i = 0; i < n; i++) {
+            int32_t in = dly_in[i] >> 1;
+            uint32_t t = (uint32_t)clamp(dl >> 8, 16, 32767);
+            int32_t l = dly_at_w(w, st, t), r = dly_at_w(w, st, 2u * t);
+            lp += mulq15(r - lp, 22000);
+            dly_put_w(w, in + mulq15(lp, fb));
+            w++;
             wet[i] += mulq15(l + r, dmix);
             dside[i] += mulq15(l - r, dmix);
-            break;
         }
-        case 4u: {                                      /* MULTI */
-            uint32_t t = (uint32_t)clamp(fx.dl_q >> 8, 64, 65000);
-            int32_t t1 = dly_at(t >> 2), t2 = dly_at(t >> 1), t3 = dly_at((t * 3u) >> 2), t4 = dly_at(t), l, r;
-            fx.dly_lp += mulq15(t4 - fx.dly_lp, 24000);
-            dly_put(in + mulq15(fx.dly_lp, fb));
+        break;
+    case 4u:                                            /* MULTI */
+        for (i = 0; i < n; i++) {
+            int32_t in = dly_in[i] >> 1;
+            uint32_t t = (uint32_t)clamp(dl >> 8, 64, 65000);
+            int32_t t1 = dly_at_w(w, st, t >> 2), t2 = dly_at_w(w, st, t >> 1), t3 = dly_at_w(w, st, (t * 3u) >> 2), t4 = dly_at_w(w, st, t), l, r;
+            lp += mulq15(t4 - lp, 24000);
+            dly_put_w(w, in + mulq15(lp, fb));
+            w++;
             l = (22 * t1 + 16 * t3 + 13 * t4) >> 5;
             r = (19 * t2 + 8 * t3 + 13 * t4) >> 5;
             wet[i] += mulq15(l + r, dmix);
             dside[i] += mulq15(l - r, dmix);
-            break;
         }
-        case 5u:                                        /* SLAP */
-            fx.dly_ph += 48696u;
-            x = dly_atq((uint32_t)clamp(slap + ((osc_sine(fx.dly_ph) * 2) >> 7), 4096, DLY_MAXQ));
-            fx.dly_lp += mulq15(x - fx.dly_lp, 20000);
-            dly_put(in + mulq15(softclip(fx.dly_lp), mulq15(fb, 11000)));
-            wet[i] += mulq15(fx.dly_lp << 1, dmix);
-            break;
-        default: {                                      /* REVERSE */
-            int32_t o = 0, k;
-            w = fx.dly_w;
+        break;
+    case 5u:                                            /* SLAP */
+        for (i = 0; i < n; i++) {
+            int32_t in = dly_in[i] >> 1, x;
+            ph += 48696u;
+            x = dly_atq_w(w, st, (uint32_t)clamp(slap + ((osc_sine(ph) * 2) >> 7), 4096, DLY_MAXQ));
+            lp += mulq15(x - lp, 20000);
+            dly_put_w(w, in + mulq15(softclip(lp), mulq15(fb, 11000)));
+            w++;
+            wet[i] += mulq15(lp << 1, dmix);
+        }
+        break;
+    default:                                            /* REVERSE */
+        for (i = 0; i < n; i++) {
+            int32_t in = dly_in[i] >> 1, o = 0, k;
             for (k = 0; k < 2; k++) {
                 uint32_t c = fx.rv_c[k], nn = fx.rv_n[k];
                 int32_t wt = (int32_t)(c < nn / 2u ? c : nn - c) * (int32_t)fx.rv_i[k];
                 uint32_t age = w - fx.rv_p[k];
-                o += mulq15(age <= w - fx.dly_start && age < DLY_LEN - 2u ? dly_buf[fx.rv_p[k] & (DLY_LEN - 1u)] : 0, wt);
+                o += mulq15(age <= w - st && age < DLY_LEN - 2u ? dly_buf[fx.rv_p[k] & (DLY_LEN - 1u)] : 0, wt);
                 fx.rv_p[k]--;
                 if (++c >= nn) {                        /* a new sweep from the newest sample, the length from TIME now */
                     c = 0;
-                    nn = (uint32_t)clamp(fx.dl_q >> 8, 441, 32000);
+                    nn = (uint32_t)clamp(dl >> 8, 441, 32000);
                     fx.rv_p[k] = w;
                     fx.rv_n[k] = nn;
                     fx.rv_i[k] = 65536u / nn;
                 }
                 fx.rv_c[k] = c;
             }
-            fx.dly_lp += mulq15(o - fx.dly_lp, 20000);
-            dly_put(in + mulq15(fx.dly_lp, fb));
+            lp += mulq15(o - lp, 20000);
+            dly_put_w(w, in + mulq15(lp, fb));
+            w++;
             wet[i] += mulq15(o << 1, dmix);
-            break;
         }
-        }
-        (void)y;
+        break;
     }
+    fx.dly_w = w;
+    fx.dly_lp = lp;
+    fx.dly_hp = hp;
+    fx.dly_ph = ph;
+    fx.dly_ph2 = ph2;
 }
 #endif
 
@@ -1170,8 +1229,10 @@ static void fx_buses(const int32_t *cho_in, const int32_t *dly_in, const int32_t
             sd |= (uint32_t)(trk[k].p[P_DLY] > 0);
             sr |= (uint32_t)(trk[k].p[P_REV] > 0);
         }
+        /* a delay whose MIX (G_DMIX) is at ZERO is off as well: its state is cleared when it starts again (below), as for
+         * a bus whose sends are all 0. (The chorus's DEPTH at 0 stays on: a pure delayed tone, fmini_fx_test) */
         cho_act = sc || fx_any(cho_in, n);
-        dly_act = sd || fx_any(dly_in, n);
+        dly_act = song.g[G_DMIX] > 0 && (sd || fx_any(dly_in, n));
         rev_act = sr || fx_any(rev_in, n);
     }
     /* FMini-1: RATE only changes the rate. The depth is a fixed, typical pitch swing (about +-16 cents, 25% above the first pick): the delay swing
@@ -1367,36 +1428,57 @@ static __attribute__((noinline)) void ins_drive(ins_t *s, const track_t *t, int3
     uint32_t hold = INS_HOLD[clamp(t->p[P_IB], 0, 127) >> 3];
     int32_t a = t->p[P_IA], g = 4096 + a * a * 3;       /* DRIVE, Q12: 1x .. 12.8x, gentle at first */
     int32_t k = ins_lpk(crush ? t->p[P_IC] : t->p[P_IB]), lvl = crush ? 4096 : LEVEL_Q12[t->p[P_IC] & 127];
-    for (i = 0; i < n; i++) {
-        int32_t x = b[i], y, v;
-        s->w += clamp(tw - s->w, -SL_SLOPE, SL_SLOPE);
-        if (crush) {
-            if (!s->cnt) {
-                s->hold = ins_shape(IT_CRUSH, clamp(x, -262144, 262143), sh);
-                s->cnt = (uint8_t)hold;
+    /* the states in locals; the TYPE (crush or not) is one a block: a loop per kind */
+    int32_t w = s->w, hp = s->hp, lp1 = s->lp1, lp2 = s->lp2, dc = s->dc, hd = s->hold;
+    uint8_t cnt = s->cnt;
+    if (crush) {
+        for (i = 0; i < n; i++) {
+            int32_t x = b[i], y, v;
+            w += clamp(tw - w, -SL_SLOPE, SL_SLOPE);
+            if (!cnt) {
+                hd = ins_shape(IT_CRUSH, clamp(x, -262144, 262143), sh);
+                cnt = (uint8_t)hold;
             }
-            s->cnt--;
-            y = s->hold;
-        } else {
-            s->hp += ((x << 8) - s->hp) >> 8;            /* ~27 Hz low cut (Q8: no offset left by the rounding) */
-            v = clamp(x - (s->hp >> 8), -230000, 230000);
-            y = ins_shape(ty, ((v >> 3) * g) >> 9, 0);    /* (>> 3 first: 32 bits) */
+            cnt--;
+            y = hd;
+            y <<= 4;                                    /* (x16: the low cutoffs' rounding leaves no offset) */
+            v = mulq16(y - lp1, (uint32_t)k);            /* TONE / LPF: two one-pole low-passes */
+            y = v + lp1;
+            lp1 = y + v;
+            v = mulq16(y - lp2, (uint32_t)k);
+            y = v + lp2;
+            lp2 = y + v;
+            y = (y + 8) >> 4;
+            b[i] = pf_mix(x, y, w);
         }
-        y <<= 4;                                        /* (x16: the low cutoffs' rounding leaves no offset) */
-        v = mulq16(y - s->lp1, (uint32_t)k);             /* TONE / LPF: two one-pole low-passes */
-        y = v + s->lp1;
-        s->lp1 = y + v;
-        v = mulq16(y - s->lp2, (uint32_t)k);
-        y = v + s->lp2;
-        s->lp2 = y + v;
-        y = (y + 8) >> 4;
-        if (!crush) {
+    } else {
+        for (i = 0; i < n; i++) {
+            int32_t x = b[i], y, v;
+            w += clamp(tw - w, -SL_SLOPE, SL_SLOPE);
+            hp += ((x << 8) - hp) >> 8;                 /* ~27 Hz low cut (Q8: no offset left by the rounding) */
+            v = clamp(x - (hp >> 8), -230000, 230000);
+            y = ins_shape(ty, ((v >> 3) * g) >> 9, 0);   /* (>> 3 first: 32 bits) */
+            y <<= 4;                                    /* (x16: the low cutoffs' rounding leaves no offset) */
+            v = mulq16(y - lp1, (uint32_t)k);            /* TONE / LPF: two one-pole low-passes */
+            y = v + lp1;
+            lp1 = y + v;
+            v = mulq16(y - lp2, (uint32_t)k);
+            y = v + lp2;
+            lp2 = y + v;
+            y = (y + 8) >> 4;
             y = (y * lvl) >> 12;                        /* LEVEL */
-            s->dc += ((y << 8) - s->dc) >> 9;           /* DC blocker, ~14 Hz (FUZZ's lopsided halves) */
-            y -= s->dc >> 8;
+            dc += ((y << 8) - dc) >> 9;                 /* DC blocker, ~14 Hz (FUZZ's lopsided halves) */
+            y -= dc >> 8;
+            b[i] = pf_mix(x, y, w);
         }
-        b[i] = pf_mix(x, y, s->w);
     }
+    s->w = w;
+    s->hp = hp;
+    s->lp1 = lp1;
+    s->lp2 = lp2;
+    s->dc = dc;
+    s->hold = hd;
+    s->cnt = cnt;
 }
 
 /* PHASR, FLANG, CHOR: the sweep at RATE (one LFO per track), DEPTH, FDBK */
@@ -1592,19 +1674,25 @@ static void mix_part(track_t *t, uint32_t n SM_DECL)
         int32_t c = t->p[P_CHOR] * 258, d = t->p[P_DLY] * 258, r = t->p[P_REV] * 258, pk = t->peak;
         int32_t xmax = c > d ? c : d;
         xmax = 0x7FFFFFFF / ((xmax > r ? xmax : r) | 1);   /* sends: loud chords at a high LEVEL */
-        for (i = 0; i < n; i++) {
-            int32_t x = ((b[i] >> 2) * lvl) >> 10, a = x < 0 ? -x : x;   /* pre-shift: 8 loud voices */
-            int32_t xs = clamp(x, -xmax, xmax);         /* sends: mulq15 would overflow */
-            if (a > pk)
-                pk = a;
+        {   /* the part's level and pan (one loop), then each send on its own loop: a send at 0 is not a loop (no test per sample) */
+            int32_t xsb[CTL];
+            for (i = 0; i < n; i++) {
+                int32_t x = ((b[i] >> 2) * lvl) >> 10, a = x < 0 ? -x : x;   /* pre-shift: 8 loud voices */
+                if (a > pk)
+                    pk = a;
+                xsb[i] = clamp(x, -xmax, xmax);         /* sends: mulq15 would overflow */
+                SM(l)[i] += (x * gl) >> 12;
+                SM(r)[i] += (x * gr) >> 12;
+            }
             if (c)
-                SM(c)[i] += mulq15(xs, c);
+                for (i = 0; i < n; i++)
+                    SM(c)[i] += mulq15(xsb[i], c);
             if (d)
-                SM(d)[i] += mulq15(xs, d);
+                for (i = 0; i < n; i++)
+                    SM(d)[i] += mulq15(xsb[i], d);
             if (r)
-                SM(v)[i] += mulq15(xs, r);
-            SM(l)[i] += (x * gl) >> 12;
-            SM(r)[i] += (x * gr) >> 12;
+                for (i = 0; i < n; i++)
+                    SM(v)[i] += mulq15(xsb[i], r);
         }
         t->peak = pk;
     }

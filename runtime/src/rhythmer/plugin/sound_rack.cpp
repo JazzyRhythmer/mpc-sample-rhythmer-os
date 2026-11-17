@@ -97,14 +97,32 @@ public:
     bool drum_names(DrumVoices& result){std::lock_guard<std::mutex> guard(lock);if(single>=0)return false;auto* g=active.load();if(!g)return true;for(int i=0;i<pads;++i)if(auto c=g->routes[size_t(i)]){auto name=sound_name(c->engine,g->sounds[size_t(i)]).fromLastOccurrenceOf(" / ",false,false);if(name.isEmpty())name=sound_name(c->engine,g->sounds[size_t(i)]);std::snprintf(result.names[size_t(i)].data(),result.names[size_t(i)].size(),"%s",name.toRawUTF8());}return true;}
     String preset_name(){std::lock_guard<std::mutex> guard(lock);auto* g=active.load();if(!g)return {};String name=user_label.isNotEmpty()?user_label:single<0?text(at(get(catalog,"kits"),g->kit),"name"):sound_name(single,g->sounds[0]);if(single>=0&&user_label.isNotEmpty())name+=" / "+sound_name(single,g->sounds[0]);if(single<0)if(auto c=g->routes[size_t(focus)])name+=" / Pad "+String(focus+1)+": "+sound_name(c->engine,g->sounds[size_t(focus)]).fromLastOccurrenceOf(" / ",false,false);if(g->edited[size_t(single<0?focus:0)]||(kit_filter&&g->filter_edited))name+=" *";return name;}
     uint32_t revision(){std::lock_guard<std::mutex> guard(lock);return layout_revision;}
+    std::array<int,3> kit_mix_controls(){
+        std::array<int,3> out{{-1,-1,-1}};if(single>=0)return out;
+        auto c=focused();if(!c)return out;
+        int volume=-1,pan=-1,tune=-1,decay=-1;
+        auto metadata=get(source_info(*c),"parameters");const auto& order=g_order();
+        for(unsigned i=0;i<order.size();++i){auto role=text(at(metadata,order[i]),"kit_mix_role");int shown=base+int(i);
+            if(role=="volume"&&volume<0)volume=shown;
+            else if(role=="pan"&&pan<0)pan=shown;
+            else if(role=="tune"&&tune<0)tune=shown;
+            else if(role=="decay"&&decay<0)decay=shown;
+        }
+        if(volume<0)return out;
+        out[0]=volume;out[1]=pan>=0?pan:tune>=0?tune:decay;
+        out[2]=pan>=0?(tune>=0?tune:decay):(tune>=0?decay:-1);
+        return out;
+    }
     bool design_pages(PluginPanel& out){
         std::lock_guard<std::mutex> guard(lock);auto c=focused();if(!c&&single>=0)return false;
         auto source=c?text(source_info(*c),"name"):String("Empty");auto variant=c?text(source_info(*c),"variant"):String();if(variant.isNotEmpty())source+=" / "+variant;
         std::snprintf(out.design_source,sizeof out.design_source,"%s",source.toRawUTF8());
         if(design_cache_revision!=layout_revision){
-            std::vector<PluginDesignControl> list;if(kit_filter)for(int i=6;i<9;++i)list.push_back({i,-100,single<0?"KIT FILTER":"OUTPUT FILTER"});
+            std::vector<PluginDesignControl> list;auto mix=kit_mix_controls();
+            for(int shown:mix)if(shown>=0)list.push_back({shown,-200,"PAD MIX"});
+            if(kit_filter)for(int i=6;i<9;++i)list.push_back({i,-100,single<0?"KIT FILTER":"OUTPUT FILTER"});
             const auto& order=g_order();auto metadata=c?get(source_info(*c),"parameters"):var();
-            for(unsigned i=0;i<order.size();++i){auto p=at(metadata,order[i]);auto group=text(p,"edit_group");int rank=number(p,"edit_group_order",700);
+            for(unsigned i=0;i<order.size();++i){if(std::find(mix.begin(),mix.end(),int(i)+base)!=mix.end())continue;auto p=at(metadata,order[i]);auto group=text(p,"edit_group");int rank=number(p,"edit_group_order",700);
                 // Hortator models reuse eight slots for different functions.
                 // Classify their current native names, never a stale kit label.
                 auto family=text(source_info(*c),"name");auto* graph=active.load();const auto& names=graph->names[size_t(single<0?focus:0)];
@@ -202,6 +220,10 @@ public:
         input.clear();hazard.store(nullptr,std::memory_order_seq_cst);
     }
     String parameter_name(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){static const char* names[]{"KIT CUTOFF","KIT RESONANCE","KIT FILTER TYPE"};return single<0?String(names[i-6]):String(names[i-6]).replace("KIT ","OUTPUT ");}if(i==3)return "Save slot";if(i==4)return single<0?"Save Kit":"Save Sound";if(i==5)return "Status";if(i==0)return single<0?"Pad":"Sound";if(i==1)return single<0?"P"+String(focus+1).paddedLeft('0',2)+" Engine":"Pitch reference";if(i==2)return single<0?"P"+String(focus+1).paddedLeft('0',2)+" Sound":"Pitch mode";auto c=focused();int p=i-base;String name=c&&p>=0&&p<int(g_order().size())?c->synth->getParameters()[g_order()[size_t(p)]]->getName(64):String();
+        if(single<0&&c&&p>=0&&p<int(g_order().size())){auto role=text(at(get(source_info(*c),"parameters"),g_order()[size_t(p)]),"kit_mix_role");
+            auto label=role=="volume"?String("Volume"):role=="pan"?String("Pan"):role=="tune"?String("Tune"):role=="decay"?String("Decay"):String();
+            if(label.isNotEmpty())return "P"+String(focus+1).paddedLeft('0',2)+" "+label;
+        }
         if(c&&p>=0&&p<int(g_order().size())){auto metadata=at(get(source_info(*c),"parameters"),g_order()[size_t(p)]);auto label=text(metadata,"edit_name");if(label.isNotEmpty())name=label;auto dynamic=get(metadata,"dynamic_labels");int selector=number(metadata,"dynamic_selector",-1);if(dynamic.isArray()&&selector>=0&&selector<c->synth->getParameters().size())name=at(dynamic,std::clamp(int(std::lround(c->synth->getParameters()[selector]->getValue()*(size(dynamic)-1))),0,size(dynamic)-1)).toString();}
         if(c&&(c->drums||get(source_info(*c),"voice_parameters").isObject())){int reference_note=single<0?active.load()->notes[size_t(focus)]:c->source_note;if(reference_note==60&&number(source_info(*c),"native_pitch_parameter",-1)>=0)reference_note=36;auto voice=get(source_info(*c),"voices");for(int n=0;n<size(voice);++n)if(number(at(voice,n),"note")==reference_note||number(at(voice,n),"note")==int(get(get(source_info(*c),"control_notes"),String(reference_note)))){auto prefix=text(at(voice,n),"name")+" ";if(name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}String prefix="Pad "+String(reference_note-35)+" ";if(name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}
         if(c){auto prefix=text(source_info(*c),"strip_voice_prefix");if(prefix.isNotEmpty()&&name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}
@@ -219,7 +241,7 @@ public:
             if(category.isNotEmpty()&&!name.equalsIgnoreCase(category)&&!(name=="Sound model"&&category.equalsIgnoreCase("Model"))&&!name.startsWithIgnoreCase(category+" ")){bool joined=false;for(int start=0;start<category.length();++start)if(start==0||category[start-1]==' '){auto suffix=category.substring(start);if(name.equalsIgnoreCase(suffix)||name.startsWithIgnoreCase(suffix+" ")){name=category.substring(0,start)+name;joined=true;break;}}if(!joined)name=category+" "+name;}}
         return single<0&&name.isNotEmpty()?"P"+String(focus+1).paddedLeft('0',2)+" "+name:name;}
     float parameter_value(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){auto* g=active.load();return g?g->kit_filter[size_t(i-6)]/float(i==8?2:100):0;}auto c=focused();if(i==3)return save_slot/63.0f;if(i==4||i==5)return 0;if(i==0)return single<0?focus/63.0f:current_program()/float(std::max(1,factory_count()+int(saved_slots.size())-1));if(i==1)return single<0&&c?c->engine/float(std::max(1,size(get(catalog,"engines"))-1)):0;if(i==2)return single<0&&c?selection_index(c->engine,current_sound())/float(std::max(1,selection_count(c->engine)-1)):0;int p=i-base;if(!c||p<0||p>=int(g_order().size()))return 0;int index=g_order()[size_t(p)];float value=c->synth->getParameters()[index]->getValue();auto meta=at(get(source_info(*c),"parameters"),index);auto choices=get(meta,"option_indices");if(size(choices)>1){int source=int(std::lround(value*(size(get(meta,"options"))-1)));for(int n=0;n<size(choices);++n)if(int(at(choices,n))==source)return n/float(size(choices)-1);return 0;}return value;}
-    String parameter_text(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){auto* g=active.load();if(!g)return {};if(i==8){static const char* types[]{"LP","BP","HP"};return types[g->kit_filter[2]];}return String(g->kit_filter[size_t(i-6)])+" %";}auto c=focused();if(i==3)return String(save_slot+1);if(i==4)return "Turn to SAVE";if(i==5)return busy?"Working...":(last_error.isEmpty()?"Ready":last_error);if(i==0)return single<0?String(focus+1):(user_label.isNotEmpty()?user_label:c?sound_name(c->engine,current_sound()):"Empty");if(i==1)return single<0?(c?text(source_info(*c),"name")+(text(source_info(*c),"variant").isNotEmpty()?" / "+text(source_info(*c),"variant"):String()):"Empty"):"C4 / MIDI 60";if(i==2)return single<0?(c?sound_name(c->engine,current_sound()):"Empty"):(c&&c->drums?"Pitch + Length":"Key Pitch");int p=i-base;if(!c||p<0||p>=int(g_order().size()))return {};int index=g_order()[size_t(p)];auto* param=c->synth->getParameters()[index];if(bool(get(at(get(source_info(*c),"parameters"),index),"display_percentage")))return String(param->getValue()*100,0)+" %";auto options=get(at(get(source_info(*c),"parameters"),index),"options");if(size(options)>0)return at(options,std::clamp(int(std::lround(param->getValue()*(size(options)-1))),0,size(options)-1)).toString();auto value=param->getText(param->getValue(),96);auto meta=at(get(source_info(*c),"parameters"),index);auto unit=param->getLabel().trim();if(unit.isEmpty())unit=text(meta,"unit");
+    String parameter_text(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){auto* g=active.load();if(!g)return {};if(i==8){static const char* types[]{"LP","BP","HP"};return types[g->kit_filter[2]];}return String(g->kit_filter[size_t(i-6)])+" %";}auto c=focused();if(i==3)return String(save_slot+1);if(i==4)return "Turn to SAVE";if(i==5)return busy?"Working...":(last_error.isEmpty()?"Ready":last_error);if(i==0)return single<0?String(focus+1):(user_label.isNotEmpty()?user_label:c?sound_name(c->engine,current_sound()):"Empty");if(i==1)return single<0?(c?text(source_info(*c),"name")+(text(source_info(*c),"variant").isNotEmpty()?" / "+text(source_info(*c),"variant"):String()):"Empty"):"C4 / MIDI 60";if(i==2)return single<0?(c?sound_name(c->engine,current_sound()):"Empty"):(c&&c->drums?"Pitch + Length":"Key Pitch");int p=i-base;if(!c||p<0||p>=int(g_order().size()))return {};int index=g_order()[size_t(p)];auto* param=c->synth->getParameters()[index];auto native_meta=at(get(source_info(*c),"parameters"),index);if(bool(get(native_meta,"display_native_percent"))){double lo=double(get(native_meta,"minimum")),hi=double(get(native_meta,"maximum"));return String((lo+(hi-lo)*param->getValue())*100.0,0)+" %";}if(bool(get(at(get(source_info(*c),"parameters"),index),"display_percentage")))return String(param->getValue()*100,0)+" %";auto options=get(at(get(source_info(*c),"parameters"),index),"options");if(size(options)>0)return at(options,std::clamp(int(std::lround(param->getValue()*(size(options)-1))),0,size(options)-1)).toString();auto value=param->getText(param->getValue(),96);auto meta=at(get(source_info(*c),"parameters"),index);auto unit=param->getLabel().trim();if(unit.isEmpty())unit=text(meta,"unit");
         if(unit.isNotEmpty()&&!value.containsIgnoreCase(unit)&&value.trim().containsOnly("+-0123456789.eE ")){if(unit=="%"&&double(get(meta,"maximum"))<=1.0&&double(get(meta,"minimum"))>=0.0)value=String(value.getDoubleValue()*100.0,1);value+=" "+unit;}
         if(value.startsWithIgnoreCase("Pad ")){auto tail=value.substring(4);int space=tail.indexOfChar(' ');if(space>0&&tail.substring(0,space).containsOnly("0123456789"))value=(single<0?"P"+String(focus+1).paddedLeft('0',2)+" ":String())+tail.substring(space+1);}return value;}
     void change(int i,float value,uint32_t expected=0){if(!std::isfinite(value))return;value=std::clamp(value,0.0f,1.0f);if((single>=0&&(i==1||i==2))||i==5)return;if(i==4){if(value>=0.5f)enqueue({5,0});return;}if(single<0&&i==0){enqueue({1,0,value});flush();return;}if(single>=0&&i==0){enqueue({0,int(std::lround(value*(getNumPrograms()-1)))});return;}Request request{1,i,value};request.revision=expected;enqueue(std::move(request));}
@@ -522,3 +544,22 @@ namespace rhythmer { std::array<int,3> sound_rack_quick_parameters(AudioPluginIn
 namespace rhythmer {int sound_rack_source_parameter_begin(AudioPluginInstance* p){if(auto* r=dynamic_cast<Rack*>(p))return r->source_begin();return 0;}}
 
 namespace rhythmer {juce::String sound_rack_source_name(AudioPluginInstance* p){if(auto* r=dynamic_cast<Rack*>(p);r&&r->focused_pad()>=0)return r->parameter_text(1);return {};}}
+
+namespace rhythmer {
+std::vector<int> sound_rack_edit_order(AudioPluginInstance* synth){
+    const int count=sound_rack_parameter_count(synth);std::vector<int> result;
+    if(count<0)return result;
+    for(int i=0;i<std::min(6,count);++i)result.push_back(i);
+    PluginPanel panel;
+    if(sound_rack_focus(synth)>=0&&sound_rack_design_pages(synth,panel)){
+        for(unsigned page=0;page<panel.design_count;++page){
+            const auto& ids=panel.design_pages[page].shown;
+            for(unsigned row=0;row<2;++row){
+                if(ids[row*3]<0)continue;
+                for(unsigned k=0;k<3;++k)result.push_back(ids[row*3+k]);
+            }
+        }
+    }else for(int i=6;i<count;++i)result.push_back(i);
+    return result;
+}
+}

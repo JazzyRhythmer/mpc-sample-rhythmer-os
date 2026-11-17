@@ -10,7 +10,11 @@
 
 namespace rhythmer {
 namespace {
-void say_bank(Context& c) { c.notice(std::string("Bank ") + char('A' + c.track().bank % sampler_banks)); }
+void say_bank(Context& c) {
+    const auto& t = c.track();
+    unsigned bank = prog_pads(t) ? prog_bank(t) : t.bank % sampler_banks;
+    c.notice(std::string("Bank ") + char('A' + bank));
+}
 
 // Seq held: the bank of patterns in view, A-H round, and what it holds.
 void step_pattern_bank(Context& c, int way) {
@@ -35,20 +39,20 @@ void step_octave(Context& c, int way) {
 
 void step_bank(Context& c, int way) {
     auto& t = c.track();
-    int banks = drum_pads(t) ? int(drum_banks) : int(sampler_banks); // Drums pads: A-D, MIDI's notes 36-99
+    int banks = drum_pads(t) ? int(drum_banks) : prog_pads(t) ? int(prog_banks) : int(sampler_banks); // Drums pads: A-D, MIDI's notes 36-99; Prog: A-C
     t.bank = uint8_t((int(t.bank % banks) + way % banks + banks) % banks);
 }
 
 void pad_bank_button(Context& c, bool pressed) {
     auto& ui = c.ui;
-    if (pressed) { ui.pad_bank = true; ui.pad_bank_used = false; return; }
+    if (pressed) { ui.pad_bank = true; ui.pad_bank_used = false; ui.pad_bank_down = c.now; return; }
     if (!ui.pad_bank) return; // its press went elsewhere (a question took it): no step
     ui.pad_bank = false;
-    if (ui.pad_bank_used) return; // held for a pad, a jump or a copy: no step
+    if (!pad_bank_tap(ui, c.now)) return; // held (for a track, a jump, a copy, or just long): no step; only a tap steps
     if (ui.shift) ui.shift_used = true;
-    if (ui.seq_held || ui.page == PageId::Patterns) { step_pattern_bank(c, ui.shift ? -1 : 1); return; } // the patterns' bank (Seq's layer)
+    if (ui.seq_held || ui.page == PageId::Patterns || ui.page == PageId::Scenes) { step_pattern_bank(c, ui.shift ? -1 : 1); return; } // the patterns' bank (Seq's layer)
     if (ui.page == PageId::Punch) { c.step_punch_bank(ui.shift ? -1 : 1); return; } // the next bank of punches
-    if (c.track().engine == EngineKind::Sampler || drum_pads(c.track())) { step_bank(c, ui.shift ? -1 : 1); say_bank(c); return; }
+    if (c.track().engine == EngineKind::Sampler || drum_pads(c.track()) || prog_pads(c.track())) { step_bank(c, ui.shift ? -1 : 1); say_bank(c); return; }
     if (ui.page == PageId::Roll) step_octave(c, ui.shift ? -1 : 1); // Roll on a synth: −/+ are its pitch
 }
 
@@ -56,10 +60,10 @@ bool pad_bank_move(Context& c, int way) {
     auto& ui = c.ui;
     if (!ui.pad_bank || !way) return false;
     ui.pad_bank_used = true;
-    if (ui.seq_held || ui.page == PageId::Patterns) step_pattern_bank(c, way);
+    if (ui.seq_held || ui.page == PageId::Patterns || ui.page == PageId::Scenes) step_pattern_bank(c, way);
     else if (ui.page == PageId::Punch) c.step_punch_bank(way);
-    else if (c.track().engine == EngineKind::Sampler || drum_pads(c.track())) { step_bank(c, way); say_bank(c); }
-    else c.notice("Banks: kit and Drums tracks");
+    else if (c.track().engine == EngineKind::Sampler || drum_pads(c.track()) || prog_pads(c.track())) { step_bank(c, way); say_bank(c); }
+    else c.notice("Banks: kit, Drums and Prog tracks");
     return true;
 }
 
@@ -94,6 +98,7 @@ bool track_soft(Context& c, int key) {
     bool moving = c.ui.moving;
     auto did = track_key(c.ui, key);
     if (did == TrackKey::Ended) c.notice(moving ? "Move off" : "Copy off");
+    if (did == TrackKey::Tracks && c.ui.page != PageId::Tracks) c.open(PageId::Tracks); // B1 TRACKS: the mixer's
     return did != TrackKey::Ignored;
 }
 

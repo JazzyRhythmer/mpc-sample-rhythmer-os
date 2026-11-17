@@ -5,6 +5,7 @@
 #include "rhythmer/model/print.h"
 #include "rhythmer/model/project.h"
 #include "rhythmer/plugin/plugin_panel.h"
+#include "rhythmer/shell/auto_sample.h"
 #include "rhythmer/shell/chop.h"
 #include "rhythmer/shell/name_entry.h"
 #include "rhythmer/shell/settings.h"
@@ -32,6 +33,9 @@ enum class PageId : uint8_t { Stage, Keys, Sounds, Edit, Roll, Motion, Patterns,
                             ModPage,                           // roadmap P4: modulators and macros (MOTION again on Motion)
                             Print,                             // freeze plan F2c: the PRINT sheet (Sample Record on a plug-in or MIDI track)
                             TrackActions,                      // visible track instrument/type management
+                            Scenes,                            // roadmap P5: the bank's scenes (B1 again on Patterns)
+                            AutoSample,                        // the AUTO SAMPLE sheet: Resample (Shift + Pad 11) on a plug-in track
+                            Stems,                             // the STEMS sheet: Shift + B3 on a kit pad's TRIM (shell/stems_jobs.cpp)
                             Count };
 
 // Takeover (shell/takeover.h): a pot or the fader drives its value once it has
@@ -73,12 +77,14 @@ struct UiState {
     bool track_types = false;
     bool project_kit_only = false;
     bool break_from_picker = false;
+    bool break_preview_sync=false;
     int8_t break_job_track = -1;
     uint8_t break_job_bank = 0, break_job_bars = 2;
     bool break_job_b = false, break_job_from_picker = false;
     bool shift = false, shift_used = false; // Shift held; another control used during the hold
     bool pad_bank = false, mute = false, erase = false; // held
     bool pad_bank_used = false;  // Pad Bank held did something (a pad, -/+, the wheel): its release steps no bank
+    uint32_t pad_bank_down = 0;  // ms: when Pad Bank went down (held past pad_bank_hold_ms, its release steps no bank)
     bool erase_used = false;     // Erase held did something (a pad, a pot, the fader): its release deletes nothing
     // Mute mode (shell/mute_mode.cpp): a tap latches it, a hold lasts while held.
     bool mute_latch = false, mute_used = false;
@@ -95,12 +101,32 @@ struct UiState {
     // The Loading sheet covers the screen and owns the controls (main volume still turns) until both are done.
     bool loading = false;
     uint32_t loading_since = 0;                 // ms
-    uint16_t loading_total = 0, loading_left = 0; // the project's sample slots in use, and those not in yet
+    uint16_t loading_total = 0, loading_left = 0; // what it has to read (a sample, an instrument's file) and what is not in yet
+    // The same apart, as the sheet's rows count them: its samples, and its instruments' files (how many each
+    // instrument has is known once its own file is read; one not read yet counts as one).
+    uint16_t loading_samples = 0, loading_samples_in = 0;
+    uint16_t loading_files = 0, loading_files_in = 0;
+    uint16_t loading_instruments = 0;
+    int16_t loading_slot = -1;                  // the sample slot being read now (its name is shown); -1 none
+    uint16_t loading_bar = 0;                   // the bar, 0..1000: it never goes back
     bool exit_off = false;         // the Exit sheet's POWER OFF chosen: saving, then the MPC turns off
     bool exit_saved = false;       // and the project is on the card: the sheet says so for a second first
     // The wheel's highlight on screens that offer their keys as choices (shell/key_pick.h): the power sheet's
     // key (B1 STAY when it opens), a question's (B1 CANCEL when asked), Project's tiles (B1 SAVE).
     uint8_t exit_pick = 0, ask_pick = 0, project_pick = 0;
+    // The MENU (shell/menu.h), the encoder held: 0 closed, 1 HERE (the page's jobs as cards), 2 GO (the sixteen
+    // places as the pads sit); the tile the wheel is on (a pad's index) and the card.
+    uint8_t menu = 0, menu_tile = 0, menu_row = 0;
+    // A lesson (shell/lesson.h): which (0 none, else its number + 1), the step in hand, the button held with the
+    // step's control (-1 none), where the step's knob stood when it first moved (-1 not yet), when the step began.
+    uint8_t lesson = 0, lesson_step = 0;
+    int8_t lesson_with = -1;
+    int16_t lesson_pot = -1;
+    uint32_t lesson_at = 0;
+    // A soft key that steps through several pages lists them by name for a moment after a press (pages/overlays.cpp):
+    // the key (0-2) and when it was pressed.
+    uint8_t key_list_key = 0;
+    uint32_t key_list_at = 0;
     bool rec_armed = false;        // Seq Record pressed while stopped: Play starts the take (its light flashes)
     uint8_t lead_pattern = 0;      // the pattern launched last: whose tempo plays with BPM per pattern on
     uint32_t locate = 0;           // Patterns: where Shift + Play carries on from, ticks (the wheel moves it)
@@ -126,7 +152,9 @@ struct UiState {
     // An empty track picked (shell/new_track.h): that track, its Stage open (-1 none), and the page to go back to
     // once it is made.
     int8_t new_for = -1;
-    uint8_t new_pick = 0; // the carousel's card in the middle (NewChoice)
+    uint8_t new_pick = 0; // the carousel's card in the middle: a NewType, or with new_sources one of its sources
+    uint8_t new_type = 0; // the type whose sources are open (NewType)
+    bool new_sources = false; // the carousel shows that type's sources (B1 BACK: the types)
     float new_pick_from = 0; // and where it was drawn when it last moved (new_pick_shown())
     uint32_t new_pick_at = 0; // ms, when (0: still)
     PageId new_back = PageId::Stage;
@@ -140,6 +168,8 @@ struct UiState {
     uint8_t recent_count = 0;
     uint8_t steps_bar = 0;
     int16_t step_cursor = 0, held_step = -1;
+    // Settings > SEQ > Follow (shell/step_edit.cpp seq_follow): the bar (Page) or step (Step) the caret last went to; -1 none.
+    int16_t follow_step = -1;
     uint8_t step_event = 0;                   // Step Edit: which of the cursor step's events (shell/step_edit.h)
     // Step Edit (round 2, step-edit2 C, step entry): what a pad writes at the caret (step_cursor): its length in
     // steps of Q, its velocity (0: as played) and chance; the pads held for this step, and whether they wrote.
@@ -222,6 +252,9 @@ struct UiState {
     uint8_t song_zoom = 2;      // index into song_zooms
     uint8_t song_pattern = 0;   // what Push places on empty time
     uint8_t song_length = 4;    // bars
+    // Freeze plan F3: an audio track's take armed or recording (its track, -1 none), and whether it runs now.
+    int8_t audio_rec_track = -1;
+    bool audio_rec_running = false;
     // Per chain: the slot (or + ADD) and parameter row; the pad chains share the last entry (cursor_of()).
     std::array<uint8_t, chain_count + 1> fx_cursor {}, fx_row {};
     static unsigned cursor_of(unsigned chain) { return chain < chain_count ? chain : chain_count; }
@@ -235,6 +268,8 @@ struct UiState {
     // PLUGIN track's instrument, or a chain's slot), the plug-in in focus as the page shows it, and each entry's row.
     enum class PluginTarget : uint8_t { Instrument, Effect };
     uint16_t plugins_cursor = 0, plugins_count = 0;
+    bool plugin_replace = false; // REPLACE was pressed on "Replace <plug-in>?": choose_plugin goes ahead
+    bool scene_capture = false;  // Scenes' Shift + B2 CAPTURE: the next pad picks the scene the playing patterns go to
     PluginTarget plugin_target = PluginTarget::Instrument;
     uint8_t plugin_chain = 0, plugin_slot = 0;  // Effect: where it goes
     PageId plugin_back = PageId::Stage;          // where B1 (Back) at the top and a load go
@@ -358,6 +393,8 @@ struct UiState {
     bool settings_editing = false;            // Push opened the value under the cursor
     uint8_t settings_door = 0;                // Settings: the door in hand (pages/settings_page.cpp)
     bool settings_in = false;                 // and behind it: its rows
+    bool settings_look = false;               // SCREEN's Palette or Font row: its cards over the rows, the look turned live
+    uint8_t settings_look_before = 0;         // the palette or face to go back to on BACK
     uint8_t about_view = 0;                   // About (round 2): 0 how the machine is doing, 1 the credits (B3 again)
     std::array<Pot, 3> pots {};
     int8_t turning = -1;      // the card turned last
@@ -379,9 +416,10 @@ struct UiState {
     // A question over the page that B1 (Cancel) or B3 (Do it) answers, as the
     // MPC asks before erasing: Erase + pad on Step Edit (`ask_target` the
     // key), Erase + pot on Motion (the lane, bindings.h). shell/ask.cpp.
-    enum class Ask : uint8_t { None, EraseKeyEvents, EraseLane, ResetSettings, NewProject, TakeCardBack, ClearLoop, LooperOff, ClearPattern, ErasePunches, ClearTrack, InstallUpdate, Unfreeze }; // Unfreeze (freeze plan F2c): an edit of a frozen track; target the track // InstallUpdate: newer release on the card (shell/update.h); ClearLoop: target the loop; ClearPattern (Seq held + Erase + pad): target the pattern; ClearTrack (Pad Bank held + Erase + pad): target the track // NewProject (phase 10): target 0 nothing unsaved, 1 saved first, 2 lost; TakeCardBack (10b): the computer still holds the card
+    enum class Ask : uint8_t { None, EraseKeyEvents, EraseLane, ResetSettings, NewProject, TakeCardBack, ClearLoop, LooperOff, ClearPattern, ErasePunches, ClearTrack, InstallUpdate, Unfreeze, BreakLength, DeleteFile, ReplacePlugin, CaptureScene }; // CaptureScene (shell/scene_jobs.cpp): CAPTURE onto a column with notes; target the column // ReplacePlugin (shell/plugin_jobs.cpp): a picked plug-in over one in use; target the picker's row, `ask_name` the old plug-in's name // DeleteFile (shell/delete_jobs.h): Erase in a browser; target what it is (DeleteWhat), `ask_name` its name // Unfreeze (freeze plan F2c): an edit of a frozen track; target the track // InstallUpdate: newer release on the card (shell/update.h); ClearLoop: target the loop; ClearPattern (Seq held + Erase + pad): target the pattern; ClearTrack (Pad Bank held + Erase + pad): target the track // NewProject (phase 10): target 0 nothing unsaved, 1 saved first, 2 lost; TakeCardBack (10b): the computer still holds the card
     Ask ask = Ask::None;
     int32_t ask_target = 0;
+    std::array<char, 48> ask_name {}; // DeleteFile: the file's or the folder's name
     // The Looper (docs/LOOPER.md, shell/looper_jobs.cpp): the loop selected, the page's view (0 LOOPS, 1 MIX),
     // its sheet (B3 MORE, shell/loop_sheet.h); Loop down (held, the pads are the loop grid on any page,
     // loop_grip once held long or a grid pad hit: its release then does nothing) and whether it went down on Song;
@@ -426,11 +464,55 @@ struct UiState {
         }
     };
     PrintSheet print_sheet;
+    // The AUTO SAMPLE sheet (shell/auto_sample.h): the plug-in track it samples, how, which row of cards is on
+    // K1-K3 (0 KEYS: low, high, step; 1 NOTE: layers, hold, tail; 2 SOUND: tap, loop, level), and whether it runs.
+    struct AutoSheet {
+        uint8_t track = 0;
+        AutoSampleSettings settings;
+        uint8_t row = 0;
+        bool sampling = false;
+        bool checking = false; // the check under way (settings.found its findings once heard)
+        // The check is still to start: once the track's plug-in is open and the print engine is free
+        // (Context::autosample_tick()).
+        bool check_wanted = false;
+    };
+    AutoSheet auto_sheet;
+    // The STEMS sheet (shell/stems_jobs.cpp): the kit pad whose sample is separated, the sample it held when the
+    // sheet opened and its length, and whether the job runs (B1 then calls it off).
+    struct StemsSheet {
+        uint8_t track = 0, pad = 0;
+        uint16_t sample = 0;
+        uint32_t frames = 0;
+        bool running = false;
+    };
+    StemsSheet stems_sheet;
     // Seq held + Sample Record: each pattern pad freezes or thaws its pattern of the selected track until Seq is let
     // go (`seq_frozen`: the patterns as they will be then); the prints are made on the release.
     bool seq_print = false;
     std::array<uint64_t, (pattern_count + 63) / 64> seq_frozen {};
     bool seq_frozen_at(unsigned p) const { p %= pattern_count; return (seq_frozen[p / 64] >> (p % 64)) & 1; }
+    // Prog layout (shell/progression_jobs.h): the card's progressions as the wheel walks them (prog_at of prog_count;
+    // -1: the track's is not among them), its neighbours' names, and when the wheel last turned (Keys shows the name
+    // big for a moment). Storing: the keys held when B2 STORE was pressed, until a pad takes them (B1 BACK: none).
+    int16_t prog_at = -1;
+    uint16_t prog_count = 0;
+    char prog_prev[48] {}, prog_next[48] {};
+    uint32_t prog_shown_at = 0;
+    bool prog_storing = false;
+    std::array<uint8_t, notes_per_step> prog_store_keys {};
+    uint8_t prog_store_count = 0;
+    uint8_t prog_store_from = 0; // the layout to go back to on B1 BACK
+    // 16 Levels held's keys (shell/levels_keys.h): the sheet FILE or SET opened (0 none, 1 the progression files,
+    // 2 SET waiting for its pad, 3 the chord being built). FILE: the rows in view, the first of them and the row in
+    // hand. SET: the chord's place in the progression, its root (as heard), type and inversion on the cards, and
+    // the chord as it was, for B1 BACK.
+    uint8_t levels_sheet = 0;
+    uint8_t levels_sheet_track = 0; // the track it was opened on: another track selected closes it
+    std::array<std::array<char, 40>, 6> prog_rows {};
+    uint8_t prog_rows_count = 0;
+    uint16_t prog_rows_first = 0, prog_cursor = 0;
+    uint8_t chord_index = 0, chord_root = 0, chord_type = 0, chord_invert = 0;
+    ProgChord chord_before;
     // A word over the header for a moment: what an undo, redo, delete or copy did.
     char notice[32] {};
     uint32_t notice_at = 0;   // ms

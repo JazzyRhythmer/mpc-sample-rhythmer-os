@@ -48,8 +48,8 @@ void BreakManipulator::off(int key){
     else{int slice=key-int(sampler_first_note+bank_*16);if(slice>=0&&slice<16)state->jungle_sequence_off(unsigned(slice));}
     if(!transport_playing&&!state->six_seq_gates)state->jungle_play(0);
 }
-void BreakManipulator::release(){transport_playing=false;state->jungle_roll_off();state->jungle_sequence_off(32);state->jungle_play(0);}
-void BreakManipulator::stop(){transport_playing=false;state->jungle_init();state->view_playing=state->view_ext=0;filter_age=filter_q_age=0;filter_q=8;state->jungle_filter_resonance(8);state->jungle_sequence_mode(1);for(unsigned i=0;i<10;i++)param(i,controls[i]);tick_phase=phase=0;read=32;previous=next=0;std::fill(std::begin(output),std::end(output),0);}
+void BreakManipulator::release(){activity_=0;transport_playing=false;state->jungle_roll_off();state->jungle_sequence_off(32);state->jungle_play(0);}
+void BreakManipulator::stop(){activity_=0;transport_playing=false;state->jungle_init();state->view_playing=state->view_ext=0;filter_age=filter_q_age=0;filter_q=8;state->jungle_filter_resonance(8);state->jungle_sequence_mode(1);for(unsigned i=0;i<10;i++)param(i,controls[i]);tick_phase=phase=0;read=32;previous=next=0;std::fill(std::begin(output),std::end(output),0);}
 void BreakManipulator::param(unsigned id,int value){if(id>=10)return;
     if(id==3&&controls[3]!=value){filter_age=filter_q_age=0;filter_q=14;state->jungle_filter_resonance(14);}
     controls[id]=value;
@@ -67,6 +67,7 @@ void BreakManipulator::render(float* l,float* r,unsigned frames,float rate){
     const double step=44100.0/std::max(8000.f,rate);
     for(unsigned i=0;i<frames;i++){phase+=step;while(phase>=1){previous=next;next=frame();phase-=1;}
         l[i]=r[i]=gain*(previous+float(phase)*(next-previous));}
+    activity_.store((transport_playing?1u:0u)|(state->six_seq_gates?2u:0u)|((state->six_seq_roll==3||state->roll_now==3)?4u:0u),std::memory_order_relaxed);
 }
 bool BreakManipulator::sounding()const{return enabled()&&(state->jungle_playing()||state->voices[0].active||state->voices[1].active);}
 }

@@ -2,7 +2,7 @@
 
 ## Load and play
 
-Choose **Break Engine** in the instrument list. Before loading a loop, set browser **K1 LOAD BARS** to its actual length (1–4 bars in 4/4), select the file and press the encoder. The engine makes sixteen equal chops and a straight pattern. It stays in **BREAK GEN**, with **BRK PERF** selected: press the encoder or **B3 OPEN**. During loading, **B1 CANCEL** or **SHIFT + encoder Push** cancels track assignment; the decoder may keep a cached copy of the file.
+Choose **Break Engine** in the instrument list. Before loading a loop, set browser **K1 LOAD BARS** to its actual length (1–4 bars in 4/4), select the file and press the encoder. The engine makes sixteen equal chops. Only an empty pattern receives Straight automatically. Replacing A preserves patterns, pattern lengths, performance and pad sound-design settings. It stays in **BREAK GEN**, with **BRK PERF** selected: press the encoder or **B3 OPEN**. During loading, **B1 CANCEL** or **SHIFT + encoder Push** cancels track assignment; the decoder may keep a cached copy of the file.
 
 A rejected or undecodable source returns to the same browser for retry or cancellation, while keeping the previous instrument. Background failures do not change the current screen. If the target track is frozen during decoding, assignment is cancelled without opening a late Unfreeze dialog.
 
@@ -30,3 +30,20 @@ The tutorial film demonstrates a session edited before this hotfix. Its audio an
 ## Verification scope
 
 The hotfix preserves DSP algorithms, preset banks, command IDs and project serialization. General GEN now also records the Acid RNG stream in the same Undo/Redo operation as its notes; the generation algorithm is unchanged. Software tests cover load/cancel/focus, Undo/Redo, saved hold/mode, held command release after paging, source A/B, recorded command replay, CHOP versus LOOP hold behavior, and grain changes with STRETCH. Physical-device installation, controls, listening and long sessions remain beta validation; software checks do not certify them.
+
+## Replace a source without replacing your music
+
+- BRK PERF pages 1, 2, 4, 5, 6: **B2 LOAD A**. Page 3 SOURCE A/B: **B2 LOAD B**. Its on-screen hint points back to CHOPS B2 for A.
+- The browser header shows **LOAD A / N BARS** or **LOAD B / N BARS**. K1 LOAD BARS declares A's 1–4-bar audio length. B shares A's declared bars. Folders and CARD/INTERNAL/PREVIEW remain; non-audio instruments, kits, banks, MIDI and expansions are hidden only here. Shift+pad does not put a Break source on a random kit pad.
+- Replacing A at the same length retains B. A changed bar count asks first: **B1 CANCEL** or **SHIFT+Push** cancels; **B3 LOAD A** keeps all pattern lengths and clears B. Undo restores the whole previous track. Source-relative slice trims are rebuilt for the new audio; filters, pitch, envelopes, sends and performance settings stay.
+- **BREAK GEN K1 LENGTH** is the native sequence-length control. It is independent of browser LOAD BARS. Set LENGTH, then explicitly apply STRAIGHT or another generation action to write a new pattern.
+- In folders B1 BACK goes up. At the root A returns to GEN, B to PERF, or CANCEL to the plug-in list for that entry route. SHIFT+encoder Push closes the browser. ORIGINAL is original-file audition; K2 AUDITION selects a separate SYNC preview using native Beats warp without assigning a source.
+- Save with **SHIFT+Pad16 → PROJECT → SAVE**, reopen with OPEN, and retain the source audio files. This is project saving, separate from User Sound/User Kit.
+
+## Audition and condition feedback
+
+B3 PREVIEW enables audition; the physical middle knob **K2 AUDITION** selects ORIGINAL / SYNC. The top **B2** still selects CARD / INTERNAL. SYNC waits for complete audio and uses the actual host tempo with native pitch-preserving Beats warp. It starts when ready, not quantised to a bar. It is monitoring only: no track assignment, pattern edits, inserts/sends, prints/stems/input recording. The initial mode is ORIGINAL. SYNC requires a preview shorter than 30 s and a ¼–4× source/project ratio. CALC is based on duration and the declared bars; it is not beat detection. Failed decoding is shown as PREVIEW UNAVAILABLE.
+
+LOOP VARIATIONS says INACTIVE in CHOP, PATTERN HOLD ON while regeneration is held, READY when it needs playback/amount, and ACTIVE when conditions are met. GRAIN / STRETCH distinguishes WAITING from an actual STRETCH command, including recorded commands. Live commands end when leaving BRK PERF; paging within it keeps a held command so the ROLLS-to-GRAIN gesture works. Other tracks' held notes are retained.
+
+See the Break/Acid guide for outcomes, source preparation and “I hear no difference” checks. A first-time human/device walkthrough remains separate from scripted route and native-audio QA.

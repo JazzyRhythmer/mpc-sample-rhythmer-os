@@ -1,13 +1,13 @@
 [
   {
     "repo": "keremimo/melodee-sample",
-    "tag": "v0.2.0",
-    "asset": "Melodee-MPC-Sample-v0.2.0.zip",
-    "url": "https://github.com/keremimo/melodee-sample/releases/download/v0.2.0/Melodee-MPC-Sample-v0.2.0.zip",
-    "sha256": "7d985917d2b1fbf91cfdb8c396cc017dea0d1aae3d4f913f86bfdb5a4a887bbd",
-    "github_digest": "sha256:7d985917d2b1fbf91cfdb8c396cc017dea0d1aae3d4f913f86bfdb5a4a887bbd",
-    "bytes": 15955490,
-    "source_commit": "8880d16116ccb3c69f75fb46bf2166b16c51ef0c"
+    "tag": "v0.3.0",
+    "asset": "Melodee-MPC-Sample-v0.3.0.zip",
+    "url": "https://github.com/keremimo/melodee-sample/releases/download/v0.3.0/Melodee-MPC-Sample-v0.3.0.zip",
+    "sha256": "4638cfd0fc4f33bf050b55eb3963d40a0af2fe46ab8a1faa8b0e3365fef82535",
+    "github_digest": "sha256:4638cfd0fc4f33bf050b55eb3963d40a0af2fe46ab8a1faa8b0e3365fef82535",
+    "bytes": 91020141,
+    "source_commit": "6d6ad5efff4cef9b7b04f3aee3c3f386ee717c16"
   },
   {
     "repo": "sd88me/mpc-vst-TR-MPC",

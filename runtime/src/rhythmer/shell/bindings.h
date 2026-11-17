@@ -29,6 +29,7 @@ struct Binding {
         RecThreshold, RecLength, RecGain,  // Record and Input Config (RecLength: 0 Free, 1 Seq, 2.. 1..16 bars)
         ProjectJump, ProjectSort,          // Project
         Tempo, ClickLevel,                 // Tempo (Swing as on Length)
+        Features,                          // Settings' K1: 0 Basic, 1 Full (shell/features.h)
         ArpMode, ArpRate, ArpOctaves,      // Arp
         ChordType, ChordVoicing, ChordInvert, // Chord
         PadFine, PadPlayMode, PadGroup, PadReverse, PadAttack, PadDecay, PadRelease, PadSustain, // sampler pages
@@ -49,9 +50,9 @@ struct Binding {
         PadFxParam,                                // Pad FX (parity phase 7b): id = the MPC's Pad FX * 4 + its K
         FlexMode, FlexMix,                         // Flex Beat
         ModWheel,                                  // the fader's mod wheel (parity phase 8), 0..127
-        // Stage (shell/stage_map.h): PRESET's sound (its place in sound_list()) and list, the arp's gate and hold,
+        // Stage (shell/stage_map.h): PRESET's sound (its place in sound_list()) and list, the arp's gate, hold and on,
         // chords on or off, an empty track's choosers; the Tracks screen's track and its pattern.
-        StageSound, SoundList, ArpGate, ArpHold, ChordOn,
+        StageSound, SoundList, ArpGate, ArpHold, ArpOn, ChordOn,
         NewEngine, NewSound, NewSource, NewPort, NewChannel, // NewEngine: index into new_engines()
         TrackPick, TrackPattern,
         LevelsType, LevelsLow, LevelsHigh, // 16 Levels: the type (index into levels_types()), pad 1's end and pad 16's
@@ -102,9 +103,25 @@ struct Binding {
         SongTempo, SongTempoShape,
         PitchBend, // a PLUGIN track's pitch bend (the fader's Pitch Bend), -64..63 around the centre
         PatternProgram, // a MIDI track's PROGRAM K3: the program its pattern in hand sends as it starts (0: the track's)
+        // The AUTO SAMPLE sheet's rows: KEYS (lowest and highest root, MIDI notes; semitones between roots), NOTE
+        // (velocity layers 1-4; hold and tail in tenths of a second), SOUND (0 Pre FX, 1 Post FX; loop off or on;
+        // 0 the level as played, 1 normalized to -1 dB).
+        AutoLow, AutoHigh, AutoStep, AutoLayers, AutoHold, AutoTail, AutoTap, AutoLoop, AutoLevel,
         PrintTapPick, PrintTailPick, // freeze plan F2c, the PRINT sheet: K1 where prints are taken (PrintTap), K2 how they end (PrintTail)
         PadSend,  // Stage's SENDS on a kit, K2: the last pad's own send into bus id (PadSound::sends)
-        PadColour // Stage's COLOUR on a kit, K1: the last pad's colour, a place on shell/pad_colour.h's list
+        PadColour, // Stage's COLOUR on a kit, K1: the last pad's colour, a place on shell/pad_colour.h's list
+        BreakPreviewMode, // browser-only audition; existing binding IDs retained
+        PadCloud,  // Stage's CLOUD on a kit: the last pad's cloud; id 0 on or off, 1-5 position, size, density, scan, spread
+        ProgKey, ProgVoicing, // Keys on the Prog layout: K1 the progression's key (0..11), K2 its voicing (model/scales.h ProgVoicing)
+        BuildRoot, BuildChord, BuildInvert, // 16 Levels' SET (shell/levels_keys.h): the chord being made, its root (0..11), type and inversion
+        // Freeze plan F3, the Record page on an audio track: K1 its source (an index into audio_sources()), K2 its monitor.
+        AudioSource, AudioMonitorMode,
+        // Stage on an audio track, the take of the pattern in hand: CLIP its level (tenths of a dB), start and end in the
+        // take (ms); FADES fade in and out (ms) and reverse.
+        RegionGain, RegionStart, RegionEnd, RegionFadeIn, RegionFadeOut, RegionReverse,
+        // WARP (B1's third page): K1 0 Off, 1 Stretch, 2 Repitch; K2 the tempo it was recorded at (tenths of a BPM); K3
+        // its semitones, Shift + K3 its cents (Stretch moves its pitch by them).
+        RegionWarp, RegionBpm, RegionSemi, RegionFine,
     };
     Kind kind = Kind::None;
     int32_t id = 0;      // Param: the parameter
@@ -179,7 +196,7 @@ inline uint8_t warp_of_card(int value) { return value >= warp_card_seq ? warp_se
 // Song's zoom steps, in bars across the view.
 constexpr unsigned song_zooms[] {4, 8, 16, 32, 64};
 // Stage's cards for the selected track's page (shell/stage_map.h), and its Shift row.
-std::array<Binding, 3> stage_bindings(const Project& project, const UiState& ui, bool shift_row);
+std::array<Binding, 3> stage_bindings(const Project& project, const UiState& ui, const Pattern& pattern, bool shift_row);
 // The engines an empty track can become on Stage's SYNTH page, in K1's order.
 unsigned new_engines(std::array<EngineKind, size_t(EngineKind::Count)>& out);
 // The track's three favourite parameters, for every page without its own.

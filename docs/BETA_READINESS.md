@@ -1,4 +1,4 @@
-# Rhythmer OS 0.4.0-beta.3
+# Rhythmer OS 0.2.0
 
 Developed by jazzy rhythmer. This is a beta package for owner-led MPC Sample testing. Hardware validation is pending; it is not labelled as completed. No device installation or public upload is performed by the packaging tools.
 
@@ -19,4 +19,4 @@ Mandatory origin credit: Based on Melodee by Kerem Kiliç (Ellic Studio), AGPL-3
 
 GEN의 트랙 범위·악기 자동 배정·MIDI 전용 모드와 1–4마디 Break 자동 준비는 [GEN_WORKFLOW.md](GEN_WORKFLOW.md)를 참고하세요.
 
-For this structural update also test patterns A-H, Freeze/Deep Freeze and thaw with Rhythmer Kit, GEN frozen-track prompts, USB web/file access and screen mirror, plus signed update and restart rollback on the actual device. See UPSTREAM_020.md.
+For this structural update also test patterns A-H, Freeze/Deep Freeze and thaw with Rhythmer Kit, GEN frozen-track prompts, USB web/file access and screen mirror, plus signed update and restart rollback on the actual device. See UPSTREAM_030.md.

@@ -2,30 +2,53 @@
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
 #pragma once
 #include <juce_graphics/juce_graphics.h>
+#include "rhythmer/ui/palettes.h"
 #include "rhythmer/ui/shades.h"
 #include <array>
 #include <cstdint>
 
 // Rhythmer's design tokens at device size (the boards are drawn at 2x: halve
-// them). RHYTHMER monochrome palette, numbered tracks, and the four fixed zones of
+// them). The palette in use (NIGHT unless Settings > SCREEN > Palette picks
+// another, ui/palettes.h), one colour per track, and the four fixed zones of
 // every screen.
 namespace rhythmer::ui {
 
 inline juce::Colour hex(uint32_t rgb, float alpha = 1) { return juce::Colour(0xff000000u | rgb).withAlpha(alpha); }
 
+// The palette in use: use_palette() sets these (the screen thread, before each
+// frame); they start as NIGHT's.
 namespace colour {
-inline const juce::Colour bg = hex(0x000000), panel = hex(0x101010), surf = hex(0x171717), raised = hex(0x262626),
-    quiet = hex(0x0A0A0A), line = hex(0x383838), text = hex(0xFFFFFF), sec = hex(0xE0E0E0), mid = hex(0xB8B8B8),
-    dim = hex(0x888888), rec = hex(0xFFFFFF), amber = hex(0xD0D0D0), play = hex(0xFFFFFF);
-
-inline const juce::Colour ice = hex(0xD8D8D8);
+inline juce::Colour bg, panel, surf, raised, quiet, line, text, sec, mid, dim,
+    rec, amber,
+    play, // the transport playing (the place bar), apart from any track's colour
+    ice;  // freeze plan F2c: a print, a frozen track or pattern
 }
+inline unsigned palette_in_use = ~0u;
+inline void use_palette(unsigned n) {
+    n %= unsigned(palettes.size());
+    if (n == palette_in_use) return;
+    palette_in_use = n;
+    const auto& p = palettes[n];
+    colour::bg = hex(p.bg); colour::panel = hex(p.panel); colour::surf = hex(p.surf); colour::raised = hex(p.raised);
+    colour::quiet = hex(p.quiet); colour::line = hex(p.line); colour::text = hex(p.text); colour::sec = hex(p.sec);
+    colour::mid = hex(p.mid); colour::dim = hex(p.dim); colour::rec = hex(p.rec); colour::amber = hex(p.amber);
+    colour::play = hex(p.play); colour::ice = hex(p.ice);
+}
+namespace detail { inline const bool night_first = (use_palette(0), true); }
+inline const PaletteSpec& palette() { return palettes[palette_in_use % palettes.size()]; }
 
-// Track colours 1-16 with their knob shades, and the Looper's L1-L4: ui/shades.h (the pads use them too).
-inline juce::Colour track_colour(unsigned /*track*/) { return colour::text; }
-inline juce::Colour knob_shade(unsigned /*track*/, unsigned /*knob*/) { return colour::text; }
-inline juce::Colour loop_colour(unsigned /*loop*/) { return colour::text; }
-inline juce::Colour loop_shade(unsigned /*loop*/, unsigned /*knob*/) { return colour::text; }
+// Track colours 1-16 with their knob shades, and the Looper's L1-L4, as the palette in use has them (the pads
+// keep ui/shades.h's own).
+inline juce::Colour track_colour(unsigned track) { return hex(palette().tracks[track % 16][0]); }
+inline juce::Colour knob_shade(unsigned track, unsigned knob) { return hex(palette().tracks[track % 16][knob % 3]); }
+inline juce::Colour loop_colour(unsigned loop) { return hex(palette().loops[loop % 4][0]); }
+inline juce::Colour loop_shade(unsigned loop, unsigned knob) { return hex(palette().loops[loop % 4][knob % 3]); }
+// A colour of the pads' own (ui/shades.h, a kit pad's COLOUR) as this palette shows it: the track colour it is, else as it is.
+inline juce::Colour screen_colour(uint32_t rgb) {
+    if (palette_in_use == 0) return hex(0xEEEEEE); // pad colour stays stored, monochrome screen only
+    for (unsigned t = 0; t < 16; ++t) if (track_shades[t][0] == rgb) return track_colour(t);
+    return hex(rgb);
+}
 
 // Zones, top to bottom, at device size.
 namespace zone {

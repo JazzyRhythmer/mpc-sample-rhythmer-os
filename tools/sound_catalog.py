@@ -10,6 +10,9 @@ from edit_metadata import enrich
 import presentation_metadata as presentation
 import quick_metadata
 import design_metadata
+import kit_mix_metadata
+import semantic_parameter_ux
+import source_synth_metadata
 from rhythmer_presets import programs as own_programs
 from original_banks import elixir_kits,hortator_presets,mono2k_models,mono2k_library
 import re
@@ -39,6 +42,7 @@ def role(voice):
 
 def original_names(port):
     if not port:return []
+    if port.name in ('fm1-frodhes','move-tenebrae'):return [s['name'] for s in source_synth_metadata.bank(port)]
     if port.name=='fm1-mono2k':return mono2k_models()+[x['name'] for x in mono2k_library()]
     simple={
         'fm1-fmini':('firmware/src/eng_fmini_presets.h','static const preset_t FMINI_PRESETS'),
@@ -180,6 +184,7 @@ def generate():
         if not drum and program_file.is_file():
             programs=json.loads(program_file.read_text()).get(so,[])
             if programs:sounds=[dict(name=name,program=i,note=60) for i,name in enumerate(programs)]
+        if port and port.name in ('fm1-frodhes','move-tenebrae'):sounds=source_synth_metadata.bank(port)
         if port and port.name=='move-plaits':
             table=json.loads((port/'model-controls.json').read_text());models=params[0]['options']
             for bank,names in enumerate(table['fm_banks']):
@@ -188,6 +193,7 @@ def generate():
         entry = dict(folder=folder.name, library=so, name=xml.attrib.get('name',folder.name), drums=bool(drum), voices=drum,
                      sounds=sounds, kit_names=[k['name'] for k in engine_kits],parameters=[dict(index=i,key=p.get('key',''),name=p.get('name',''),category=p.get('category',''),options=p.get('options',[]),type=p.get('type',''),unit=p.get('unit',''),minimum=p.get('min',0),maximum=p.get('max',len(p.get('options',[]))-1)) for i,p in enumerate(params)])
         entry['preset_parameters']=[i for i,p in enumerate(params) if p.get('name','').strip().lower() in ('factory program','factory preset','sound recipe','patch recipe') or any(sound.get('native_key')==p.get('key') for sound in sounds)]
+        entry['preset_parameters'].extend(config.get('preset_parameters',[]))
         if port and port.name=='move-plaits':entry['preset_parameters']=[i for i in entry['preset_parameters'] if i!=1]
         if port and port.name=='fm1-hortator':
             entry['preset_parameters'].extend([0,89,90]);entry['native_pitch_parameter']=89;entry['lane_preset_key']='p90'
@@ -306,12 +312,25 @@ def generate():
     selected=json.loads((ROOT/'config/first-release-candidates.json').read_text())
     elixir_names={e['name']+' / '+n for e in registry if e['name']=='Elixir' for n in e['kit_names']}
     presets=[k for k in presets if k['name'] in selected['kit_presets'] or k['name'] in elixir_names]
-    assert len(registry)==25 and len(presets)==len(selected['kit_presets'])
+    assert len(registry)==len(selected['engine_folders']) and len(presets)==len(selected['kit_presets'])
+    # Append new sources without changing numeric identities in saved kit routes.
+    previous={i:e['folder'] for i,e in enumerate(registry)}
+    if selected.get('source_order'):
+        byfolder={e['folder']:e for e in registry}
+        assert set(selected['source_order'])==set(byfolder)
+        registry=[byfolder[folder] for folder in selected['source_order']]
+        current={e['folder']:i for i,e in enumerate(registry)}
+        for kit in presets:
+            for route in kit['routes']:route['engine']=current[previous[route['engine']]]
+
     result = dict(schema=2,engines=registry,kits=presets)
     for entry in registry:
+        source_synth_metadata.enrich(entry)
         quick_metadata.enrich(entry)
         design_metadata.enrich(entry)
         design_metadata.original_panel_order(entry)
+        kit_mix_metadata.enrich(entry)
+        semantic_parameter_ux.enrich(entry)
     target=ROOT/'config/sound-catalog.json'
     target.write_text(json.dumps(result,indent=2)+'\n')
     print(len(registry),'engines;',len(presets),'kit presets')

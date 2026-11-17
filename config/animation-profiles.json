@@ -90,6 +90,14 @@
     {
       "engine": "Break Engine",
       "style": 19
+    },
+    {
+      "engine": "Frodhes",
+      "style": 20
+    },
+    {
+      "engine": "Tenebrae",
+      "style": 21
     }
   ],
   "max_faces": 384,

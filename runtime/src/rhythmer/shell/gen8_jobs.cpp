@@ -94,7 +94,7 @@ void Context::gen8_action(unsigned action) {
     static std::mutex fm1_lock;std::lock_guard<std::mutex> fm1_guard(fm1_lock);
     auto fm1=std::make_unique<Fm1GenResult>();
     // Original FM-1 generator owns the seed streams, harmony and role choices.
-    if(action==9){if(track().engine!=EngineKind::Sampler||!track().break_bars){notice("Select Break Engine");return;}ui.break_load_b=false;ui.break_browse=true;ui.break_track=ui.track;open(PageId::Samples);notice("K1: loop bars / Push: load");return;}
+    if(action==9){if(track().engine!=EngineKind::Sampler||!track().break_bars){notice("Select Break Engine");return;}ui.break_load_b=false;ui.break_browse=true;ui.break_track=ui.track;ui.break_bars=track().break_bars;open(PageId::Samples);notice("K1: loop bars / Push: load");return;}
     if(action>=4) {
         if(track().engine!=EngineKind::Sampler||!track().break_bars){notice("BREAK: select a sampler track");return;}
         BreakMap map;map.bars=track().break_bars?track().break_bars:2;

@@ -11,10 +11,12 @@
 #include "rhythmer/model/midi_track.h"
 #include "rhythmer/model/modulators.h"
 #include "rhythmer/model/pad_fx.h"
+#include "rhythmer/model/progression_data.h"
 #include "rhythmer/model/pattern.h"
 #include "rhythmer/model/gen8.h"
 #include "rhythmer/model/acid_gen.h"
 #include "rhythmer/model/sampler.h"
+#include "rhythmer/model/slot_table.h"
 #include <algorithm>
 #include <array>
 #include <iterator>
@@ -34,7 +36,13 @@ namespace rhythmer {
 // drum kit (PROPHET, FM6, CZ, SID, the 909), gone since the synths became
 // plug-ins of their own: a file's track of one opens as that plug-in or empty
 // (legacy_engine below, model/project_file.cpp).
-enum class EngineKind : uint8_t { None = 0, Sampler = 6, Midi = 7, Plugin = 8, Count = 9 };
+// Keygroup: one sampled instrument (an .sfz, an MPC keygroup, an .exs, a
+// DecentSampler preset, an .sf2 preset, or one WAV across the keys) on pad 1 of
+// the sampler, its notes MIDI notes (engine/sampler.h keyed); files keep it in
+// KGRP, TRAK says None, so older builds load the track empty.
+// Audio (freeze plan F3, model/audio_track.h): records its input into its patterns and plays their takes; files keep
+// it in AUDT, TRAK says None.
+enum class EngineKind : uint8_t { None = 0, Sampler = 6, Midi = 7, Plugin = 8, Keygroup = 9, Audio = 10, Count = 11 };
 
 // What TRAK's engine number meant before the synths left Rhythmer. PROPHET,
 // CZ and SID tracks open as PLUGIN tracks on Melodee Poly, PD and Chip (the
@@ -232,9 +240,9 @@ struct Scene {
     }
 };
 
-// Drums: a drum plug-in's or drum machine's pads, as a kit's (model/scales.h pad_note()). Files keep the number:
-// new layouts go on the end.
-enum class PadLayout : uint8_t { Scale, Chromatic, Chords, Levels, Drums, Count };
+// Drums: a drum plug-in's or drum machine's pads, as a kit's (model/scales.h pad_note()). Prog: each pad one chord
+// of the track's progression (model/progression.h). Files keep the number: new layouts go on the end.
+enum class PadLayout : uint8_t { Scale, Chromatic, Chords, Levels, Drums, Prog, Count };
 
 constexpr unsigned max_chain = 8; // a track's pattern chain (seq-sheet2 B), patterns in the order played
 // A chained pattern in its last bar (`position` ticks into its `length`), when the next is queued for the bar line,
@@ -301,7 +309,15 @@ struct Track {
     // Chord: one pad, one chord from the scale (up to four notes).
     bool chord = false, chord_hold = false;
     uint8_t chord_type = 1, chord_voicing = 0, chord_invert = 0;
-    // Arp (note repeat on a sampler track): held notes in turn at a rate.
+    // Prog layout: the chords of an MPC 3 progression, one a pad over banks A-C (model/progression.h), moved by
+    // prog_shift semitones (K1 KEY, -6..5) and voiced by prog_voicing (K2: ProgVoicing).
+    Progression prog;
+    int8_t prog_shift = 0;
+    uint8_t prog_voicing = 0;
+    // Note Repeat: every pad held, again on each step of its rate (engine/note_repeat.h).
+    bool repeat = false;
+    uint8_t repeat_rate = 4; // engine/arp.h, 4 is 1/16
+    // Arp: held notes in turn at a rate (Stage's ARP page).
     bool arp = false, arp_latch = false;
     uint8_t arp_mode = 0, arp_rate = 4, arp_octaves = 1, arp_gate = 60; // arp_rate: engine/arp.h, 4 is 1/16
     // The fader (Shift + Pad 9, parity phase 8): its target (model/fader.h; 255
@@ -323,7 +339,12 @@ struct Track {
     uint8_t plugin = no_plugin; // a PLUGIN track: the entry of Project::plugins it plays
     uint8_t speed = speed_normal; // its patterns' playback speed (roadmap P1), an index into speeds: x1/2 .. x2
     MidiDevice midi;              // a MIDI track's device name, drum map and SysEx file (roadmap P4, MIDT v3)
+    AudioTrackSettings audio;     // an AUDIO track's source and monitor (freeze plan F3, AUDT)
     bool used() const { return engine != EngineKind::None; }
+    bool is_audio() const { return engine == EngineKind::Audio; }
+    // Plays samples off its pads: a kit, or a keygroup (its one sound on pad 1, always its last pad), whose sound
+    // pages (trim or zones, tune, envelopes, filter, play) are the same.
+    bool sampled() const { return engine == EngineKind::Sampler || engine == EngineKind::Keygroup; }
     // The note a new step gets on Steps: on a kit the pad hit last, else the last note played.
     uint8_t step_note() const { return engine == EngineKind::Sampler ? uint8_t(sampler_first_note + last_pad % sampler_pads) : last_note; }
     void set_name(const char* text) {
@@ -362,6 +383,8 @@ struct PluginRef {
     bool used() const { return path[0] != 0; }
 };
 
+static_assert(sample_slots >= track_count * sampler_pads * pad_layers, "a sample slot for every layer of every pad");
+
 struct Project {
     Gen8Settings gen8;
     char name[32] = "Untitled";
@@ -387,8 +410,10 @@ struct Project {
     MasterComp compressor;  // Shift + Pad 5 (parity phase 7)
     Song song;              // (Motion is each pattern's own since roadmap P1: Pattern::motion)
     std::array<Bus, bus_count> buses {};
-    std::array<SampleRef, sample_slots> samples {};
-    std::array<SampleChop, sample_slots> chops {}; // roadmap P3: each sample's chop, as Chop left it (CHOP)
+    // Its samples, a slot each (PadSound::sample), in tables that keep only the slots written (model/slot_table.h):
+    // samples[n] reads slot n, samples.edit(n) is the slot to write.
+    SlotTable<SampleRef> samples;
+    SlotTable<SampleChop> chops; // roadmap P3: each sample's chop, as Chop left it (CHOP)
     std::array<PluginRef, max_plugins> plugins {};
     Chain master {{}, master_slots};
     // The Looper (docs/LOOPER.md): its settings, and its four tracks' strips and chains.

@@ -3,6 +3,7 @@
 #include "rhythmer/shell/track_copy.h"
 #include "rhythmer/engine/sampler.h"
 #include <cmath>
+#include "rhythmer/shell/ask.h"
 #include "rhythmer/engine/engine_host.h"
 #include "rhythmer/shell/sample_library.h"
 #include "rhythmer/plugin/plugin_rack.h"
@@ -12,8 +13,14 @@ void Context::gen_break_load(const std::string& path,const std::string& name){
     if(host_recording()){notice("Stop recording before BREAK");return;}
     if(frozen_edit(ui.track))return;
     int slot=sample_slot(path,name);if(slot<0){notice("No sample slot");return;}
-    ui.break_pending=slot;ui.break_pending_b=ui.break_load_b;ui.break_track=ui.track;ui.break_bank=track().bank;ui.break_bars=ui.break_load_b?project.tracks[ui.break_track].break_bars:project.gen8.bars;
+    ui.break_pending=slot;ui.break_pending_b=ui.break_load_b;ui.break_track=ui.track;ui.break_bank=track().bank;ui.break_bars=ui.break_load_b?project.tracks[ui.break_track].break_bars:ui.break_bars;
     ui.break_job_track=int8_t(ui.break_track);ui.break_job_bank=ui.break_bank;ui.break_job_bars=ui.break_bars;ui.break_job_b=ui.break_pending_b;ui.break_job_from_picker=ui.break_from_picker;
+    if(!ui.break_job_b && track().engine==EngineKind::Sampler && track().break_bars && track().break_bars!=ui.break_job_bars){
+        ask(*this,UiState::Ask::BreakLength,ui.track);return;
+    }
+    gen_break_begin();
+}
+void Context::gen_break_begin(){
     ui.break_from_picker=false;ui.break_browse=false;open(PageId::Patterns);ui.sheet_open=true;ui.gen8_mode=2;ui.sheet_row=0;notice("Loading BREAK sample");
 }
 void Context::gen_break_tick(){
@@ -30,7 +37,7 @@ void Context::gen_break_tick(){
         }
     }
     if(plugins)for(unsigned e=0;e<max_plugins;e++)if(project.plugins[e].gen_program>=0&&plugins->status(e)==PluginStatus::Ready){plugins->select_program(e,project.plugins[e].gen_program);project.plugins[e].gen_program=-1;}
-    if(ui.break_pending<0||host_recording())return;
+    if(ui.break_pending<0||host_recording()||ui.ask==UiState::Ask::BreakLength)return;
     unsigned slot=unsigned(ui.break_pending),at=ui.break_job_track>=0?unsigned(ui.break_job_track):ui.break_track;
     unsigned job_bars=ui.break_job_track>=0?ui.break_job_bars:ui.break_bars;
     unsigned job_bank=ui.break_job_track>=0?ui.break_job_bank:ui.break_bank;
@@ -46,6 +53,9 @@ void Context::gen_break_tick(){
     };
     if(slot>=sample_slots||at>=track_count){fail_load("BREAK: invalid load target");return;}
     const auto& sample=project.samples[slot];if(!sample.frames){if(library){auto loaded=library->slot(slot);if(!loaded.error.empty()){fail_load("BREAK: sample load failed");}}return;}
+    if (sample.frames > 60u * 44100u) { fail_load("BREAK: use a loop under 60 s"); return; }
+    if (library && library->break_failed(slot)) { fail_load("BREAK: cannot read loop / retry"); return; }
+    if (library && sample.streamed && !library->break_ready(slot)) { library->hold(slot, {{0,sample.frames,false,true}}); return; }
     ui.break_pending=-1;ui.break_job_track=-1;
     if(frozen(at)){notice("BREAK load cancelled: frozen track");return;} // no late Unfreeze dialog on another screen
     unsigned bars=std::clamp<unsigned>(job_bars,1,4);
@@ -67,20 +77,32 @@ void Context::gen_break_tick(){
         edit.gen_plugins_after=edit.gen_plugins_before;
     }
     auto next=std::make_unique<TrackState>(*edit.track_before);auto& t=next->track;
-    rhythmer::load_sound(t,EngineKind::Sampler,0);t.break_bars=uint8_t(bars);t.bank=job_bank%sampler_banks;t.layout=PadLayout::Drums;t.set_name("BREAK");t.last_note=uint8_t(sampler_first_note+t.bank*16);
-    t.params[sampler::Follow]=1;t.params[sampler::FollowHow]=0;
+    const bool replacing=t.engine==EngineKind::Sampler && t.break_bars;
+    const bool changed_bars=replacing && t.break_bars!=bars;
+    if(!replacing)rhythmer::load_sound(t,EngineKind::Sampler,0);
+    t.break_bars=uint8_t(bars);t.bank=job_bank%sampler_banks;if(!replacing){t.layout=PadLayout::Drums;t.set_name("BREAK");t.last_note=uint8_t(sampler_first_note+t.bank*16);}
+    if(!replacing){t.params[sampler::Follow]=1;t.params[sampler::FollowHow]=0;}
+    if(changed_bars)t.break_source=0;
     for(unsigned i=0;i<16;i++){
-        PadSound sound;sound.sample=uint16_t(slot);sound.start=uint32_t(uint64_t(sample.frames)*i/16);sound.end=uint32_t(uint64_t(sample.frames)*(i+1)/16);
-        sound.own_tempo=uint16_t(std::lround(bpm*10));sound.group=16;sound.mono=true;
+        PadSound sound=replacing?t.pads[t.bank*16+i]:PadSound{};
+        // Retain sound design, but source-relative trim/loop and secondary layers
+        // must not point outside the new loop. B is retained only at the same length.
+        if(changed_bars || !replacing || i!=0) sound.layers={};
+        sound.loop_lock=true;sound.loop_start=0;
+        sound.sample=uint16_t(slot);sound.start=uint32_t(uint64_t(sample.frames)*i/16);sound.end=uint32_t(uint64_t(sample.frames)*(i+1)/16);
+        sound.own_tempo=uint16_t(std::lround(bpm*10));if(!replacing){sound.group=16;sound.mono=true;}
         t.pads[t.bank*16+i]=sound;
     }
-    auto& pat=next->patterns[t.pattern];pat.length=bars*384;
-    BreakMap map;map.bars=bars;for(unsigned i=0;i<16;i++)map.slices[i]=uint8_t(sampler_first_note+t.bank*16+i);
-    pat=break_generate(pat,BreakAction::Straight,project.gen8,map,project.tempo/10);
+    auto& pat=next->patterns[t.pattern];
+    if(!replacing && pat.events.empty() && pat.lanes.empty() && pat.motion.empty() && pat.euclids.empty() && pat.punches.empty()){
+        pat.length=bars*384;
+        BreakMap map;map.bars=bars;for(unsigned i=0;i<16;i++)map.slices[i]=uint8_t(sampler_first_note+t.bank*16+i);
+        pat=break_generate(pat,BreakAction::Straight,project.gen8,map,project.tempo/10);
+    }
     restore_track(*this,at,*next);edit.track_after=std::move(next);edits.push(std::move(edit));dirty=true;
     // Keep the loading screen as a stable BREAK menu; never take focus back
     // after the player changes track, closes GEN, or opens another GEN mode.
     if(ui.track==at && ui.page==PageId::Patterns && ui.sheet_open && ui.gen8_mode==2)ui.sheet_row=6;
-    notice("BREAK ready: "+std::to_string(bars)+" bars / 16 chops");
+    notice(replacing ? "BREAK A replaced / patterns kept" : "BREAK ready / GEN edits patterns");
 }
 }

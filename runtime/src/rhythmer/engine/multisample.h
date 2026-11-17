@@ -7,6 +7,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <mutex>
+#include <string>
 #include <vector>
 
 // A multisampled instrument's zones: what sits on a kit pad in place of one
@@ -46,6 +48,7 @@ struct SampleZone {
     uint8_t cutoff_center = 60;
     // Its own envelope: each stage off the pad's, in the pad's 0..100 steps.
     int16_t attack = 0, decay = 0, sustain = 0, release = 0;
+    int8_t velocity = 0;              // its Velocity over the pad's, percent (the sides of a split follow velocity each their own way)
     // Roadmap P3. A release sample (SFZ trigger=release): it plays when its key is let go, at the press's
     // velocity, `rt_decay` dB quieter a second the key was held, and is not played by the press itself.
     bool on_release = false;
@@ -74,9 +77,30 @@ inline float zone_crossfade(const SampleZone& z, int key, int velocity) {
     return curve(k, z.key_power) * curve(v, z.vel_power);
 }
 
-// One audio file of an instrument: its frames, mapped from the card's cache
-// (or, in tests, held). `frames` stays 0 until it has landed, its zones' start,
-// end and loop written before it, so the audio thread may read them after.
+// A PCM WAV read in place (engine/stream_pager.h): the file and how its frames lie in it. The part's `left` and
+// `right` then point into memory of the part's own, empty until the pager turns a chunk of the file to floats there
+// as a voice nears it. A chunk read stays in memory after the voice has gone (`kept`), for the next hit, until the
+// memory all such chunks may take is used up and it is the one longest unused. The file stays open from its first
+// read, as one of the few the pager keeps open: an instrument of a thousand files holds only its latest. More than
+// one pager may read a part (the live one and a print's), so its chunks are counted, filled and let go under `lock`.
+struct ZoneSource {
+    ZoneSource() = default;
+    ZoneSource(const ZoneSource&) = delete;
+    ZoneSource& operator=(const ZoneSource&) = delete;
+    ~ZoneSource(); // its file closed (engine/stream_pager.cpp)
+    std::string path;
+    uint64_t data_at = 0;             // bytes from the file's start to its first frame
+    uint8_t channels = 0, bits = 0;
+    bool floating = false;
+    std::mutex lock;
+    int file = -1;                    // open: under `lock`
+    std::vector<uint8_t> kept;        // a chunk: its frames are in memory, counted (ZonePart::pins) or not; under `lock`
+};
+
+// One audio file of an instrument: its frames, mapped from the card's cache,
+// read in place from a PCM WAV (`source`), or, in tests, held. `frames` stays 0
+// until it has landed, its zones' start, end and loop written before it, so the
+// audio thread may read them after.
 struct ZonePart {
     ZonePart() = default;
     ZonePart(const ZonePart&) = delete;
@@ -84,6 +108,8 @@ struct ZonePart {
     ~ZonePart(); // the mapping goes, and its pins with it (engine/stream_pager.cpp)
     const float* left = nullptr;
     const float* right = nullptr;     // == left: one side
+    float rate = 44100;               // of its frames: the project's when laid out in the cache, the file's own read in place
+    std::unique_ptr<ZoneSource> source; // read in place; none: mapped (or held)
     uint32_t total = 0;               // its length, known before it is published
     std::atomic<uint32_t> frames {0}; // its length once landed: what the audio thread goes by
     std::vector<uint16_t> pins;       // a count a chunk; the landing thread's, then the pager's
@@ -100,6 +126,12 @@ struct Multisample {
     // whose switch_key it is and sounds nothing of itself; -1 none. `switched`: the last pressed, audio thread only.
     int16_t switch_low = -1, switch_high = -1, switch_default = -1, switched = -1;
     bool has_release = false;         // a zone plays on a key let go
+    // Its program's Mono and Portamento (SfzRead): the sampler slides the pitch to a new key and, `tied`, carries a
+    // held note on to it.
+    bool mono = false, legato = false, tied = false;
+    uint8_t mono_low = 0, mono_high = 127; // the keys Mono holds for (one side of a split; the rest plays poly)
+    bool mono_at(int key) const { return mono && key >= mono_low && key <= mono_high; }
+    float glide = 0;                  // seconds
 };
 
 } // namespace rhythmer

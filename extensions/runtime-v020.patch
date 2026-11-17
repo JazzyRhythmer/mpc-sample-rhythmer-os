@@ -21,7 +21,7 @@
 -This guide explains every part of Rhythmer for the Akai MPC Sample. If you
 -have not installed Rhythmer yet, start with the [quickstart](QUICKSTART.md).
 -For the complete control reference, see [RHYTHMER.md](RHYTHMER.md).
-+Rhythmer OS 0.4.0-beta.3 for MPC Sample. Developed by jazzy rhythmer, based on Melodee by Kerem Kiliç (Ellic Studio). This owner beta awaits physical-device validation.
++Rhythmer OS 0.2.0 for MPC Sample. Developed by jazzy rhythmer, based on Melodee by Kerem Kiliç (Ellic Studio). This owner beta awaits physical-device validation.
  
  ## Contents
  
@@ -387,10 +387,32 @@
 +Turn the encoder or use Minus/Plus: the last entry wraps to the first and the first wraps back to the last in the current preset list, including User Sound/User Kit. Absolute pot selection and the existing LOAD/debounced preview timing stay unchanged. Acid Engine adds the original Aphex presets Acid Squelch, Lead Scream, Whistle Lead, Resonant Spike, Acid Seq, Reso Bass, Filter Cry and Techno Pulse alongside its four Hortator Acid presets. Each uses its original DSP and matching filter/edit controls.
 --- /dev/null
 +++ b/docs/guide/break-acid.md
-@@ -0,0 +1,72 @@
+@@ -0,0 +1,116 @@
 +# Break Manipulator와 Acid Generator
 +
 +## Break Engine
++
++## 먼저 한 가지씩 따라 하기
++
++| 목표 | 화면과 조작 | 확인 / 돌아가기 |
++|---|---|---|
++| 루프 재생 | 빈 트랙 → PLUG-IN → Break Engine. 브라우저 상단 LOAD A / N BARS를 확인하고 K1 LOAD BARS로 실제 1–4마디 지정 → 파일 선택 → 인코더 Push | 비어 있던 패턴만 Straight로 준비된다. BREAK GEN에 머무르며 BRK PERF가 선택된다. Push / B3 OPEN → PLAY. |
++| 패턴 생성 | Break 트랙 → SEQ / PATTERNS → SHIFT+B3 GEN → BREAK GEN → STRAIGHT / GENRE CHOPS / RANDOM CHOPS / MUTATE CHOPS / TAIL FILL → Push / B3 APPLY | 현재 패턴을 바꾸는 동작이다. SHIFT+− Undo, SHIFT++ Redo. BREAK GEN의 B1 BACK / SHIFT+Push → GEN 메인 → 한 번 더 닫기. |
++| 소스 A 교체 | BRK PERF의 1·2·4·5·6페이지 → B2 LOAD A. 또는 BREAK GEN → BROWSE SAMPLE | 기존 패턴·길이·연주 값·패드 음색 설정 유지. 새 파일의 16등분으로 트림을 다시 잡는다. 같은 마디 수면 B 유지. |
++| 소스 B 교체 | BRK PERF의 3 SOURCE A/B → B2 LOAD B → 파일 → Push | A와 같은 선언 마디 수를 사용. 패턴을 만들지 않는다. 로드 후 SOURCE A/B로 복귀. PLAY 중 패드 1 A / 2 B / 3 RETURN. |
++| 롤 연주 | BRK PERF → 인코더 회전으로 2 ROLLS → PLAY → 롤 패드 누르고 놓기 | 누른 동안 연주한다. Record+Play일 때만 시퀀스에 기록한다. B1 GEN은 BREAK GEN으로. RETURN은 Variation/Drift 복귀이며 뒤로가기가 아니다. |
++| 저장·다시 열기 | SHIFT+패드16 PROJECT → SAVE. 이후 OPEN으로 프로젝트 재열기 | 소스 참조·패턴·연주 설정을 프로젝트에 저장한다. 원본 샘플 파일을 이동/삭제하지 않는다. User Sound/User Kit 저장과 다르다. |
++
++### 교체와 길이 변경
++
++A의 LOAD BARS를 바꾸면 **Replace A / N bars?** 확인창이 나온다. B1 CANCEL 또는 SHIFT+Push는 취소한다. B3 LOAD A로 진행하면 패턴과 패턴 길이는 유지하고 B는 비운다. 새 길이의 Straight가 필요하면 BREAK GEN의 K1 LENGTH로 시퀀스 길이를 정한 뒤 STRAIGHT를 명시적으로 생성한다. 브라우저의 LOAD BARS는 소스 길이 선언으로 별개이며 GEN 설정을 바꾸지 않는다. Undo는 A/B·마디 수·패턴·연주 설정을 한 번에 복원한다. 초기 로드도 기존 노트/모션이 있다면 자동 Straight로 덮어쓰지 않는다.
++
++### 파일 선택과 취소
++
++Break 브라우저는 기존 폴더·CARD/INTERNAL·B3 PREVIEW를 사용하며 오디오 루프와 폴더만 표시한다. WAV, MP3, FLAC, Ogg, AIFF를 지원한다. K2 AUDITION으로 ORIGINAL / SYNC를 고르며 기본은 ORIGINAL이다. SYNC는 30초 미만·¼–4배 속도 범위에서만 제공한다. CALC BPM은 파일 길이와 선언 마디 수로 계산한 값으로 자동 비트 검출이 아니다. K1의 마디 수는 사용자가 선언한 길이이며 자동 검출값이 아니다. 소스 BPM은 파일 길이와 선언 마디 수로 계산한다. 샘플 파일은 수정하지 않는다.
++
++B1 BACK은 폴더 안에서는 상위 폴더로 간다. 루트에서 A는 GEN, B는 PERF, 플러그인 선택에서 들어왔다면 CANCEL로 목록에 돌아간다. SHIFT+인코더 **Push**는 브라우저를 닫는다. 인코더 회전과 혼동하지 않는다. 로딩 화면의 B1 CANCEL / SHIFT+Push는 배정을 취소하며, 다른 트랙으로 이동한 뒤 로드가 끝나도 화면을 빼앗지 않는다. K2 AUDITION의 ORIGINAL은 원본 속도 미리듣기다. SYNC는 기존 샘플러 Beats 워프로 현재 프로젝트 템포에 맞춘 별도 모니터링이다. 읽기가 끝난 뒤 재생하며 마디 시작에 맞춰 퀀타이즈해 시작하지는 않는다. 일반 Sample Kit 브라우저와 그 로드 경로는 그대로다.
++
 +
 +플러그인 목록에서 **Break Engine**을 선택하고 루프를 불러온다. 루프 브라우저의 K1 LOAD BARS에서 실제 길이를 1–4마디로 지정한 뒤 파일을 선택하고 Push한다. 재로드는 SEQ / PATTERNS → SHIFT+B3 GEN → BREAK GEN → BROWSE SAMPLE로 진입한다. 기존처럼 16개 슬라이스와 템포에 맞는 패턴을 준비한다. 원본 녹음 파일은 제공하지 않는다. Break DSP는 원본처럼 모노이며 스테레오 루프는 합쳐서 처리한다.
 +
@@ -398,9 +420,9 @@
 +
 +| 페이지 | 패드와 노브 |
 +|---|---|
-+| 1 CHOPS | 패드 1–16으로 슬라이스 연주. Orbit, DJ Filter, Pattern Hold(배포본 표기 LOOP HOLD) |
++| 1 CHOPS | 패드 1–16으로 슬라이스 연주. Orbit, DJ Filter, Pattern Hold |
 +| 2 ROLLS | 패드를 누르는 동안 Repeat·Up·Down·Shrink·Build·Stretch·Echo 연주 |
-+| 3 SOURCE A / B | 패드 1은 A, 패드 2는 B, 패드 3은 Return. Play Mode, Pattern Hold(배포본 표기 LOOP HOLD), DJ Filter |
++| 3 SOURCE A / B | 패드 1은 A, 패드 2는 B, 패드 3은 Return. Play Mode, Pattern Hold, DJ Filter |
 +| 4 LOOP VARIATIONS | Variation, Drift, Tail Fill. Variation·Drift는 LOOP 모드 + Pattern Hold OFF에서 내부 마디 경계부터 적용 |
 +| 5 GRAIN / STRETCH | 그레인 길이, 이음새 크로스페이드, 2–4배 Stretch |
 +| 6 TRACK MIX | 트랙 음량, 팬, Send A |
@@ -416,31 +438,25 @@
 +
 +SOURCE 페이지의 **LOAD B**로 두 번째 루프를 선택한다. A와 B는 같은 마디 수로 해석하며, 파일의 실제 프레임 길이가 달라도 각각 같은 구절에 맞춰 재생한다. 원본 FM-1의 고정 길이 A/B 뱅크를 사용자가 직접 불러오는 루프로 대체한 구조다.
 +
-+**CHOP**은 시퀀스에 지정한 슬라이스를 재생한다. **LOOP**는 시퀀스의 게이트가 열려 있는 동안 원본의 내부 브레이크 패턴·Variation·Drift를 사용한다. 기존 GEN 슬라이스 패턴은 CHOP으로 시작한다.
++**CHOP**은 시퀀스에 지정한 슬라이스를 재생한다. **LOOP**는 시퀀스의 게이트가 열려 있는 동안 원본의 내부 브레이크 패턴·Variation·Drift를 사용한다. 시퀀스의 슬라이스를 들으려면 CHOP을 선택한다. 소스 교체와 GEN은 선택한 연주 모드를 유지한다.
 +
 +**Record + Play** 상태에서 ROLLS와 SOURCE 패드를 누르면 연주 명령과 누른 길이를 현재 시퀀스에 기록한다. A/B와 Return도 기록하며, 재생할 때 같은 명령을 실행한다. 연주한 명령을 SEQ의 선택 레인으로 표시하며, STEP EDIT와 ROLL에도 음 이름 대신 명령 이름이 나온다. 스텝을 누른 채 인코더를 돌리면 해당 스텝의 Chop·Roll·A/B·Return 명령을 바꾼다. Return은 Variation·Drift를 원래 상태로 돌린다. 기존 시퀀스를 새 패턴으로 덮어쓰지 않는다.
 +
 +아래 **GEN**은 BREAK 생성 메뉴로 돌아간다. 그 메뉴의 BACK은 GEN 메인 메뉴로 이동한다. 정지 버튼을 두 번 누르는 전체 오디오 중단 동작도 유지한다.
 +
-+## Break 조작 안내 · hotfix.2
++## Break 조작 안내
 +
-+### 현재 배포본에서 다시 진입
++### 다시 진입
 +
-+Break 트랙 선택 → **SEQ / PATTERNS → SHIFT + B3 GEN → BREAK GEN → BRK PERF**. BRK PERF의 **B1 GEN**은 BREAK GEN으로 돌아간다. BREAK GEN의 B1 BACK 또는 SHIFT + 엔코더는 GEN 메인으로, 한 번 더 실행하면 창을 닫는다. 별도의 “Breaker Setup” 메뉴는 없다. hotfix.1까지는 A 루프 로드 시 STRAIGHT 생성 후 Stage로 이동해 메뉴가 잠시 나타났다가 사라질 수 있었다. hotfix.2에서는 BREAK GEN을 유지한다.
++Break 트랙 선택 → **SEQ / PATTERNS → SHIFT + B3 GEN → BREAK GEN → BRK PERF**. BRK PERF의 **B1 GEN**은 BREAK GEN으로 돌아간다. BREAK GEN의 B1 BACK 또는 SHIFT + 엔코더는 GEN 메인으로, 한 번 더 실행하면 창을 닫는다. 별도의 “Breaker Setup” 메뉴는 없다.
 +
 +### 작동 조건을 듣고 확인
 +
-+- 기본 CHOP은 시퀀스의 슬라이스를 재생한다. LOOP HOLD는 오디오 유지가 아닌 **내부 패턴 재생성 중지**이므로 CHOP에서 효과가 들리지 않는다. 트랙 Freeze와도 다르다.
++- 기본 CHOP은 시퀀스의 슬라이스를 재생한다. PATTERN HOLD는 오디오 유지가 아닌 **내부 패턴 재생성 중지**이므로 CHOP에서 효과가 들리지 않는다. 트랙 Freeze와도 다르다.
 +- PLAY → 3 SOURCE A/B에서 K1 LOOP, K2 Hold OFF → 4 LOOP VARIATIONS에서 Variation/Drift를 올린다. 내부 마디가 바뀌는 소리를 듣고 3페이지 Hold ON으로 패턴을 유지한다. Variation/Drift가 0이면 ON/OFF 차이가 적을 수 있다. Hold가 라이브 롤과 모든 조작을 멈추는 것은 아니다.
-+- GRAIN/STRETCH는 스트레치된 히트에 적용된다. PLAY 중 2 ROLLS에서 **패드 3 STRETCH를 계속 누른 채** 인코더를 돌려 5페이지로 이동하고 Grain/Splice/Slow를 조절한다. 패드를 놓으면 해제된다. STRETCH를 시퀀스에 녹음한 뒤 조절해도 된다. LOOP HOLD는 필요하지 않다. Slow는 해당 히트의 2–4배 스트레치이며 전체 템포가 아니다.
++- GRAIN/STRETCH는 스트레치된 히트에 적용된다. PLAY 중 2 ROLLS에서 **패드 3 STRETCH를 계속 누른 채** 인코더를 돌려 5페이지로 이동하고 Grain/Splice/Slow를 조절한다. 패드를 놓으면 해제된다. STRETCH를 시퀀스에 녹음한 뒤 조절해도 된다. PATTERN HOLD는 필요하지 않다. Slow는 해당 히트의 2–4배 스트레치이며 전체 템포가 아니다.
 +- B는 3페이지 LOAD B로 별도 파일을 넣어야 한다. 6 TRACK MIX는 트랙 음량·팬·Send A이며 패턴 생성 페이지가 아니다.
 +- RETURN은 Variation/Drift를 리셋한다. 패턴 삭제나 Hold 해제가 아니다. 누른 연주 패드는 놓아서 해제한다.
-+
-+### 0.4.0-beta.3 · Break workflow hotfix (hotfix.2)
-+
-+A 루프 로드 완료 후 BREAK GEN을 유지하고 **BRK PERF** 행을 선택한다. Push 또는 B3 OPEN으로 연주 화면을 연다. 로딩 중에는 B1 CANCEL 또는 SHIFT+Push로 트랙 배정을 취소할 수 있다. 파일 디코딩 캐시는 남아도 취소한 요청은 트랙을 바꾸지 않는다. 로딩 중 다른 생성·탐색 조작은 잠시 막고 K1–K3 카드는 비운다.
-+
-+사용자가 다른 트랙/페이지로 이동했거나 GEN을 닫은 경우 로드 완료가 화면을 되돌리지 않는다. 소스 B도 같은 화면 소유권 규칙을 따른다. PATTERN HOLD는 이전 배포본의 LOOP HOLD와 같은 저장 값·기능이며 이름만 명확히 했다. DSP·패턴 생성 알고리즘·프로젝트 형식은 바꾸지 않았다. 실기기 조작·장시간 재생·설치 복구는 베타 검증 범위다.
 +
 +## Acid Generator
 +
@@ -460,9 +476,37 @@
 +Auto Mutate는 재생 중 지정한 마디 간격마다 변형한다. 녹음·송 재생 중에는 자동 생성하지 않는다. BACK은 GEN 메인 메뉴로 돌아간다.
 +
 +이 문서는 베타 기능의 조작 안내다. 실제 MPC Sample의 패드 응답, 장시간 재생, 소리 및 녹음 감각은 실기기에서 검증한다.
++
++
++## 효과가 들리지 않을 때: 상태부터 확인
++
++| 화면 / 상태 | 의미 | 조작 |
++|---|---|---|
++| LOOP VARIATIONS: INACTIVE | CHOP 재생 중. 내부 LOOP 패턴 변형은 들리지 않음 | SOURCE의 PLAY MODE를 LOOP로 직접 선택 |
++| PATTERN HOLD ON | 내부 패턴 재생성 보류 | Hold OFF. 오디오 유지 / 트랙 Freeze / Grain 켜기가 아님 |
++| READY | 정지·게이트 없음 또는 Variation/Drift가 모두 0 | 패턴 PLAY / chop 패드 게이트, Variation·Drift 한 값씩 올리기 |
++| ACTIVE | LOOP·Hold OFF·재생 조건 충족 | 다음 내부 마디에서 비교 |
++| GRAIN: WAITING | STRETCH 명령이 없음 | 2 ROLLS의 패드3 STRETCH를 누른 채 5 GRAIN으로 이동 |
++| STRETCH ACTIVE | 실시간 또는 시퀀스에 기록한 STRETCH가 실제 엔진에 전달됨 | Grain/Splice/Slow 조정. 패드를 놓으면 종료. Pattern Hold 불필요 |
++
++BRK PERF 내 페이지 이동은 누른 패드를 유지한다. GEN·뒤로·다른 트랙으로 나가면 해당 트랙의 실시간 연주 명령만 해제하며, 다른 트랙의 눌린 음은 끊지 않는다. 시퀀스에 기록된 명령은 패턴대로 재생한다. RETURN은 Variation/Drift 복귀이며 Hold OFF나 패턴 삭제가 아니다.
++
++### 새 미리듣기의 범위
++
++B3 PREVIEW와 K2 AUDITION은 트랙·소스·패턴·Send·Insert를 바꾸지 않는다. 모니터링은 프로젝트 녹음·Freeze·스템에 들어가지 않는다. SYNC는 파일 전체 읽기가 끝난 뒤 기존 Beats 워프를 사용하며 피치를 유지한다. 실제 호스트 템포를 따르지만 MIDI 싱크 계산은 바꾸지 않는다. 다른 파일로 이동·PREVIEW OFF·브라우저 닫기·트랙 이동은 미리듣기를 중단한다. Push는 별도의 소스 로드 동작이다.
++
++READING SYNC는 읽는 중이다. 미리듣기는 최대 30초이므로 30초에 도달한 미리듣기는 전체 파일의 BPM으로 추정하지 않으며 ORIGINAL만 사용한다. 파일 이름의 숫자를 자동 BPM으로 단정하거나 LOAD BARS를 자동 변경하지 않는다. 소스 길이를 절반/두 배로 잘못 선언하면 계산 BPM도 절반/두 배가 된다.
++
++### 박자가 밀리거나 끝에 빈틈이 있을 때
++
++STRAIGHT부터 확인한다. 파일의 앞 무음·밀린 첫 박·뒤 패딩·잘린 시작은 16등분에 그대로 포함된다. 자동 트랜지언트 검출이나 첫 박 보정 기능으로 설명하지 않는다. 3마디도 16등분이므로 모든 어택에 슬라이스가 맞지는 않는다.
++
++필요하면 여유 Sample Kit 트랙의 패드에 원본 전체를 로드 → 기본 TRIM에서 Start/End 조정 → SHIFT+패드13 Trim Sample로 Samples/Edits에 파생 파일 생성 → 파일 확인 → Break에서 다시 로드한다. 원본 파일은 덮어쓰지 않는다. Break의 한 슬라이스 Trim을 전체 루프 편집으로 혼동하지 않는다.
++
++같은 Seed·설정은 같은 결과를 만든다. Mutate는 바꿀 노트가 있어야 하며 ENERGY 0이면 변화가 없을 수 있다. 생성 패턴은 SHIFT+−로 Undo, SHIFT++로 Redo한다. PROJECT SAVE/OPEN은 소스 참조·패턴·연주 설정을 저장/복원하며 User Sound/User Kit과 다르다. A 마디 수 변경으로 B를 비웠다면 기록된 B 전환 명령을 쓰기 전에 B를 다시 로드한다.
 --- /dev/null
 +++ b/docs/guide/gen.md
-@@ -0,0 +1,21 @@
+@@ -0,0 +1,23 @@
 +# GEN workflow — Rhythmer OS
 +
 +GEN uses the original Rhythmer OS for FM-1 generator, including its independent seeded random streams, genre orchestration, bass/kick relationship, chord voicing and melodic development. Required upstream C sources are preserved unchanged under `third_party/fm1-gen`; a small native bridge translates their steps to MPC events. FM-1 audio is not rendered by this bridge.
@@ -473,7 +517,7 @@
 +
 +The selected engine controls ENGINE GEN: Break GEN appears only for a track loaded as Break Engine; Acid GEN appears for Acid Engine. Back from either returns to the main GEN sheet. Back from the main sheet returns to PATTERNS. B2 labels its next destination (VARY / SETUP / GEN) and cycles main GEN / original Variations / Setup.
 +
-+Acid Engine uses Hortator's original ACID synthesis model, with native MIDI pitch and gate handling. Acid GEN exposes Energy, Accent and Seed, and calls the same original TB-3PO generator and scale-mask wrapper as the FM-1 build; seed, accents, slides, ties and mutate are converted to native events. Its source headers preserve the upstream schwung-tb3po → Phazerville Hemisphere Suite credits.
++Acid Engine uses Hortator's original ACID synthesis model, with native MIDI pitch and gate handling. Acid GEN exposes Density / Accent / Slide on settings page 1 of 2 and Octaves / Base Octave / Auto Mutate on page 2 of 2, and calls the same original TB-3PO generator and scale-mask wrapper as the FM-1 build; seed, accents, slides, ties and mutate are converted to native events. Its source headers preserve the upstream schwung-tb3po → Phazerville Hemisphere Suite credits.
 +
 +Break Engine uses the existing sampler: select a loop and source length 1–4 bars. It divides the whole loop into 16 equal slices, calculates source tempo, and follows project tempo. All four source lengths use the same chop workflow. Break GEN offers Genre, Straight, Random, Mutate, Tail Fill and Browse Sample. Sample Kit continues to load the existing MPC kit formats.
 +
@@ -481,13 +525,15 @@
 +
 +The interface shows each operation's target: Generate Song shows the selected four-track range / NEW SOUNDS; Mutate Song shows that range / KEEP SOUNDS; Generate Tn and Mutate Tn show the current track and KEEP SOUND. MIDI FROM / MIDI TO apply only to MIDI ONLY. Crossing an endpoint keeps the inclusive range valid. OPEN enters a subpage, APPLY executes, DONE returns from Setup. Reopening GEN starts at its main page.
 +
-+The Break browser exposes K1 LOAD BARS before loading. Push returns to Break GEN while loading; B1 GEN at the drive root cancels back to Break GEN. LOAD BARS describes the next load. To reinterpret an existing loop's bar count, choose the count and load that file again. Straight/Genre generation uses the loaded track's stored bar count. Random/Mutate intensity follows ENERGY on main GEN. MIDI-only/single-track generation reuses another active original melodic role if its preferred original role is empty. Full-song generation retains the original arrangement.
++The Break browser exposes K1 LOAD BARS before loading. Push returns to Break GEN while loading; B1 GEN at the drive root cancels back to Break GEN. Browser LOAD BARS describes the next source load without changing general GEN settings. BREAK GEN K1 LENGTH controls sequence length. To reinterpret an existing loop's bar count, choose the count in the browser and load that file again. A length change asks before clearing B; existing pattern lengths stay. Straight/Genre generation uses the loaded track's stored bar count. Random/Mutate intensity follows ENERGY on main GEN. MIDI-only/single-track generation reuses another active original melodic role if its preferred original role is empty. Full-song generation retains the original arrangement.
 +
 +The project persists SONG GROUP as an optional GNGP project section; older projects default to T1-4. Groups route the same four original roles by relative position, so T5, T9 or T13 can be the kit. Generate/Mutate Song affect only the selected group's current patterns and, on Generate, instruments. Single-track Generate/Mutate and engine-specific Acid/Break ignore SONG GROUP. The original project's shared root, scale and tempo behavior remains: full Generate Song still applies them globally, with Undo/Redo.
++
++Acid GEN offers only GENERATE ACID and MUTATE ACID. Its seed remains internal: the original NEW reroll and MUTATE stream are unchanged, including project state and Undo/Redo. B2 SETTINGS cycles the two pages; Back returns to the main GEN menu. The general GEN and Break seed controls are unchanged.
 --- /dev/null
 +++ b/docs/guide/install.md
 @@ -0,0 +1,65 @@
-+# Rhythmer OS 0.4.0-beta.3 — 실기기 검증용 베타
++# Rhythmer OS 0.2.0 — 실기기 검증용 베타
 +
 +beta.2 → beta.3은 플러그인과 카탈로그도 바뀌므로 전체 SD.zip을 사용한다. UPDATE.zip은 앱만 바꾸며 이 수정 전체를 설치하지 않는다. SD_CARD_GUIDE.md의 전원 종료·백업·전체 파일 복사 절차를 따른다.
 +
@@ -554,12 +600,12 @@
 +이 프로젝트는 AKAI Professional 또는 inMusic이 승인하거나 지원하는 공식 펌웨어가 아니다. MPC Sample 명칭과 로고의 권리는 각 권리자에게 있다. 소프트웨어는 각 라이선스에 따라 무보증으로 제공된다. 테스트 범위·알려진 한계는 VERIFICATION.md를 확인한다. 제조사 펌웨어를 덮어쓰는 설치가 아니라 SD launcher를 사용하는 방식이다.
 --- /dev/null
 +++ b/docs/guide/rhythmer.md
-@@ -0,0 +1,212 @@
+@@ -0,0 +1,219 @@
 +# Rhythmer OS 사용 설명서
 +
 +> **처음 사용하는 분:** [트랙 선택·진입·타입 변경부터 읽기](GETTING_STARTED_KO.md). SAMPLE은 Stage로, PAD FX + KNOB FX는 TRACKS로 갑니다. PATTERNS의 패드는 패턴 실행용이며, 연주 녹음은 SAMPLE로 Stage에 돌아와 진행합니다. Stage B1 EDIT에서 인코더 Push로 PAD SOURCE / SAVE 도구를 엽니다.
 +
-+웹사이트 게재용 초안 · 대상 버전 0.4.0-beta.3
++웹사이트 게재용 초안 · 대상 버전 0.2.0
 +
 +Rhythmer OS는 MPC Sample에서 샘플, 신스, 드럼킷과 시퀀서를 사용하는 음악 제작 환경입니다. 개발자는 **jazzy rhythmer**입니다. 실기기 조작·청취·성능은 별도 베타 검증 대상입니다. 아래 버튼 설명은 현재 구현을 기준으로 작성했습니다.
 +
@@ -619,9 +665,11 @@
 +
 +플러그인 목록 맨 위의 **Rhythmer Kit**을 선택합니다. PRESETS에서 36개 킷을 바꿀 수 있습니다. 모든 킷의 1–16번 패드가 채워져 있습니다. Hortator MD 추가 6종과 패드별 원본 사운드는 HORTATOR_KITS_KO.md에 정리했습니다.
 +
-+첫 화면의 **KIT CUTOFF / KIT RESONANCE**는 Rhythmer Kit 엔진 내부의 전체 필터이며 모든 패드에 적용됩니다. K3은 트랙 음량입니다. EDIT 첫 묶음의 **KIT FILTER TYPE**에서 LP / BP / HP를 고릅니다. 컷오프·레조넌스는 첫 화면과 동일한 값입니다. 전체 필터는 트랙 인서트 슬롯을 쓰지 않으며 킷 프리셋과 프로젝트에 저장됩니다. 공장 킷의 기본값은 원래 소리를 그대로 통과시킵니다.
++첫 화면의 **KIT CUTOFF / KIT RESONANCE**는 Rhythmer Kit 엔진 내부의 전체 필터이며 모든 패드에 적용됩니다. K3은 트랙 음량입니다. EDIT 두 번째 묶음의 **KIT FILTER TYPE**에서 LP / BP / HP를 고릅니다. 컷오프·레조넌스는 첫 화면과 동일한 값입니다. 전체 필터는 트랙 인서트 슬롯을 쓰지 않으며 킷 프리셋과 프로젝트에 저장됩니다. 공장 킷의 기본값은 원래 소리를 그대로 통과시킵니다.
 +
-+그 뒤의 **P01 … / P11 …** 항목은 선택 패드의 원본 엔진 제어입니다. KIT 항목은 전체 킷, P번호 항목은 해당 패드이므로 구분하여 조정하세요. 다른 패드를 눌러도 전체 필터 값은 유지됩니다. SAVE KIT에는 전체 필터와 패드별 소리가 함께 저장됩니다.
++**EDIT에 들어가면 첫 줄의 K1은 선택한 패드의 `Pxx Volume`입니다.** K2·K3에는 그 사운드가 지원하는 Pan·Tune·Decay를 우선 배치합니다. 없는 항목은 비워 두므로 다른 소리의 볼륨이나 엔진 전체 출력을 잘못 조정하지 않습니다. 다음 줄은 전체 킷 필터입니다.
++
++나머지 **P01 … / P11 …** 항목은 선택 패드의 원본 엔진 제어입니다. KIT 항목은 전체 킷, P번호 항목은 해당 패드이므로 구분하여 조정하세요. 다른 패드를 눌러도 전체 필터 값은 유지됩니다. SAVE KIT에는 전체 필터와 패드별 소리가 함께 저장됩니다.
 +
 +Stage에서 B1 EDIT를 선택한 뒤 인코더 Push로 도구를 엽니다. Rhythmer Kit은 PAD SOURCE, 개별 엔진은 SAVE로 시작합니다. 도구 Edit 화면의 B3 **PAD SOURCE**를 열면 `Pad / Engine / Sound`가 나옵니다. B3은 SOURCE → SAVE → EDIT 순서로 전환합니다.
 +
@@ -664,13 +712,13 @@
 +2. 브라우저의 K1 **LOAD BARS**로 원본 4/4 루프의 길이 **1·2·3·4마디**를 지정합니다.
 +3. 오디오 루프를 선택하고 Push를 누릅니다. Break GEN으로 돌아오며 로드 중에는 진행 메시지를 표시합니다. 브라우저 최상위의 B1 GEN은 선택을 취소하고 Break GEN으로 돌아갑니다.
 +4. 로드가 끝나면 선택 뱅크 1–16번 패드에 루프 전체의 16개 구간이 자동 배치됩니다. 기존 해당 패드와 현재 패턴은 교체됩니다.
-+5. 원본 길이로 계산한 템포와 기존 Follow/Beats 기능으로 프로젝트 템포에 맞추고 Straight 패턴을 만듭니다. Undo로 되돌릴 수 있습니다.
++5. 원본 길이로 계산한 템포와 기존 Follow/Beats 기능으로 프로젝트 템포에 맞춥니다. 초기의 빈 패턴만 Straight로 준비하며, 소스 교체는 기존 패턴·길이·연주·패드 음색 설정을 유지합니다. Undo로 되돌릴 수 있습니다.
 +
 +16개 구간은 원본 전체를 균등 분할한 것입니다. 특히 3마디는 고정 8분음표 슬라이스가 아닙니다. 트랜지언트를 자동 탐지하는 기능으로 표시하지 않습니다. 수동 Chop도 계속 사용할 수 있습니다.
 +
 +### 실행 순서
 +
-+Break 트랙에서 SEQ → PATTERNS → Shift+B3 GEN → **BREAK GEN**으로 들어갑니다. K2 Genre, K3 Seed를 설정하고 인코더로 작업을 고른 뒤 Push 또는 APPLY로 실행합니다. LOAD BARS는 다음 샘플 로드의 마디 수입니다. 이미 로드한 루프를 다르게 해석하려면 마디 수를 지정하고 BROWSE SAMPLE로 같은 파일을 다시 선택하세요. Random/Mutate 강도는 메인 GEN의 ENERGY를 사용합니다.
++Break 트랙에서 SEQ → PATTERNS → Shift+B3 GEN → **BREAK GEN**으로 들어갑니다. K1 LENGTH로 시퀀스 길이, K2 Genre, K3 Seed를 설정하고 인코더로 작업을 고른 뒤 Push 또는 APPLY로 실행합니다. 브라우저 K1 LOAD BARS는 다음 소스의 1–4마디 길이 선언이며 시퀀스 LENGTH와 별개입니다. 이미 로드한 루프를 다르게 해석하려면 마디 수를 지정하고 BROWSE SAMPLE로 같은 파일을 다시 선택하세요. Random/Mutate 강도는 메인 GEN의 ENERGY를 사용합니다.
 +
 +| 작업 | 용도 |
 +|---|---|
@@ -767,9 +815,14 @@
 +## 필수 조작·구조 안내와 핫픽스 저장 도구
 +
 +[첫 세션 안내](GETTING_STARTED_KO.md)의 필수 키 조합과 OS 구조부터 확인하세요. 뒤로 가기는 SHIFT + 인코더 클릭, 미세 조정은 대상 K1–K3 조작 후 SHIFT + 인코더 회전입니다. Stage EDIT 클릭은 지원 엔진의 SAVE SOUND / PAD SOURCE 진입으로 변경됐고, 도구의 SHIFT + B3는 플러그인 TRANSPORT 수신 설정입니다. 프로젝트 SAVE와 User Sound / User Kit 저장은 별개입니다.
++
++
++Break 소스 교체·취소·저장 절차는 [Break 조작 가이드](BREAK_ACID_GUIDE_KO.md#먼저-한-가지씩-따라-하기)를 참고하세요. A의 마디 수를 바꾸면 확인 후 B만 비우며 패턴 길이는 유지합니다.
++
++Break 브라우저의 K2 AUDITION은 ORIGINAL / SYNC 미리듣기 선택이며, 위쪽 B2 CARD / INTERNAL과 다른 컨트롤입니다. B3 PREVIEW는 미리듣기 켜기/끄기입니다. 새 상태 표시·작동 조건·소스 준비 절차는 [Break 가이드](BREAK_ACID_GUIDE_KO.md)를 참고하세요.
 --- /dev/null
 +++ b/src/rhythmer/edit_preview.inc
-@@ -0,0 +1,68 @@
+@@ -0,0 +1,69 @@
 +// SPDX-License-Identifier: AGPL-3.0-only
 +// Render every inspected state; capture_rows only reduces duplicate PNG writes.
 +#include "rhythmer/pages/performance_art.inc"
@@ -778,12 +831,13 @@
 +    auto data=juce::JSON::parse(juce::File(inventory).loadFileAsString());
 +    unsigned written=0,saved=0,issues_count=0;
 +    for(int engine=0;engine<data.size();++engine){
-+        auto item=data[engine],parameters=item["parameters"];
++        auto item=data[engine],parameters=item["parameters"],edit_order=item["edit_order"];
++        const int edit_slots=edit_order.isArray()?edit_order.size():parameters.size();
 +        auto s=std::make_unique<Snapshot>();shell.snapshot(*s,100000);s->ui=UiState{};s->now=100000;s->ui.page=PageId::Edit;s->ui.track=0;s->ui.edit_page[0]=bool(item["home"])?0:1;s->meters[0]=float(item["meter"]);s->now=uint32_t(int(item.getProperty("at",100000)));
 +        s->project.tracks[0].last_note=uint8_t(int(item.getProperty("note",60)));s->held_keys.fill(-1);if(bool(item["held"]))s->held_keys[0]=s->project.tracks[0].last_note;
 +        s->project.tracks[0].engine=EngineKind::Plugin;s->project.tracks[0].params.fill(0);if(bool(item["performance_active"]))s->project.tracks[0].params[1]=35;s->project.tracks[0].plugin=0;
 +        auto name=item["engine"].toString();s->project.tracks[0].set_name(name.toRawUTF8());std::snprintf(s->project.plugins[0].name,sizeof s->project.plugins[0].name,"%s",name.toRawUTF8());
-+        auto& panel=s->ui.plugin_panel;panel.layout_revision=1;panel.focused_pad=int16_t(int(item.getProperty("focused_pad",-1)));panel.entry=0;panel.status=PluginStatus::Ready;panel.instrument=true;panel.rows=uint16_t((parameters.size()+2)/3);panel.programs=uint16_t(item["programs"].size());
++        auto& panel=s->ui.plugin_panel;panel.layout_revision=1;panel.focused_pad=int16_t(int(item.getProperty("focused_pad",-1)));panel.entry=0;panel.status=PluginStatus::Ready;panel.instrument=true;panel.rows=uint16_t((edit_slots+2)/3);panel.programs=uint16_t(item["programs"].size());
 +        std::snprintf(panel.name,sizeof panel.name,"%s",name.toRawUTF8());
 +        std::snprintf(panel.design_source,sizeof panel.design_source,"%s",item["design_source"].toString().toRawUTF8());
 +        std::snprintf(panel.preset,sizeof panel.preset,"%s",item["programs"][0].toString().toRawUTF8());
@@ -802,11 +856,11 @@
 +                std::snprintf(panel.preset,sizeof panel.preset,"%s",item["programs"][int(chosen)].toString().toRawUTF8());
 +            }
 +            panel.row=uint16_t(save?1:source?0:row);s->ui.edit_row[0]=save?2:source?1:0;panel.window_first=uint16_t((panel.row?panel.row-1:0)*3);if(panel.row>=2)panel.window_first=std::max<uint16_t>(6,panel.window_first);panel.params={};panel.window={};
-+            auto read=[&](int index,PluginPanelParam& p){if(index<0||index>=parameters.size())return;auto v=parameters[index];p.used=true;p.shown=int16_t(index);std::snprintf(p.name,sizeof p.name,"%s",v["name"].toString().toRawUTF8());std::snprintf(p.text,sizeof p.text,"%s",v["text"].toString().toRawUTF8());p.value=int16_t(std::lround(float(v["value"])*plugin_param_max));};
++            auto read=[&](int index,PluginPanelParam& p){if(index<0||index>=edit_slots)return;int native=edit_order.isArray()?int(edit_order[index]):index;if(native<0||native>=parameters.size())return;auto v=parameters[native];p.used=true;p.shown=int16_t(index);std::snprintf(p.name,sizeof p.name,"%s",v["name"].toString().toRawUTF8());std::snprintf(p.text,sizeof p.text,"%s",v["text"].toString().toRawUTF8());p.value=int16_t(std::lround(float(v["value"])*plugin_param_max));};
 +            for(unsigned n=0;n<3;n++)read(int(panel.row*3+n),panel.params[n]);
 +            auto quick=item["quick"];if(stage&&item["preset_quick"].isArray())quick=item["preset_quick"][int(row)];panel.quick={};
 +            for(int n=0;n<std::min(3,quick.size());++n){auto v=quick[n];auto& card=panel.quick[size_t(n)];card.used=true;card.shown=int16_t(int(v["shown"]));std::snprintf(card.name,sizeof card.name,"%s",v["name"].toString().toRawUTF8());std::snprintf(card.text,sizeof card.text,"%s",v["text"].toString().toRawUTF8());card.value=int16_t(std::lround(float(v["value"])*plugin_param_max));card.initial=int16_t(std::lround(float(v["initial"])*plugin_param_max));}
-+            if(stage&&!bool(item["perform_view"])&&panel.focused_pad>=0){auto bindings=page_bindings(s->project,s->ui,s->pattern);for(unsigned n=0;n<2;++n){if(bindings[n].kind!=Binding::Kind::PluginParam||int(plugin_binding_shown(bindings[n].id))!=6+int(n))return 37;ui::KnobCard card;describe_card(*s,bindings[n],card);if(card.value!=panel.quick[n].text)return 38;}if(bindings[2].kind!=Binding::Kind::Level)return 39;}
++            if(stage&&!bool(item["perform_view"])&&panel.focused_pad>=0){auto bindings=page_bindings(s->project,s->ui,s->pattern);for(unsigned n=0;n<2;++n){if(bindings[n].kind!=Binding::Kind::PluginParam||int(plugin_binding_shown(bindings[n].id))!=panel.quick[n].shown)return 37;ui::KnobCard card;describe_card(*s,bindings[n],card);if(card.value!=panel.quick[n].text)return 38;}if(bindings[2].kind!=Binding::Kind::Level)return 39;}
 +            if(stage&&!bool(item["perform_view"])&&panel.focused_pad<0){auto bindings=page_bindings(s->project,s->ui,s->pattern);for(unsigned n=0;n<3;++n){if(!panel.quick[n].used||bindings[n].kind!=Binding::Kind::PluginParam||int(plugin_binding_shown(bindings[n].id))!=panel.quick[n].shown)return 35;ui::KnobCard card;describe_card(*s,bindings[n],card);if(card.value!=panel.quick[n].text)return 36;}}
 +
 +            for(unsigned n=0;n<6;n++)read(int(panel.window_first+n),panel.window[n]);
@@ -840,7 +894,7 @@
 +}
 --- /dev/null
 +++ b/src/rhythmer/engine/break_manipulator.cpp
-@@ -0,0 +1,72 @@
+@@ -0,0 +1,73 @@
 +// SPDX-License-Identifier: GPL-3.0-only
 +// Per-track state around the pinned FM-1 Amenity/Jungle DSP. No audio allocations.
 +#include "rhythmer/engine/break_manipulator.h"
@@ -891,8 +945,8 @@
 +    else{int slice=key-int(sampler_first_note+bank_*16);if(slice>=0&&slice<16)state->jungle_sequence_off(unsigned(slice));}
 +    if(!transport_playing&&!state->six_seq_gates)state->jungle_play(0);
 +}
-+void BreakManipulator::release(){transport_playing=false;state->jungle_roll_off();state->jungle_sequence_off(32);state->jungle_play(0);}
-+void BreakManipulator::stop(){transport_playing=false;state->jungle_init();state->view_playing=state->view_ext=0;filter_age=filter_q_age=0;filter_q=8;state->jungle_filter_resonance(8);state->jungle_sequence_mode(1);for(unsigned i=0;i<10;i++)param(i,controls[i]);tick_phase=phase=0;read=32;previous=next=0;std::fill(std::begin(output),std::end(output),0);}
++void BreakManipulator::release(){activity_=0;transport_playing=false;state->jungle_roll_off();state->jungle_sequence_off(32);state->jungle_play(0);}
++void BreakManipulator::stop(){activity_=0;transport_playing=false;state->jungle_init();state->view_playing=state->view_ext=0;filter_age=filter_q_age=0;filter_q=8;state->jungle_filter_resonance(8);state->jungle_sequence_mode(1);for(unsigned i=0;i<10;i++)param(i,controls[i]);tick_phase=phase=0;read=32;previous=next=0;std::fill(std::begin(output),std::end(output),0);}
 +void BreakManipulator::param(unsigned id,int value){if(id>=10)return;
 +    if(id==3&&controls[3]!=value){filter_age=filter_q_age=0;filter_q=14;state->jungle_filter_resonance(14);}
 +    controls[id]=value;
@@ -910,12 +964,13 @@
 +    const double step=44100.0/std::max(8000.f,rate);
 +    for(unsigned i=0;i<frames;i++){phase+=step;while(phase>=1){previous=next;next=frame();phase-=1;}
 +        l[i]=r[i]=gain*(previous+float(phase)*(next-previous));}
++    activity_.store((transport_playing?1u:0u)|(state->six_seq_gates?2u:0u)|((state->six_seq_roll==3||state->roll_now==3)?4u:0u),std::memory_order_relaxed);
 +}
 +bool BreakManipulator::sounding()const{return enabled()&&(state->jungle_playing()||state->voices[0].active||state->voices[1].active);}
 +}
 --- /dev/null
 +++ b/src/rhythmer/engine/break_manipulator.h
-@@ -0,0 +1,39 @@
+@@ -0,0 +1,41 @@
 +// SPDX-License-Identifier: GPL-3.0-only
 +#pragma once
 +#include "rhythmer/engine/sample_data.h"
@@ -931,6 +986,7 @@
 +        auto before=feedback_version.load(std::memory_order_acquire);variation=variation_view.load(std::memory_order_relaxed);drift=drift_view.load(std::memory_order_relaxed);
 +        auto after=feedback_version.load(std::memory_order_acquire);if(before!=after||after==version)return false;version=after;return true;
 +    }
++    unsigned activity()const{return activity_.load(std::memory_order_relaxed);}
 +    unsigned source()const{return source_.load(std::memory_order_relaxed);}
 +    void initial_source(unsigned value){source_=value%2;bind();}
 +    unsigned first_pad()const{return bank_*16;}
@@ -949,6 +1005,7 @@
 +    std::atomic<unsigned> feedback_version{0},variation_view{0},drift_view{0};
 +    int controls[10]{0,0,0,64,0,0,38,100,4,1};
 +    const SampleData* loops[2]{};
++    std::atomic<unsigned> activity_{0};
 +    unsigned filter_age=0,filter_q_age=0,filter_q=8;
 +    double tick_phase=0,phase=0;unsigned tempo_=1200,read=32;
 +    int32_t output[64]{};float previous=0,next=0,gain=1;
@@ -957,7 +1014,39 @@
 +}
 --- a/src/rhythmer/engine/engine_host.cpp
 +++ b/src/rhythmer/engine/engine_host.cpp
-@@ -338,6 +338,9 @@
+@@ -48,6 +48,7 @@
+     : is_lean(lean), fx_clock(lean ? &own_clock : &effect_clock), take(!lean), recall_ring(!lean), render_out(!lean),
+       punch(!lean), live {Live(!lean), Live(!lean), Live(!lean), Live(!lean)}, flex(!lean),
+       kept {Kept(!lean), Kept(!lean), Kept(!lean), Kept(!lean)}, pool(delay_blocks), lines(!lean) {
++    break_preview=std::make_unique<SamplerEngine>();break_preview->set_samples(&samples);
+     static_assert(live_slots == 4, "one Live and one Kept a slot above");
+     for (auto& t : patterns) for (auto& p : t) p = new Pattern;
+     for (auto& s : positions_now) s.store(-1);
+@@ -106,6 +107,7 @@
+         slot.freeze = slot.freeze_leaving = freeze_next[t] = nullptr;
+         slot.print_on = false; slot.hand.reset(); wake(slot);
+     }
++    break_preview->silence();break_preview_active=false;
+     for (auto& s : slots) if (s.engine) s.engine->silence();
+     pending.waiting = false; punch.clear(); punch_target = 255;
+     for (auto& l : live) { l.pending.waiting = false; l.punch.stop(); l.punch.clear(); }
+@@ -147,6 +149,7 @@
+ 
+ // Everything of a project but its patterns (Reload swaps those in by pointer).
+ void EngineHost::load_state(const Project& project, bool keep_loops) {
++    break_preview->silence();break_preview_active=false;
+     for (unsigned n = track_count; n < chain_count; ++n) { // the buses and the master; each track's in load_track()
+         const auto& chain = project.chain(n);
+         for (unsigned k = 0; k < max_slots; ++k) {
+@@ -217,6 +220,7 @@
+     if (now == tempo) return;
+     tempo = now;
+     for (auto& s : slots) s.sampler.set_tempo(tempo);
++    break_preview->set_tempo(tempo);
+     tempo_shown.store(tempo, std::memory_order_relaxed);
+ }
+ 
+@@ -338,6 +342,9 @@
      slot.base = track.params;
      if (slot.engine) for (unsigned r = 0; r < mod_routes; ++r) slot.engine->set_mod(r, track.mods[r]);
      for (unsigned pad = 0; pad < sampler_pads; ++pad) slot.sampler.set_pad(pad, track.pads[pad]);
@@ -967,7 +1056,7 @@
      slot.sampler.set_trims(track.zone_trims);
      slot.sampler.set_pad_mutes(track.pad_mutes);
      if (slot.engine) for (unsigned p = 0; p < info.param_count; ++p) slot.engine->set_param(int(p), track.params[p]);
-@@ -424,6 +427,7 @@
+@@ -424,6 +431,7 @@
          slot.plugin.attach(slot.kind == EngineKind::Plugin ? runner_of(slot.plugin_entry) : nullptr);
          break;
      case Type::NoteOn:
@@ -975,13 +1064,15 @@
          if (slot.freeze && slot.freeze->deep) break; // freeze plan F2d: a deep-frozen track's pads play nothing
          if (slot.freeze) { wake(slot); slot.hand.set(c.index & 0xff); } // freeze plan F2b: a hand wakes a frozen track's engine
          if (c.index <= 127 || slot.kind == EngineKind::Sampler) engine_note_on(slot, c.index, c.value);
-@@ -435,6 +439,14 @@
+@@ -435,6 +443,16 @@
          if (c.pattern != 1) midi_note_off(c.track % track_count, c.index & 0xff, frame_now + block_at);
          break;
      case Type::AllNotesOff:
 +        if (c.index == 1) {
 +            panic_latched = true;
-+            for (auto& s : slots) if (s.engine) s.engine->silence();
++            break_preview->silence();break_preview_active=false;
++            break_preview->silence();break_preview_active=false;
++    for (auto& s : slots) if (s.engine) s.engine->silence();
 +            for (auto& chain : fx) for (auto& effect : chain) effect.clear();
 +            if (pad_fx) for (auto& pads : *pad_fx) for (auto& pad : pads) for (auto& effect : pad) effect.clear();
 +            knob.clear(); knob_in.clear(); punch.clear(); flex.clear();
@@ -990,7 +1081,7 @@
          midi_all_off(c.track, frame_now);
          for (unsigned t = 0; t < track_count; ++t)
              if ((c.track == 255 || t == c.track) && slots[t].engine) {
-@@ -706,6 +718,7 @@
+@@ -706,6 +724,7 @@
          bounce_ticks = bounce_song ? 0 : std::max<uint32_t>(c.position, 1);
          break;
      case Type::PadNote:
@@ -998,15 +1089,21 @@
          if (slot.freeze && slot.freeze->deep) break; // freeze plan F2d
          if (slot.freeze) wake(slot);
          if (slot.engine == &slot.sampler) {
-@@ -767,6 +780,7 @@
+@@ -767,6 +786,13 @@
          break;
      }
      case Type::Audition:
 +        if(c.value>0)panic_latched=false;
++        if(c.index==1){ // Break browser: audition without assigning or waking the selected track.
++            break_preview_track=c.track%track_count;
++            break_preview->audition(c.pad.sample,c.pad.start,c.pad.end,c.value,c.pad.own_tempo);
++            break_preview_active=break_preview->sounding(); // retain the native short choke fade on cancel/change
++            break;
++        }
          if (slot.freeze && slot.freeze->deep) break; // freeze plan F2d
          if (slot.freeze) wake(slot);
          if (slot.engine == &slot.sampler) {
-@@ -869,6 +883,7 @@
+@@ -869,6 +895,7 @@
          else { global_tempo = uint16_t(std::clamp<int>(c.value, 300, 3000)); scene_tempo = 0; follow_tempo(); }
          break;
      case Type::Play:
@@ -1014,7 +1111,7 @@
          if (running) break;
          mtc_off(); // MTC in places it right after (MtcIn locate)
          running = true; until_tick = 0;
-@@ -1119,6 +1134,7 @@
+@@ -1119,6 +1146,7 @@
  // The engine's frames [at, at + frames) into its buffers; a kit's pads that go apart (Sidechain's key pad, Knob FX)
  // into theirs at the same frames.
  void EngineHost::render_engine(unsigned t, Slot& slot, unsigned at, unsigned frames) {
@@ -1022,7 +1119,7 @@
      if (slot.engine == &slot.sampler) {
          bool pad_key = keyed_pad == int(t);
          slot.sampler.set_key_pad(pad_key ? int(comp.key_pad()) : -1, pad_key ? key_pad_l + at : nullptr, pad_key ? key_pad_r + at : nullptr);
-@@ -1854,6 +1870,7 @@
+@@ -1854,6 +1882,7 @@
      if (key < 0 || key > 127) return false;
      if (is_midi(t)) return heard(t); // a MIDI track: always, unless muted (docs/MIDI_TRACKS.md)
      if (!out_channel[t] || !out_mode[t]) return false;
@@ -1030,7 +1127,28 @@
      if (out_mode[t] == 1) return true;
      const auto& slot = slots[t];
      if (!slot.engine) return true;
-@@ -2900,7 +2917,7 @@
+@@ -2392,6 +2421,7 @@
+     Offer offer;
+     while (offers.pop(offer)) {
+         if (offer.slot > preview_slot) continue;
++        break_preview->sample_gone(offer.slot);
+         for (auto& slot : slots) slot.sampler.sample_gone(offer.slot); // nothing may play the old one past here
+         const SampleData* old = samples[offer.slot];
+         samples[offer.slot] = offer.sample;
+@@ -2884,6 +2914,12 @@
+     keep_sources(input, usb, frames);
+     take_stems(frames); // roadmap P4: the stems by the same bounds, before the bounce moves on
+     render_out.process(master_l, master_r, frames);
++    // Monitoring after prints/stems/recall/master effects: preview never edits or prints the project.
++    if(break_preview_active){
++        std::array<float,block> l{},r{};break_preview->render_stereo(l.data(),r.data(),frames);
++        for(unsigned f=0;f<frames;++f){master_l[f]+=l[f];master_r[f]+=r[f];}
++        if(!break_preview->sounding())break_preview_active=false;
++    }
+     volume_now.aim(volume, frames, snap_mix); // main volume eased too: the knob's steps are up to dB apart
+     park_gain.aim(park_wanted ? 0.0f : 1.0f, frames); // a Park fades out (and the next project in), never a jump
+     bool park_fading = !(park_gain.flat() && park_gain.to == 1.0f);
+@@ -2900,7 +2936,7 @@
              master_l[f] += blip; master_r[f] += blip;
          }
          out_l = std::max(out_l, std::fabs(master_l[f])); out_r = std::max(out_r, std::fabs(master_r[f])); // the mix, for the meters
@@ -1039,18 +1157,39 @@
          float left = dsp::soft_clip(master_l[f] * v), right = dsp::soft_clip(master_r[f] * v);
          peak = std::max(peak, std::max(std::fabs(left), std::fabs(right)));
          out[2 * f] = int32_t(std::clamp(left, -0.999f, 0.999f) * 2147483647.0f);
+@@ -3051,7 +3087,8 @@
+     taps.track = uint8_t(watched);
+     taps.stamp = frame_now + frames;
+     auto& slot = slots[size_t(watched)];
+-    if (slot.engine == &slot.sampler) slot.sampler.taps(taps);
++    if(break_preview_active && watched==break_preview_track)break_preview->taps(taps);
++    else if (slot.engine == &slot.sampler) slot.sampler.taps(taps);
+     tap_board.publish(taps);
+ }
+ 
 --- a/src/rhythmer/engine/engine_host.h
 +++ b/src/rhythmer/engine/engine_host.h
-@@ -215,6 +215,8 @@
+@@ -215,6 +215,9 @@
      bool monitoring() const { return monitor_on.load(std::memory_order_relaxed); }
  
      // Feedback, any thread.
 +    bool break_feedback(unsigned t,unsigned& version,unsigned& variation,unsigned& drift)const{return slots[t%track_count].sampler.manipulator.feedback(version,variation,drift); }
++    unsigned break_activity_of(unsigned t)const{return slots[t%track_count].sampler.manipulator.activity();}
 +    unsigned break_source_of(unsigned t)const{return slots[t%track_count].sampler.manipulator.source();}
      bool playing() const { return is_playing.load(std::memory_order_relaxed); }
      uint32_t ticks() const { return tick_count.load(std::memory_order_relaxed); } // clock ticks since Play, 96 a quarter
      // Where a track is in its pattern, in ticks; -1 while it plays none.
-@@ -869,6 +871,7 @@
+@@ -744,6 +747,9 @@
+     void start_punch(const PendingPunch& p);
+     double bar_length() const { return tick_length() * bar; }
+     std::array<Slot, track_count> slots;
++    std::unique_ptr<SamplerEngine> break_preview; // monitoring only; never a project track
++    bool break_preview_active = false;
++    uint8_t break_preview_track=0;
+     // Rendering on several cores (render_pool.h): the workers; the tracks heaviest first by what each took last
+     // block, the ones with an engine in that order; each track's time this block (engine and chain), and the total.
+     static constexpr int render_priority = 30;            // the audio thread's (base drivers/audio.cpp)
+@@ -869,6 +875,7 @@
      unsigned bar = 4 * ticks_per_quarter, beat = ticks_per_quarter; // the time signature, in ticks
      uint32_t count_left = 0; // Count-In: ticks of the bar counted before the song starts
      uint8_t swing = 50;
@@ -1988,7 +2127,30 @@
      if (id < 0 || id >= Count) return;
      const auto& info = engine_info(EngineKind::Sampler).params[id];
      p[size_t(id)] = std::clamp<int>(value, info.min, info.max);
-@@ -491,6 +492,11 @@
+@@ -103,7 +104,7 @@
+     aim(v, sound, zone, multi, key);
+     settle(v);
+     // A speed of its own and a pitch of its own: stretched.
+-    if (!v.cloud && pad < int(sampler_pads) && !(zone && zone->on_release) && std::fabs(v.step - v.advance) > 1e-6) begin_stretch(v, false);
++    if (!v.cloud && (pad < int(sampler_pads) || (pad == int(sampler_pads) && sound.warped() && !v.grow)) && !(zone && zone->on_release) && std::fabs(v.step - v.advance) > 1e-6) begin_stretch(v, false);
+     // A cloud never reads to its region's end, so a one shot's cloud lasts as
+     // long as the pad would play, then lets go; a gate ends on release, a loop when hit again.
+     if (v.cloud && !v.gate && !v.loop) v.life = std::max(1.0, double(v.end - v.start) / std::max(v.advance, 1e-6));
+@@ -369,6 +370,13 @@
+     if (!any) return;
+     for (auto& v : voices)
+         if (v.pad >= 0 && v.pad < int(sampler_pads) && !v.choked && (marked(v.pad) || (tempo_moved && v.follows))) refresh(v);
++    if(tempo_moved && audition_tempo)for(auto& v:voices)
++        if(v.pad==int(sampler_pads) && !v.choked && v.follows){
++            PadSound sound;sound.sample=v.slot;sound.own_tempo=audition_tempo;sound.warp=warp_seq;
++            aim(v,sound,nullptr,nullptr,60);
++            if(!v.stretch && std::fabs(v.aim.step-v.aim.advance)>1e-6)begin_stretch(v,true);
++            v.gliding=glide_frames;
++        }
+     retune.fill(0);
+     retune_all = tempo_moved = false;
+ }
+@@ -491,6 +499,11 @@
  // A note is a pad's key, and over it the semitones from the pad's root it plays at (an instrument's), and over those a
  // 16 Levels cutoff a pattern kept (roadmap P3: model/sampler.h pad_note).
  void SamplerEngine::note_on(int key, int velocity) {
@@ -2000,7 +2162,7 @@
      if (pedal) { // pressed again under the pedal: its earlier off is not owed any more
          unsigned kept = 0;
          for (unsigned n = 0; n < pedal_count; ++n) if ((pedal_offs[n] & 0xffff) != (key & 0xffff)) pedal_offs[kept++] = pedal_offs[n];
-@@ -532,6 +538,7 @@
+@@ -532,6 +545,7 @@
  }
  
  void SamplerEngine::note_off(int key) {
@@ -2008,11 +2170,28 @@
      if (pedal) { // held on by the sustain pedal; the oldest goes now when too many wait
          for (unsigned n = 0; n < pedal_count; ++n) if (pedal_offs[n] == key) return;
          if (pedal_count < pedal_offs.size()) { pedal_offs[pedal_count++] = key; return; }
-@@ -587,22 +594,26 @@
+@@ -578,31 +592,42 @@
+     }
+ }
+ 
+-void SamplerEngine::audition(uint16_t sample, uint32_t from, uint32_t to, int velocity) {
++void SamplerEngine::audition(uint16_t sample, uint32_t from, uint32_t to, int velocity, uint16_t own_tempo) {
+     PadSound sound;
+     sound.sample = sample; sound.start = from; sound.end = to;
++    audition_tempo=own_tempo;
++    if(own_tempo){sound.own_tempo=own_tempo;sound.warp=warp_seq;}
+     for (auto& v : voices) if (v.pad == int(sampler_pads)) v.choked = true; // one audition at a time
+     if (sample == no_sample) return; // only that: the audition stops
+     start(free_voice(), sound, int(sampler_pads), velocity);
  }
  
  void SamplerEngine::sample_gone(uint16_t slot) {
-+    if(manipulator.enabled()){manipulator.stop();manipulator.sources(nullptr,nullptr);}
++    if(manipulator.enabled()){
++        const unsigned first=manipulator.first_pad();
++        if(first<sampler_pads && (pads[first].sample==slot || pads[first].layers[0].sample==slot)){
++            manipulator.stop();manipulator.sources(nullptr,nullptr);
++        }
++    }
      for (auto& v : voices) if (v.slot == slot) { end_stream(v); v = Voice {}; }
      if (samples && slot <= preview_slot)
          for (auto& g : grains) if (g.sample == (*samples)[slot]) g.sample = nullptr;
@@ -2037,7 +2216,7 @@
      for (auto& v : voices) if (v.pad >= 0) return true;
      for (auto& g : grains) if (g.sample) return true;
      return false;
-@@ -960,6 +971,12 @@
+@@ -960,6 +985,12 @@
  }
  
  void SamplerEngine::render_stereo(float* left, float* right, unsigned frames) {
@@ -2069,6 +2248,15 @@
      void set_samples(const Table* table) { samples = table; }
      void set_pager(StreamPager* streams) { pager = streams; } // nullptr: instruments' frames are all safe to read (tests)
      // A pad's sound. What the pad plays now hears it too (at the next render, gliding there: refresh), while it
+@@ -78,7 +81,7 @@
+     void set_pad_mutes(const std::array<uint64_t, (sampler_pads + 63) / 64>& bits);
+     bool pad_muted(unsigned pad) const { return pad < sampler_pads && ((muted[pad / 64] >> (pad % 64)) & 1); }
+     // A region of a sample on no pad, for Chop's audition (plays one shot).
+-    void audition(uint16_t sample, uint32_t start, uint32_t end, int velocity);
++    void audition(uint16_t sample, uint32_t start, uint32_t end, int velocity, uint16_t own_tempo = 0);
+     // A sample is about to change: whatever plays it stops now.
+     void sample_gone(uint16_t sample);
+     // A kit pad shifted by `semitones`, its filter at `cutoff` (0..100; -1 its
 @@ -106,7 +109,7 @@
      // TrackTaps::voices of them, then the cloud's grains. Audio thread, after render.
      void taps(TrackTaps& out) const;
@@ -2078,6 +2266,14 @@
      // PadFX: each pad's own chain (the host's). A pad with a chain, or with a
      // send of its own, plays through a lane of its own, up to `lanes` pads at
      // once; a chain's lane stays with its pad after the pad falls silent, for tails.
+@@ -266,6 +269,7 @@
+     std::array<Grain, 48> grains {};
+     uint32_t grain_serial = 0;
+     unsigned tempo = 1200;
++    uint16_t audition_tempo=0;
+     uint32_t seed = 99;
+     // A choke's fade and an instrument zone's duck move this far a frame: 64 44.1 kHz frames (1.5 ms) at any rate.
+     float edge_step = 1.0f / 64;
 --- /dev/null
 +++ b/src/rhythmer/model/acid_gen.cpp
 @@ -0,0 +1,38 @@
@@ -2576,7 +2772,7 @@
 +}
 --- /dev/null
 +++ b/src/rhythmer/model/gen_engine_map.h
-@@ -0,0 +1,85 @@
+@@ -0,0 +1,87 @@
 +// Generated by tools/gen_engine_catalog.py; SPDX-License-Identifier: GPL-3.0-only
 +#pragma once
 +namespace rhythmer {
@@ -2599,14 +2795,16 @@
 +{"RHYTHMER - Move - braids - Braids","Braids",false,false,false,24,96,{2,3,1,6,0,0,0,9},{-1,5,-1,-1,-1,2,-1,3,8,-1,-1,-1,4,-1,1,6,7,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,2}},
 +{"RHYTHMER - Move - dexed - Dexed","Dexed",false,false,false,24,96,{113,30,95,40,788,439,0,185},{314,-1,-1,-1,-1,113,25,30,84,888,71,31,912,-1,201,40,249,72,65,32,928,-1,133,-1,798,48,95,113}},
 +{"RHYTHMER - Move - hera - Hera","Hera",false,false,false,24,96,{16,0,0,0,0,0,0,48},{-1,-1,-1,-1,-1,16,-1,-1,0,-1,3,-1,-1,12,-1,-1,-1,-1,-1,8,-1,-1,-1,-1,-1,14,-1,16}},
-+{"RHYTHMER - Move - plaits - Plaits","Plaits",false,false,false,24,96,{21,14,0,0,21,22,0,17},{-1,-1,-1,-1,-1,21,-1,-1,19,-1,-1,-1,-1,14,-1,-1,-1,-1,7,-1,-1,17,-1,-1,-1,-1,-1,21}},
++{"RHYTHMER - Move - plaits - Plaits","Plaits",false,false,false,24,96,{21,14,26,26,21,22,0,17},{-1,-1,-1,-1,-1,21,-1,98,19,-1,90,58,-1,14,-1,76,26,-1,7,56,-1,17,49,-1,-1,-1,-1,21}},
 +{"Matt Estela - VST - Sophie","Sophie",true,false,false,24,96,{0,0,0,0,0,1,4,7},{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}},
 +{"athousanddetails - VST - 6W6","6W6",true,false,false,24,96,{0,0,0,0,0,1,3,5},{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}},
 +{"athousanddetails - VST - 8W8","8W8",true,false,false,24,96,{0,0,0,12,0,1,3,5},{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,12,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}},
 +{"athousanddetails - VST - 9W9","9W9",true,false,false,24,96,{0,0,0,0,0,1,3,5},{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}},
 +{"athousanddetails - VST - CW-78","CW-78",true,false,false,24,96,{0,0,0,6,0,1,2,4},{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,6,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}},
 +{"sd88me - VST - TR-MPC","TR-MPC",true,false,false,24,96,{0,0,0,0,0,1,3,5},{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}},
-+{"RHYTHMER - Acid Engine","Acid Engine",false,true,true,24,84,{1,0,0,0,0,0,0,0},{-1,-1,-1,-1,-1,1,-1,-1,-1,-1,-1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1}},
++{"RHYTHMER - Acid Engine","Acid Engine",false,true,true,24,84,{1,0,5,5,0,0,0,0},{-1,4,-1,-1,-1,1,-1,-1,-1,-1,-1,1,-1,-1,-1,-1,5,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1}},
++{"RHYTHMER - FM1 - frodhes - Frodhes","Frodhes",false,false,false,24,96,{-1,1,1,1,0,0,0,14},{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,1,14,3,-1,-1,-1,0,-1,-1,-1,-1,-1,-1,1,-1}},
++{"RHYTHMER - Move - tenebrae - Tenebrae","Tenebrae",false,false,false,24,96,{1,53,0,0,0,0,0,32},{11,13,24,-1,-1,1,-1,53,-1,38,-1,68,146,53,-1,84,27,-1,9,83,9,-1,-1,39,-1,-1,83,1}},
 +{"RHYTHMER - Rhythmer Kit","Rhythmer Kit",true,false,false,36,99,{0,0,0,0,0,0,0,0},{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}},
 +};
 +inline constexpr int gen_kit_programs[]={14,1,2,0,4,5,6,8};
@@ -2674,7 +2872,7 @@
 +}
 --- /dev/null
 +++ b/src/rhythmer/model/native_gen_profiles.h
-@@ -0,0 +1,31 @@
+@@ -0,0 +1,33 @@
 +// Generated by tools/generate_engine_profiles.py. SPDX-License-Identifier: GPL-3.0-only
 +#pragma once
 +#include "rhythmer/model/gen8.h"
@@ -2687,6 +2885,7 @@
 +{"rhythmer - fm1 - elixir - ",true,false,24,96,{{36,38,255,42,46,45,255,47}}},
 +{"rhythmer - fm1 - fm106 - ",false,false,24,96,{{255,255,255,255,255,255,255,255}}},
 +{"rhythmer - fm1 - fmini - ",false,false,24,96,{{255,255,255,255,255,255,255,255}}},
++{"rhythmer - fm1 - frodhes - ",false,false,24,96,{{255,255,255,255,255,255,255,255}}},
 +{"rhythmer - fm1 - guru600 - ",false,false,24,96,{{255,255,255,255,255,255,255,255}}},
 +{"rhythmer - fm1 - hortator - ",true,false,24,96,{{36,38,39,42,46,45,37,49}}},
 +{"rhythmer - fm1 - kwasub - ",false,true,24,96,{{255,255,255,255,255,255,255,255}}},
@@ -2700,6 +2899,7 @@
 +{"rhythmer - move - dexed - ",false,false,24,96,{{255,255,255,255,255,255,255,255}}},
 +{"rhythmer - move - hera - ",false,false,24,96,{{255,255,255,255,255,255,255,255}}},
 +{"rhythmer - move - plaits - ",false,false,24,96,{{255,255,255,255,255,255,255,255}}},
++{"rhythmer - move - tenebrae - ",false,false,24,96,{{255,255,255,255,255,255,255,255}}},
 +};
 +inline const NativeGenProfile* native_gen_profile(const std::string& path) {
 +for(const auto& p:native_gen_profiles) { if(path.find(p.needle)!=std::string::npos)return &p; }
@@ -2834,10 +3034,24 @@
          break;
      }
      case Ask::ResetSettings:
+@@ -157,6 +157,12 @@
+         verb = "UNFREEZE"; verb_glyph = Icon::Snow; accent = colour::ice;
+         break;
+     }
++    case Ask::BreakLength:
++        sheet.title="Replace A / " + juce::String(s.ui.break_job_bars) + " bars?";
++        sheet.lines={"Patterns and lengths stay. B is cleared.", "Undo restores the previous sources."};
++        sheet.chip="TRACK " + juce::String(s.ui.ask_target+1);
++        sheet.chip_colour=colour_of(s);sheet.undo=true;
++        sheet.icon=Icon::Wav;verb="LOAD A";verb_glyph=Icon::Wav;break;
+     default: return;
+     }
+ 
 --- /dev/null
 +++ b/src/rhythmer/pages/break_performance.inc
-@@ -0,0 +1,41 @@
+@@ -0,0 +1,43 @@
 +// SPDX-License-Identifier: GPL-3.0-only
++#include "rhythmer/pages/break_status.h"
 +bool break_home(const Snapshot& s){return s.track().engine==EngineKind::Sampler&&s.track().break_bars;}
 +bool break_home(Context& c){return c.track().engine==EngineKind::Sampler&&c.track().break_bars;}
 +void break_performance(Paint& p,const Snapshot& s){
@@ -2847,7 +3061,7 @@
 +    const float x=zone::pad,y=zone::picture_y,w=zone::width-2*zone::pad;
 +    const char* titles[]={"CHOPS","ROLLS / HOLD PADS","SOURCE A / B","LOOP VARIATIONS","GRAIN / STRETCH","TRACK MIX"};
 +    p.text(juce::String(page+1)+" / 6   "+titles[page],x,y,w,16,plain(colour::text,type::small,Weight::Bold));
-+    const char* hints[]={"Pads: chops / Hold affects LOOP only","Hold a pad / Release ends command","K1: CHOP or LOOP / K2: pattern hold","LOOP + Play / Hold OFF to vary","Hold P3 on ROLLS; wheel here","Track level / Pan / Send A"};
++    const char* hints[]={"CHOP: play slices / HOLD affects LOOP","Hold a pad / Release ends command","Load A: CHOPS B2 / Load B: B2 here","LOOP + Play / Hold OFF to vary","Hold P3 on ROLLS; wheel here","Track level / Pan / Send A"};
 +    p.text(hints[page],x,y+17,w,14,plain(colour::sec,type::small));
 +    if(page<2){
 +        const float cw=(w-9)/4,rh=24;
@@ -2867,7 +3081,8 @@
 +        p.text("PAD 3 / RETURN: straight playback",x,y+126,w,15,plain(colour::sec,type::small));
 +    }else{
 +        performance_art(p,s,"Break Engine","User loop",x,y+43,w,56,int(s.track().last_pad));
-+        p.text(page==3?(s.track().break_perf[9]?"Select LOOP on SOURCE for variations":s.track().break_perf[4]?"PATTERN HOLD ON: variations locked":"Variation / Drift: next internal bar"):page==4?"Grain / Splice / Slow: stretched hits":"Wheel: page / Record + Play: capture",x,y+111,w,17,plain(colour::sec,type::small));
++        p.text(page==3?break_variation_status(s.track().break_perf[9],s.track().break_perf[4],s.playing,s.break_activity,s.track().break_perf[1],s.track().break_perf[2]):page==4?break_stretch_status(s.playing,s.break_activity):"Wheel: page / Record + Play: capture",x,y+111,w,17,plain(colour::sec,type::small));
++        if(page==3 || page==4)p.text(page==3?"Values can be prepared while inactive":"Grain needs STRETCH / not Pattern Hold",x,y+129,w,13,plain(colour::dim,type::small));
 +    }
 +}
 +void break_pad(Context& c,unsigned pad,uint8_t velocity,bool down){
@@ -2877,6 +3092,22 @@
 +    if(key<0)return;
 +    if(page==2&&pad==1&&!c.track().pads[c.track().bank*16].layers[0].used()){c.notice("Load loop B first");return;}
 +    c.pad_track[pad]=c.ui.track;c.pad_keys[pad][0]=key;c.key(key,velocity,true);
++}
+--- /dev/null
++++ b/src/rhythmer/pages/break_status.h
+@@ -0,0 +1,13 @@
++// SPDX-License-Identifier: GPL-3.0-only
++#pragma once
++inline const char* break_variation_status(bool chop,bool hold,bool playing,unsigned activity,unsigned variation,unsigned drift){
++    if(chop)return "INACTIVE / Choose LOOP on SOURCE";
++    if(hold)return "PATTERN HOLD ON / OFF to vary";
++    if(!(activity&2))return playing?"READY / Pattern needs a chop gate":"READY / PLAY or hold a chop pad";
++    if(!variation && !drift)return "READY / Raise Variation or Drift";
++    return "ACTIVE / Changes at internal bars";
++}
++inline const char* break_stretch_status(bool playing,unsigned activity){
++    if(activity&4)return "STRETCH ACTIVE / Shape this hit";
++    return playing || (activity&2) ? "WAITING / Hold P3 on ROLLS" : "READY / PLAY + hold P3 on ROLLS";
 +}
 --- a/src/rhythmer/pages/common.cpp
 +++ b/src/rhythmer/pages/common.cpp
@@ -2890,7 +3121,37 @@
  #include <cmath>
  #include <cstdio>
  
-@@ -70,6 +73,15 @@
+@@ -32,17 +35,24 @@
+ 
+ juce::Colour colour_of(const Snapshot& s) { return ui::track_colour(s.ui.track); }
+ juce::Colour load_colour(float load) { return load >= 0.85f ? ui::colour::rec : load >= 0.6f ? ui::colour::amber : ui::colour::play; }
++
++bool external_clock_tempo(const Snapshot& s) { return s.display_tempo || (s.following && !s.following_mtc); }
++juce::String tempo_text(const Snapshot& s, bool decimals) {
++    const unsigned value=s.display_tempo?s.display_tempo:s.tempo;
++    char bpm[16];
++    // External whole BPMs omit redundant .0; retain the native internal-page style.
++    if((decimals && !external_clock_tempo(s)) || value%10)std::snprintf(bpm,sizeof(bpm),"%u.%u",value/10,value%10);
++    else std::snprintf(bpm,sizeof(bpm),"%u",value/10);
++    return bpm;
++}
+ 
+ ui::Header header_of(const Snapshot& s) {
+     ui::Header h;
+     h.playing = s.playing;
+     h.recording = s.ui.recording;
+     h.armed = s.ui.rec_armed && !s.ui.recording; // Seq Record armed: Play starts the take
+-    char bpm[16];
+-    int tempo = int(s.tempo);
+-    if (tempo % 10) std::snprintf(bpm, sizeof(bpm), "%d.%d", tempo / 10, tempo % 10);
+-    else std::snprintf(bpm, sizeof(bpm), "%d", tempo / 10);
+-    h.bpm = bpm;
++    h.bpm = tempo_text(s);
++    h.fixed_bpm_width = external_clock_tempo(s);
+     // Count-In: the beat counted before the take, an amber metronome chip.
+     if (s.count_in) h.left.push_back(ui::chip(ui::Icon::Metro, juce::String(s.count_in), ui::colour::amber));
+     if (s.following) h.left.push_back(ui::chip(s.following_mtc ? "EXT MTC" : "EXT CLOCK", ui::colour::text)); // MIDI clock / MTC in leads (phase 9, 9b)
+@@ -70,6 +80,15 @@
      return h;
  }
  
@@ -2906,7 +3167,7 @@
  ui::HeaderItem bank_pill(const Snapshot& s) {
      return ui::pill(ui::Icon::Pattern, juce::String("BANK ") + juce::String::charToString(juce::juce_wchar('A' + s.ui.pattern_bank % pattern_banks)),
                      ui::colour::text);
-@@ -78,7 +90,7 @@
+@@ -78,7 +97,7 @@
  ui::HeaderItem tag_of(const Snapshot& s, unsigned track) {
      const auto& t = s.project.tracks[track % track_count];
      const auto& info = engine_info(t.engine);
@@ -2915,7 +3176,7 @@
                           ui::track_colour(track));
  }
  
-@@ -151,6 +163,9 @@
+@@ -151,6 +170,9 @@
      const auto& track = s.track();
      char text[32];
      switch (b.kind) {
@@ -2925,7 +3186,7 @@
      case Kind::Param: {
          const auto& p = track_param_info(track.engine, track.params, unsigned(b.id));
          auto shown = show(p, b.value);
-@@ -164,7 +179,7 @@
+@@ -164,7 +186,7 @@
          if (track.engine == EngineKind::Sampler && b.id == sampler::Level) c.label = "KIT VOLUME";
          break;
      }
@@ -2934,7 +3195,7 @@
      case Kind::Pan:
          c.label = "PAN"; c.bipolar = true;
          c.value = b.value == 0 ? juce::String("C") : (b.value < 0 ? "L" : "R") + juce::String(std::abs(b.value));
-@@ -218,7 +233,15 @@
+@@ -218,7 +240,16 @@
      case Kind::EuclidHits: c.label = "HITS"; c.value = juce::String(b.value); c.unit = "of " + juce::String(b.max); break; // generators (roadmap P1)
      case Kind::EuclidSteps: c.label = "STEPS"; c.value = juce::String(b.value); break;
      case Kind::EuclidRotate: c.label = "ROTATE"; c.value = juce::String(b.value); break;
@@ -2943,6 +3204,7 @@
 +    case Kind::GenLast:c.label="MIDI TO";c.value=juce::String(b.value+1);break;
 +    case Kind::GenGroup:c.label="SONG GROUP";c.value=juce::String(1+4*b.value)+"-"+juce::String(4+4*b.value);break;
 +    case Kind::GenAssign:c.label="GEN MODE";c.value=b.value?"SOUND + MIDI":"MIDI ONLY";break;
++    case Kind::BreakPreviewMode:c.label="AUDITION";c.value=b.value?"SYNC":"ORIGINAL";break;
 +    case Kind::GenBars:c.label="LOAD BARS";c.value=juce::String(b.value);break;
 +    case Kind::Gen8Amount: c.label="ENERGY"; c.value=juce::String(b.value); c.unit="%"; break;
 +    case Kind::Gen8Genre: c.label="GENRE"; c.value=gen_menu_name(unsigned(b.value)); break;
@@ -2951,7 +3213,7 @@
      case Kind::TrackSpeed: c.label = "SPEED"; c.value = juce::String::fromUTF8(speed_name(unsigned(b.value))); break; // roadmap P1
      case Kind::FollowAction: case Kind::FollowOther: { // roadmap P5: a follow action, the first or the second
          static const char* const names[] {"Off", "Next", "Previous", "Any", "Again", "Stop"};
-@@ -477,7 +500,7 @@
+@@ -477,7 +508,7 @@
          c.label = "JUMP"; c.value = juce::String(b.value + 1).paddedLeft('0', 2); c.unit = "/ " + juce::String(s.ui.files_count);
          break;
      case Kind::PluginJump:
@@ -2960,7 +3222,16 @@
          break;
      case Kind::ProjectJump:
          c.label = "JUMP"; c.value = juce::String(b.value + 1); c.unit = "/ " + juce::String(b.max + 1);
-@@ -558,12 +581,20 @@
+@@ -499,7 +530,7 @@
+         break;
+     }
+     case Kind::PadSustain: c.label = "SUSTAIN"; c.value = juce::String(b.value); c.unit = "%"; break;
+-    case Kind::Tempo: c.label = "TEMPO"; c.value = juce::String(int(s.tempo) / 10); c.unit = "BPM"; break;
++    case Kind::Tempo: c.label = "TEMPO"; c.value = external_clock_tempo(s) ? tempo_text(s) : juce::String(int(s.tempo) / 10); c.unit = "BPM"; break;
+     case Kind::NameSuggest: {
+         std::array<const char*, max_suggestions> names {};
+         unsigned count = name_suggestions(s.ui.name, names);
+@@ -558,12 +589,20 @@
          break;
      }
      case Kind::PluginParam: { // as the shell last read it from the plug-in (plugin/plugin_panel.h)
@@ -2986,9 +3257,12 @@
          break;
 --- a/src/rhythmer/pages/common.h
 +++ b/src/rhythmer/pages/common.h
-@@ -13,6 +13,7 @@
+@@ -12,7 +12,10 @@
+ // default control behaviours.
  namespace rhythmer {
  
++bool external_clock_tempo(const Snapshot& s);
++juce::String tempo_text(const Snapshot& s, bool decimals=false); // presentation only
  ui::Header header_of(const Snapshot& s);
 +juce::String track_display_name(const Snapshot& s,unsigned track);
  ui::HeaderItem tag_of(const Snapshot& s, unsigned track);
@@ -3079,7 +3353,7 @@
 +    if(break_home(c)){
 +        if(key>0&&c.frozen_edit(c.ui.track))return;
 +        if(key==0){c.open(PageId::Patterns);c.ui.sheet_open=true;c.ui.gen8_mode=2;c.ui.sheet_row=6;return;}
-+        if(key==1){c.ui.break_load_b=c.ui.break_perf_page%6==2;c.ui.break_browse=true;c.ui.break_track=c.ui.track;if(c.ui.break_load_b)c.project.gen8.bars=c.track().break_bars;c.open(PageId::Samples);c.notice(c.ui.break_load_b?"Choose loop B":"Choose loop A");return;}
++        if(key==1){c.ui.break_load_b=c.ui.break_perf_page%6==2;c.ui.break_browse=true;c.ui.break_track=c.ui.track;c.ui.break_bars=c.track().break_bars;c.open(PageId::Samples);c.notice(c.ui.break_load_b?"Choose loop B":"Choose loop A");return;}
 +        if(key==2){c.key(18,127,true);c.key(18,0,false);c.track().break_perf[1]=c.track().break_perf[2]=0;c.notice("STRAIGHT RETURN");return;}
 +    }
      if (c.track().engine == EngineKind::Plugin) {
@@ -3144,6 +3418,19 @@
 +const PageSpec edit_page {draw, break_pad, wheel, push, soft, nudge};
  
  } // namespace rhythmer
+--- a/src/rhythmer/pages/helper_pages.cpp
++++ b/src/rhythmer/pages/helper_pages.cpp
+@@ -51,9 +51,7 @@
+         p.g.setColour(n % 2 ? knob_shade(s.ui.track, 1) : n % 4 == 0 ? colour::text : colour::mid);
+         p.g.strokePath(tick, juce::PathStrokeType(n % 4 == 0 ? 2.0f : 1.4f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+     }
+-    char text[16];
+-    std::snprintf(text, sizeof(text), "%u.%u", s.tempo / 10, s.tempo % 10);
+-    p.text(text, cx - 40, cy - 16, 80, 30, plain(colour::text, 24, Weight::Medium), juce::Justification::centred);
++    p.text(tempo_text(s,true), cx - 40, cy - 16, 80, 30, plain(colour::text, 24, Weight::Medium), juce::Justification::centred);
+     p.text("BPM", cx - 30, cy + 12, 60, 14, caps_text(colour::mid), juce::Justification::centred);
+ }
+ void tempo_soft(Context& c, int key) {
 --- a/src/rhythmer/pages/pages.cpp
 +++ b/src/rhythmer/pages/pages.cpp
 @@ -56,6 +56,7 @@
@@ -3316,7 +3603,7 @@
      if (key == 0) { ui.patterns_cards = 0; return; } // PATTERNS again: the pattern's cards
 --- /dev/null
 +++ b/src/rhythmer/pages/performance_art.inc
-@@ -0,0 +1,273 @@
+@@ -0,0 +1,291 @@
 +// SPDX-License-Identifier: AGPL-3.0-only
 +// Original input-driven geometric sculptures. Screen thread only, <=384 faces;
 +// existing meters/notes supply motion. No audio-thread work or DSP change.
@@ -3325,9 +3612,9 @@
 +#include <algorithm>
 +#include <cmath>
 +inline int performance_kind(const juce::String& name) {
-+    static const char* names[]{"Sophie","Aphex","Elixir","FM-106","FMini-1","CS-1","OberVave","K-WASUB","Hera","Braids","Plaits","Hortator","MONO2K","Prophet","S1Vave","Dexed","Guru-600","Acid Engine","Rhythmer Kit","Break Engine"};
-+    for(int i=0;i<20;++i)if(name==names[i])return i;
-+    return 20;
++    static const char* names[]{"Sophie","Aphex","Elixir","FM-106","FMini-1","CS-1","OberVave","K-WASUB","Hera","Braids","Plaits","Hortator","MONO2K","Prophet","S1Vave","Dexed","Guru-600","Acid Engine","Rhythmer Kit","Break Engine","Frodhes","Tenebrae"};
++    for(unsigned i=0;i<sizeof(names)/sizeof(*names);++i)if(name==names[i])return int(i);
++    return 22;
 +}
 +template<class Signal>
 +inline void performance_art(ui::Paint& p,const Signal& s,const juce::String& name,const juce::String& preset,float x,float y,float w,float h,int selected=-1,float opacity=1.0f,bool fit=false) {
@@ -3338,7 +3625,8 @@
 +    const float a=std::clamp(std::sqrt(level)*1.15f+(held?.32f:0.0f),0.0f,1.0f);
 +
 +    const float pitch=float(s.track().last_note%128)/127.0f,pan=s.track().mix.pan/50.0f;
-+    unsigned seed=2166136261u;for(auto c:preset)seed=(seed^unsigned(c))*16777619u;
++    const auto motion_name=kind==18 ? preset.upToFirstOccurrenceOf(" / Pad ",false,true).trimCharactersAtEnd(" *") : preset;
++    unsigned seed=2166136261u;for(auto c:motion_name)seed=(seed^unsigned(c))*16777619u;
 +    const float m=float(seed%997)/997.0f;
 +    // Bounded screen-only gesture memory: sustain evolves from the actual key
 +    // press, release follows the existing meter. No audio callback or timer.
@@ -3573,6 +3861,23 @@
 +    case 19: // Break: a segmented tape loop, separating and returning.
 +        for(int i=0;i<16;++i){float q=i*2*pi/16+drive*.18f,r=1.0f+a*.18f*std::sin(i*.7f+drive*1.8f);box({std::cos(q)*r*1.28f,std::sin(q)*r*.63f,std::sin(q*2)*a*.3f},{.12f,.12f,.12f},i==selected%16?1:.55f);}
 +        break;
++    case 20: // Frodhes: struck tines above a solid resonant soundboard.
++        box({0,-.61f,0},{1.46f,.055f,.28f},.35f);
++        for(int i=0;i<12;++i){float u=float(i)/11.0f,xx=(u-.5f)*2.65f;
++            float height=.31f+.43f*(1-u),bend=a*.12f*std::sin(phrase*2.1f+i*.61f)*std::exp(-age*.8f);
++            box({xx,-.56f+height,bend},{.052f,height,.065f},.4f+.35f*u);
++            box({xx,-.48f,.19f},{.075f,.08f,.075f},.78f);
++        }
++        break;
++    case 21: // Tenebrae: layered, opening folds; a heavy geometric chamber.
++        for(int i=0;i<9;++i){float z=(float(i)-4)*.18f,q=float(i)*.31f;
++            float fold=.25f+.22f*std::sin(q)+a*.16f*std::sin(phrase*.7f+q);
++            float spread=1.12f+a*.10f*std::sin(phrase+q);
++            V l{-spread,-.46f,z},m0{0,-fold,z-.16f},r0{spread,-.46f,z};
++            V lt{-spread,.46f,z},mt{0,fold,z-.16f},rt{spread,.46f,z};
++            add(l,m0,mt,lt,.3f+float(i)*.055f);add(m0,r0,rt,mt,.78f-float(i)*.045f);
++        }
++        break;
 +    default:lathe({0,0,0},.9f,1.5f,24,8,1);
 +        break;
 +    }
@@ -3580,7 +3885,7 @@
 +    // pixel inset for antialiasing. Instrument pages retain their original framing.
 +    auto project=[&](V v){float perspective=3.6f/(3.6f-v.z*.35f);return V{v.x*w*(kind==18?.217f:.29f)*perspective,-v.y*h*(kind==18?.235f:.48f)*perspective,0};};
 +    float fit_scale=1,centre_x=0,centre_y=0;
-+    if(fit&&count&&kind!=18){float left=1e6f,right=-1e6f,top=1e6f,bottom=-1e6f;
++    if((fit||kind==20||kind==21)&&count&&kind!=18){float left=1e6f,right=-1e6f,top=1e6f,bottom=-1e6f;
 +        for(unsigned i=0;i<count;++i)for(const auto& v:faces[i].v){auto q=project(v);left=std::min(left,q.x);right=std::max(right,q.x);top=std::min(top,q.y);bottom=std::max(bottom,q.y);}
 +        fit_scale=std::min((w-6)/std::max(1.0f,right-left),(h-6)/std::max(1.0f,bottom-top));centre_x=(left+right)*.5f;centre_y=(top+bottom)*.5f;
 +    }
@@ -3728,8 +4033,8 @@
 -    unsigned hand = panel.row * 3u;
 +    if(panel.preset[0]) {
 +        auto style=plain(colour::text,type::body,Weight::SemiBold);
-+        auto caption=juce::String::fromUTF8(panel.preset);if(panel.focused_pad>=0&&panel.row==2){const bool modified=caption.endsWith(" *");caption=caption.upToFirstOccurrenceOf(" / Pad ",false,false)+" / ALL PADS"+(modified?" *":"");}
-+        else if(panel.focused_pad>=0&&panel.row>=3){
++        auto caption=juce::String::fromUTF8(panel.preset);if(panel.focused_pad>=0&&panel.row>=2&&panel.params[0].used&&juce::String(panel.params[0].name).startsWith("KIT ")){const bool modified=caption.endsWith(" *");caption=caption.upToFirstOccurrenceOf(" / Pad ",false,false)+" / ALL PADS"+(modified?" *":"");}
++        else if(panel.focused_pad>=0&&panel.row>=2){
 +            auto sound=caption.fromFirstOccurrenceOf(" / Pad ",false,false).fromFirstOccurrenceOf(": ",false,false);
 +            auto source=juce::String::fromUTF8(panel.design_source);if(source.isEmpty())source="Empty";
 +            caption="P"+juce::String(panel.focused_pad+1).paddedLeft('0',2)+" / "+source;
@@ -3850,11 +4155,14 @@
  juce::Colour ink_on(juce::Colour fill) { return fill.getPerceivedBrightness() > 0.55f ? ui::colour::bg : ui::colour::text; }
 --- a/src/rhythmer/pages/samples_page.cpp
 +++ b/src/rhythmer/pages/samples_page.cpp
-@@ -44,11 +44,12 @@
+@@ -43,12 +43,14 @@
+     auto drive_chip = chip(drive_name(drive), c);
      drive_chip.spare = true; // a long folder name keeps its room: B2 names the other drive
      h.left.push_back(drive_chip);
-     h.left.push_back(pill(folder_title(s) + juce::String::fromUTF8(" \xc2\xb7 ") + juce::String(s.files.size()), c));
-+    if(s.ui.break_browse)h.left.push_back(pill("BREAK / "+juce::String(s.project.gen8.bars)+" BARS",c));
+-    h.left.push_back(pill(folder_title(s) + juce::String::fromUTF8(" \xc2\xb7 ") + juce::String(s.files.size()), c));
++    h.left.push_back(pill(s.ui.break_browse
++        ? juce::String(s.ui.break_load_b ? "LOAD B / " : "LOAD A / ") + juce::String(s.ui.break_load_b ? track.break_bars : s.ui.break_bars) + " BARS"
++        : folder_title(s) + juce::String::fromUTF8(" \xc2\xb7 ") + juce::String(s.files.size()), c));
      h.right.push_back(tag_of(s, s.ui.track));
      juce::String other = drive == Drive::Card ? "INTERNAL" : "CARD";
      // The file under the cursor as it previews (mock 7): its row fills as it plays; B3 lit while there is sound.
@@ -3864,7 +4172,47 @@
      keys.toggles = 4; // PREVIEW names a thing that is on or off: its LED, never ON / OFF (the row fills while it sounds)
      keys.lit = s.ui.preview ? 4 : 0;
      frame(p, s, keys, h);
-@@ -110,6 +111,7 @@
+@@ -58,9 +60,10 @@
+         p.text(no_card ? "NO CARD" : "EMPTY", 0, zone::picture_y + 76, zone::width, 14, caps_text(colour::dim), juce::Justification::centred);
+         return;
+     }
++    const unsigned shown=s.ui.break_browse?5:visible;
+     unsigned count = unsigned(s.files.size()), cursor = std::min<unsigned>(s.ui.files_cursor, count - 1);
+-    unsigned first = cursor < 2 ? 0 : std::min(cursor - 2, count > visible ? count - visible : 0);
+-    for (unsigned row = 0; row < visible && first + row < count; ++row) {
++    unsigned first = cursor < 2 ? 0 : std::min(cursor - 2, count > shown ? count - shown : 0);
++    for (unsigned row = 0; row < shown && first + row < count; ++row) {
+         const auto& file = s.files[first + row];
+         ListRow r;
+         r.name = name_case(juce::String(file.name)); r.accent = c; r.current = first + row == cursor;
+@@ -96,6 +99,21 @@
+         list_row(p, zone::pad, zone::picture_y + 0.5f + row * (list_row_h + list_row_gap), zone::width - 2 * zone::pad, r);
+         p.g.restoreState();
+     }
++    if(s.ui.break_browse){
++        juce::String status="PREVIEW reads source / K2 audition";
++        const auto& file=s.files[cursor];
++        if(file.path==s.preview_path && s.preview_complete && s.preview_seconds<=0)status="PREVIEW UNAVAILABLE / choose audio";
++        if(file.path==s.preview_path && s.preview_seconds>0){
++            unsigned bars=s.ui.break_load_b?track.break_bars:s.ui.break_bars;
++            double bpm=bars*240.0/s.preview_seconds;
++            auto source_bpm=juce::String(bpm,1);if(source_bpm.endsWith(".0"))source_bpm=source_bpm.dropLastCharacters(2);
++            status="CALC "+source_bpm+" BPM / "+juce::String(bars)+" bars";
++            if(s.ui.break_preview_sync && s.preview_complete)status="CALC "+source_bpm+" BPM / SYNC "+tempo_text(s);
++            if(s.ui.preview && s.ui.break_preview_sync && !s.preview_complete)status="READING SYNC / "+source_bpm+" BPM calc";
++            if(s.preview_seconds>=30)status="30s PREVIEW LIMIT / ORIGINAL ONLY";
++        }
++        p.text(status,zone::pad,zone::picture_y+122,zone::width-2*zone::pad,18,plain(colour::sec,type::small));
++    }
+ }
+ 
+ void wheel(Context& c, int delta) {
+@@ -106,10 +124,11 @@
+ 
+ void push(Context& c) {
+     if (!c.library) return;
+-    auto files = c.library->files();
++    auto files = sample_browser_files(c.library->files(), c.ui.break_browse);
      if (c.ui.files_cursor >= files.size()) return;
      const auto& file = files[c.ui.files_cursor];
      if (file.folder) c.library->browse(Drive(c.ui.files_drive), file.path);
@@ -3872,7 +4220,7 @@
      else if (file.bank) c.load_bank_file(file.path, file.name);
      else if (file.kit) c.load_kit_file(file.path, file.name);
      else if (file.expansion) c.library->install(file.path);
-@@ -118,6 +120,7 @@
+@@ -118,6 +137,7 @@
  }
  
  void soft(Context& c, int key) {
@@ -3880,6 +4228,36 @@
      if (!c.library) return;
      auto& ui = c.ui;
      if (key == 0) { if (c.library->top()) samples_cancel(c); else c.library->browse_up(); } // at the top: CANCEL
+@@ -136,7 +156,8 @@
+ // Shift + pad on the browser: the file under the cursor onto the next empty pad.
+ bool samples_shift_pad(Context& c) {
+     if (c.ui.page != PageId::Samples || !c.library || c.track().engine != EngineKind::Sampler) return false;
+-    auto files = c.library->files();
++    if (c.ui.break_browse) { c.notice("Push loads the selected BREAK source"); return true; }
++    auto files = sample_browser_files(c.library->files(), c.ui.break_browse);
+     if (c.ui.files_cursor >= files.size() || files[c.ui.files_cursor].folder) { c.notice("Shift + pad: a file first"); return true; }
+     const auto& file = files[c.ui.files_cursor];
+     if (file.bank) { c.notice("Push loads a bank"); return true; }
+--- a/src/rhythmer/pages/seq_sheet.cpp
++++ b/src/rhythmer/pages/seq_sheet.cpp
+@@ -88,7 +88,7 @@
+         float saved = frozen.frozen() ? (s.live_load[t] > 0 ? std::max(0.0f, s.live_load[t] - load) : -1) : ice ? load : -1; // live: what freezing saves
+         block(p, x, y + 44, w, "CPU", saved < 0 ? juce::String::fromUTF8("\xe2\x80\x94") : juce::String::fromUTF8("\xe2\x88\x92") + juce::String(int(std::lround(saved * 100))),
+               saved < 0 ? juce::String() : juce::String("% of a block"), colour::ice);
+-        juce::String tempo = juce::String(s.tempo / 10) + "." + juce::String(s.tempo % 10);
++        juce::String tempo = tempo_text(s,true);
+         block(p, x, y + 88, w, "TEMPO", tempo, "BPM", colour::amber);
+         knob_strip(p, cards_of(s));
+         return;
+@@ -107,7 +107,7 @@
+     };
+     row(y + 42, "NEXT", next, track.chained() ? juce::String("at its end") : juce::String("next bar"));
+     row(y + 64, "AFTER", after, track.chain_count > 3 ? "+" + juce::String(track.chain_count - 3) : juce::String());
+-    juce::String tempo = juce::String(s.tempo / 10) + "." + juce::String(s.tempo % 10);
++    juce::String tempo = tempo_text(s,true);
+     block(p, x, y + 90, w, s.project.seq_tempo ? "P" + juce::String(s.ui.lead_pattern % pattern_count + 1) + " TEMPO" : juce::String("TEMPO"),
+           tempo, s.ui.bpm_tenths ? "BPM, by 0.1" : "BPM", colour::amber);
+ 
 --- a/src/rhythmer/pages/settings_page.cpp
 +++ b/src/rhythmer/pages/settings_page.cpp
 @@ -275,23 +275,22 @@
@@ -3914,6 +4292,26 @@
          ry += 14.5f;
      }
  }
+--- a/src/rhythmer/pages/sounds_page.cpp
++++ b/src/rhythmer/pages/sounds_page.cpp
+@@ -11,6 +11,8 @@
+ #include "rhythmer/shell/sound_list.h"
+ #include "rhythmer/ui/widgets.h"
+ #include <cstdio>
++
++#include "rhythmer/shell/preset_index.h"
+ 
+ namespace rhythmer {
+ namespace {
+@@ -56,7 +58,7 @@
+     std::array<uint16_t, max_listed> list {};
+     unsigned count = listed(c, list);
+     if (!count) return;
+-    c.ui.sounds_cursor = uint16_t(std::clamp<int>(int(c.ui.sounds_cursor) + delta, 0, int(count) - 1));
++    c.ui.sounds_cursor = uint16_t(preset_index(int64_t(c.ui.sounds_cursor) + delta, count));
+ }
+ 
+ void push(Context& c) {
 --- a/src/rhythmer/pages/stage_page.cpp
 +++ b/src/rhythmer/pages/stage_page.cpp
 @@ -16,6 +16,7 @@
@@ -4046,7 +4444,7 @@
      const auto& t = s.track();
      const auto& panel = s.ui.plugin_panel;
      if (!plugin_ready(s)) { draw_plugin_view(p, s, t.plugin, top); return; }
-+    const bool artwork = panel.layout_revision && performance_kind(plugin_name(s,t.plugin)) < 20;
++    const bool artwork = panel.layout_revision && performance_kind(plugin_name(s,t.plugin)) < 22;
 +    if (artwork) performance_art(p, s, plugin_name(s, t.plugin), juce::String::fromUTF8(panel.preset),
 +                                px + 4, top + 43, pw - 8, bottom - top - 65, int(t.last_pad), 1.0f, true);
      auto poster_at = [&](const juce::String& name, juce::Colour colour) {
@@ -4134,7 +4532,7 @@
 -    if (!t.used()) { make_new_track(c, NewChoice(c.ui.new_pick % new_choice_count)); return; } // the card in the middle
 +    if (!t.used()) { make_new_track(c,NewChoice(c.ui.new_pick % new_choice_count)); return; }
 +    if(t.engine==EngineKind::Sampler&&t.break_bars&&!t.pads[t.last_pad%sampler_pads].used()){
-+        c.ui.break_browse=true;c.ui.break_load_b=false;c.ui.break_track=c.ui.track;c.ui.break_bars=t.break_bars;c.project.gen8.bars=t.break_bars;c.open(PageId::Samples);c.notice("Choose loop A");return;
++        c.ui.break_browse=true;c.ui.break_load_b=false;c.ui.break_track=c.ui.track;c.ui.break_bars=t.break_bars;c.open(PageId::Samples);c.notice("Choose loop A");return;
 +    } // the card in the middle
 +    if (empty_source_pad(t, page)) {
 +        if (c.ui.recording || c.host_recording()) { c.notice("Finish recording first"); return; }
@@ -4350,8 +4748,8 @@
 +    }
 +    const auto& selected=out.design_pages[out.design_page];out.design_half=uint8_t(selected.shown[3]>=0?std::min(half,1u):0u);
 +    const auto& params=h->instance->getParameters();out.window={};out.params={};
-+    for(unsigned k=0;k<6;++k){int at=selected.shown[k];if(at<0||unsigned(at)>=h->shown.size())continue;
-+        auto& card=out.window[k];auto* p=params[h->shown[size_t(at)]];card.used=true;card.shown=int16_t(at);
++    for(unsigned k=0;k<6;++k){int at=selected.shown[k];if(at<0||at>=params.size())continue;
++        auto& card=out.window[k];auto* p=params[size_t(at)];auto found=std::find(h->shown.begin(),h->shown.end(),at);if(found==h->shown.end())continue;card.used=true;card.shown=int16_t(found-h->shown.begin());
 +        put(card.name,sizeof card.name,p->getName(int(sizeof card.name)-1).trim().toStdString());float v=p->getValue();
 +        put(card.text,sizeof card.text,tidy(p->getText(v,96).trim().toStdString()));card.value=int16_t(std::lround(std::clamp(v,0.0f,1.0f)*plugin_param_max));
 +        card.initial=int16_t(std::lround(std::clamp(p->getDefaultValue(),0.0f,1.0f)*plugin_param_max));
@@ -4612,7 +5010,7 @@
      out.instrument = h->instrument;
 +    const auto snapshot_revision=sound_rack_revision(h->instance.get());
 +    const int sound_controls=sound_rack_parameter_count(h->instance.get());
-+    if(sound_controls>=0) {h->shown.resize(size_t(sound_controls));std::iota(h->shown.begin(),h->shown.end(),0);}
++    if(sound_controls>=0) h->shown=sound_rack_edit_order(h->instance.get());
 +    put(out.preset,sizeof(out.preset),sound_rack_preset_name(h->instance.get()).toStdString());
 +    if(!out.preset[0]&&h->instance->getNumPrograms()>0)put(out.preset,sizeof(out.preset),h->instance->getProgramName(h->instance->getCurrentProgram()).toStdString());
 +    out.layout_revision=snapshot_revision;
@@ -4621,20 +5019,23 @@
      out.qlinks = h->qlinks;
      out.rows = uint16_t((h->shown.size() + 2) / 3);
      out.row = uint16_t(out.rows ? std::min<unsigned>(row, out.rows - 1u) : 0);
-@@ -607,7 +626,7 @@
+@@ -606,8 +625,9 @@
+     out.programs = uint16_t(std::min<size_t>(h->programs.size(), 0xffff));
      const auto& params = h->instance->getParameters();
      auto read = [&](size_t at, PluginPanelParam& card) {
++        if(at>=h->shown.size()||h->shown[at]<0)return;
          auto* p = params[h->shown[at]];
 -        card.used = true;
 +        card.used = true; card.shown=int16_t(at);
          std::string name = p->getName(int(sizeof(card.name) - 1)).trim().toStdString();
          put(card.name, sizeof(card.name), h->nam ? nam_card_name(name) : name);
          float v = p->getValue();
-@@ -617,27 +636,44 @@
+@@ -617,27 +637,45 @@
          int steps = p->getNumSteps();
          card.steps = uint16_t(steps > 1 && steps < plugin_param_max ? steps : 0);
      };
 +    auto quick=sound_rack_quick_parameters(h->instance.get());
++    if(sound_controls>=0)for(auto& index:quick){auto found=std::find(h->shown.begin(),h->shown.end(),index);index=index<0||found==h->shown.end()?-1:int(found-h->shown.begin());}
 +    if(sound_controls<0){
 +        const std::array<std::vector<std::string>,3> preferred{{{"cutoff","filter cutoff","vcf cutoff","lpf cut"},{"resonance","filter resonance","vcf reso","lpf peak"},{"filter env","vcf env","timbre","tone","output level","volume"}}};
 +        for(unsigned k=0;k<3;++k)for(const auto& wanted:preferred[k]){int found=-1,count=0;for(unsigned at=0;at<h->shown.size();++at)if(params[h->shown[at]]->getName(64).trim().toLowerCase().toStdString()==wanted){found=int(at);++count;}if(count==1&&std::find(quick.begin(),quick.end(),found)==quick.end()){quick[k]=found;break;}}
@@ -4670,7 +5071,8 @@
      if (entry >= max_plugins) return;
      std::lock_guard<std::mutex> held(lock);
      auto* h = entries[entry].live;
-     if (!h || shown_index >= h->shown.size()) return;
+-    if (!h || shown_index >= h->shown.size()) return;
++    if (!h || shown_index >= h->shown.size() || h->shown[shown_index]<0) return;
      auto* p = h->instance->getParameters()[h->shown[shown_index]];
      float v = std::clamp(value, 0, plugin_param_max) / float(plugin_param_max);
 -    p->setValue(v);
@@ -4679,7 +5081,7 @@
  }
  
  PluginPrograms PluginRack::programs(unsigned entry) const {
-@@ -647,8 +683,9 @@
+@@ -647,8 +685,9 @@
      std::lock_guard<std::mutex> held(lock);
      const auto& e = entries[entry];
      if (!e.live || e.status != PluginStatus::Ready) return out;
@@ -4690,7 +5092,7 @@
      out.loading = e.live->switching;
      out.finding = e.live->finding;
      return out;
-@@ -663,6 +700,7 @@
+@@ -663,6 +702,7 @@
          if (!e.live || e.status != PluginStatus::Ready) return;
          e.live->program = program;
          e.live->switching = true;
@@ -4698,7 +5100,7 @@
          job.generation = e.generation;
      }
      push(std::move(job));
-@@ -684,7 +722,7 @@
+@@ -684,7 +724,7 @@
          instance = e.live->instance.get(); // freed only on this thread, so it outlives the switch
      }
      if (program >= 0 && program < instance->getNumPrograms()) {
@@ -4707,7 +5109,7 @@
              instance->setCurrentProgram(program == 0 ? 1 : 0);
              std::this_thread::sleep_for(std::chrono::milliseconds(150));
          }
-@@ -744,6 +782,7 @@
+@@ -744,6 +784,7 @@
      push(std::move(job));
  }
  
@@ -4715,7 +5117,7 @@
  PluginRack::View PluginRack::view() const {
      std::lock_guard<std::mutex> held(lock);
      return shown;
-@@ -860,6 +899,7 @@
+@@ -860,6 +901,7 @@
  PluginRack::Known PluginRack::probe(const PluginFile& file) {
      Known found;
      found.path = file.path;
@@ -4723,7 +5125,7 @@
      int8_t kind = -1;
      std::string error;
      fs::path stage = stage_root() / (stage_tag + "probe-" + std::to_string(++stage_count));
-@@ -935,6 +975,7 @@
+@@ -935,6 +977,7 @@
      // A path relative to the card's top (a track Rhythmer's own synth was), or one in the card's old top-level
      // Plugins folder: on the card in now, in Rhythmer/Plugins.
      std::string path = card_plugin_path(top, job.path);
@@ -4731,7 +5133,7 @@
      auto file = describe_plugin(path);
      std::vector<uint8_t> state;
      {
-@@ -969,8 +1010,35 @@
+@@ -969,8 +1012,35 @@
      double device_rate = job.rate > 0 ? job.rate : 44100.0;
      double rate = file.fixed_rate ? double(file.fixed_rate) : device_rate; // what the plug-in itself runs at
      int block = int(EngineHost::block);
@@ -4769,7 +5171,7 @@
          juce::OwnedArray<juce::PluginDescription> types;
          auto host = juce_types(file.format, staged_path(file, stage), types);
          const juce::PluginDescription* chosen = types.isEmpty() ? nullptr : types[0];
-@@ -1014,7 +1082,7 @@
+@@ -1014,7 +1084,7 @@
      handle->format = file.format;
      handle->programs = named_programs(*handle->instance);
      handle->finding = file.format == PluginFormat::Clap; // looked for once it plays: find_presets()
@@ -4778,7 +5180,7 @@
          auto order = qlink_order(file.path);
          if (!order.empty()) {
              std::vector<int> ordered;
-@@ -1044,6 +1112,7 @@
+@@ -1044,6 +1114,7 @@
              handles.push_back(std::move(handle));
              if (entry.live) retiring.push_back(entry.live);
              raw->transport.store(entry.transport, std::memory_order_relaxed); // before the audio thread first runs it
@@ -4786,7 +5188,7 @@
              entry.live = raw;
              entry.status = PluginStatus::Ready;
              entry.file.instrument = is_instrument ? 1 : 0;
-@@ -1082,6 +1151,8 @@
+@@ -1082,6 +1153,8 @@
          if (e.generation == generation && e.live && e.live->instance.get() == clap) {
              e.live->programs = PluginProgramList(std::move(list));
              e.live->finding = false;
@@ -4833,7 +5235,7 @@
      };
 --- /dev/null
 +++ b/src/rhythmer/plugin/sound_rack.cpp
-@@ -0,0 +1,524 @@
+@@ -0,0 +1,565 @@
 +// SPDX-License-Identifier: AGPL-3.0-only
 +// Copyright (C) 2026 jazzy rhythmer
 +#include "rhythmer/plugin/sound_rack.h"
@@ -4933,14 +5335,32 @@
 +    bool drum_names(DrumVoices& result){std::lock_guard<std::mutex> guard(lock);if(single>=0)return false;auto* g=active.load();if(!g)return true;for(int i=0;i<pads;++i)if(auto c=g->routes[size_t(i)]){auto name=sound_name(c->engine,g->sounds[size_t(i)]).fromLastOccurrenceOf(" / ",false,false);if(name.isEmpty())name=sound_name(c->engine,g->sounds[size_t(i)]);std::snprintf(result.names[size_t(i)].data(),result.names[size_t(i)].size(),"%s",name.toRawUTF8());}return true;}
 +    String preset_name(){std::lock_guard<std::mutex> guard(lock);auto* g=active.load();if(!g)return {};String name=user_label.isNotEmpty()?user_label:single<0?text(at(get(catalog,"kits"),g->kit),"name"):sound_name(single,g->sounds[0]);if(single>=0&&user_label.isNotEmpty())name+=" / "+sound_name(single,g->sounds[0]);if(single<0)if(auto c=g->routes[size_t(focus)])name+=" / Pad "+String(focus+1)+": "+sound_name(c->engine,g->sounds[size_t(focus)]).fromLastOccurrenceOf(" / ",false,false);if(g->edited[size_t(single<0?focus:0)]||(kit_filter&&g->filter_edited))name+=" *";return name;}
 +    uint32_t revision(){std::lock_guard<std::mutex> guard(lock);return layout_revision;}
++    std::array<int,3> kit_mix_controls(){
++        std::array<int,3> out{{-1,-1,-1}};if(single>=0)return out;
++        auto c=focused();if(!c)return out;
++        int volume=-1,pan=-1,tune=-1,decay=-1;
++        auto metadata=get(source_info(*c),"parameters");const auto& order=g_order();
++        for(unsigned i=0;i<order.size();++i){auto role=text(at(metadata,order[i]),"kit_mix_role");int shown=base+int(i);
++            if(role=="volume"&&volume<0)volume=shown;
++            else if(role=="pan"&&pan<0)pan=shown;
++            else if(role=="tune"&&tune<0)tune=shown;
++            else if(role=="decay"&&decay<0)decay=shown;
++        }
++        if(volume<0)return out;
++        out[0]=volume;out[1]=pan>=0?pan:tune>=0?tune:decay;
++        out[2]=pan>=0?(tune>=0?tune:decay):(tune>=0?decay:-1);
++        return out;
++    }
 +    bool design_pages(PluginPanel& out){
 +        std::lock_guard<std::mutex> guard(lock);auto c=focused();if(!c&&single>=0)return false;
 +        auto source=c?text(source_info(*c),"name"):String("Empty");auto variant=c?text(source_info(*c),"variant"):String();if(variant.isNotEmpty())source+=" / "+variant;
 +        std::snprintf(out.design_source,sizeof out.design_source,"%s",source.toRawUTF8());
 +        if(design_cache_revision!=layout_revision){
-+            std::vector<PluginDesignControl> list;if(kit_filter)for(int i=6;i<9;++i)list.push_back({i,-100,single<0?"KIT FILTER":"OUTPUT FILTER"});
++            std::vector<PluginDesignControl> list;auto mix=kit_mix_controls();
++            for(int shown:mix)if(shown>=0)list.push_back({shown,-200,"PAD MIX"});
++            if(kit_filter)for(int i=6;i<9;++i)list.push_back({i,-100,single<0?"KIT FILTER":"OUTPUT FILTER"});
 +            const auto& order=g_order();auto metadata=c?get(source_info(*c),"parameters"):var();
-+            for(unsigned i=0;i<order.size();++i){auto p=at(metadata,order[i]);auto group=text(p,"edit_group");int rank=number(p,"edit_group_order",700);
++            for(unsigned i=0;i<order.size();++i){if(std::find(mix.begin(),mix.end(),int(i)+base)!=mix.end())continue;auto p=at(metadata,order[i]);auto group=text(p,"edit_group");int rank=number(p,"edit_group_order",700);
 +                // Hortator models reuse eight slots for different functions.
 +                // Classify their current native names, never a stale kit label.
 +                auto family=text(source_info(*c),"name");auto* graph=active.load();const auto& names=graph->names[size_t(single<0?focus:0)];
@@ -5038,6 +5458,10 @@
 +        input.clear();hazard.store(nullptr,std::memory_order_seq_cst);
 +    }
 +    String parameter_name(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){static const char* names[]{"KIT CUTOFF","KIT RESONANCE","KIT FILTER TYPE"};return single<0?String(names[i-6]):String(names[i-6]).replace("KIT ","OUTPUT ");}if(i==3)return "Save slot";if(i==4)return single<0?"Save Kit":"Save Sound";if(i==5)return "Status";if(i==0)return single<0?"Pad":"Sound";if(i==1)return single<0?"P"+String(focus+1).paddedLeft('0',2)+" Engine":"Pitch reference";if(i==2)return single<0?"P"+String(focus+1).paddedLeft('0',2)+" Sound":"Pitch mode";auto c=focused();int p=i-base;String name=c&&p>=0&&p<int(g_order().size())?c->synth->getParameters()[g_order()[size_t(p)]]->getName(64):String();
++        if(single<0&&c&&p>=0&&p<int(g_order().size())){auto role=text(at(get(source_info(*c),"parameters"),g_order()[size_t(p)]),"kit_mix_role");
++            auto label=role=="volume"?String("Volume"):role=="pan"?String("Pan"):role=="tune"?String("Tune"):role=="decay"?String("Decay"):String();
++            if(label.isNotEmpty())return "P"+String(focus+1).paddedLeft('0',2)+" "+label;
++        }
 +        if(c&&p>=0&&p<int(g_order().size())){auto metadata=at(get(source_info(*c),"parameters"),g_order()[size_t(p)]);auto label=text(metadata,"edit_name");if(label.isNotEmpty())name=label;auto dynamic=get(metadata,"dynamic_labels");int selector=number(metadata,"dynamic_selector",-1);if(dynamic.isArray()&&selector>=0&&selector<c->synth->getParameters().size())name=at(dynamic,std::clamp(int(std::lround(c->synth->getParameters()[selector]->getValue()*(size(dynamic)-1))),0,size(dynamic)-1)).toString();}
 +        if(c&&(c->drums||get(source_info(*c),"voice_parameters").isObject())){int reference_note=single<0?active.load()->notes[size_t(focus)]:c->source_note;if(reference_note==60&&number(source_info(*c),"native_pitch_parameter",-1)>=0)reference_note=36;auto voice=get(source_info(*c),"voices");for(int n=0;n<size(voice);++n)if(number(at(voice,n),"note")==reference_note||number(at(voice,n),"note")==int(get(get(source_info(*c),"control_notes"),String(reference_note)))){auto prefix=text(at(voice,n),"name")+" ";if(name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}String prefix="Pad "+String(reference_note-35)+" ";if(name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}
 +        if(c){auto prefix=text(source_info(*c),"strip_voice_prefix");if(prefix.isNotEmpty()&&name.startsWithIgnoreCase(prefix))name=name.substring(prefix.length());}
@@ -5055,7 +5479,7 @@
 +            if(category.isNotEmpty()&&!name.equalsIgnoreCase(category)&&!(name=="Sound model"&&category.equalsIgnoreCase("Model"))&&!name.startsWithIgnoreCase(category+" ")){bool joined=false;for(int start=0;start<category.length();++start)if(start==0||category[start-1]==' '){auto suffix=category.substring(start);if(name.equalsIgnoreCase(suffix)||name.startsWithIgnoreCase(suffix+" ")){name=category.substring(0,start)+name;joined=true;break;}}if(!joined)name=category+" "+name;}}
 +        return single<0&&name.isNotEmpty()?"P"+String(focus+1).paddedLeft('0',2)+" "+name:name;}
 +    float parameter_value(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){auto* g=active.load();return g?g->kit_filter[size_t(i-6)]/float(i==8?2:100):0;}auto c=focused();if(i==3)return save_slot/63.0f;if(i==4||i==5)return 0;if(i==0)return single<0?focus/63.0f:current_program()/float(std::max(1,factory_count()+int(saved_slots.size())-1));if(i==1)return single<0&&c?c->engine/float(std::max(1,size(get(catalog,"engines"))-1)):0;if(i==2)return single<0&&c?selection_index(c->engine,current_sound())/float(std::max(1,selection_count(c->engine)-1)):0;int p=i-base;if(!c||p<0||p>=int(g_order().size()))return 0;int index=g_order()[size_t(p)];float value=c->synth->getParameters()[index]->getValue();auto meta=at(get(source_info(*c),"parameters"),index);auto choices=get(meta,"option_indices");if(size(choices)>1){int source=int(std::lround(value*(size(get(meta,"options"))-1)));for(int n=0;n<size(choices);++n)if(int(at(choices,n))==source)return n/float(size(choices)-1);return 0;}return value;}
-+    String parameter_text(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){auto* g=active.load();if(!g)return {};if(i==8){static const char* types[]{"LP","BP","HP"};return types[g->kit_filter[2]];}return String(g->kit_filter[size_t(i-6)])+" %";}auto c=focused();if(i==3)return String(save_slot+1);if(i==4)return "Turn to SAVE";if(i==5)return busy?"Working...":(last_error.isEmpty()?"Ready":last_error);if(i==0)return single<0?String(focus+1):(user_label.isNotEmpty()?user_label:c?sound_name(c->engine,current_sound()):"Empty");if(i==1)return single<0?(c?text(source_info(*c),"name")+(text(source_info(*c),"variant").isNotEmpty()?" / "+text(source_info(*c),"variant"):String()):"Empty"):"C4 / MIDI 60";if(i==2)return single<0?(c?sound_name(c->engine,current_sound()):"Empty"):(c&&c->drums?"Pitch + Length":"Key Pitch");int p=i-base;if(!c||p<0||p>=int(g_order().size()))return {};int index=g_order()[size_t(p)];auto* param=c->synth->getParameters()[index];if(bool(get(at(get(source_info(*c),"parameters"),index),"display_percentage")))return String(param->getValue()*100,0)+" %";auto options=get(at(get(source_info(*c),"parameters"),index),"options");if(size(options)>0)return at(options,std::clamp(int(std::lround(param->getValue()*(size(options)-1))),0,size(options)-1)).toString();auto value=param->getText(param->getValue(),96);auto meta=at(get(source_info(*c),"parameters"),index);auto unit=param->getLabel().trim();if(unit.isEmpty())unit=text(meta,"unit");
++    String parameter_text(int i){std::lock_guard<std::mutex> guard(lock);if(kit_filter_index(i)){auto* g=active.load();if(!g)return {};if(i==8){static const char* types[]{"LP","BP","HP"};return types[g->kit_filter[2]];}return String(g->kit_filter[size_t(i-6)])+" %";}auto c=focused();if(i==3)return String(save_slot+1);if(i==4)return "Turn to SAVE";if(i==5)return busy?"Working...":(last_error.isEmpty()?"Ready":last_error);if(i==0)return single<0?String(focus+1):(user_label.isNotEmpty()?user_label:c?sound_name(c->engine,current_sound()):"Empty");if(i==1)return single<0?(c?text(source_info(*c),"name")+(text(source_info(*c),"variant").isNotEmpty()?" / "+text(source_info(*c),"variant"):String()):"Empty"):"C4 / MIDI 60";if(i==2)return single<0?(c?sound_name(c->engine,current_sound()):"Empty"):(c&&c->drums?"Pitch + Length":"Key Pitch");int p=i-base;if(!c||p<0||p>=int(g_order().size()))return {};int index=g_order()[size_t(p)];auto* param=c->synth->getParameters()[index];auto native_meta=at(get(source_info(*c),"parameters"),index);if(bool(get(native_meta,"display_native_percent"))){double lo=double(get(native_meta,"minimum")),hi=double(get(native_meta,"maximum"));return String((lo+(hi-lo)*param->getValue())*100.0,0)+" %";}if(bool(get(at(get(source_info(*c),"parameters"),index),"display_percentage")))return String(param->getValue()*100,0)+" %";auto options=get(at(get(source_info(*c),"parameters"),index),"options");if(size(options)>0)return at(options,std::clamp(int(std::lround(param->getValue()*(size(options)-1))),0,size(options)-1)).toString();auto value=param->getText(param->getValue(),96);auto meta=at(get(source_info(*c),"parameters"),index);auto unit=param->getLabel().trim();if(unit.isEmpty())unit=text(meta,"unit");
 +        if(unit.isNotEmpty()&&!value.containsIgnoreCase(unit)&&value.trim().containsOnly("+-0123456789.eE ")){if(unit=="%"&&double(get(meta,"maximum"))<=1.0&&double(get(meta,"minimum"))>=0.0)value=String(value.getDoubleValue()*100.0,1);value+=" "+unit;}
 +        if(value.startsWithIgnoreCase("Pad ")){auto tail=value.substring(4);int space=tail.indexOfChar(' ');if(space>0&&tail.substring(0,space).containsOnly("0123456789"))value=(single<0?"P"+String(focus+1).paddedLeft('0',2)+" ":String())+tail.substring(space+1);}return value;}
 +    void change(int i,float value,uint32_t expected=0){if(!std::isfinite(value))return;value=std::clamp(value,0.0f,1.0f);if((single>=0&&(i==1||i==2))||i==5)return;if(i==4){if(value>=0.5f)enqueue({5,0});return;}if(single<0&&i==0){enqueue({1,0,value});flush();return;}if(single>=0&&i==0){enqueue({0,int(std::lround(value*(getNumPrograms()-1)))});return;}Request request{1,i,value};request.revision=expected;enqueue(std::move(request));}
@@ -5358,9 +5782,28 @@
 +namespace rhythmer {int sound_rack_source_parameter_begin(AudioPluginInstance* p){if(auto* r=dynamic_cast<Rack*>(p))return r->source_begin();return 0;}}
 +
 +namespace rhythmer {juce::String sound_rack_source_name(AudioPluginInstance* p){if(auto* r=dynamic_cast<Rack*>(p);r&&r->focused_pad()>=0)return r->parameter_text(1);return {};}}
++
++namespace rhythmer {
++std::vector<int> sound_rack_edit_order(AudioPluginInstance* synth){
++    const int count=sound_rack_parameter_count(synth);std::vector<int> result;
++    if(count<0)return result;
++    for(int i=0;i<std::min(6,count);++i)result.push_back(i);
++    PluginPanel panel;
++    if(sound_rack_focus(synth)>=0&&sound_rack_design_pages(synth,panel)){
++        for(unsigned page=0;page<panel.design_count;++page){
++            const auto& ids=panel.design_pages[page].shown;
++            for(unsigned row=0;row<2;++row){
++                if(ids[row*3]<0)continue;
++                for(unsigned k=0;k<3;++k)result.push_back(ids[row*3+k]);
++            }
++        }
++    }else for(int i=6;i<count;++i)result.push_back(i);
++    return result;
++}
++}
 --- /dev/null
 +++ b/src/rhythmer/plugin/sound_rack.h
-@@ -0,0 +1,28 @@
+@@ -0,0 +1,30 @@
 +// SPDX-License-Identifier: AGPL-3.0-only
 +// Copyright (C) 2026 jazzy rhythmer
 +#pragma once
@@ -5369,6 +5812,7 @@
 +#include <functional>
 +#include <memory>
 +#include <string>
++#include <vector>
 +
 +namespace rhythmer {
 +// Original VSTs remain the synthesis/state authority. The loader runs only on
@@ -5379,6 +5823,7 @@
 +// Used by the existing parameter pages: no fixed truncation of original controls.
 +int sound_rack_parameter_count(juce::AudioPluginInstance*);
 +int sound_rack_source_parameter_begin(juce::AudioPluginInstance*);
++std::vector<int> sound_rack_edit_order(juce::AudioPluginInstance*);
 +bool sound_rack_design_pages(juce::AudioPluginInstance*,PluginPanel&);
 +juce::String sound_rack_source_name(juce::AudioPluginInstance*);
 +juce::String sound_rack_preset_name(juce::AudioPluginInstance*);
@@ -5416,7 +5861,7 @@
  
 --- a/src/rhythmer/shell/ask.cpp
 +++ b/src/rhythmer/shell/ask.cpp
-@@ -38,7 +38,12 @@
+@@ -38,9 +38,15 @@
      auto& ui = c.ui;
      if (ui.ask == UiState::Ask::None) return false;
      if (button == B::Play || button == B::Stop) return false; // the transport still answers
@@ -5429,16 +5874,37 @@
 +    }
      if (button == B::TopLeft) { // Cancel (LATER on the update question: asked again when the card is returned)
          if (ui.ask == UiState::Ask::InstallUpdate && c.updates) c.updates->decline();
++        if(ui.ask==UiState::Ask::BreakLength){ui.break_pending=-1;ui.break_job_track=-1;}
          ui.ask = UiState::Ask::None;
-@@ -81,7 +86,7 @@
+         return true;
+     }
+@@ -60,6 +66,7 @@
+     } else if (kind == UiState::Ask::ErasePunches) c.erase_punches(); // Erase + KEEP on Pad FX (pad-fx C)
+     else if (kind == UiState::Ask::ClearTrack) clear_track(c, unsigned(ui.ask_target)); // Pad Bank held + Erase + pad
+     else if (kind == UiState::Ask::InstallUpdate) begin_update(c); // shell/update.h
++    else if (kind == UiState::Ask::BreakLength) c.gen_break_begin();
+     else if (kind == UiState::Ask::Unfreeze) { // freeze plan F2c: live again at once; its prints stay for the next freeze
+         unsigned t = unsigned(ui.ask_target) % track_count;
+         bool thaw = c.deep(t) && !((c.deep_hold >> t) & 1); // freeze plan F2d: its plug-ins load first
+@@ -81,8 +88,9 @@
      case UiState::Ask::LooperOff: return "Turn the Looper off?";
      case UiState::Ask::ClearPattern: return "Clear P" + std::to_string(ui.ask_target % pattern_count + 1) + " of track " + std::to_string(ui.track % track_count + 1) + "?";
      case UiState::Ask::ErasePunches: return "Erase kept punches?";
 -    case UiState::Ask::ClearTrack: return "Clear track " + std::to_string(ui.ask_target % track_count + 1) + "?";
 +    case UiState::Ask::ClearTrack: return std::string(ui.page==PageId::TrackActions?"Delete track ":"Clear track ") + std::to_string(ui.ask_target % track_count + 1) + "?";
      case UiState::Ask::InstallUpdate: return std::string("Update to ") + ui.update.version + "?";
++    case UiState::Ask::BreakLength: return "Replace A with " + std::to_string(ui.break_job_bars) + " bars?";
      case UiState::Ask::Unfreeze: return "Unfreeze track " + std::to_string(ui.ask_target % track_count + 1) + "?";
      default: return {};
+     }
+@@ -111,6 +119,7 @@
+     if (ui.ask == UiState::Ask::ClearPattern) return "Its notes and motion go; Shift + Minus brings them back.";
+     if (ui.ask == UiState::Ask::ClearTrack) return "Its sound and patterns go; Shift + Minus brings them back.";
+     if (ui.ask == UiState::Ask::InstallUpdate) return "The project is saved first, then Rhythmer restarts.";
++    if (ui.ask == UiState::Ask::BreakLength) return "Patterns keep their length. B is cleared; Undo restores both.";
+     if (ui.ask == UiState::Ask::Unfreeze) return "Its sound plays live again; prints stay until what made them changes.";
+     if (ui.ask == UiState::Ask::NewProject)
+         return ui.ask_target == 1 ? "Changes are saved first." : ui.ask_target == 2 ? "Unsaved changes are lost." : "The open project closes.";
 --- a/src/rhythmer/shell/bindings.cpp
 +++ b/src/rhythmer/shell/bindings.cpp
 @@ -25,6 +25,7 @@
@@ -5536,7 +6002,7 @@
 +                if(project.gen8.assign)return {Binding{Kind::GenGroup,0,0,3,project.gen8.group},Binding{},Binding{Kind::GenAssign,0,0,1,project.gen8.assign}};
 +                return {Binding{Kind::GenFirst,0,0,15,project.gen8.first},Binding{Kind::GenLast,0,0,15,project.gen8.last},Binding{Kind::GenAssign,0,0,1,project.gen8.assign}};
 +            }
-+            if(ui.gen8_mode==2)return {Binding{Kind::GenBars,0,1,4,project.gen8.bars},Binding{Kind::Gen8Genre,0,0,60,project.gen8.genre},Binding{Kind::Gen8Seed,0,0,9999,project.gen8.seed}};
++            if(ui.gen8_mode==2)return {pattern_cards(project,pattern)[0],Binding{Kind::Gen8Genre,0,0,60,project.gen8.genre},Binding{Kind::Gen8Seed,0,0,9999,project.gen8.seed}};
 +            if(ui.gen8_mode==1) return {Binding {Kind::VaryAmount, 0, 0, 100, ui.vary_amount}, Binding {}, Binding {}};
 +            return {Binding {Kind::Gen8Amount,0,0,100,project.gen8.amount},
 +                    Binding {Kind::Gen8Genre,0,0,int(gen8_genre_count)+1,project.gen8.genre},
@@ -5551,8 +6017,8 @@
          return {Binding {Kind::FlexMode, 0, 0, 1, project.flex.mode}, Binding {}, Binding {Kind::FlexMix, 0, 0, 100, project.flex.mix}};
 -    case PageId::Samples: // every list: K1 jumps, the other pots draw nothing
 +    case PageId::Samples:
-+        if(ui.break_browse&&ui.break_load_b)return {}; // Break loop length is chosen before loading
-+        if(ui.break_browse)return {Binding{Kind::GenBars,0,1,4,project.gen8.bars},Binding{},Binding{}};
++        if(ui.break_browse&&ui.break_load_b)return {Binding{},Binding{Kind::BreakPreviewMode,0,0,1,ui.break_preview_sync},Binding{}}; // Break loop length is chosen before loading
++        if(ui.break_browse)return {Binding{Kind::GenBars,0,1,4,ui.break_bars},Binding{Kind::BreakPreviewMode,0,0,1,ui.break_preview_sync},Binding{}};
          return {Binding {Kind::FileJump, 0, 0, std::max(int(ui.files_count) - 1, 1), ui.files_cursor}, Binding {}, Binding {}};
 +    case PageId::TrackActions: return {};
      case PageId::Plugins:
@@ -5569,9 +6035,19 @@
          TrackSpeed, // Tracks, Shift + K1: the strip in hand's playback speed (roadmap P1), id the track, an index of speeds
          LoopSource, // the Looper's loop sheet, K1: the loop's source, an index into loop_sources() (shell/loop_sheet.h), id the loop
          // Pad layers (roadmap P3), the last pad hit: the layer in hand 0-3, its velocities, its tune and level over the
+@@ -104,7 +104,8 @@
+         PatternProgram, // a MIDI track's PROGRAM K3: the program its pattern in hand sends as it starts (0: the track's)
+         PrintTapPick, PrintTailPick, // freeze plan F2c, the PRINT sheet: K1 where prints are taken (PrintTap), K2 how they end (PrintTail)
+         PadSend,  // Stage's SENDS on a kit, K2: the last pad's own send into bus id (PadSound::sends)
+-        PadColour // Stage's COLOUR on a kit, K1: the last pad's colour, a place on shell/pad_colour.h's list
++        PadColour, // Stage's COLOUR on a kit, K1: the last pad's colour, a place on shell/pad_colour.h's list
++        BreakPreviewMode // browser-only audition; existing binding IDs retained
+     };
+     Kind kind = Kind::None;
+     int32_t id = 0;      // Param: the parameter
 --- /dev/null
 +++ b/src/rhythmer/shell/break_acid_check.inc
-@@ -0,0 +1,176 @@
+@@ -0,0 +1,228 @@
 +// SPDX-License-Identifier: GPL-3.0-only
 +    {
 +        EngineHost h;Shell s(h);auto& x=s.context();x.ui.track=0;x.ui.page=PageId::Edit;
@@ -5701,7 +6177,7 @@
 +        EngineHost h;Shell s(h);auto& x=s.context();x.ui.track=0;x.track().engine=EngineKind::Midi;
 +        x.pattern().length=768;Event e;e.key=48;e.length=96;x.pattern().add(e);auto before=x.pattern().events;
 +        x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bank=2;x.ui.break_job_bars=3;x.project.samples[0].frames=264600;
-+        x.gen_break_tick();auto made=x.pattern().events;x.track().break_perf[4]=1;x.track().break_perf[9]=0;
++        x.gen_break_tick();auto made=x.pattern().events;if(made!=before)return gen_failure(466,__LINE__);x.track().break_perf[4]=1;x.track().break_perf[9]=0;
 +        auto saved=save_project(x.project,x.patterns);auto project=std::make_unique<Project>();auto bank=std::make_unique<PatternBank>();
 +        if(!load_project(saved,*project,*bank).empty()||project->tracks[0].break_perf[4]!=1||project->tracks[0].break_perf[9]||bank->at[0][0].events!=made)return gen_failure(442,__LINE__);
 +        x.undo();if(x.track().engine!=EngineKind::Midi||x.pattern().events!=before)return gen_failure(443,__LINE__);
@@ -5748,6 +6224,264 @@
 +        if(x.ui.ask!=UiState::Ask::None||x.ui.page!=PageId::Stage||x.ui.track!=1||x.ui.break_pending>=0||x.project.tracks[0].engine!=EngineKind::Midi||x.edits.size()!=history)return gen_failure(453,__LINE__);
 +    }
 +    std::puts("RHYTHMER_BREAK_FROZEN late_completion=cancelled no_surprise_unfreeze_dialog=ok");
++
++    // Replacing a source is not pattern generation. The complete track edit
++    // restores source B and the old declared length together on Undo.
++    for(unsigned bars : {2u,3u}){
++        EngineHost h;Shell s(h);auto& x=s.context();x.track().engine=EngineKind::Sampler;x.track().break_bars=2;
++        x.track().pads[0].sample=1;x.track().pads[0].layers[0].sample=2;
++        x.track().pads[0].pitch=7;x.track().pads[0].cutoff=42;x.track().break_perf[4]=1;
++        x.pattern().length=1152;Event note;note.key=42;note.tick=96;note.length=48;x.pattern().add(note);
++        auto original=x.pattern();
++        x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bars=uint8_t(bars);x.project.samples[0].frames=264600;
++        x.gen_break_tick();
++        if(!(x.pattern()==original)||x.track().pads[0].sample!=0||x.track().pads[0].pitch!=7||x.track().pads[0].cutoff!=42||x.track().break_perf[4]!=1)return gen_failure(454,__LINE__);
++        if(x.track().pads[0].layers[0].sample!=(bars==2?2:no_sample))return gen_failure(455,__LINE__);
++        x.undo();
++        if(!(x.pattern()==original)||x.track().pads[0].sample!=1||x.track().pads[0].layers[0].sample!=2||x.track().break_bars!=2)return gen_failure(456,__LINE__);
++        x.redo();if(!(x.pattern()==original)||x.track().pads[0].sample!=0||x.track().break_bars!=bars)return gen_failure(457,__LINE__);
++        auto saved=save_project(x.project,x.patterns);auto restored=std::make_unique<Project>();auto bank=std::make_unique<PatternBank>();
++        if(!load_project(saved,*restored,*bank).empty()||!(bank->at[0][0]==original)||restored->tracks[0].pads[0].layers[0].sample!=(bars==2?2:no_sample))return gen_failure(458,__LINE__);
++    }
++    for(unsigned cancel=0;cancel<3;++cancel){
++        EngineHost h;Shell s(h);auto& x=s.context();x.ui.page=PageId::Samples;x.ui.break_browse=true;
++        x.track().engine=EngineKind::Sampler;x.track().break_bars=2;x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bars=3;
++        x.project.samples[0].frames=264600;auto history=x.edits.size();ask(x,UiState::Ask::BreakLength,0);x.gen_break_tick();
++        if(x.edits.size()!=history||x.track().break_bars!=2)return gen_failure(459,__LINE__);
++        if(cancel==2)x.ui.shift=true;
++        ask_button(x,cancel==2?SurfaceButton::WheelPush:cancel?SurfaceButton::TopLeft:SurfaceButton::TopRight);x.gen_break_tick();
++        if(cancel){if(x.ui.page!=PageId::Samples||x.edits.size()!=history||x.ui.break_pending>=0)return gen_failure(460,__LINE__);}
++        else if(x.ui.page!=PageId::Patterns||x.track().break_bars!=3||x.edits.size()!=history+1)return gen_failure(461,__LINE__);
++    }
++    {
++        std::vector<SampleFile> files(10);files[0].folder=true;files[0].path="folder";files[1].path="loop.wav";
++        files[2].bank=true;files[3].instrument=true;files[4].kit=true;files[5].expansion=true;
++        files[6].presets=true;files[6].folder=true;files[7].midi=true;files[8].path="loop.flac";files[9].path="loop.mp3";
++        auto loops=sample_browser_files(files,true),all=sample_browser_files(files,false);
++        if(loops.size()!=4||loops[0].path!="folder"||loops[1].path!="loop.wav"||loops[2].path!="loop.flac"||all.size()!=10)return gen_failure(462,__LINE__);
++    }
++    // Existing source actions remain visible; generic Shift+pad never assigns a
++    // previewed loop to an arbitrary kit pad while the Break browser owns it.
++    {
++        EngineHost h;Shell s(h);auto& x=s.context();x.track().engine=EngineKind::Sampler;x.track().break_bars=2;
++        for(unsigned page=0;page<6;++page){x.ui.page=PageId::Edit;x.ui.break_perf_page=page;edit_page.soft(x,1);
++            if(x.ui.page!=PageId::Samples||!x.ui.break_browse||x.ui.break_load_b!=(page==2))return gen_failure(463,__LINE__);}
++    }
++    std::puts("RHYTHMER_BREAK_P0 replace_A=patterns_and_design_kept length_confirmation=cancel_and_load B_length_policy=undo_redo_atomic save_restore=ok browser_projection=consistent source_routes=6");
++
++    {
++        EngineHost h;Shell s(h);auto& x=s.context();x.ui.page=PageId::Samples;x.ui.break_browse=true;x.ui.break_bars=2;
++        auto settings=x.project.gen8.bars;auto cards=page_bindings(x.project,x.ui,x.pattern());x.apply(cards[0],4);
++        if(x.ui.break_bars!=4||x.project.gen8.bars!=settings)return gen_failure(464,__LINE__);
++        x.ui.page=PageId::Patterns;x.ui.sheet_open=true;x.ui.gen8_mode=2;
++        if(page_bindings(x.project,x.ui,x.pattern())[0].kind!=Binding::Kind::PatternLength)return gen_failure(465,__LINE__);
++    }
+--- /dev/null
++++ b/src/rhythmer/shell/break_p1_check.h
+@@ -0,0 +1,203 @@
++// SPDX-License-Identifier: GPL-3.0-only
++#pragma once
++#include "rhythmer/shell/gen8_check.h"
++#include "rhythmer/pages/break_status.h"
++#include "rhythmer/shell/sample_library.h"
++#include <filesystem>
++#include <fstream>
++namespace rhythmer {
++inline int break_p1_check(){
++    std::setvbuf(stdout,nullptr,_IOLBF,0);
++    const char* where=std::getenv("RHYTHMER_BREAK_QA");
++    if(!where){std::fprintf(stderr,"Set RHYTHMER_BREAK_QA to the registered SSD QA directory\n");return 1;}
++    const std::string root=where;
++    auto fail=[](int n){std::fprintf(stderr,"BREAK_P1 failure=%d\n",n);return n;};
++    SampleData tone;tone.frames=176400;tone.left.resize(tone.frames);
++    for(unsigned n=0;n<tone.frames;++n)tone.left[n]=.22f*std::sin(2*dsp::pi*220*n/44100.f);
++    tone.right=tone.left; // decoded mono files have two populated sides in SampleData
++    // Preview works before assignment, on MIDI/plug-in tracks, and on an existing
++    // Break; no track, pattern, insert, send or stem is used for monitoring.
++    for(auto kind:{EngineKind::None,EngineKind::Midi,EngineKind::Plugin,EngineKind::Sampler}){
++        auto host_owner=std::make_unique<EngineHost>();auto& h=*host_owner;Shell shell(h);auto& c=shell.context();
++        for(auto& t:c.project.tracks)t.engine=EngineKind::None;
++        c.track().engine=kind;c.track().mix.level=0;
++        if(kind==EngineKind::Sampler){c.track().break_bars=2;c.track().pads[0].sample=0;}
++        auto saved=save_project(c.project,c.patterns);h.load(c.project,c.patterns);
++        h.offer_sample(0,&tone);h.offer_sample(preview_slot,&tone);h.watch_taps(0);
++        Command a{Command::Type::Audition,0,0,1,100};a.pad.sample=preview_slot;h.send(a);
++        std::array<int32_t,256> audio{};std::array<float,track_count*128*2> stems{};double energy=0;
++        for(unsigned b=0;b<40;++b){h.render(audio.data(),128,1,nullptr,stems.data());for(auto v:audio)energy+=double(v)*v;}
++        if(energy<1||save_project(c.project,c.patterns)!=saved)return fail(11);
++        for(float v:stems)if(v!=0)return fail(12);
++        TrackTaps taps;if(!h.taps(taps)||!taps.count||taps.voice[0].slot!=preview_slot)return fail(13);
++        a.pad.sample=no_sample;h.send(a);h.render(audio.data(),128,1);h.render(audio.data(),128,1);
++        for(auto v:audio)if(v)return fail(14);
++        a.pad.sample=preview_slot;h.send(a);h.render(audio.data(),128,1);
++        Command panic{Command::Type::AllNotesOff,255,0,1};h.send(panic);h.render(audio.data(),128,1);
++        for(auto v:audio)if(v)return fail(15);
++    }
++    std::puts("BREAK_P1_MONITOR targets=EMPTY,MIDI,PLUGIN,BREAK isolated_from_tracks_and_stems=ok stop_panic=ok taps=ok");
++    // Existing sampler Warp/Beats is reused, and only after the file is complete.
++    // Tone frequency remains 220 Hz while duration follows source/project tempo.
++    for(unsigned tempo:{600u,1200u,2400u}){
++        SamplerEngine sampler;SamplerEngine::Table table{};table[preview_slot]=&tone;sampler.set_samples(&table);sampler.set_tempo(tempo);
++        sampler.audition(preview_slot,0,0,100,1200);
++        unsigned last=0,crossings=0;float previous=0;double square=0;unsigned measured=0;
++        std::vector<float> result;const unsigned expected=unsigned(uint64_t(tone.frames)*1200/tempo);
++        std::array<float,128> l{},r{};
++        for(unsigned at=0;at<expected+44100;at+=128){
++            l.fill(0);r.fill(0);sampler.render_stereo(l.data(),r.data(),128);
++            for(unsigned n=0;n<128;++n){unsigned frame=at+n;float v=l[n];if(std::fabs(v)>1e-5)last=frame;
++                if(frame>4410&&frame<std::min(expected-4410,44100u)){crossings+=previous<=0&&v>0;square+=v*v;++measured;}previous=v;result.push_back(v);}
++        }
++        double hz=double(crossings)*44100/std::max(1u,measured);
++        if(last<expected-9000 || last>expected+9000 || hz<200||hz>240||square<.01)return fail(16);
++        SampleData audio;audio.frames=unsigned(result.size());audio.left=std::move(result);audio.right=audio.left;
++        if(!write_wav(root+"/Rendered/preview-"+std::to_string(tempo/10)+"bpm.wav",audio).empty())return fail(17);
++        std::printf("BREAK_P1_SYNC tempo=%u duration_expected=%.3f last=%.3f pitch=%.2f_Hz\n",tempo,expected/44100.,last/44100.,hz);
++    }
++    // Offering an unrelated sample (especially preview_slot) must not reset a
++    // playing Break. Compare identical native DSP state, sample for sample.
++    {
++        SamplerEngine a,b;SamplerEngine::Table table{};table[0]=&tone;a.set_samples(&table);b.set_samples(&table);
++        for(unsigned n=0;n<16;++n){PadSound pad;pad.sample=0;pad.start=tone.frames*n/16;pad.end=tone.frames*(n+1)/16;a.set_pad(n,pad);b.set_pad(n,pad);}
++        a.configure_break(2,0);b.configure_break(2,0);
++        std::array<float,128> al{},ar{},bl{},br{};
++        a.render_stereo(al.data(),ar.data(),128);b.render_stereo(bl.data(),br.data(),128);
++        a.note_on(36,110);b.note_on(36,110);double energy=0;
++        for(unsigned block=0;block<80;++block){
++            if(block==8){b.sample_gone(preview_slot);b.sample_gone(1);}
++            al.fill(0);ar.fill(0);bl.fill(0);br.fill(0);a.render_stereo(al.data(),ar.data(),128);b.render_stereo(bl.data(),br.data(),128);
++            if(al!=bl||ar!=br)return fail(18);
++            for(float v:al)energy+=v*v;
++        }
++        if(energy<.01)return fail(58);
++    }
++    // Real decoder/streaming metadata, all native formats, cancellation and rapid changes.
++    {
++        auto host_owner=std::make_unique<EngineHost>();auto& h=*host_owner;Shell shell(h);SampleLibrary library(h);shell.set_library(&library);auto saved=save_project(shell.project(),shell.patterns());
++        for(const auto& ext:{"wav","flac","ogg","mp3","aiff"}){
++            std::string path=root+"/Fixtures/2bar-aligned."+ext;library.preview(path);
++            for(unsigned n=0;n<100;++n){library.preview_service();std::array<int32_t,256> audio{};h.render(audio.data(),128,1);auto info=library.preview_info();if(info.path==path&&info.complete)break;}
++            auto info=library.preview_info();if(info.path!=path||!info.complete||std::fabs(info.seconds-4.)>.06)return fail(19);
++        }
++        library.preview(root+"/Fixtures/4bar-aligned.wav");library.preview_service();
++        library.preview(root+"/Fixtures/1bar-aligned.wav");library.preview_service();
++        library.preview(root+"/Fixtures/not-a-file.wav");library.preview_service();
++        if(!library.preview_info().complete||library.preview_info().seconds>0)return fail(57);
++        library.preview("");library.preview_service();if(!library.preview_info().path.empty())return fail(20);
++        if(save_project(shell.project(),shell.patterns())!=saved)return fail(21);
++    }
++    std::puts("BREAK_P1_STREAM formats=WAV,FLAC,OGG,MP3,AIFF complete_before_sync=ok metadata=measured rapid_change_cancel=ok project_unchanged=ok");
++    // Mode feedback covers stopped transport, CHOP, hold, zero amount and active
++    // gates. Leaving the editor ends live commands; paging within it does not.
++    {
++        if(std::string(break_variation_status(true,false,true,3,50,50)).find("INACTIVE")!=0)return fail(22);
++        if(std::string(break_variation_status(false,true,true,3,50,50)).find("PATTERN HOLD")!=0)return fail(23);
++        if(std::string(break_variation_status(false,false,false,0,50,50)).find("READY")!=0)return fail(24);
++        if(std::string(break_variation_status(false,false,true,3,0,0)).find("READY")!=0)return fail(25);
++        if(std::string(break_variation_status(false,false,true,1,50,50)).find("READY")!=0)return fail(59);
++        if(std::string(break_variation_status(false,false,true,3,50,50)).find("ACTIVE")!=0)return fail(26);
++        if(std::string(break_stretch_status(true,4)).find("STRETCH ACTIVE")!=0)return fail(27);
++        auto host_owner=std::make_unique<EngineHost>();auto& h=*host_owner;Shell shell(h);auto& c=shell.context();c.track().engine=EngineKind::Sampler;c.track().break_bars=2;
++        for(unsigned n=0;n<16;++n){c.track().pads[n].sample=0;c.track().pads[n].end=tone.frames;}
++        h.load(c.project,c.patterns);h.offer_sample(0,&tone);std::array<int32_t,256> audio{};h.render(audio.data(),128,1);
++        for(unsigned route=0;route<3;++route){c.ui.track=0;c.ui.page=PageId::Stage;c.ui.back_depth=0;c.open(PageId::Edit);c.ui.break_perf_page=1;
++            edit_page.pad(c,2,100,true);h.render(audio.data(),128,1);if(!(h.break_activity_of(0)&4))return fail(28);
++            edit_page.wheel(c,3);if(c.pad_keys[2][0]<0)return fail(29);
++            if(route==0)c.open(PageId::Patterns);else if(route==1)c.back();else c.select_track(1);
++            h.render(audio.data(),128,1);if(c.pad_keys[2][0]>=0||h.break_activity_of(0)&4){std::fprintf(stderr,"release route=%u key=%d activity=%u page=%u\n",route,c.pad_keys[2][0],h.break_activity_of(0),unsigned(c.ui.page));return fail(30);}
++        }
++        c.ui.page=PageId::Samples;c.ui.break_browse=true;auto before=save_project(c.project,c.patterns);auto edits=c.edits.size();
++        c.apply(Binding{Binding::Kind::BreakPreviewMode,0,0,1,0},1);
++        if(!c.ui.break_preview_sync||save_project(c.project,c.patterns)!=before||c.edits.size()!=edits)return fail(31);
++    }
++    std::puts("BREAK_P1_UX conditions=CHOP,HOLD,STOPPED,ZERO,ACTIVE,STRETCH live_release=GEN,BACK,TRACK paging_hold=preserved mode=UI_only");
++
++    // Replay the written guide's state-machine route. Decoder completion is fed
++    // from the real permitted WAV fixture; this is scripted QA, not a human novice study.
++    {
++        auto host_owner=std::make_unique<EngineHost>();auto& h=*host_owner;Shell shell(h);SampleLibrary library(h);shell.set_library(&library);auto& c=shell.context();c.track().engine=EngineKind::None;c.ui.page=PageId::Samples;c.ui.break_browse=true;c.ui.break_from_picker=true;c.ui.break_bars=2;
++        SampleData decoded;std::string path=root+"/Fixtures/2bar-aligned.wav";if(!read_wav(path,decoded).empty())return fail(39);
++        auto load=[&](const std::string& file,unsigned bars){c.ui.break_bars=uint8_t(bars);c.gen_break_load(file,"Guide loop");
++            if(c.ui.break_pending>=0){SampleData data;if(!read_wav(file,data).empty())return false;c.project.samples[unsigned(c.ui.break_pending)].frames=data.frames;}return true;};
++        std::ofstream trace(root+"/guide-trace.csv");trace<<"step,expected,result\n";
++        if(!load(path,2))return fail(40);
++        c.gen_break_tick();
++        if(c.track().break_bars!=2||c.ui.page!=PageId::Patterns||!c.ui.sheet_open||c.ui.gen8_mode!=2||c.ui.sheet_row!=6)return fail(41);
++        trace<<"load,BREAK GEN with BRK PERF selected,pass\n";
++        auto straight=c.pattern();patterns_page.push(c);if(c.ui.page!=PageId::Edit)return fail(42);
++        edit_page.soft(c,0);
++        if(c.ui.page!=PageId::Patterns||c.ui.gen8_mode!=2)return fail(43);
++        c.project.gen8.genre=0;c.gen8_action(4);auto made=c.pattern();c.undo();if(!(c.pattern()==straight))return fail(44);
++        c.redo();if(!(c.pattern()==made))return fail(45);
++        trace<<"generate,GENRE CHOPS then Undo and Redo,pass\n";
++        c.gen8_action(10);c.ui.break_perf_page=2;edit_page.soft(c,1);if(!c.ui.break_load_b||c.ui.page!=PageId::Samples)return fail(46);
++        if(!load(path,2))return fail(47);
++        c.gen_break_tick();if(c.ui.page!=PageId::Edit||c.ui.break_perf_page!=2||!c.track().pads[0].layers[0].used()||!(c.pattern()==made))return fail(48);
++        trace<<"load_B,SOURCE A/B and pattern retained,pass\n";
++        c.ui.break_perf_page=0;edit_page.soft(c,1);std::string three=root+"/Fixtures/3bar-aligned.wav";
++        if(!load(three,3)||c.ui.ask!=UiState::Ask::BreakLength)return fail(49);
++        ask_button(c,SurfaceButton::TopLeft);c.gen_break_tick();if(c.track().break_bars!=2||c.ui.page!=PageId::Samples)return fail(50);
++        if(!load(three,3))return fail(51);
++        ask_button(c,SurfaceButton::TopRight);c.gen_break_tick();
++        if(c.track().break_bars!=3||c.track().pads[0].layers[0].used()||!(c.pattern()==made))return fail(52);
++        trace<<"replace_A,Cancel then Load A keeps pattern and clears B,pass\n";
++        c.undo();if(c.track().break_bars!=2||!c.track().pads[0].layers[0].used())return fail(53);
++        c.redo();
++        auto saved=save_project(c.project,c.patterns);{std::ofstream file(root+"/guide-session.mldp",std::ios::binary);file.write(reinterpret_cast<const char*>(saved.data()),std::streamsize(saved.size()));}
++        std::ifstream input(root+"/guide-session.mldp",std::ios::binary);std::vector<uint8_t> from_file((std::istreambuf_iterator<char>(input)),std::istreambuf_iterator<char>());
++        auto project=std::make_unique<Project>();auto bank=std::make_unique<PatternBank>();
++        if(!load_project(from_file,*project,*bank).empty()||project->tracks[0].break_bars!=3||!(bank->at[0][0]==made))return fail(54);
++        trace<<"save_reopen,real project bytes and source references restored,pass\n";
++        c.ui.page=PageId::Patterns;c.ui.sheet_open=true;c.ui.gen8_mode=2;c.back();if(!c.ui.sheet_open||c.ui.gen8_mode)return fail(55);
++        c.back();if(c.ui.sheet_open)return fail(56);
++        trace<<"back,BREAK GEN to GEN to PATTERNS,pass\n";
++    }
++    std::puts("BREAK_P1_GUIDE scripted_routes=load,perform,generate,undo,redo,A/B,length_confirm,cancel,save,reopen,back human_novice_validation=not_claimed");
++    // Repeatable musical matrix, genuine native DSP rendering, permitted fixtures.
++    // No auto-trimming or generation-algorithm edits: source prep issues are kept
++    // observable rather than disguised by changing the user's source or seed.
++    std::ofstream csv(root+"/matrix.csv");csv<<"bars,source,tempo,action,mode,bank,notes,peak,rms\n";
++    unsigned cases=0;
++    for(unsigned bars=1;bars<=4;++bars)for(const auto& variant:{"aligned","offset","padding","trim"}){
++        SampleData data;std::string path=root+"/Fixtures/"+std::to_string(bars)+"bar-"+variant+".wav";
++        if(!read_wav(path,data).empty())return fail(32);
++        BreakMap map;map.bars=bars;for(unsigned i=0;i<16;++i)map.slices[i]=uint8_t(36+i);
++        Pattern source;source.length=bars*384;Gen8Settings settings{};settings.seed=137;settings.amount=80;settings.complexity=55;settings.genre=0;
++        source=break_generate(source,BreakAction::Straight,settings,map,120);
++        for(unsigned bpm:{90u,140u,175u})for(auto action:{BreakAction::Straight,BreakAction::Genre,BreakAction::Random,BreakAction::Mutate}){
++            auto pattern=break_generate(source,action,settings,map,bpm);
++            if(!(pattern==break_generate(source,action,settings,map,bpm))||pattern.events.empty())return fail(33);
++            for(const auto& e:pattern.events)if(e.key<36||e.key>51||e.tick>=pattern.length||!e.length||e.tick+e.length>pattern.length)return fail(34);
++            if(action==BreakAction::Mutate)for(const auto& e:source.events)if(e.tick%96==0){
++                auto it=std::find_if(pattern.events.begin(),pattern.events.end(),[&](const Event& v){return e.tick==v.tick&&e.key==v.key;});if(it==pattern.events.end())return fail(35);}
++            for(unsigned mode=0;mode<2;++mode){
++                struct Edge{unsigned frame;int key;bool on;};std::vector<Edge> edges;
++                for(const auto& e:pattern.events){unsigned count=e.hits();for(unsigned n=0;n<count;++n){
++                    double tick=e.tick+double(e.length)*n/count,to=e.tick+double(e.length)*(n+1)/count;
++                    edges.push_back({unsigned(tick*60.*44100/(bpm*96)),int(e.key),true});edges.push_back({unsigned(to*60.*44100/(bpm*96)),int(e.key),false});}}
++                std::sort(edges.begin(),edges.end(),[](const Edge& a,const Edge& b){return a.frame<b.frame||(a.frame==b.frame&&a.on<b.on);});
++                BreakManipulator dsp;dsp.configure(bars,0);dsp.sources(&data,&data);dsp.tempo(bpm*10);dsp.param(9,mode);dsp.transport(true,0);
++                unsigned bank=(unsigned(action)+bars)%2;if(bank)dsp.note(17,100);
++                unsigned total=unsigned(pattern.length*60.*44100/(bpm*96));size_t edge=0;double square=0,peak=0;unsigned position=0;
++                SampleData render;bool save=bars==2&&std::string(variant)=="aligned"&&bpm==140&&mode==1;
++                if(save){render.frames=total;render.left.resize(total);}
++                while(position<total){while(edge<edges.size()&&edges[edge].frame<=position){const auto& e=edges[edge++];if(e.on)dsp.note(e.key,100);else dsp.off(e.key);}
++                    unsigned n=std::min(128u,total-position);if(edge<edges.size()&&edges[edge].frame>position)n=std::min(n,edges[edge].frame-position);
++                    std::array<float,128> l{},r{};dsp.render(l.data(),r.data(),n,44100);
++                    for(unsigned i=0;i<n;++i){if(!std::isfinite(l[i]))return fail(36);
++        peak=std::max(peak,double(std::fabs(l[i])));square+=l[i]*l[i];if(save)render.left[position+i]=l[i];}position+=n;
++                }
++                if(peak<1e-5)return fail(37);
++                csv<<bars<<','<<variant<<','<<bpm<<','<<unsigned(action)<<','<<(mode?"CHOP":"LOOP")<<','<<bank<<','<<pattern.events.size()<<','<<peak<<','<<std::sqrt(square/std::max(1u,total))<<'\n';
++                if(save){render.right=render.left;}
++                if(save&&!write_wav(root+"/Rendered/break-action-"+std::to_string(unsigned(action))+".wav",render).empty())return fail(38);
++                ++cases;
++            }
++        }
++    }
++    std::printf("BREAK_P1_MATRIX cases=%u source_bars=1-4 variants=aligned,offset,padding,trim tempos=90,140,175 actions=Straight,Genre,Random,Mutate modes=CHOP,LOOP sources=A,B deterministic=ok anchors=ok native_audio=finite_nonzero\n",cases);
++    return 0;
++}
++}
 --- a/src/rhythmer/shell/context.cpp
 +++ b/src/rhythmer/shell/context.cpp
 @@ -95,6 +95,9 @@
@@ -5770,10 +6504,12 @@
      send({Type::AllNotesOff, 255});
      prints = next_prints ? *next_prints : PrintTable {}; // a print still under way for the last project is dropped (print_tick)
      freeze_waiting = 0; // freeze plan F2b: its frozen tracks play live until their prints are checked and mapped again
-@@ -213,10 +219,16 @@
+@@ -213,10 +219,18 @@
  }
  
  void Context::open(PageId page) {
++    if(ui.page==PageId::Edit && page!=PageId::Edit && track().break_bars)
++        for(unsigned n=0;n<16;++n)if(pad_track[n]==ui.track && pad_keys[n][0]>=0 && pad_keys[n][0]<19)release_pad(n);
 +    if(page==PageId::Edit&&track().engine==EngineKind::Plugin&&ui.page!=PageId::PluginPresets){
 +        ui.edit_page[ui.track]=1;ui.edit_row[ui.track]=0;ui.kit_common=false;
 +        if(track().plugin<max_plugins){ui.plugin_row[track().plugin]=0;}plugin_panel_at=0;
@@ -5788,7 +6524,7 @@
          page = PageId::Stage;
      }
      if (page != ui.page) punch_release(); // a pad held over a page change would never let go
-@@ -255,17 +267,71 @@
+@@ -255,17 +269,73 @@
  }
  
  void Context::back() {
@@ -5830,6 +6566,8 @@
      if (ui.page == PageId::Sounds) audition(-1);
      stage_tick(UINT32_MAX); // a sound still waiting to load lands on the track it was turned on
 +    bool changed = ui.track != t % track_count;
++    if(changed && ui.page==PageId::Edit && track().break_bars)for(unsigned n=0;n<16;++n)if(pad_track[n]==ui.track && pad_keys[n][0]>=0 && pad_keys[n][0]<19)release_pad(n);
++    if(changed && ui.page==PageId::Samples){stop_preview();if(library)library->preview("");}
 +    bool bound = (ui.page==PageId::Project && ui.project_kit_only) || ui.page==PageId::Print || ui.page == PageId::Samples || ui.page == PageId::Sounds || ui.page == PageId::TrackActions
 +        || ui.page == PageId::Edit || ui.page == PageId::Chop || ui.page == PageId::PadPage
 +        || ui.page == PageId::PlayPage || ui.page == PageId::EnvelopePage || ui.page == PageId::FilterPage
@@ -5860,7 +6598,7 @@
      ui.held_step = -1;
      if (ui.page == PageId::Sounds) ui.sounds_cursor = track().preset;
  }
-@@ -291,6 +357,7 @@
+@@ -291,6 +361,7 @@
  // engine; every press also goes into the ring Capture reads (roadmap P5).
  void Context::key(int k, int velocity, bool down, int cutoff) {
      auto& t = track();
@@ -5868,7 +6606,7 @@
      if (t.arp) {
          Command c {Type::ArpKey, ui.track, 0, uint16_t(k), int16_t(down ? velocity : 0)};
          c.position = uint32_t(cutoff + 1); // a 16 Levels Filter pad's cutoff, kept on its repeats
-@@ -356,6 +423,11 @@
+@@ -356,6 +427,11 @@
          return;
      }
      if (!t.used()) return;
@@ -5880,7 +6618,7 @@
      if (t.levels) { // 16 Levels on a synth: the last note on all sixteen, soft to loud or in pitch; Scale the key's notes
          auto level = levels_of(project, t, pad);
          ui.levels_hit = int8_t(pad); ui.levels_value = int16_t(level.shown);
-@@ -448,6 +520,7 @@
+@@ -448,6 +524,7 @@
  
  void Context::load_sound(unsigned t, EngineKind kind, unsigned sound) {
      auto& tr = project.tracks[t % track_count];
@@ -5888,7 +6626,15 @@
      bool engine_changed = tr.engine != kind;
      const auto& info = engine_info(kind);
      const UserSound* own = sound >= info.sound_count ? user_sound(kind, sound - info.sound_count) : nullptr;
-@@ -503,6 +576,9 @@
+@@ -496,6 +573,7 @@
+ void Context::apply(const Binding& b, int value) {
+     using Kind = Binding::Kind;
+     value = std::clamp(value, b.min, b.max);
++    if(b.kind==Kind::BreakPreviewMode){ui.break_preview_sync=value!=0;preview_cursor();return;}
+     if (frozen_edit(freeze_scope(project, ui, b))) return; // freeze plan F2c: what a frozen track's prints hold asks "Unfreeze track N?" first
+     touch_gesture(b); // one undo step per control's turns (shell/undo_scope.cpp)
+     learn_lane(*this, b); // roadmap P4: what ADD on the MOD page takes
+@@ -503,6 +581,9 @@
      if (midi_binding(*this, b, value)) return; // roadmap P4: a MIDI track's device and SysEx file
      auto& t = track();
      switch (b.kind) {
@@ -5898,7 +6644,7 @@
      case Kind::Param:
          set_param(ui.track, b.id, value);
          if (t.engine != EngineKind::Midi || midi_track::is_cc(b.id) || b.id == midi_track::Bend) record_motion(b.id, value); // of a MIDI track's own, its slots and bend are lanes
-@@ -717,7 +793,7 @@
+@@ -717,7 +798,7 @@
      }
      case Kind::ChopZoom: ui.chop_zoom = uint8_t(value); ui.chop_focus = uint8_t(b.id % 2); ui.chop_view = {}; break;
      case Kind::FileJump: ui.files_cursor = uint16_t(value); break;
@@ -5907,7 +6653,7 @@
      case Kind::ProjectJump: ui.project_cursor = uint16_t(value); break;
      case Kind::ProjectSort: ui.project_sort = uint8_t(value); break;
      case Kind::PadFine: pad().fine = int8_t(value); send_pad(ui.track, t.last_pad); record_pad_motion(PadParam::Fine, value); break;
-@@ -800,7 +876,15 @@
+@@ -800,7 +881,16 @@
      case Kind::MarksRamp: roll_marks_ramp(*this, value); break;                               // Roll's Shift + K2, marked notes                             // Roll's Shift + K1
      case Kind::EuclidHits: case Kind::EuclidSteps: case Kind::EuclidRotate: set_euclid(b.kind, value); break;
      case Kind::TrackSpeed: set_speed(unsigned(b.id), value); break;
@@ -5916,7 +6662,8 @@
 +    case Kind::GenLast:project.gen8.last=uint8_t(std::clamp(value,0,15));project.gen8.first=std::min(project.gen8.first,project.gen8.last);break;
 +    case Kind::GenGroup:project.gen8.group=uint8_t(std::clamp(value,0,3));if(ui.gen8_mode==3)ui.sheet_row=project.gen8.group;break;
 +    case Kind::GenAssign:project.gen8.assign=uint8_t(value!=0);break;
-+    case Kind::GenBars:project.gen8.bars=uint8_t(std::clamp(value,1,4));break;
++    case Kind::BreakPreviewMode:break;
++    case Kind::GenBars:if(ui.page==PageId::Samples && ui.break_browse){ui.break_bars=uint8_t(std::clamp(value,1,4));if(ui.break_preview_sync)preview_cursor();}else project.gen8.bars=uint8_t(std::clamp(value,1,4));break;
 +    case Kind::Gen8Amount: project.gen8.amount=uint8_t(std::clamp(value,0,100)); break;
 +    case Kind::Gen8Genre: project.gen8.genre=uint8_t(std::clamp(value,0,60)); break;
 +    case Kind::Gen8Seed: project.gen8.seed=uint16_t(std::clamp(value,0,9999)); break;
@@ -5924,7 +6671,7 @@
      case Kind::FollowAction: case Kind::FollowOther: case Kind::FollowAfter: case Kind::FollowChance: set_follow(b.kind, value); break; // roadmap P5
      case Kind::SceneTempo: set_scene_tempo(unsigned(b.id), value * 10); break; // Patterns' SCENE: below 30, none of its own
      case Kind::PrintTapPick: ui.print_sheet.tap = value ? PrintTap::PreFx : PrintTap::PostFx; break; // freeze plan F2c
-@@ -1384,6 +1468,7 @@
+@@ -1384,6 +1474,7 @@
  }
  
  void Context::apply_edit(const Edit& e, bool after) {
@@ -5932,7 +6679,7 @@
      if (e.pad >= 0) restore_pad(e.track, unsigned(e.pad), after ? e.pad_after : e.pad_before);
      if (after) for (const auto& [kit, value] : e.pads_after) restore_pad(e.track, kit, value);
      else for (auto p = e.pads_before.rbegin(); p != e.pads_before.rend(); ++p) restore_pad(e.track, p->first, p->second);
-@@ -1393,6 +1478,8 @@
+@@ -1393,6 +1484,8 @@
      if (song) restore_song(*song);
      const auto& motion = after ? e.motion_after : e.motion_before;
      if (motion) restore_motion(*motion);
@@ -5941,7 +6688,7 @@
      const auto& whole = after ? e.track_after : e.track_before;
      if (whole) restore_track(*this, e.track, *whole); // last: its pack carries the motion as restored
      if (e.swap_a >= 0) trade_tracks(*this, unsigned(e.swap_a), unsigned(e.swap_b)); // a move: the same swap again
-@@ -1412,6 +1499,7 @@
+@@ -1412,6 +1505,7 @@
          if (project.seq_tempo != m->per_pattern) { project.seq_tempo = m->per_pattern; send({Type::SeqTempo, 0, 0, ui.lead_pattern, int16_t(m->per_pattern)}); }
      }
      dirty = true;
@@ -5951,18 +6698,19 @@
  
 --- a/src/rhythmer/shell/context.h
 +++ b/src/rhythmer/shell/context.h
-@@ -196,6 +196,10 @@
+@@ -196,6 +196,11 @@
      // A track's playback speed (roadmap P1, model/pattern.h speeds): its patterns sent again, scaled (shell/feel_jobs.cpp).
      void set_speed(unsigned track, int speed);
      void vary(Variation v);
 +    void gen8_action(unsigned action);
 +    void gen_break_load(const std::string&,const std::string&);
 +    void gen_break_tick();
++    void gen_break_begin();
 +    uint32_t acid_auto_bar=~0u;
      static constexpr uint32_t motion_sync_ms = 40;
      int motion_waiting = -1;  // track << 8 | pattern whose recorded motion the audio thread has not had yet
      uint32_t motion_synced = 0;
-@@ -288,7 +292,9 @@
+@@ -288,7 +293,9 @@
      void open_plugin_picker(UiState::PluginTarget target, unsigned chain = 0, unsigned slot = 0);
      void choose_plugin(const PluginFile& file);
      void set_plugin_param(int32_t id, int value);
@@ -5972,7 +6720,7 @@
      void toggle_plugin_transport(unsigned entry); // TRANSPORT on or off for that plug-in (PluginRef::transport)
      void choose_plugin_program(int index);    // that program, by its place in the plug-in's list (Stage's wheel)
      void push_plugin_preset();                // PRESETS' Push: into the folder under the cursor, or load the preset
-@@ -398,6 +404,8 @@
+@@ -398,6 +405,8 @@
      void start_new_project();                 // its B3: saved first if it has a file, then a new one, Stage
      void load_kit_file(const std::string& path, const std::string& name); // a project's kit onto the selected track, once loaded
      void load_kit(const Project& from, const std::string& name);          // that kit onto the selected track, one undo
@@ -5981,6 +6729,14 @@
      std::string kit_from;                     // the file Load Kit waits for
      // Kit bank files (shell/project_jobs.cpp, model/project_file.h): Push on one in the Samples browser
      // loads it into the selected kit's bank in view, once the service thread has read it.
+@@ -505,6 +514,7 @@
+     void browser_tick();
+     std::string files_folder_seen;
+     unsigned previews_seen = 0;
++    bool preview_break_bus=false;
+     int previewing = -1; // the track a preview plays on, -1 none
+     // land: 0 Extract (the next empty pad after `pad`), or Trim (`trim`); 1 onto `pad` itself (Recall,
+     // Resample; one undo); 2 the take of Sample Record onto `pad`, with the pads cut from it (ui.rec_chop_*).
 --- /dev/null
 +++ b/src/rhythmer/shell/fm1_gen_bridge.h
 @@ -0,0 +1,14 @@
@@ -6000,10 +6756,11 @@
 +#endif
 --- /dev/null
 +++ b/src/rhythmer/shell/gen8_check.h
-@@ -0,0 +1,308 @@
+@@ -0,0 +1,311 @@
 +// SPDX-License-Identifier: GPL-3.0-only
 +#pragma once
 +#include "rhythmer/model/project_file.h"
++#include "rhythmer/shell/ask.h"
 +#include "rhythmer/shell/shell.h"
 +#include "rhythmer/model/scales.h"
 +#include "rhythmer/engine/engine_host.h"
@@ -6073,6 +6830,8 @@
 +    if(c.patterns.at[4][0].events.empty())return gen_failure(14,__LINE__);
 +    for(const auto& e:c.patterns.at[4][0].events)if(e.key<36||e.key>43)return gen_failure(15,__LINE__);
 +    for(unsigned bars=1;bars<=4;bars++){
++        // Duration/chop fixture: start empty; occupied-pattern preservation is tested separately.
++        c.project.tracks[10]={};c.patterns.at[10]={};
 +        c.ui.track=10;c.ui.break_track=10;c.ui.break_bank=0;c.ui.break_bars=uint8_t(bars);c.ui.break_pending=0;
 +        c.project.samples[0].frames=bars*88200;
 +        c.gen_break_tick();
@@ -6408,7 +7167,7 @@
 +    static std::mutex fm1_lock;std::lock_guard<std::mutex> fm1_guard(fm1_lock);
 +    auto fm1=std::make_unique<Fm1GenResult>();
 +    // Original FM-1 generator owns the seed streams, harmony and role choices.
-+    if(action==9){if(track().engine!=EngineKind::Sampler||!track().break_bars){notice("Select Break Engine");return;}ui.break_load_b=false;ui.break_browse=true;ui.break_track=ui.track;open(PageId::Samples);notice("K1: loop bars / Push: load");return;}
++    if(action==9){if(track().engine!=EngineKind::Sampler||!track().break_bars){notice("Select Break Engine");return;}ui.break_load_b=false;ui.break_browse=true;ui.break_track=ui.track;ui.break_bars=track().break_bars;open(PageId::Samples);notice("K1: loop bars / Push: load");return;}
 +    if(action>=4) {
 +        if(track().engine!=EngineKind::Sampler||!track().break_bars){notice("BREAK: select a sampler track");return;}
 +        BreakMap map;map.bars=track().break_bars?track().break_bars:2;
@@ -6550,12 +7309,13 @@
 +} // namespace rhythmer
 --- /dev/null
 +++ b/src/rhythmer/shell/gen_break_jobs.cpp
-@@ -0,0 +1,86 @@
+@@ -0,0 +1,105 @@
 +// SPDX-License-Identifier: GPL-3.0-only
 +#include "rhythmer/shell/context.h"
 +#include "rhythmer/shell/track_copy.h"
 +#include "rhythmer/engine/sampler.h"
 +#include <cmath>
++#include "rhythmer/shell/ask.h"
 +#include "rhythmer/engine/engine_host.h"
 +#include "rhythmer/shell/sample_library.h"
 +#include "rhythmer/plugin/plugin_rack.h"
@@ -6565,8 +7325,14 @@
 +    if(host_recording()){notice("Stop recording before BREAK");return;}
 +    if(frozen_edit(ui.track))return;
 +    int slot=sample_slot(path,name);if(slot<0){notice("No sample slot");return;}
-+    ui.break_pending=slot;ui.break_pending_b=ui.break_load_b;ui.break_track=ui.track;ui.break_bank=track().bank;ui.break_bars=ui.break_load_b?project.tracks[ui.break_track].break_bars:project.gen8.bars;
++    ui.break_pending=slot;ui.break_pending_b=ui.break_load_b;ui.break_track=ui.track;ui.break_bank=track().bank;ui.break_bars=ui.break_load_b?project.tracks[ui.break_track].break_bars:ui.break_bars;
 +    ui.break_job_track=int8_t(ui.break_track);ui.break_job_bank=ui.break_bank;ui.break_job_bars=ui.break_bars;ui.break_job_b=ui.break_pending_b;ui.break_job_from_picker=ui.break_from_picker;
++    if(!ui.break_job_b && track().engine==EngineKind::Sampler && track().break_bars && track().break_bars!=ui.break_job_bars){
++        ask(*this,UiState::Ask::BreakLength,ui.track);return;
++    }
++    gen_break_begin();
++}
++void Context::gen_break_begin(){
 +    ui.break_from_picker=false;ui.break_browse=false;open(PageId::Patterns);ui.sheet_open=true;ui.gen8_mode=2;ui.sheet_row=0;notice("Loading BREAK sample");
 +}
 +void Context::gen_break_tick(){
@@ -6583,7 +7349,7 @@
 +        }
 +    }
 +    if(plugins)for(unsigned e=0;e<max_plugins;e++)if(project.plugins[e].gen_program>=0&&plugins->status(e)==PluginStatus::Ready){plugins->select_program(e,project.plugins[e].gen_program);project.plugins[e].gen_program=-1;}
-+    if(ui.break_pending<0||host_recording())return;
++    if(ui.break_pending<0||host_recording()||ui.ask==UiState::Ask::BreakLength)return;
 +    unsigned slot=unsigned(ui.break_pending),at=ui.break_job_track>=0?unsigned(ui.break_job_track):ui.break_track;
 +    unsigned job_bars=ui.break_job_track>=0?ui.break_job_bars:ui.break_bars;
 +    unsigned job_bank=ui.break_job_track>=0?ui.break_job_bank:ui.break_bank;
@@ -6620,21 +7386,33 @@
 +        edit.gen_plugins_after=edit.gen_plugins_before;
 +    }
 +    auto next=std::make_unique<TrackState>(*edit.track_before);auto& t=next->track;
-+    rhythmer::load_sound(t,EngineKind::Sampler,0);t.break_bars=uint8_t(bars);t.bank=job_bank%sampler_banks;t.layout=PadLayout::Drums;t.set_name("BREAK");t.last_note=uint8_t(sampler_first_note+t.bank*16);
-+    t.params[sampler::Follow]=1;t.params[sampler::FollowHow]=0;
++    const bool replacing=t.engine==EngineKind::Sampler && t.break_bars;
++    const bool changed_bars=replacing && t.break_bars!=bars;
++    if(!replacing)rhythmer::load_sound(t,EngineKind::Sampler,0);
++    t.break_bars=uint8_t(bars);t.bank=job_bank%sampler_banks;if(!replacing){t.layout=PadLayout::Drums;t.set_name("BREAK");t.last_note=uint8_t(sampler_first_note+t.bank*16);}
++    if(!replacing){t.params[sampler::Follow]=1;t.params[sampler::FollowHow]=0;}
++    if(changed_bars)t.break_source=0;
 +    for(unsigned i=0;i<16;i++){
-+        PadSound sound;sound.sample=uint16_t(slot);sound.start=uint32_t(uint64_t(sample.frames)*i/16);sound.end=uint32_t(uint64_t(sample.frames)*(i+1)/16);
-+        sound.own_tempo=uint16_t(std::lround(bpm*10));sound.group=16;sound.mono=true;
++        PadSound sound=replacing?t.pads[t.bank*16+i]:PadSound{};
++        // Retain sound design, but source-relative trim/loop and secondary layers
++        // must not point outside the new loop. B is retained only at the same length.
++        if(changed_bars || !replacing || i!=0) sound.layers={};
++        sound.loop_lock=true;sound.loop_start=0;
++        sound.sample=uint16_t(slot);sound.start=uint32_t(uint64_t(sample.frames)*i/16);sound.end=uint32_t(uint64_t(sample.frames)*(i+1)/16);
++        sound.own_tempo=uint16_t(std::lround(bpm*10));if(!replacing){sound.group=16;sound.mono=true;}
 +        t.pads[t.bank*16+i]=sound;
 +    }
-+    auto& pat=next->patterns[t.pattern];pat.length=bars*384;
-+    BreakMap map;map.bars=bars;for(unsigned i=0;i<16;i++)map.slices[i]=uint8_t(sampler_first_note+t.bank*16+i);
-+    pat=break_generate(pat,BreakAction::Straight,project.gen8,map,project.tempo/10);
++    auto& pat=next->patterns[t.pattern];
++    if(!replacing && pat.events.empty() && pat.lanes.empty() && pat.motion.empty() && pat.euclids.empty() && pat.punches.empty()){
++        pat.length=bars*384;
++        BreakMap map;map.bars=bars;for(unsigned i=0;i<16;i++)map.slices[i]=uint8_t(sampler_first_note+t.bank*16+i);
++        pat=break_generate(pat,BreakAction::Straight,project.gen8,map,project.tempo/10);
++    }
 +    restore_track(*this,at,*next);edit.track_after=std::move(next);edits.push(std::move(edit));dirty=true;
 +    // Keep the loading screen as a stable BREAK menu; never take focus back
 +    // after the player changes track, closes GEN, or opens another GEN mode.
 +    if(ui.track==at && ui.page==PageId::Patterns && ui.sheet_open && ui.gen8_mode==2)ui.sheet_row=6;
-+    notice("BREAK ready: "+std::to_string(bars)+" bars / 16 chops");
++    notice(replacing ? "BREAK A replaced / patterns kept" : "BREAK ready / GEN edits patterns");
 +}
 +}
 --- a/src/rhythmer/shell/history.h
@@ -6668,6 +7446,15 @@
      update_tick();
      // Power was pressed: the Exit sheet opens (the service thread only counts presses).
      // The library found files or finished a sample: the lengths go into the project.
+@@ -166,7 +167,7 @@
+                 project_->samples[n].keys = keys;
+                 project_->samples[n].one_key_zones = one_key && zone_key_count(project_->samples[n]) >= 2;
+             }
+-        ui_.files_count = uint16_t(std::min<size_t>(library_->files().size(), 0xffff));
++        ui_.files_count = uint16_t(std::min<size_t>(sample_browser_files(library_->files(), ui_.break_browse).size(), 0xffff));
+         if (ui_.page == PageId::Chop && !ui_.slices.count) context_.rechop();
+     }
+     context_.files_landed();  // Trim Sample, Extract, Save Sample, takes, Recall, Resample: done on the service thread
 --- a/src/rhythmer/shell/mod_jobs.cpp
 +++ b/src/rhythmer/shell/mod_jobs.cpp
 @@ -32,6 +32,9 @@
@@ -6840,7 +7627,7 @@
 +        if(ui.plugin_target!=UiState::PluginTarget::Instrument){notice("Break Engine is an instrument");return;}
 +        close_gesture();ui.break_from_picker=true;ui.break_load_b=false;
 +        ui.break_browse=true;ui.break_track=ui.track;ui.break_bars=track().break_bars?track().break_bars:2;
-+        project.gen8.bars=ui.break_bars;open(PageId::Samples);notice("BREAK: choose a loop; Back cancels");return;
++        open(PageId::Samples);notice("BREAK: choose a loop; Back cancels");return;
 +    }
      if (file.folder || file.several()) { plugins->browse(file.path); ui.plugins_cursor = 0; return; } // a folder, or a bundle's plug-ins
      if (!file.loadable()) { notice(file.why.empty() ? "Not a plug-in for this MPC" : file.why); return; }
@@ -7030,6 +7817,21 @@
  }
  
  } // namespace rhythmer
+--- /dev/null
++++ b/src/rhythmer/shell/preset_index.h
+@@ -0,0 +1,12 @@
++// SPDX-License-Identifier: AGPL-3.0-only
++// Copyright (C) 2026 jazzy rhythmer
++#pragma once
++#include <cstdint>
++#include <cstddef>
++namespace rhythmer {
++// A relative preset turn wraps; absolute pot positions remain bounded by their bindings.
++inline unsigned preset_index(int64_t position, size_t count) {
++    if(!count)return 0;
++    const auto n=int64_t(count);return unsigned((position%n+n)%n);
++}
++}
 --- a/src/rhythmer/shell/project_jobs.cpp
 +++ b/src/rhythmer/shell/project_jobs.cpp
 @@ -11,6 +11,8 @@
@@ -7134,6 +7936,228 @@
      into.preset = src.preset;
      into.params = src.params;
      into.set_name(src.name);
+--- a/src/rhythmer/shell/sample_files.cpp
++++ b/src/rhythmer/shell/sample_files.cpp
+@@ -21,12 +21,14 @@
+ // Rhythmer writes only to the card: Trim and Extract go to Samples/Edits;
+ // without a card they stay in memory for the session.
+ #include "rhythmer/shell/context.h"
++#include "rhythmer/engine/engine_host.h"
+ #include "rhythmer/shell/new_track.h"
+ #include "rhythmer/shell/sample_library.h"
+ #include <cstdio>
+ #include <filesystem>
+ #include <cstring>
+ #include <algorithm>
++#include <cmath>
+ 
+ namespace rhythmer {
+ namespace {
+@@ -372,7 +374,7 @@
+ 
+ void Context::preview_cursor() {
+     if (!library) return;
+-    auto files = library->files();
++    auto files = sample_browser_files(library->files(), ui.break_browse);
+     const SampleFile* file = ui.files_cursor < files.size() ? &files[ui.files_cursor] : nullptr;
+     std::string path = ui.preview && file && !file->folder && !file->bank && !file->midi ? file->path : std::string(); // a MIDI file has no sound to preview
+     stop_preview(); // what played stops as the cursor moves on
+@@ -383,17 +385,28 @@
+     if (previewing < 0) return;
+     Command stop {Command::Type::Audition, uint8_t(previewing)};
+     stop.pad.sample = no_sample;
+-    send(stop);
+-    previewing = -1;
++    stop.index=preview_break_bus?1:0;send(stop);
++    preview_break_bus=false;previewing = -1;
+ }
+ 
+ void Context::browser_tick() {
+     if (!library) return;
+-    bool here = ui.page == PageId::Samples && track().engine == EngineKind::Sampler;
++    bool here = ui.page == PageId::Samples && (track().engine == EngineKind::Sampler || ui.break_browse);
++    const auto visible_files=here ? sample_browser_files(library->files(), ui.break_browse) : std::vector<SampleFile>{};
++    if(here){
++        ui.files_count=uint16_t(std::min<size_t>(visible_files.size(),0xffff));
++        ui.files_cursor=uint16_t(std::min<unsigned>(ui.files_cursor,ui.files_count?ui.files_count-1:0));
++    }
+     auto folder = library->folder();
+     if (folder != files_folder_seen) { // a new folder: the cursor on the one it came out of, else the top
+         files_folder_seen = folder;
+         ui.files_cursor = uint16_t(files_row_wanted >= 0 ? files_row_wanted : std::max(library->came_from(), 0)); // B2's drive: its row
++        if(ui.break_browse && files_row_wanted<0){
++            auto all=library->files();int came=library->came_from();ui.files_cursor=0;
++            if(came>=0 && size_t(came)<all.size())for(size_t i=0;i<visible_files.size();++i)
++                if(visible_files[i].path==all[size_t(came)].path){ui.files_cursor=uint16_t(i);break;}
++        }
++        ui.files_cursor=uint16_t(std::min<unsigned>(ui.files_cursor,ui.files_count?ui.files_count-1:0));
+         files_row_wanted = -1;
+         ui.files_drive = uint8_t(library->drive());
+         if (here && ui.preview) preview_cursor();
+@@ -404,11 +417,24 @@
+     }
+     unsigned arrived = library->previews();
+     if (arrived == previews_seen) return;
++    auto info=library->preview_info();
++    if(here && ui.break_browse && ui.break_preview_sync && !info.complete)return;
+     previews_seen = arrived;
+-    auto files = library->files();
++    if(info.complete && info.seconds<=0){notice("PREVIEW unavailable / choose another file");return;}
++    auto files = sample_browser_files(library->files(), ui.break_browse);
+     if (!here || !ui.preview || ui.files_cursor >= files.size() || files[ui.files_cursor].path != library->previewed()) return;
+     Command a {Command::Type::Audition, ui.track, 0, 0, int16_t(ui.audition_velocity)};
+     a.pad.sample = uint16_t(preview_slot); a.pad.start = 0; a.pad.end = 0;
++    if(ui.break_browse || track().break_bars){
++        a.index=1;preview_break_bus=true;
++        if(ui.break_browse && ui.break_preview_sync){
++            unsigned bars=ui.break_load_b?track().break_bars:ui.break_bars;
++            double own=info.seconds>0?bars*2400.0/info.seconds:0;
++            double ratio=own>0?(host.tempo_now()?host.tempo_now():project.tempo)/own:0;
++            if(info.seconds>=30 || own<1||own>65535||ratio<.25||ratio>4){notice("SYNC: check loop bars / use ORIGINAL");return;}
++            a.pad.own_tempo=uint16_t(std::lround(own));
++        }
++    }
+     send(a);
+     previewing = ui.track;
+ }
+--- a/src/rhythmer/shell/sample_library.cpp
++++ b/src/rhythmer/shell/sample_library.cpp
+@@ -123,6 +123,7 @@
+ int SampleLibrary::came_from() const { std::lock_guard<std::mutex> guard(lock); return known.came_from; }
+ std::vector<SampleFile> SampleLibrary::files() const { std::lock_guard<std::mutex> guard(lock); return known.files; }
+ std::string SampleLibrary::previewed() const { std::lock_guard<std::mutex> guard(lock); return preview_heard; }
++SampleLibrary::PreviewInfo SampleLibrary::preview_info() const {std::lock_guard<std::mutex> guard(lock);return {preview_heard,preview_seconds,preview_complete};}
+ 
+ void SampleLibrary::browse(Drive drive, const std::string& folder) {
+     std::lock_guard<std::mutex> guard(lock);
+@@ -167,7 +168,7 @@
+ }
+ void SampleLibrary::preview(const std::string& path) {
+     std::lock_guard<std::mutex> guard(lock);
+-    preview_wanted = path; preview_pending = true;
++    preview_wanted = path; preview_pending = true;preview_complete=false;preview_seconds=0;
+     if (path.empty()) preview_heard.clear();
+ }
+ 
+@@ -281,19 +282,15 @@
+     SampleJob job;
+     bank_files();
+     install_service();
++    bool did_work=false;
+     if (requests.pop(request)) { // one file per pass keeps the thread answering
++        did_work=true;
+         read(request);
+         landings_open.store(unsigned(landings.size()), std::memory_order_relaxed); // an instrument begun lands from here
+         answered.fetch_add(1, std::memory_order_release);
+     }
+-    else if (jobs.pop(job)) make(job);
+-    else {
+-        std::string heard;
+-        bool pending = false;
+-        { std::lock_guard<std::mutex> guard(lock); std::swap(pending, preview_pending); heard = preview_wanted; }
+-        if (pending && !heard.empty()) hear(heard);
+-    }
+-    hear_more(); // the preview's next piece, every pass, so the reading keeps ahead of what plays
++    else if (jobs.pop(job)) {make(job);did_work=true;}
++    preview_service(!did_work); // same service priority and bounded read pieces
+     // The card's Samples folder: $RHYTHMER_SAMPLES, else the first card's, looked for every few seconds. A card
+     // without one is still a card: what Rhythmer writes makes the folder, and browsing starts at the card's top.
+     bool browse_wanted;
+@@ -530,6 +527,14 @@
+ // The browser's preview (B3): the file in the preview slot, at most 30 s of it. It plays once its first piece is
+ // read, not when all of it is: the sample is laid out at its full length and filled in a piece a pass (hear_more()),
+ // and the voice reads only what has landed (SampleGrowth), so a long file starts as soon as a short one.
++void SampleLibrary::preview_service(bool read_request){
++    if(read_request){
++        std::string heard;bool pending=false;
++        {std::lock_guard<std::mutex> guard(lock);std::swap(pending,preview_pending);heard=preview_wanted;}
++        if(pending && !heard.empty())hear(heard);
++    }
++    hear_more();
++}
+ void SampleLibrary::hear(const std::string& path) {
+     stop_hearing(); // the last one's file goes before anything takes its place in the preview slot
+     // An MPC program with a preview of its own (an expansion's [Previews]): that, as the MPC plays it.
+@@ -538,18 +543,24 @@
+     if (preview.empty() && is_drum_program(path)) return; // a kit with no preview: nothing to hear
+     if (preview.empty() && is_instrument(path)) { hear_instrument(path); return; }
+     auto h = std::make_unique<Hearing>();
+-    if (!h->file.open(preview.empty() ? path : preview, 30).empty()) return;
++    auto failed=[&]{
++        {std::lock_guard<std::mutex> guard(lock);if(preview_wanted!=path)return;
++            preview_heard=path;preview_seconds=0;preview_complete=true;}
++        preview_count.fetch_add(1,std::memory_order_release);
++    };
++    if (!h->file.open(preview.empty() ? path : preview, 30).empty()) {failed();return;}
+     auto data = std::make_unique<SampleData>();
+     size_t held = 0; // the device's copy as offer() makes one: none past the budget
+     for (const auto& d : owned) held += d->play_bytes();
+     h->fill.begin(*data, h->file.frames(), h->file.rate(), dsp::sample_rate(), held < playback_budget ? playback_budget - held : 0);
++    const double seconds=double(h->file.frames())/std::max(1u,h->file.rate());
+     h->path = path;
+     hearing = std::move(h);
+     if (!hear_piece() && !data->growth->whole.load(std::memory_order_relaxed) && !data->growth->frames.load(std::memory_order_relaxed))
+-        return; // not a frame of it could be read
+-    if (!offer(preview_slot, data.get())) { stop_hearing(); return; }
++        {failed();return;} // not a frame of it could be read
++    if (!offer(preview_slot, data.get())) { stop_hearing();failed();return; }
+     owned.push_back(std::move(data));
+-    { std::lock_guard<std::mutex> guard(lock); preview_heard = path; }
++    { std::lock_guard<std::mutex> guard(lock); preview_heard = path;preview_seconds=seconds;preview_complete=!hearing; }
+     preview_count.fetch_add(1, std::memory_order_release);
+ }
+ 
+@@ -575,6 +586,7 @@
+ void SampleLibrary::stop_hearing() {
+     if (!hearing) return;
+     hearing->fill.finish();
++    {std::lock_guard<std::mutex> guard(lock);if(preview_heard==hearing->path && preview_wanted==hearing->path)preview_complete=true;}
+     hearing.reset();
+ }
+ 
+--- a/src/rhythmer/shell/sample_library.h
++++ b/src/rhythmer/shell/sample_library.h
+@@ -13,6 +13,7 @@
+ #include "rhythmer/shell/zone_shapes.h"
+ #include "surface/midi.h"
+ #include <array>
++#include <algorithm>
+ #include <atomic>
+ #include <memory>
+ #include <mutex>
+@@ -51,6 +52,12 @@
+     bool presets = false;    // a SoundFont (".sf2", roadmap P3): listed as a folder, its presets inside it
+     bool midi = false;       // a Standard MIDI File (".mid", roadmap P4): Push lays its notes on the track's pattern
+ };
++inline std::vector<SampleFile> sample_browser_files(std::vector<SampleFile> files, bool break_only) {
++    if (break_only) files.erase(std::remove_if(files.begin(), files.end(), [](const SampleFile& f) {
++        return f.bank || f.instrument || f.kit || f.expansion || f.presets || f.midi;
++    }), files.end());
++    return files;
++}
+ struct LoadedSample {
+     std::string name, path, error;
+     uint32_t frames = 0;
+@@ -121,8 +128,11 @@
+     // MIDI thread: a file to hear (preview_slot), empty for none; ready()
+     // counts the previews that arrived, so the MIDI thread knows when to play one.
+     void preview(const std::string& path);
++    void preview_service(bool read_request=true); // service thread: bounded decode pieces; no Hardware dependency
+     unsigned previews() const { return preview_count.load(std::memory_order_acquire); }
+     std::string previewed() const;
++    struct PreviewInfo { std::string path; double seconds=0; bool complete=false; };
++    PreviewInfo preview_info() const;
+     // MIDI thread: write a file; done() hands back what came of it (a notice).
+     bool write(const SampleJob& job) { return jobs.push(job); }
+     struct Done { char text[32] {}; int16_t failed = -1; }; // failed: the Derive target slot that got nothing
+@@ -316,6 +326,7 @@
+     View known;
+     // Under `lock`: what the MIDI thread asked of the browser.
+     struct Wanted { bool pending = false, up = false; Drive drive = Drive::Card; std::string folder; } wanted;
++    double preview_seconds=0;bool preview_complete=false;
+     std::string preview_wanted, preview_heard; // under `lock`
+     std::vector<std::pair<std::string, std::vector<uint8_t>>> bank_writes; // under `lock`: name, bytes
+     std::vector<std::string> bank_reads;  // under `lock`: paths
 --- a/src/rhythmer/shell/shell.cpp
 +++ b/src/rhythmer/shell/shell.cpp
 @@ -199,6 +199,15 @@
@@ -7171,10 +8195,11 @@
      auto bindings = page_bindings(*project_, ui_, context_.pattern());
      // A Trim or Chop handle's pot: that handle in focus, the view zoomed in round it (shell/zoom_view.h).
      if (!syncing && focus_handle(ui_, bindings[n])) bindings = page_bindings(*project_, ui_, context_.pattern());
-@@ -654,6 +668,10 @@
+@@ -654,6 +668,11 @@
  
  void Shell::snapshot(Snapshot& out, uint32_t now) {
      std::lock_guard<std::mutex> guard(lock);
++    out.break_activity=uint8_t(host.break_activity_of(ui_.track));
 +    const auto& selected=project_->tracks[ui_.track];
 +    const bool break_gen=selected.engine==EngineKind::Sampler&&selected.break_bars;
 +    const bool acid_gen=selected.engine==EngineKind::Plugin&&selected.plugin<max_plugins&&std::string(project_->plugins[selected.plugin].name)=="Acid Engine";
@@ -7182,9 +8207,36 @@
      auto bindings = page_bindings(*project_, ui_, context_.pattern());
      for (unsigned n = 0; n < 3; ++n) if (bindings[n].bound()) check_pickup(n, bindings[n]);
      fader_check(context_);
+@@ -677,6 +696,8 @@
+     out.following = midi_io.following();
+     out.following_mtc = midi_io.following_mtc();
+     if (ui_.settings.midi.sync_in == MidiSync::Clock && midi_io.tempo_in()) out.tempo = host.tempo_now();
++    out.display_tempo=tempo_display.sample(out.tempo,now,
++        ui_.settings.midi.sync_in==MidiSync::Clock && midi_io.tempo_in()!=0,unsigned(ui_.settings.midi.port));
+     {
+         const auto& r = host.recorder();
+         out.take.state = uint8_t(r.state()); out.take.frames = r.frames(); out.take.length = r.length(); out.take.level = r.level();
+@@ -720,7 +741,8 @@
+                     out.pad_waves_shown = uint16_t(out.pad_waves_shown | 1u << n);
+             }
+         if (ui_.page == PageId::Samples) {
+-            out.files = library_->files(); out.sample_root = library_->root(); out.files_folder = library_->folder(); out.files_top = library_->top();
++            auto preview=library_->preview_info();out.preview_seconds=preview.seconds;out.preview_complete=preview.complete;out.preview_path=preview.path;
++            out.files = sample_browser_files(library_->files(), ui_.break_browse); out.sample_root = library_->root(); out.files_folder = library_->folder(); out.files_top = library_->top();
+         }
+     }
+     for (unsigned t = 0; t < track_count; ++t)
 --- a/src/rhythmer/shell/shell.h
 +++ b/src/rhythmer/shell/shell.h
-@@ -94,6 +94,8 @@
+@@ -15,6 +15,7 @@
+ #include "rhythmer/shell/project_store.h"
+ #include "rhythmer/shell/sample_library.h"
+ #include "rhythmer/shell/snapshot.h"
++#include "rhythmer/shell/tempo_display.h"
+ #include "rhythmer/shell/ui_state.h"
+ #include "runtime/app.h"
+ #include "surface/leds.h"
+@@ -94,6 +95,8 @@
      UpdateLink& updates() { return update_link; }
  
  private:
@@ -7193,6 +8245,60 @@
      void button(SurfaceButton button, bool pressed);
      void press(SurfaceButton button, bool pressed); // button() inside its undo step (shell/undo_scope.h)
      void pot(unsigned index, int position, bool syncing);
+@@ -139,6 +142,7 @@
+     // Presses the Loading sheet took (ui.loading): their releases are taken too, even after it has gone.
+     std::array<bool, 256> eaten_buttons {};
+     std::array<bool, 128> eaten_pads {};
++    TempoDisplay tempo_display; // screen-thread number presentation; no MIDI/audio feedback
+     CompTrail comp_trail; // the screen thread's, in snapshot(): the Compressor page's picture over time
+     CompBar comp_bar;     // and over one bar of the song (round 2, compressor B)
+     HeadTrail trail; // the screen thread's, in snapshot(): heads kept while their wakes fade
+--- a/src/rhythmer/shell/snapshot.h
++++ b/src/rhythmer/shell/snapshot.h
+@@ -36,11 +36,14 @@
+     Pattern pattern;                         // the selected track's pattern playing
+     std::array<bool, track_count> has_notes {}; // the playing pattern of each track holds notes
+     bool playing = false;
++    uint8_t break_activity=0;
++    double preview_seconds=0;bool preview_complete=false;std::string preview_path;
+     uint32_t position = 0;                   // where the selected track is in its pattern, ticks
+     uint32_t pass = 0;                       // and its pattern's passes since it began (a kit lane's place, roadmap P1)
+     std::array<int, track_count> positions {}; // each track's, -1 none
+     unsigned count_in = 0;                   // the Count-In's beat, 0 none
+     unsigned tempo = 1200;                   // tenths of a BPM, as it plays (BPM per pattern or global, or MIDI clock in's)
++    unsigned display_tempo = 0;              // UI-only smoothed external BPM; 0 uses tempo. Never used for calculations.
+     bool following = false;                  // MIDI clock in leads the transport (parity phase 9)
+     bool following_mtc = false;              // and MTC in (parity phase 9b)
+     std::array<uint8_t, track_count> playing_patterns {};
+--- a/src/rhythmer/shell/stage_jobs.cpp
++++ b/src/rhythmer/shell/stage_jobs.cpp
+@@ -11,6 +11,8 @@
+ #include "rhythmer/shell/stage_map.h"
+ #include <algorithm>
+ 
++#include "rhythmer/shell/preset_index.h"
++
+ namespace rhythmer {
+ 
+ void Context::preset_turn(int at) {
+@@ -18,7 +20,7 @@
+     unsigned count = sound_list(track(), ui, list);
+     if (!count || !track().used()) return;
+     if (frozen_edit(UndoScope {UndoScope::Kind::Sound, uint8_t(ui.track % track_count), 0})) return; // freeze plan F2c
+-    ui.preset_cursor = uint16_t(std::clamp(at, 0, int(count) - 1));
++    ui.preset_cursor = uint16_t(preset_index(at, count));
+     ui.preset_due = std::max<uint32_t>(now + stage_preset_ms, 1);
+ }
+ 
+@@ -34,7 +36,7 @@
+     if (ui.preset_due && ui.presets_entry == t.plugin) at = ui.presets_cursor;
+     else for (size_t n = 0; n < programs.list.size(); ++n) if (programs.list[n].index == programs.current) at = int(n);
+     ui.presets_entry = t.plugin;
+-    ui.presets_cursor = uint16_t(std::clamp(at + delta, 0, int(programs.list.size()) - 1));
++    ui.presets_cursor = uint16_t(preset_index(int64_t(at) + delta, programs.list.size()));
+     ui.preset_due = std::max<uint32_t>(now + stage_preset_ms, 1);
+ }
+ 
 --- a/src/rhythmer/shell/stage_map.h
 +++ b/src/rhythmer/shell/stage_map.h
 @@ -53,7 +53,7 @@
@@ -7229,6 +8335,48 @@
      if (t.levels) return -1;
      if (t.engine == EngineKind::Sampler) return int(t.step_note());
      if (drum_pads(t)) return drum_pad_of(t.last_note) >= 0 ? int(t.last_note) : drum_key(t, 0);
+--- /dev/null
++++ b/src/rhythmer/shell/tempo_display.h
+@@ -0,0 +1,39 @@
++// SPDX-License-Identifier: AGPL-3.0-only
++// Copyright (C) 2026 jazzy rhythmer
++#pragma once
++#include <cmath>
++#include <cstdint>
++namespace rhythmer {
++// Screen-thread presentation only. Never feed this result to a clock, audio,
++// automation, recording, sample-length calculation or saved project tempo.
++class TempoDisplay {
++public:
++    unsigned sample(unsigned raw, uint32_t now, bool external, unsigned source=0) {
++        if(!external || !raw){ready=false;return 0;}
++        const uint32_t elapsed=now-last;
++        if(!ready || source!=input || elapsed>2000){
++            ready=true;input=source;last=published=since=now;
++            average=raw;shown=candidate=raw;pending=false;return shown;
++        }
++        last=now;
++        const double time_constant=std::abs(double(raw)-average)>=10.0?150.0:750.0;
++        average+=(double(raw)-average)*(-std::expm1(-double(elapsed)/time_constant));
++        if(uint32_t(now-published)<250)return shown; // at most four displayed changes a second
++        const unsigned rounded=unsigned(std::lround(average));
++        const double difference=average-double(shown);
++        if(rounded==shown || std::abs(difference)<0.75){pending=false;return shown;}
++        // Larger real changes follow the average; small decimal changes must
++        // persist, so a rounding boundary cannot flash between neighbouring digits.
++        if(std::abs(difference)<=2.0){
++            if(!pending || candidate!=rounded){candidate=rounded;since=now;pending=true;return shown;}
++            if(uint32_t(now-since)<500)return shown;
++        }
++        shown=rounded;published=now;pending=false;return shown;
++    }
++private:
++    bool ready=false,pending=false;
++    unsigned input=0,shown=0,candidate=0;
++    uint32_t last=0,published=0,since=0;
++    double average=0;
++};
++}
 --- a/src/rhythmer/shell/track_copy.cpp
 +++ b/src/rhythmer/shell/track_copy.cpp
 @@ -3,6 +3,7 @@
@@ -7565,7 +8713,7 @@
                              Count };
  
  // Takeover (shell/takeover.h): a pot or the fader drives its value once it has
-@@ -68,6 +69,13 @@
+@@ -68,6 +69,14 @@
      std::array<PageId, back_capacity> back_stack {};
      uint8_t back_depth = 0;
      uint8_t track = 0;
@@ -7573,13 +8721,14 @@
 +    bool track_types = false;
 +    bool project_kit_only = false;
 +    bool break_from_picker = false;
++    bool break_preview_sync=false;
 +    int8_t break_job_track = -1;
 +    uint8_t break_job_bank = 0, break_job_bars = 2;
 +    bool break_job_b = false, break_job_from_picker = false;
      bool shift = false, shift_used = false; // Shift held; another control used during the hold
      bool pad_bank = false, mute = false, erase = false; // held
      bool pad_bank_used = false;  // Pad Bank held did something (a pad, -/+, the wheel): its release steps no bank
-@@ -143,7 +151,11 @@
+@@ -143,7 +152,11 @@
      bool fill = false;                        // Play held while playing: Fill (FILL trig conditions play)
      int8_t held_note = -1;                    // Roll: the pad held on the note in focus (its cards lock it, roadmap P1)
      bool euclid_cards = false;                // Steps on a kit, STEPS a third time: the EUCLID row of the last pad's lane (roadmap P1)
@@ -7592,7 +8741,7 @@
      // The fader (shell/fader.cpp): where it sits (-1 until it moves)
      // and whether it has met the value it drives (takeover), when it last moved (its card shows a moment).
      Pot fader;
-@@ -228,11 +240,17 @@
+@@ -228,11 +241,17 @@
      PageId plugin_back = PageId::Stage;          // where B1 (Back) at the top and a load go
      PageId plugin_from = PageId::Stage;          // the page it opened over: B1 at the top while the track is not PLUGIN yet
      PluginPanel plugin_panel;
@@ -7610,6 +8759,15 @@
      PageId presets_back = PageId::Edit;
      std::array<char, 192> presets_folder {}; // PRESETS: the folder in view, "" the top (plugin/preset_rows.h)
      uint16_t files_cursor = 0;  // Samples, the browser: the row under the cursor
+@@ -361,7 +380,7 @@
+     // A question over the page that B1 (Cancel) or B3 (Do it) answers, as the
+     // MPC asks before erasing: Erase + pad on Step Edit (`ask_target` the
+     // key), Erase + pot on Motion (the lane, bindings.h). shell/ask.cpp.
+-    enum class Ask : uint8_t { None, EraseKeyEvents, EraseLane, ResetSettings, NewProject, TakeCardBack, ClearLoop, LooperOff, ClearPattern, ErasePunches, ClearTrack, InstallUpdate, Unfreeze }; // Unfreeze (freeze plan F2c): an edit of a frozen track; target the track // InstallUpdate: newer release on the card (shell/update.h); ClearLoop: target the loop; ClearPattern (Seq held + Erase + pad): target the pattern; ClearTrack (Pad Bank held + Erase + pad): target the track // NewProject (phase 10): target 0 nothing unsaved, 1 saved first, 2 lost; TakeCardBack (10b): the computer still holds the card
++    enum class Ask : uint8_t { None, EraseKeyEvents, EraseLane, ResetSettings, NewProject, TakeCardBack, ClearLoop, LooperOff, ClearPattern, ErasePunches, ClearTrack, InstallUpdate, Unfreeze, BreakLength }; // Unfreeze (freeze plan F2c): an edit of a frozen track; target the track // InstallUpdate: newer release on the card (shell/update.h); ClearLoop: target the loop; ClearPattern (Seq held + Erase + pad): target the pattern; ClearTrack (Pad Bank held + Erase + pad): target the track // NewProject (phase 10): target 0 nothing unsaved, 1 saved first, 2 lost; TakeCardBack (10b): the computer still holds the card
+     Ask ask = Ask::None;
+     int32_t ask_target = 0;
+     // The Looper (docs/LOOPER.md, shell/looper_jobs.cpp): the loop selected, the page's view (0 LOOPS, 1 MIX),
 --- a/src/rhythmer/shell/undo_scope.cpp
 +++ b/src/rhythmer/shell/undo_scope.cpp
 @@ -104,7 +104,7 @@
@@ -7667,18 +8825,29 @@
 +}
 --- a/src/rhythmer/tools.cpp
 +++ b/src/rhythmer/tools.cpp
-@@ -1,6 +1,8 @@
+@@ -1,6 +1,9 @@
  // SPDX-License-Identifier: AGPL-3.0-only
  // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
  #include "rhythmer/tools.h"
 +#include "rhythmer/shell/gen8_check.h"
++#include "rhythmer/shell/break_p1_check.h"
 +#include "rhythmer/shell/track_workflow_check.h"
  #include "rhythmer/shell/stage_map.h"
  #include "rhythmer/shell/expansion_install.h"
  #include "rhythmer/shell/mpc_program.h"
-@@ -728,6 +730,116 @@
+@@ -727,7 +730,134 @@
+     void (*set)(Shell&, Snapshot&);
  };
  
++// Illustrative card listing for native UI documentation; no recordings bundled.
++void preview_break_files(Snapshot& s){
++    s.sample_root="/card/Samples";s.files_folder=s.sample_root;s.files.clear();
++    SampleFile folder;folder.path="/card/Samples/Breaks";folder.name="BREAKS";folder.folder=true;s.files.push_back(folder);
++    for(const auto& name:{"think-160-preview.wav","loop-2bar.flac","loop-4bar.aiff"}){
++        SampleFile f;f.path=s.sample_root+"/"+name;f.name=name;s.files.push_back(f);
++    }
++    s.ui.files_cursor=1;s.ui.files_count=uint16_t(s.files.size());
++}
  const Preview previews[] {
 +    {"break-seq-roll",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.project.tracks[0].engine=EngineKind::Sampler;s.project.tracks[0].break_bars=2;s.project.tracks[0].last_note=8;}},
 +    {"break-perf-0",[](Shell&,Snapshot& s){s.ui.page=PageId::Edit;s.ui.break_perf_page=0;s.project.tracks[s.ui.track].engine=EngineKind::Sampler;s.project.tracks[s.ui.track].break_bars=2;s.ui.held_pads=1<<6;}},
@@ -7713,7 +8882,15 @@
 +    {"gen-track-16",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.track=15;s.ui.sheet_open=true;s.ui.sheet_row=2;}},
 +    {"gen-midi-one",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.project.gen8.assign=0;s.project.gen8.first=s.project.gen8.last=11;}},
 +    {"gen-setup-song",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.ui.gen8_mode=3;}},
-+    {"break-browse-four",[](Shell&,Snapshot& s){s.ui.page=PageId::Samples;s.ui.break_browse=true;s.files_top=true;s.project.gen8.bars=4;}},
++    {"break-sync-reading",[](Shell&,Snapshot& s){s.ui.page=PageId::Samples;s.ui.break_browse=true;s.ui.break_bars=2;s.ui.break_preview_sync=true;s.ui.preview=true;s.files_top=true;preview_break_files(s);s.preview_path=s.files[1].path;s.preview_seconds=3;s.preview_complete=false;}},
++    {"break-sync-ready",[](Shell&,Snapshot& s){s.ui.page=PageId::Samples;s.ui.break_browse=true;s.ui.break_bars=2;s.ui.break_preview_sync=true;s.ui.preview=true;s.files_top=true;preview_break_files(s);s.preview_path=s.files[1].path;s.preview_seconds=3;s.preview_complete=true;}},
++    {"break-variation-stopped",[](Shell&,Snapshot& s){s.ui.page=PageId::Edit;s.ui.break_perf_page=3;s.project.tracks[0].engine=EngineKind::Sampler;s.project.tracks[0].break_bars=2;s.project.tracks[0].break_perf[9]=0;s.playing=false;s.break_activity=0;}},
++    {"break-variation-active",[](Shell&,Snapshot& s){s.ui.page=PageId::Edit;s.ui.break_perf_page=3;s.project.tracks[0].engine=EngineKind::Sampler;s.project.tracks[0].break_bars=2;s.project.tracks[0].break_perf[9]=0;s.project.tracks[0].break_perf[1]=64;s.playing=true;s.break_activity=3;}},
++    {"break-stretch-ready",[](Shell&,Snapshot& s){s.ui.page=PageId::Edit;s.ui.break_perf_page=4;s.project.tracks[0].engine=EngineKind::Sampler;s.project.tracks[0].break_bars=2;s.playing=true;s.break_activity=3;}},
++    {"break-stretch-active",[](Shell&,Snapshot& s){s.ui.page=PageId::Edit;s.ui.break_perf_page=4;s.project.tracks[0].engine=EngineKind::Sampler;s.project.tracks[0].break_bars=2;s.playing=true;s.break_activity=7;}},
++    {"break-length-confirm",[](Shell&,Snapshot& s){s.ui.page=PageId::Samples;s.ui.break_browse=true;s.ui.break_job_bars=3;s.ui.break_bars=3;preview_break_files(s);s.ui.ask=UiState::Ask::BreakLength;s.ui.ask_target=s.ui.track;s.project.tracks[s.ui.track].engine=EngineKind::Sampler;s.project.tracks[s.ui.track].break_bars=2;}},
++    {"break-browse-b",[](Shell&,Snapshot& s){s.ui.page=PageId::Samples;s.ui.break_browse=true;s.ui.break_load_b=true;s.files_top=true;s.project.tracks[s.ui.track].break_bars=2;preview_break_files(s);s.files=sample_browser_files(std::move(s.files),true);}},
++    {"break-browse-four",[](Shell&,Snapshot& s){s.ui.page=PageId::Samples;s.ui.break_browse=true;s.files_top=true;s.ui.break_bars=4;preview_break_files(s);s.files=sample_browser_files(std::move(s.files),true);}},
 +
 +    {"empty-track-cursor", [](Shell&,Snapshot& s){s.ui.page=PageId::Tracks;s.ui.track=7;s.project.tracks[7]=Track{};}},
 +    {"empty-track-overlay", [](Shell&,Snapshot& s){s.ui.page=PageId::Tracks;s.ui.track=11;s.project.tracks[11]=Track{};}},
@@ -7793,7 +8970,7 @@
      {"stage", [](Shell&, Snapshot& s) { s.ui.page = PageId::Stage; s.playing = true; }}, // track 1, a synth plug-in: B1 MIX
      // The place bar (shell/place_bar.h) on the kit's Pads, its pattern slot 8 made 4 bars long (no other preview
      // plays it): playing, at the top; recording, at the bottom; stopped, held where Shift + Play carries on.
-@@ -825,6 +937,10 @@
+@@ -825,6 +955,10 @@
      {"stageemptyslide", [](Shell&, Snapshot& s) { // the wheel just moved: Card on its way to the middle
           on_stage(s, 12, 1, 0); s.ui.new_pick = 2; s.ui.new_pick_from = 1; s.now = 1000; s.ui.new_pick_at = 960;
       }},
@@ -7804,7 +8981,7 @@
      {"tracks", [](Shell&, Snapshot& s) { // Pad Bank tapped twice; each track's share of a block (roadmap P2), one heavy
          s.ui.page = PageId::Tracks; s.ui.track = 2; s.playing = true;
          const float loads[] {0.04f, 0.11f, 0.07f, 0.02f, 0.66f, 0.09f, 0.03f, 0.05f};
-@@ -1025,6 +1141,7 @@
+@@ -1025,6 +1159,7 @@
      // plug-ins loading again (THAWING), and the question an edit of it asks.
      {"printdeep", [](Shell&, Snapshot& s) { print_scene(s); s.ui.shift = true; }},
      {"deepfreeze", [](Shell&, Snapshot& s) { deep_scene(s); on_stage(s, 2, 1, 0); }},
@@ -7812,7 +8989,7 @@
      {"thawing", [](Shell&, Snapshot& s) { deep_scene(s); on_stage(s, 2, 1, 0); s.thawing = 1u << 2; }},
      {"tracksdeep", [](Shell&, Snapshot& s) { // track 3 deep frozen, track 5 frozen
           deep_scene(s);
-@@ -2302,6 +2419,8 @@
+@@ -2302,6 +2437,8 @@
  
  // The boot animation at 30 frames a second, fading out over the starting
  // project's first page, as DIR/boot-NNN.png.
@@ -7821,7 +8998,7 @@
  int boot_frames(const std::string& folder) {
      EngineHost host;
      Shell shell(host);
-@@ -2314,17 +2433,20 @@
+@@ -2314,17 +2451,20 @@
      snapshot->pattern = shell.patterns().at[snapshot->ui.track][track.pattern];
      ui::BootAnimation boot;
      unsigned written = 0;
@@ -7851,12 +9028,13 @@
      }
      std::cout << "RHYTHMER_BOOT frames=" << written << '\n';
      return written > 1 ? 0 : 1;
-@@ -2513,6 +2635,9 @@
+@@ -2513,6 +2653,10 @@
  }
  
  std::optional<int> run_tool(int argc, char** argv) {
 +    if(argc==4&&!std::strcmp(argv[1],"--rhythmer-edit-preview"))return edit_preview(argv[2],argv[3]);
 +    if(argc==2&&!std::strcmp(argv[1],"--rhythmer-track-check"))return track_workflow_check();
++    if(argc==2&&!std::strcmp(argv[1],"--rhythmer-break-p1-check"))return break_p1_check();
 +    if(argc==2&&!std::strcmp(argv[1],"--rhythmer-gen8-check"))return gen8_shell_check();
      if (argc >= 2 && !std::strcmp(argv[1], "--rhythmer-monkey")) { // [SEED COUNT MOVES], build.sh's: 1 12 3000
          auto arg = [&](int n, unsigned fallback) { return argc > n ? unsigned(std::strtoul(argv[n], nullptr, 10)) : fallback; };
@@ -8558,6 +9736,28 @@
  
 -} // namespace rhythmer::ui
 +}
+--- a/src/rhythmer/ui/chrome.cpp
++++ b/src/rhythmer/ui/chrome.cpp
+@@ -136,7 +136,8 @@
+         p.fill(x + 1, header_mid - 3, 6, 6, colour::mid, 1);
+     }
+     x += 13;
+-    x += p.text(h.bpm, x, zone::header_y, 50, zone::header_h, plain(colour::text, type::bpm, Weight::Medium)) + 5;
++    float bpm_width = p.text(h.bpm, x, zone::header_y, 50, zone::header_h, plain(colour::text, type::bpm, Weight::Medium));
++    x += (h.fixed_bpm_width ? 50 : bpm_width) + 5;
+     // Two chips at most: the state chips come first (header_of), a page's own after them.
+     std::vector<HeaderItem> left(h.left.begin(), h.left.begin() + std::min<size_t>(h.left.size(), 2));
+     float left_end = x;
+--- a/src/rhythmer/ui/chrome.h
++++ b/src/rhythmer/ui/chrome.h
+@@ -70,6 +70,7 @@
+     bool playing = false, recording = false, armed = false;
+     juce::String bpm = "120";
+     std::vector<HeaderItem> left, right;
++    bool fixed_bpm_width = false; // external clock: decimal digits cannot shift neighbouring chips
+ };
+ void header(Paint& p, const Header& h);
+ 
 --- /dev/null
 +++ b/src/rhythmer/ui/device_mark.h
 @@ -0,0 +1,21 @@
@@ -9267,6 +10467,45 @@
      CHECK(macro_kind(0, 0) == MacroKind::Filter && macro_kind(0, 1) == MacroKind::Echo && macro_kind(0, 2) == MacroKind::Space &&
            macro_kind(int(MacroKind::Space), 0) == MacroKind::Space && macro_kind(99, 1) == MacroKind::Echo);
 --- /dev/null
++++ b/tests/tempo_display.cpp
+@@ -0,0 +1,36 @@
++// SPDX-License-Identifier: AGPL-3.0-only
++// Copyright (C) 2026 jazzy rhythmer
++#include "rhythmer/shell/tempo_display.h"
++#include <cstdio>
++#include <cstdlib>
++#include <cmath>
++#include <initializer_list>
++using rhythmer::TempoDisplay;
++unsigned checks=0;
++void check(bool ok,const char* what){++checks;if(!ok){std::fprintf(stderr,"FAIL %s\n",what);std::exit(1);}}
++int main(){
++ TempoDisplay d;check(d.sample(1200,0,false)==0,"internal tempo bypass");check(d.sample(1275,1,true)==1275,"true fractional acquisition");
++ unsigned changes=0,last=1200;d.sample(1200,2,false);d.sample(1200,10,true);
++ for(unsigned t=26;t<10010;t+=16){unsigned out=d.sample((t/96)%3==0?1199:(t/96)%3==1?1200:1201,t,true);if(out!=last)++changes;last=out;}
++ check(changes==0,"plus/minus 0.1 BPM jitter does not flash");
++ for(unsigned initial:{1200u,1201u}){TempoDisplay edge;edge.sample(initial,0,true);unsigned flips=0,before=initial;
++  for(unsigned t=16;t<6000;t+=16){unsigned value=edge.sample(1200+(t/16)%2,t,true);flips+=value!=before;before=value;}
++  check(flips==0,"rounding-boundary jitter stays stable from either initial digit");}
++
++ for(unsigned initial:{1199u,1201u}){TempoDisplay integer;unsigned value=integer.sample(initial,0,true);
++  for(unsigned t=16;t<10000;t+=16)value=integer.sample(1199+(t/64)%3,t,true);
++  check(value==1200,"noisy whole BPM settles to integer even after fractional acquisition");}
++ for(unsigned t=10026;t<14010;t+=16)d.sample(1201,t,true);
++ check(d.sample(1201,14020,true)==1201,"sustained 0.1 BPM change remains representable");
++ unsigned previous=1201,last_change=14020,max_changes=0;
++ for(unsigned t=14036;t<18020;t+=16){unsigned value=d.sample(1400,t,true);if(value!=previous){if(max_changes)check(t-last_change>=250,"display changes no faster than 4 Hz");last_change=t;++max_changes;previous=value;}}
++ check(previous>=1399,"real large tempo change converges");check(max_changes>0,"real change is not frozen");
++ check(d.sample(900,18021,false)==0,"external off returns immediate raw-display fallback");check(d.sample(900,18022,true)==900,"reacquisition resets old average");
++ check(d.sample(1275,18023,true,1)==1275,"port switch resets display state");check(d.sample(1500,22024,true,1)==1500,"screen hiatus resets stale display");
++ check(d.sample(0,22025,true,1)==0,"no measurement clears display filter");
++ TempoDisplay a,b;for(unsigned t=0;t<=2000;t+=10)a.sample(t?1280:1200,t,true);for(unsigned t=0;t<=2000;t+=50)b.sample(t?1280:1200,t,true);
++ check(std::abs(int(a.sample(1280,2010,true))-int(b.sample(1280,2010,true)))<=2,"smoothing is time based across frame rates");
++ TempoDisplay wrap;wrap.sample(1200,0xfffffff0u,true);check(wrap.sample(1200,16,true)==1200,"millisecond counter wrap safe");
++ check(wrap.sample(300,100,false)==0&&wrap.sample(300,101,true)==300,"minimum tempo acquired");check(wrap.sample(3000,102,true,1)==3000,"maximum tempo acquired");
++ std::printf("TEMPO_DISPLAY passed %u checks; jitter_changes=%u large_change_updates=%u\n",checks,changes,max_changes);
++}
+--- /dev/null
 +++ b/tests/test_break_acid.py
 @@ -0,0 +1,10 @@
 +import os,subprocess,unittest
@@ -9326,6 +10565,24 @@
             "src/rhythmer/model/project_file.cpp", "src/rhythmer/model/pattern.cpp", "src/rhythmer/model/note_edits.cpp", "src/rhythmer/model/smf.cpp", "src/rhythmer/model/generators.cpp", "src/rhythmer/engine/punch.cpp", "src/rhythmer/engine/print_render.cpp", "src/rhythmer/engine/print_player.cpp", "src/rhythmer/model/print.cpp", "src/rhythmer/engine/punch_mpc.cpp", "src/rhythmer/engine/pad_fx_info.cpp", "src/rhythmer/model/sound_file.cpp",
             "src/rhythmer/shell/page_stack.cpp", "src/rhythmer/shell/button_jobs.cpp", "src/rhythmer/shell/roll.cpp",
             "src/rhythmer/shell/shift_pad_jobs.cpp", "src/rhythmer/shell/fader_job.cpp", "src/rhythmer/shell/midi_route.cpp", "src/rhythmer/shell/mtc_in.cpp",
+--- /dev/null
++++ b/tests/test_tempo_display.py
+@@ -0,0 +1,15 @@
++# SPDX-License-Identifier: AGPL-3.0-only
++# Copyright (C) 2026 jazzy rhythmer
++"""Display-only external tempo smoothing; no audio/MIDI processing changes."""
++import os
++from pathlib import Path
++import subprocess
++import tempfile
++import unittest
++ROOT=Path(__file__).resolve().parents[1]
++class TempoDisplayTests(unittest.TestCase):
++    def test_jitter_fractional_changes_reset_and_update_limit(self):
++        with tempfile.TemporaryDirectory() as temp:
++            binary=Path(temp)/"tempo-display"
++            subprocess.run([os.environ.get("CXX","c++"),"-std=c++17","-Wall","-Wextra","-Werror","-I"+str(ROOT/"src"),str(ROOT/"tests/tempo_display.cpp"),"-o",str(binary)],check=True)
++            subprocess.run([str(binary)],check=True)
 --- /dev/null
 +++ b/tests/test_upstream_integration.py
 @@ -0,0 +1,13 @@
@@ -9411,6 +10668,47 @@
            && std::memcmp(none.data() + none.size() - 4, &address, 4) == 0, "mDNS answers AAAA with NSEC: there is none");
      auto other = query("mpc-sample.local", 1, 0);
      check(mdns_answer(other.data(), other.size(), mdns_name, address, false).empty(), "mDNS leaves other names alone");
+--- /dev/null
++++ b/tools/make_break_fixtures.py
+@@ -0,0 +1,38 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: AGPL-3.0-only
++# Audio fixtures generated by this program are CC0-1.0.
++from pathlib import Path
++import math,random,wave,struct,subprocess,json,hashlib
++import os,shutil,argparse
++parser=argparse.ArgumentParser(description="Make original CC0 Break QA loops in an explicitly selected output directory")
++parser.add_argument("output",type=Path)
++parser.add_argument("--ffmpeg",default=os.environ.get("FFMPEG") or shutil.which("ffmpeg"))
++args=parser.parse_args()
++if not args.ffmpeg:parser.error("Pass --ffmpeg with an existing FFmpeg binary")
++q=args.output.resolve()
++helper=Path.home()/".local/share/ssd-development/bin/ssd-qa-output"
++if helper.is_file():subprocess.run([str(helper),str(q)],check=True)
++else:q.mkdir(parents=True,exist_ok=True)
++rng=random.Random(303)
++manifest=[]
++for bars in range(1,5):
++ n=bars*2*44100;a=[]
++ for i in range(n):
++  t=i/44100;beat=t%.5;back=t%1
++  kick=.52*math.exp(-beat*35)*math.sin(2*math.pi*(58*beat+45*beat*math.exp(-beat*30)))
++  sn=.30*math.exp(-((back-.5)%1)*40)*(rng.random()*2-1)
++  hat=.07*math.exp(-(t%.25)*120)*(rng.random()*2-1)
++  a.append(int(max(-.95,min(.95,kick+sn+hat)) *32767))
++ for variant in ['aligned','offset','padding','trim']:
++  if variant=='aligned':v=a
++  elif variant=='offset':v=[0]*4410+a[:-4410]
++  elif variant=='padding':v=a+[0]*11025
++  else:v=a[4410:]
++  p=q/f'{bars}bar-{variant}.wav'
++  with wave.open(str(p),'wb') as f:f.setnchannels(1);f.setsampwidth(2);f.setframerate(44100);f.writeframes(struct.pack('<'+'h'*len(v),*v))
++  manifest.append(dict(file=p.name,bars=bars,variant=variant,frames=len(v),sha256=hashlib.sha256(p.read_bytes()).hexdigest()))
++ff=args.ffmpeg
++for suffix,codec in [('flac','flac'),('ogg','libvorbis'),('mp3','libmp3lame'),('aiff','pcm_s16be')]:
++ subprocess.run([ff,'-v','error','-y','-i',str(q/'2bar-aligned.wav'),'-c:a',codec,str(q/('2bar-aligned.'+suffix))],check=True)
++(q/'MANIFEST.json').write_text(json.dumps(dict(license='CC0-1.0',origin='Original deterministic synthetic drum fixtures; no third-party break recordings.',sources=manifest),indent=2)+'\n')
++print(len(manifest),'original loops and four extra audio formats')
 --- a/tools/web_bundle.py
 +++ b/tools/web_bundle.py
 @@ -21,7 +21,7 @@
@@ -9441,67 +10739,3 @@
  
      for rel in sorted(images):
          files["/img/" + rel] = (DOCS / "images" / rel).read_bytes()
---- /dev/null
-+++ b/src/rhythmer/shell/preset_index.h
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: AGPL-3.0-only
-+// Copyright (C) 2026 jazzy rhythmer
-+#pragma once
-+#include <cstdint>
-+#include <cstddef>
-+namespace rhythmer {
-+// A relative preset turn wraps; absolute pot positions remain bounded by their bindings.
-+inline unsigned preset_index(int64_t position, size_t count) {
-+    if(!count)return 0;
-+    const auto n=int64_t(count);return unsigned((position%n+n)%n);
-+}
-+}
---- a/src/rhythmer/shell/stage_jobs.cpp
-+++ b/src/rhythmer/shell/stage_jobs.cpp
-@@ -11,6 +11,8 @@
- #include "rhythmer/shell/stage_map.h"
- #include <algorithm>
- 
-+#include "rhythmer/shell/preset_index.h"
-+
- namespace rhythmer {
- 
- void Context::preset_turn(int at) {
-@@ -18,7 +20,7 @@
-     unsigned count = sound_list(track(), ui, list);
-     if (!count || !track().used()) return;
-     if (frozen_edit(UndoScope {UndoScope::Kind::Sound, uint8_t(ui.track % track_count), 0})) return; // freeze plan F2c
--    ui.preset_cursor = uint16_t(std::clamp(at, 0, int(count) - 1));
-+    ui.preset_cursor = uint16_t(preset_index(at, count));
-     ui.preset_due = std::max<uint32_t>(now + stage_preset_ms, 1);
- }
- 
-@@ -34,7 +36,7 @@
-     if (ui.preset_due && ui.presets_entry == t.plugin) at = ui.presets_cursor;
-     else for (size_t n = 0; n < programs.list.size(); ++n) if (programs.list[n].index == programs.current) at = int(n);
-     ui.presets_entry = t.plugin;
--    ui.presets_cursor = uint16_t(std::clamp(at + delta, 0, int(programs.list.size()) - 1));
-+    ui.presets_cursor = uint16_t(preset_index(int64_t(at) + delta, programs.list.size()));
-     ui.preset_due = std::max<uint32_t>(now + stage_preset_ms, 1);
- }
- 
---- a/src/rhythmer/pages/sounds_page.cpp
-+++ b/src/rhythmer/pages/sounds_page.cpp
-@@ -11,6 +11,8 @@
- #include "rhythmer/shell/sound_list.h"
- #include "rhythmer/ui/widgets.h"
- #include <cstdio>
-+
-+#include "rhythmer/shell/preset_index.h"
- 
- namespace rhythmer {
- namespace {
-@@ -56,7 +58,7 @@
-     std::array<uint16_t, max_listed> list {};
-     unsigned count = listed(c, list);
-     if (!count) return;
--    c.ui.sounds_cursor = uint16_t(std::clamp<int>(int(c.ui.sounds_cursor) + delta, 0, int(count) - 1));
-+    c.ui.sounds_cursor = uint16_t(preset_index(int64_t(c.ui.sounds_cursor) + delta, count));
- }
- 
- void push(Context& c) {

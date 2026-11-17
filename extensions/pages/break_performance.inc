@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+#include "rhythmer/pages/break_status.h"
 bool break_home(const Snapshot& s){return s.track().engine==EngineKind::Sampler&&s.track().break_bars;}
 bool break_home(Context& c){return c.track().engine==EngineKind::Sampler&&c.track().break_bars;}
 void break_performance(Paint& p,const Snapshot& s){
@@ -8,7 +9,7 @@ void break_performance(Paint& p,const Snapshot& s){
     const float x=zone::pad,y=zone::picture_y,w=zone::width-2*zone::pad;
     const char* titles[]={"CHOPS","ROLLS / HOLD PADS","SOURCE A / B","LOOP VARIATIONS","GRAIN / STRETCH","TRACK MIX"};
     p.text(juce::String(page+1)+" / 6   "+titles[page],x,y,w,16,plain(colour::text,type::small,Weight::Bold));
-    const char* hints[]={"Pads: chops / Hold affects LOOP only","Hold a pad / Release ends command","K1: CHOP or LOOP / K2: pattern hold","LOOP + Play / Hold OFF to vary","Hold P3 on ROLLS; wheel here","Track level / Pan / Send A"};
+    const char* hints[]={"CHOP: play slices / HOLD affects LOOP","Hold a pad / Release ends command","Load A: CHOPS B2 / Load B: B2 here","LOOP + Play / Hold OFF to vary","Hold P3 on ROLLS; wheel here","Track level / Pan / Send A"};
     p.text(hints[page],x,y+17,w,14,plain(colour::sec,type::small));
     if(page<2){
         const float cw=(w-9)/4,rh=24;
@@ -28,7 +29,8 @@ void break_performance(Paint& p,const Snapshot& s){
         p.text("PAD 3 / RETURN: straight playback",x,y+126,w,15,plain(colour::sec,type::small));
     }else{
         performance_art(p,s,"Break Engine","User loop",x,y+43,w,56,int(s.track().last_pad));
-        p.text(page==3?(s.track().break_perf[9]?"Select LOOP on SOURCE for variations":s.track().break_perf[4]?"PATTERN HOLD ON: variations locked":"Variation / Drift: next internal bar"):page==4?"Grain / Splice / Slow: stretched hits":"Wheel: page / Record + Play: capture",x,y+111,w,17,plain(colour::sec,type::small));
+        p.text(page==3?break_variation_status(s.track().break_perf[9],s.track().break_perf[4],s.playing,s.break_activity,s.track().break_perf[1],s.track().break_perf[2]):page==4?break_stretch_status(s.playing,s.break_activity):"Wheel: page / Record + Play: capture",x,y+111,w,17,plain(colour::sec,type::small));
+        if(page==3 || page==4)p.text(page==3?"Values can be prepared while inactive":"Grain needs STRETCH / not Pattern Hold",x,y+129,w,13,plain(colour::dim,type::small));
     }
 }
 void break_pad(Context& c,unsigned pad,uint8_t velocity,bool down){

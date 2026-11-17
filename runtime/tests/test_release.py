@@ -21,7 +21,12 @@ class ReleaseTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             binary = Path(temp) / "rhythmer"
             binary.write_bytes(b"\x7fELF not really")
-            return make_release.collect(binary, "v0.1.0-alpha.1", "0123456789ab")
+            stems = Path(temp) / "stems" # as tools/stems/build.py leaves it
+            (stems / "licenses").mkdir(parents=True)
+            (stems / "rhythmer-stems").write_bytes(b"\x7fELF nor this")
+            (stems / "spleeter-4stems.f16").write_bytes(b"MLST and no weights")
+            (stems / "licenses/README.txt").write_text("where its sources are\n")
+            return make_release.collect(binary, "v0.1.0-alpha.1", "0123456789ab", stems)
 
     def test_autorun_is_signed_and_starts_the_rhythmer_folder(self):
         files = self.collect()
@@ -50,6 +55,13 @@ class ReleaseTests(unittest.TestCase):
         files = self.collect()
         self.assertEqual({name.split("/")[0] for name in files}, {"autorun"})
         self.assertIn("autorun/rhythmer/licenses/LICENSE-AGPL-3.0.txt", files)
+
+    def test_the_stem_separator_ships_in_a_folder_of_its_own(self):
+        files = self.collect()
+        self.assertEqual(files["autorun/rhythmer/stems/rhythmer-stems"], b"\x7fELF nor this") # where Rhythmer looks for it
+        self.assertEqual(files["autorun/rhythmer/stems/spleeter-4stems.f16"], b"MLST and no weights") # its model beside it
+        self.assertIn("autorun/rhythmer/licenses/stems/README.txt", files)
+        self.assertNotIn("rhythmer-stems", files["autorun/rhythmer/SHA256SUMS"].decode()) # not among what sd-worker.sh copies into RAM
 
     def test_release_list_covers_every_file_and_is_signed(self):
         try:

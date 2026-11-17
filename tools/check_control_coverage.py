@@ -34,9 +34,9 @@ def check():
                          contract_sha256=hashlib.sha256(contract.read_bytes()).hexdigest(),
                          original_panel_keys=len(panel_keys),
                          hidden=[dict(key=p['key'],name=p['name']) for p in source if p['key'] in hidden],missing=[]))
-    assert len(rows)==20,'Unexpected native/source-view contract count'
+    assert len(rows)==22,'Unexpected native/source-view contract count'
     (WORK/'source-control-coverage.json').write_text(json.dumps(rows,indent=2)+'\n')
-    print('Control boundary: 20 source contracts; original panel keys present; native IDs/order stable; no missing keys')
+    print('Control boundary: 22 source contracts; original panel keys present; native IDs/order stable; no missing keys')
     return rows
 
 if __name__=='__main__':check()

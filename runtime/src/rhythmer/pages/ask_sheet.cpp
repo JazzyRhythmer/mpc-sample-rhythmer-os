@@ -9,6 +9,7 @@
 #include "rhythmer/engine/engine_info.h"
 #include "rhythmer/shell/ask.h"
 #include "rhythmer/shell/bindings.h"
+#include "rhythmer/shell/delete_jobs.h"
 #include "rhythmer/shell/step_edit.h"
 #include "rhythmer/shell/update.h"
 #include "rhythmer/ui/widgets.h"
@@ -30,7 +31,7 @@ void draw_ask_sheet(Paint& p, const Snapshot& s) {
     const auto& t = s.track();
     unsigned track = s.ui.track % track_count, playing = t.pattern % pattern_count;
     ConfirmSheet sheet;
-    juce::String verb = "ERASE", cancel = "CANCEL";
+    juce::String verb = "ERASE", cancel = "CANCEL", middle; // middle: B2, a second way to do it (New project's EMPTY)
     Icon verb_glyph = Icon::Trash;
     juce::Colour accent = colour::rec; // the verb's: red for a loss
     const juce::String undo_line = "Undo brings them back.";
@@ -110,13 +111,14 @@ void draw_ask_sheet(Paint& p, const Snapshot& s) {
         else if (s.ui.ask_target == 2) sheet.lines = {"This project was never saved.", "Its changes are lost."};
         else sheet.lines = {name + " has nothing unsaved.", ""};
         verb = "NEW"; verb_glyph = Icon::Check;
+        middle = "EMPTY"; // B3: with the MPC's factory kit on track 1; B2: an empty kit
         break;
     }
     case Ask::TakeCardBack:
         sheet.icon = Icon::Card;
-        sheet.title = "Take the card back?";
-        sheet.lines = {"The computer has not ejected it.", "Files being written may break."};
-        verb = "TAKE"; verb_glyph = Icon::Check;
+        sheet.title = "Eject anyway?";
+        sheet.lines = {"The card is still mounted.", "Files being written may break."};
+        verb = "EJECT"; verb_glyph = Icon::Check;
         break;
     case Ask::ClearLoop: {
         unsigned loop = unsigned(s.ui.ask_target) % 4;
@@ -142,6 +144,45 @@ void draw_ask_sheet(Paint& p, const Snapshot& s) {
         sheet.chip_colour = colour::sec;
         verb = "INSTALL"; verb_glyph = Icon::Check; cancel = "LATER";
         break;
+    case Ask::DeleteFile: { // Erase in a browser (shell/delete_jobs.h): a file, a folder, a program, a plug-in
+        const auto what = DeleteWhat(s.ui.ask_target);
+        const bool plugin = what == DeleteWhat::Plugin || what == DeleteWhat::PluginFolder;
+        sheet.icon = Icon::Trash;
+        sheet.title = "Delete from the card?";
+        sheet.lines = {what == DeleteWhat::Folder || what == DeleteWhat::PluginFolder ? "The folder and all in it go."
+                       : what == DeleteWhat::Program ? "The program and its samples go."
+                       : plugin ? "The plug-in goes." : "The file goes.",
+                       "Undo can't bring it back."};
+        sheet.chip = juce::String::fromUTF8(s.ui.ask_name.data()).toUpperCase();
+        sheet.chip_colour = colour::sec;
+        verb = "DELETE";
+        break;
+    }
+    case Ask::CaptureScene: { // Scenes' CAPTURE onto a column with notes (shell/scene_jobs.cpp)
+        unsigned column = unsigned(s.ui.ask_target) % pattern_count, replaced = 0;
+        for (unsigned t = 0; t < track_count; ++t) {
+            if (!s.project.tracks[t].used() || s.playing_patterns[t] % pattern_count == column) continue;
+            if (s.sketches[t][column].notes || s.sketches[t][column].moves) ++replaced;
+        }
+        sheet.icon = Icon::Pattern;
+        sheet.title = "Replace " + count_of(replaced, "pattern", "patterns") + " in SEQ " + juce::String(column + 1) + "?";
+        sheet.lines = {"They get the patterns playing now.", undo_line};
+        sheet.chip = "SEQ " + juce::String(column + 1);
+        sheet.chip_colour = colour_of(s);
+        sheet.undo = true;
+        verb = "REPLACE"; verb_glyph = Icon::Swap;
+        break;
+    }
+    case Ask::ReplacePlugin: { // a picked plug-in over one in use (shell/plugin_jobs.cpp)
+        sheet.icon = Icon::Plug;
+        sheet.title = "Replace " + juce::String::fromUTF8(s.ui.ask_name.data()) + "?";
+        bool instrument = s.ui.plugin_target == UiState::PluginTarget::Instrument;
+        sheet.lines = instrument ? std::array<juce::String,2>{"Patterns stay.", "Undo restores the previous sound."} : std::array<juce::String,2>{"Its sound and settings go.", "Undo can't bring them back."};
+        sheet.chip = instrument ? "TRACK " + juce::String(track + 1) : juce::String("EFFECT");
+        sheet.chip_colour = colour_of(s);
+        verb = "REPLACE"; verb_glyph = Icon::Swap;
+        break;
+    }
     case Ask::Unfreeze: { // freeze plan F2c: an edit of a frozen track
         unsigned which = unsigned(s.ui.ask_target) % track_count;
         const bool deep = s.freeze[which].state == FreezeState::Deep; // freeze plan F2d: thawed first
@@ -157,6 +198,12 @@ void draw_ask_sheet(Paint& p, const Snapshot& s) {
         verb = "UNFREEZE"; verb_glyph = Icon::Snow; accent = colour::ice;
         break;
     }
+    case Ask::BreakLength:
+        sheet.title="Replace A / " + juce::String(s.ui.break_job_bars) + " bars?";
+        sheet.lines={"Patterns and lengths stay. B is cleared.", "Undo restores the previous sources."};
+        sheet.chip="TRACK " + juce::String(s.ui.ask_target+1);
+        sheet.chip_colour=colour_of(s);sheet.undo=true;
+        sheet.icon=Icon::Wav;verb="LOAD A";verb_glyph=Icon::Wav;break;
     default: return;
     }
 
@@ -166,7 +213,7 @@ void draw_ask_sheet(Paint& p, const Snapshot& s) {
         p.fill(x + 8, zone::soft_y + 2, column - 16, zone::soft_h - 4, colour::raised, 4);
     }
     bool on_verb = s.ui.ask_pick == 2; // the wheel's key, barred; Push presses it
-    SoftKeys keys {{cancel, "", verb}, on_verb ? 2 : 0, on_verb ? accent : colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::None}};
+    SoftKeys keys {{cancel, middle, verb}, on_verb ? 2 : 0, on_verb ? accent : colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::None}};
     keys.glyphs[2] = verb_glyph;
     keys.tints[2] = accent;
     soft_keys(p, keys);

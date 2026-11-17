@@ -7,6 +7,7 @@
 #include "rhythmer/engine/dsp.h"
 #include "rhythmer/engine/engine_host.h"
 #include "rhythmer/plugin/clap_instance.h"
+#include "rhythmer/plugin/idle_gate.h"
 #include "rhythmer/plugin/plugin_runner.h"
 #include "rhythmer/plugin/plugin_support.h"
 #include "rhythmer/plugin/rate_bridge.h"
@@ -244,6 +245,7 @@ public:
         auto* bypass = instance->getBypassParameter(); // the slot's own Bypass does that job
         for (auto& p : instance->getParameters()) if (!hidden(*p) && p != bypass) shown.push_back(p->getParameterIndex());
         instance->setPlayHead(&clock);
+        idle.reset(is_instrument, this->plugin_rate);
     }
     ~PluginHandle() override {
         if (!instance) return;
@@ -254,6 +256,7 @@ public:
     void midi(uint8_t status, uint8_t data1, uint8_t data2) override {
         if ((status & 0xf0) == 0x90 && data2) cut_output = false;
         if (pending_count < pending.size()) pending[pending_count++] = {status, data1, data2};
+        idle.midi(status, data1, data2);
     }
     void silence() override {
         cut_output = true;
@@ -287,6 +290,14 @@ public:
         if (!frames) return;
         auto t0 = std::chrono::steady_clock::now();
         follow_clock(frames);
+        // Asleep (plugin/idle_gate.h): not run at all. An effect's input is as quiet as its output; it gives silence.
+        bool sleeping = !warming && idle.asleep(pending_count > 0, now.playing, instrument ? nullptr : left, instrument ? nullptr : right, frames);
+        asleep.store(sleeping, std::memory_order_relaxed);
+        if (sleeping) {
+            if (!instrument) { std::fill(left, left + frames, 0.0f); std::fill(right, right + frames, 0.0f); }
+            load.store(load.load(std::memory_order_relaxed) * 0.95f, std::memory_order_relaxed);
+            return;
+        }
         if (bridge.converting()) bridge.render(left, right, frames, [&](float* l, float* r, unsigned n) { run(l, r, n, false); });
         else run(left, right, frames, instrument);
         double took = std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count();
@@ -321,6 +332,7 @@ public:
         }
         const float* l = pointers[0];
         const float* r = outs >= 2 ? pointers[1] : pointers[0];
+        idle.heard(l, r, frames);
         auto safe = [](float x) { return std::isfinite(x) ? std::clamp(x, -8.0f, 8.0f) : 0.0f; };
         if (add) for (unsigned f = 0; f < frames; ++f) { left[f] += safe(l[f]); right[f] += safe(r[f]); }
         else for (unsigned f = 0; f < frames; ++f) { left[f] = safe(l[f]); right[f] = safe(r[f]); }
@@ -335,6 +347,7 @@ public:
     bool nam = false;                    // Neural Amp Modeler: shorter card names (plugin/nam.h)
     std::atomic<bool> transport {true};  // TRANSPORT: it hears Play and Stop (off: always stopped), set by the rack
     std::atomic<float> load {0};         // share of a block's time
+    std::atomic<bool> asleep {false};    // its last render skipped (plugin/idle_gate.h)
     std::string stage;                   // the RAM copy it runs from, removed with it
     PluginFormat format = PluginFormat::Vst3;
     PluginProgramList programs;          // its named programs, as it listed them on opening (a CLAP one's: once found)
@@ -385,6 +398,7 @@ private:
     double per_frame = 0;      // and how far a frame at the plug-in's rate moves it
     bool warming = false;
     PluginRateBridge bridge;
+    IdleGate idle;             // when it may sleep
     std::array<Midi, 512> pending {};
     unsigned pending_count = 0;
     int channels = 2;
@@ -612,7 +626,7 @@ void PluginRack::panel(unsigned entry, unsigned row, PluginPanel& out) const {
     out.instrument = h->instrument;
     const auto snapshot_revision=sound_rack_revision(h->instance.get());
     const int sound_controls=sound_rack_parameter_count(h->instance.get());
-    if(sound_controls>=0) {h->shown.resize(size_t(sound_controls));std::iota(h->shown.begin(),h->shown.end(),0);}
+    if(sound_controls>=0) h->shown=sound_rack_edit_order(h->instance.get());
     put(out.preset,sizeof(out.preset),sound_rack_preset_name(h->instance.get()).toStdString());
     if(!out.preset[0]&&h->instance->getNumPrograms()>0)put(out.preset,sizeof(out.preset),h->instance->getProgramName(h->instance->getCurrentProgram()).toStdString());
     out.layout_revision=snapshot_revision;
@@ -625,6 +639,7 @@ void PluginRack::panel(unsigned entry, unsigned row, PluginPanel& out) const {
     out.programs = uint16_t(std::min<size_t>(h->programs.size(), 0xffff));
     const auto& params = h->instance->getParameters();
     auto read = [&](size_t at, PluginPanelParam& card) {
+        if(at>=h->shown.size()||h->shown[at]<0)return;
         auto* p = params[h->shown[at]];
         card.used = true; card.shown=int16_t(at);
         std::string name = p->getName(int(sizeof(card.name) - 1)).trim().toStdString();
@@ -637,6 +652,7 @@ void PluginRack::panel(unsigned entry, unsigned row, PluginPanel& out) const {
         card.steps = uint16_t(steps > 1 && steps < plugin_param_max ? steps : 0);
     };
     auto quick=sound_rack_quick_parameters(h->instance.get());
+    if(sound_controls>=0)for(auto& index:quick){auto found=std::find(h->shown.begin(),h->shown.end(),index);index=index<0||found==h->shown.end()?-1:int(found-h->shown.begin());}
     if(sound_controls<0){
         const std::array<std::vector<std::string>,3> preferred{{{"cutoff","filter cutoff","vcf cutoff","lpf cut"},{"resonance","filter resonance","vcf reso","lpf peak"},{"filter env","vcf env","timbre","tone","output level","volume"}}};
         for(unsigned k=0;k<3;++k)for(const auto& wanted:preferred[k]){int found=-1,count=0;for(unsigned at=0;at<h->shown.size();++at)if(params[h->shown[at]]->getName(64).trim().toLowerCase().toStdString()==wanted){found=int(at);++count;}if(count==1&&std::find(quick.begin(),quick.end(),found)==quick.end()){quick[k]=found;break;}}
@@ -669,7 +685,7 @@ void PluginRack::set_param(unsigned entry, unsigned shown_index, int value, uint
     if (entry >= max_plugins) return;
     std::lock_guard<std::mutex> held(lock);
     auto* h = entries[entry].live;
-    if (!h || shown_index >= h->shown.size()) return;
+    if (!h || shown_index >= h->shown.size() || h->shown[shown_index]<0) return;
     auto* p = h->instance->getParameters()[h->shown[shown_index]];
     float v = std::clamp(value, 0, plugin_param_max) / float(plugin_param_max);
     if(revision&&is_sound_rack(h->instance.get()))sound_rack_set_parameter_checked(h->instance.get(),int(h->shown[shown_index]),v,revision);

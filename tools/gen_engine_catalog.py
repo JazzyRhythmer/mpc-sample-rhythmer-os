@@ -12,13 +12,15 @@ for e in c['engines']:
  if p:
   m=re.search(r',(\d+),(\d+),',p);lo,hi=map(int,m.groups()) if m else (lo,hi)
  roles=['kick','snare','hat','percussion'] if drums else ['acid'] if acid else ['bass','melody'] if mono else ['bass','chords','melody']
+ if e.get('gen_roles'):roles=e['gen_roles']
  choices=[]
  for words in [('bass','sub'),('pad','chord','string'),('lead','pluck','key'),('lead','bell','key'),('kick','bass drum'),('snare',),('closed hat','closed','hi hat','hihat'),('perc','tom','rim','noise')]:
-  choices.append(next((i for i,s in enumerate(e['sounds']) if any(w in s['name'].lower() for w in words)),-1 if drums and words in [('snare',),('closed hat','closed','hi hat','hihat')] else 0))
+  choices.append(next((i for i,s in enumerate(e['sounds']) if any(w in (s['name']+' '+' '.join(s.get('gen_tags',[]))).lower() for w in words)),-1 if drums and words in [('snare',),('closed hat','closed','hi hat','hihat')] else 0))
+ if e.get('gen_roles') and 'bass' not in e['gen_roles']:choices[0]=-1
  if e.get('selection'):choices=[e['selection'].index(i) if i in e['selection'] else 0 for i in choices]
  recipes=[]
  for words in recipe_words:
-  match=next((i for i,sound in enumerate(e['sounds']) if sound['name'].lower()!='init' and any(word in sound['name'].lower() for word in words)),-1)
+  match=next((i for i,sound in enumerate(e['sounds']) if sound['name'].lower()!='init' and any(word in (sound['name']+' '+' '.join(sound.get('gen_tags',[]))).lower() for word in words)),-1)
   if match>=0 and e.get('selection'):match=e['selection'].index(match) if match in e['selection'] else -1
   recipes.append(match)
  rows.append(dict(recipes=recipes,programs=choices,folder=folder,name=e['name'],drums=drums,mono=mono,acid=acid,low=lo,high=hi,roles=roles))

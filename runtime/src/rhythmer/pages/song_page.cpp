@@ -60,6 +60,13 @@ void draw_clip(Paint& p, const Snapshot& s, const Clip& clip, float y, unsigned 
     p.g.reduceClipRegion(juce::Rectangle<int>(int(left), int(y), int(right - left + 1), int(lane_h)));
     p.fill(cx + 0.5f, y, cw - 1, lane_h, selected ? c : c.withAlpha(clip.muted ? 0.12f : 0.38f), 2.5f);
     const auto& sketch = s.sketches[clip.track][clip.pattern];
+    if (sketch.audio.used()) { // freeze plan F3: an audio track's take, from the top of each pass of its pattern
+        const unsigned bar = std::max(1u, s.project.bar_ticks());
+        const float pass = bw * std::max<uint32_t>(sketch.length, 1) / bar;
+        const float take = bw * float(frames_to_ticks(sketch.audio.frames, sketch.audio.warp ? sketch.audio.tempo : s.tempo)) / bar;
+        for (float px = cx; px < cx + cw - 1; px += std::max(pass, 2.0f))
+            region_wave(p, s, sketch.audio, px + 1, y + 1, std::min({take, pass, cx + cw - px}) - 2, lane_h - 2, selected ? colour::bg.withAlpha(0.55f) : c.withAlpha(0.9f));
+    }
     // Its notes in small: the pattern repeated across the clip.
     // In sixteenths: the sketch keeps the first note of each.
     unsigned bar = s.project.bar_ticks(), length = std::max<unsigned>((sketch.length + sixteenth_ticks - 1) / sixteenth_ticks, 1);
@@ -81,6 +88,10 @@ void draw_clip(Paint& p, const Snapshot& s, const Clip& clip, float y, unsigned 
     float repeat = length * step_w;
     if (repeat >= 4)
         for (float rx = cx + repeat; rx < cx + cw - 1; rx += repeat) p.fill(rx, y, 0.5f, lane_h, colour::bg);
+    if (sketch.audio.used()) { // the name on a backing, clear of the wave (freeze plan F3)
+        float lw = p.width("P" + juce::String(clip.pattern + 1), plain(c, type::small, Weight::Bold)) + 5;
+        p.fill(cx + 1, y + 1, lw, lane_h - 2, selected ? c : colour::bg.interpolatedWith(c, clip.muted ? 0.12f : 0.38f), 2);
+    }
     p.text("P" + juce::String(clip.pattern + 1), cx + 3, y, 24, lane_h, plain(selected ? colour::bg : c, type::small, Weight::Bold));
     if (selected) p.ring(cx + 0.5f, y, cw - 1, lane_h, colour::text, 2.5f);
     p.g.restoreState();
@@ -108,16 +119,18 @@ void draw(Paint& p, const Snapshot& s) {
 
     if (s.ui.song_export) {
         // Export (B1), as on the MPC: B2 an audio mixdown, B3 a new pattern; a tile under each says what it makes.
-        // Roadmap P4: the wheel picks what B2 makes: the mixdown as float, 24 or 16 bits, the stems, or a MIDI file.
-        static const char* const b2[] {"MIXDOWN", "MIXDOWN", "MIXDOWN", "STEMS", "MIDI FILE"};
-        unsigned kind = s.ui.export_kind % 5;
+        // Roadmap P4: the wheel picks what B2 makes: the mixdown as float, 24 or 16 bits, the stems, a MIDI file, or
+        // an MPC 3 project.
+        static const char* const b2[] {"MIXDOWN", "MIXDOWN", "MIXDOWN", "STEMS", "MIDI FILE", "MPC 3"};
+        unsigned kind = s.ui.export_kind % 6;
         SoftKeys keys {{"CANCEL", b2[kind], "PATTERN"}, -1, colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::None}};
-        keys.glyphs = {Icon::None, kind == 4 ? Icon::Note : kind == 3 ? Icon::Layers : Icon::Wav, Icon::Pattern};
+        const Icon made = kind == 5 ? Icon::Mpc : kind == 4 ? Icon::Note : kind == 3 ? Icon::Layers : Icon::Wav;
+        keys.glyphs = {Icon::None, made, Icon::Pattern};
         frame(p, s, keys, h);
         p.dim_zone(zone::picture_y, zone::picture_h, 0.86f);
         p.dim_zone(zone::knobs_y, zone::knobs_h);
         unsigned bars = song.length(), seconds = unsigned(song.tempo.seconds(bars, double(s.project.bar_ticks()) / ticks_per_quarter, std::max(300u, unsigned(s.project.tempo))) + 0.5);
-        if (!bars && kind != 4) { // nothing to export yet (a MIDI file takes the patterns playing)
+        if (!bars && kind < 4) { // nothing to export yet (a MIDI file and an MPC 3 project take the patterns)
             icon(p, Icon::Pattern, zone::width / 2.0f - 14, zone::picture_y + 44, 28, colour::amber, 1.4f);
             p.text("EMPTY SONG", 0, zone::picture_y + 80, zone::width, 14, caps_text(colour::amber), juce::Justification::centred);
             return;
@@ -131,9 +144,10 @@ void draw(Paint& p, const Snapshot& s) {
         juce::String length = juce::String(seconds / 60) + ":" + juce::String(seconds % 60).paddedLeft('0', 2);
         unsigned stems = 0;
         for (const auto& tr : s.project.tracks) stems += tr.used();
-        static const char* const formats[] {"32-BIT FLOAT", "24-BIT DITHER", "16-BIT DITHER", "", "SMF 96 PPQ"};
+        static const char* const formats[] {"32-BIT FLOAT", "24-BIT DITHER", "16-BIT DITHER", "", "SMF 96 PPQ", "PROJECT"};
         juce::String sub = kind == 3 ? juce::String(stems) + " STEMS" : juce::String(formats[kind]);
-        key_tiles(p, {KeyTile {}, value_tile(kind == 4 ? Icon::Note : kind == 3 ? Icon::Layers : Icon::Wav, bars ? length : juce::String("P"), sub, true), // the wheel picks
+        juce::String value = kind == 5 ? juce::String(stems) + (stems == 1 ? " TRACK" : " TRACKS") : bars ? length : juce::String("P");
+        key_tiles(p, {KeyTile {}, value_tile(made, value, sub, true), // the wheel picks
                       value_tile(Icon::Pattern, free < pattern_count ? "P" + juce::String(free + 1) : juce::String("FULL"),
                                  juce::String(bars) + (bars == 1 ? " BAR" : " BARS"))});
         return;
@@ -311,7 +325,7 @@ void pad(Context& c, unsigned pad, uint8_t, bool down) {
 }
 
 void wheel(Context& c, int delta) {
-    if (c.ui.song_export) { c.ui.export_kind = uint8_t(std::clamp(int(c.ui.export_kind) + delta, 0, 4)); return; } // what B2 makes (roadmap P4)
+    if (c.ui.song_export) { c.ui.export_kind = uint8_t(std::clamp(int(c.ui.export_kind) + delta, 0, 5)); return; } // what B2 makes (roadmap P4)
     c.ui.song_cursor = uint16_t(std::clamp<int>(c.ui.song_cursor + delta, 0, int(song_bars) - 1));
     c.ui.song_view = uint16_t(view_of(c.ui));
 }

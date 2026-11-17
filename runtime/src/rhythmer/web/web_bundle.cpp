@@ -5,7 +5,7 @@
 // that many bytes. The assembler reads it from the build folder (make runs at
 // the repository root).
 #include "rhythmer/web/web_bundle.h"
-#include "rhythmer/ui/rubik_data.h"
+#include "rhythmer/ui/font_data.h"
 #include <cstdint>
 #include <cstring>
 #include <map>

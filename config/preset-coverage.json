@@ -1,16 +1,16 @@
 {
-  "version": "0.4.0-beta.3",
-  "source_views": 25,
-  "track_picker_entries": 20,
+  "version": "0.2.0",
+  "source_views": 27,
+  "track_picker_entries": 22,
   "factory_kits": 36,
-  "exposed_sounds": 2667,
+  "exposed_sounds": 2888,
   "missing_source_names": 0,
   "explicit_exclusions": 7,
   "excluded_factory_presets": 4,
   "excluded_input_only_models": 3,
   "excluded_external_bank_assets": 118,
   "excluded_external_sound_selections": 1019,
-  "original_source_selections": 2616,
+  "original_source_selections": 2845,
   "rhythmer_authored_selections": 43,
   "policy": "Original bank names/data retained except 118 excluded external assets. User-authorized Rhythmer presets are separately identified: 15 Prophet sounds and four Elixir kits / 28 voices, made from GPL Init with independent edits. No hidden envelope overrides. This report is not blanket public distribution clearance.",
   "engines": [
@@ -668,7 +668,7 @@
       "bank_assets": [
         {
           "file": "firmware/src/eng_fmini_presets.h",
-          "sha256": "e1004dfafac4b43563b522bcda9076f160dc090c8990e3604187bde3426fac9c"
+          "sha256": "bf49ac8904fd4cc1286df43a09c2cc8fb6bf1bc623e0005a862527a810242ffe"
         },
         {
           "file": "firmware/src/upreset.c",
@@ -677,6 +677,10 @@
         {
           "file": "tools/gen_fm6_patches.py",
           "sha256": "3956c375a86f63692f7ee55a4610362f428d9c001d03763b5183e9e37614d9f4"
+        },
+        {
+          "file": "tools/gen_fmini_presets.py",
+          "sha256": "a6c9715fb11f48ee72dd4ad8d4d12e5712a716b6766bf48b4505a46699894990"
         }
       ],
       "excluded": [],
@@ -1436,6 +1440,78 @@
           "reason": "Requires original sample assets and sample model, absent from synthesis-only port"
         }
       ],
+      "missing": []
+    },
+    {
+      "engine": "Frodhes",
+      "folder": "RHYTHMER - FM1 - frodhes - Frodhes",
+      "variant": "",
+      "source_slots": 57,
+      "exposed_sounds": 57,
+      "basis": "Pinned original factory table, exact source order and names",
+      "bank_assets": [
+        {
+          "file": "firmware/src/presets.c",
+          "sha256": "1e8bae56136f98aa00e416ae0da4e1989ce24243fdc16a6afd8c2f510833bea5"
+        },
+        {
+          "file": "move/move_presets.h",
+          "sha256": "e3cb33fca2cef9edac19320e2d41b0eccabb9ad64f5f8e7170cf55d4879a4055"
+        },
+        {
+          "file": "move/presets/new_variants.json",
+          "sha256": "3b2bfdbabbef48642d6f87f07fbb086000b5da70d0ebfbe36191e60853950eaf"
+        },
+        {
+          "file": "move/presets/proposed_records.txt",
+          "sha256": "b5c085497c905fe2f7e248701f466e97e5e27474599acd60a0c61f2e27fa50d5"
+        },
+        {
+          "file": "move/presets/variants.json",
+          "sha256": "031a8238eb27fd633d43589d1a18feecdd6e53a530f459f239f691b6d865f4ea"
+        },
+        {
+          "file": "tests/py/test_move_presets.py",
+          "sha256": "f8f20bdbd5f73a239cbd9830512acaa8e4e8adc8c12c5f0b0c542efa2da84872"
+        },
+        {
+          "file": "tests/py/test_presets_cpu.py",
+          "sha256": "3dd2f71f7a68394503e507667bd645b3a228dbcd15ac705a15325395897fb372"
+        },
+        {
+          "file": "tests/scripts/ui_presets.txt",
+          "sha256": "7980d467cc2d8e8ccff1f01f452ae81e06d1c9e0d0daaa17fa1506be8d3f4a84"
+        },
+        {
+          "file": "tools/gen_move_presets.py",
+          "sha256": "242f0ff66c60d72f51fda0726fd1867a8cba87b86998639a50f1d6b023b8de6d"
+        },
+        {
+          "file": "tools/preset_lists.py",
+          "sha256": "937dc780b86f4f4013c40a24d018a585a830f47466e45a87f1d9600a122562eb"
+        },
+        {
+          "file": "tools/preset_review.py",
+          "sha256": "c1618564f3c9a8615a7196d316d5b567811cee888c9aa56a6a9d6dcf1127cbab"
+        }
+      ],
+      "excluded": [],
+      "missing": []
+    },
+    {
+      "engine": "Tenebrae",
+      "folder": "RHYTHMER - Move - tenebrae - Tenebrae",
+      "variant": "",
+      "source_slots": 164,
+      "exposed_sounds": 164,
+      "basis": "Pinned original factory table, exact source order and names",
+      "bank_assets": [
+        {
+          "file": "src/dsp/tenebrae_presets.h",
+          "sha256": "358471a4267ecaf795658a1f9276bdcb96043a5cb60bd7d539c3e0af23cc5868"
+        }
+      ],
+      "excluded": [],
       "missing": []
     }
   ]

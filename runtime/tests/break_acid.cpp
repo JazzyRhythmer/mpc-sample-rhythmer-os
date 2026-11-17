@@ -38,6 +38,18 @@ int main(){
         }
         assert(energy>1);m.stop();float l[64],r[64];m.render(l,r,64,44100);for(float v:l)assert(v==0);
     }
+    // Streamed Breaks never touch unmapped PCM from the audio task. Once the
+    // service task publishes the immutable cache, output matches resident PCM.
+    SampleData streamed; streamed.frames=loop.frames; streamed.stream=std::make_shared<ZonePart>();
+    { BreakManipulator wait; wait.configure(2,0);wait.sources(&streamed,nullptr);wait.note(36,127);
+      float l[128]{},r[128]{};wait.render(l,r,128,44100);for(float v:l)assert(v==0); }
+    streamed.break_cache->mono=loop.left;streamed.break_cache->ready.store(true,std::memory_order_release);
+    for(unsigned rate:{44100u,48000u,96000u}) {
+        BreakManipulator resident,cached;resident.configure(2,0);cached.configure(2,0);
+        resident.sources(&loop,nullptr);cached.sources(&streamed,nullptr);resident.note(36,127);cached.note(36,127);
+        for(unsigned n=0;n<200;++n){float a[128],b[128],ar[128],br[128];resident.render(a,ar,128,rate);cached.render(b,br,128,rate);
+            for(unsigned i=0;i<128;++i)assert(a[i]==b[i]);}
+    }
     // Different-length A/B buffers and device rates, independent per-track DSP.
     SampleData b=loop;b.frames=32000;b.left.resize(b.frames);
     for(unsigned bars=1;bars<=4;bars++)for(unsigned rate:{44100u,48000u,96000u}){

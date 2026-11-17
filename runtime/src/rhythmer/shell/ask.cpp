@@ -3,7 +3,9 @@
 #include "rhythmer/shell/ask.h"
 #include "rhythmer/shell/bindings.h"
 #include "rhythmer/shell/context.h"
+#include "rhythmer/shell/delete_jobs.h"
 #include "rhythmer/shell/looper_jobs.h"
+#include "rhythmer/plugin/plugin_rack.h"
 #include "rhythmer/shell/project_store.h"
 #include "rhythmer/shell/step_edit.h"
 #include "rhythmer/shell/track_copy.h"
@@ -46,7 +48,13 @@ bool ask_button(Context& c, SurfaceButton button) {
     }
     if (button == B::TopLeft) { // Cancel (LATER on the update question: asked again when the card is returned)
         if (ui.ask == UiState::Ask::InstallUpdate && c.updates) c.updates->decline();
+        if(ui.ask==UiState::Ask::BreakLength){ui.break_pending=-1;ui.break_job_track=-1;}
         ui.ask = UiState::Ask::None;
+        return true;
+    }
+    if (button == B::TopMiddle && ui.ask == UiState::Ask::NewProject) { // EMPTY: a new project without the factory kit
+        ui.ask = UiState::Ask::None;
+        c.start_new_project(false);
         return true;
     }
     if (button != B::TopRight) return true;                                  // the rest wait
@@ -64,7 +72,15 @@ bool ask_button(Context& c, SurfaceButton button) {
         c.notice("P" + std::to_string(n + 1) + " cleared");
     } else if (kind == UiState::Ask::ErasePunches) c.erase_punches(); // Erase + KEEP on Pad FX (pad-fx C)
     else if (kind == UiState::Ask::ClearTrack) clear_track(c, unsigned(ui.ask_target)); // Pad Bank held + Erase + pad
+    else if (kind == UiState::Ask::DeleteFile) delete_asked(c);    // shell/delete_jobs.h: Erase in a browser
+    else if (kind == UiState::Ask::CaptureScene) c.capture_scene(unsigned(ui.ask_target), true); // Scenes' CAPTURE
+    else if (kind == UiState::Ask::ReplacePlugin && c.plugins) { // the picker's row asked about, picked again
+        auto view = c.plugins->view();
+        if (unsigned(ui.ask_target) < view.files.size()) { ui.plugin_replace = true; c.choose_plugin(view.files[size_t(ui.ask_target)]); }
+        ui.plugin_replace = false;
+    }
     else if (kind == UiState::Ask::InstallUpdate) begin_update(c); // shell/update.h
+    else if (kind == UiState::Ask::BreakLength) c.gen_break_begin();
     else if (kind == UiState::Ask::Unfreeze) { // freeze plan F2c: live again at once; its prints stay for the next freeze
         unsigned t = unsigned(ui.ask_target) % track_count;
         bool thaw = c.deep(t) && !((c.deep_hold >> t) & 1); // freeze plan F2d: its plug-ins load first
@@ -81,14 +97,18 @@ std::string ask_title(const Project& project, const UiState& ui) {
     case UiState::Ask::EraseLane: return "Erase " + lane_name(t, int(ui.ask_target), &project) + " motion?";
     case UiState::Ask::ResetSettings: return "Reset factory settings?";
     case UiState::Ask::NewProject: return "New project?";
-    case UiState::Ask::TakeCardBack: return "Take the card back anyway?";
+    case UiState::Ask::TakeCardBack: return "Eject anyway?";
     case UiState::Ask::ClearLoop: return "Clear L" + std::to_string(ui.ask_target + 1) + "?";
     case UiState::Ask::LooperOff: return "Turn the Looper off?";
     case UiState::Ask::ClearPattern: return "Clear P" + std::to_string(ui.ask_target % pattern_count + 1) + " of track " + std::to_string(ui.track % track_count + 1) + "?";
     case UiState::Ask::ErasePunches: return "Erase kept punches?";
     case UiState::Ask::ClearTrack: return std::string(ui.page==PageId::TrackActions?"Delete track ":"Clear track ") + std::to_string(ui.ask_target % track_count + 1) + "?";
     case UiState::Ask::InstallUpdate: return std::string("Update to ") + ui.update.version + "?";
+    case UiState::Ask::BreakLength: return "Replace A with " + std::to_string(ui.break_job_bars) + " bars?";
     case UiState::Ask::Unfreeze: return "Unfreeze track " + std::to_string(ui.ask_target % track_count + 1) + "?";
+    case UiState::Ask::DeleteFile: return std::string("Delete ") + ui.ask_name.data() + "?";
+    case UiState::Ask::ReplacePlugin: return std::string("Replace ") + ui.ask_name.data() + "?";
+    case UiState::Ask::CaptureScene: return "Capture into SEQ " + std::to_string(ui.ask_target % pattern_count + 1) + "?";
     default: return {};
     }
 }
@@ -116,7 +136,10 @@ std::string ask_detail(const Project& project, const UiState& ui, const Pattern&
     if (ui.ask == UiState::Ask::ClearPattern) return "Its notes and motion go; Shift + Minus brings them back.";
     if (ui.ask == UiState::Ask::ClearTrack) return "Its sound and patterns go; Shift + Minus brings them back.";
     if (ui.ask == UiState::Ask::InstallUpdate) return "The project is saved first, then Rhythmer restarts.";
+    if (ui.ask == UiState::Ask::BreakLength) return "Patterns keep their length. B is cleared; Undo restores both.";
     if (ui.ask == UiState::Ask::Unfreeze) return "Its sound plays live again; prints stay until what made them changes.";
+    if (ui.ask == UiState::Ask::DeleteFile) return "It goes from the card. Undo can't bring it back.";
+    if (ui.ask == UiState::Ask::ReplacePlugin) return ui.plugin_target == UiState::PluginTarget::Instrument ? "Patterns stay. Undo restores the previous sound." : "Its sound and settings go. Undo can't bring them back.";
     if (ui.ask == UiState::Ask::NewProject)
         return ui.ask_target == 1 ? "Changes are saved first." : ui.ask_target == 2 ? "Unsaved changes are lost." : "The open project closes.";
     return {};

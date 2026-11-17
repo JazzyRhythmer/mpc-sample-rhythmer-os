@@ -94,7 +94,7 @@ void Context::gen8_action(unsigned action) {
     static std::mutex fm1_lock;std::lock_guard<std::mutex> fm1_guard(fm1_lock);
     auto fm1=std::make_unique<Fm1GenResult>();
     // Original FM-1 generator owns the seed streams, harmony and role choices.
-    if(action==9){if(track().engine!=EngineKind::Sampler||!track().break_bars){notice("Select Break Engine");return;}ui.break_load_b=false;ui.break_browse=true;ui.break_track=ui.track;open(PageId::Samples);notice("K1: loop bars / Push: load");return;}
+    if(action==9){if(track().engine!=EngineKind::Sampler||!track().break_bars){notice("Select Break Engine");return;}ui.break_load_b=false;ui.break_browse=true;ui.break_track=ui.track;ui.break_bars=track().break_bars;open(PageId::Samples);notice("K1: loop bars / Push: load");return;}
     if(action>=4) {
         if(track().engine!=EngineKind::Sampler||!track().break_bars){notice("BREAK: select a sampler track");return;}
         BreakMap map;map.bars=track().break_bars?track().break_bars:2;
@@ -194,6 +194,9 @@ void Context::gen8_action(unsigned action) {
             if(!ready){++skipped;continue;}
             made=break_generate(p,action%2?BreakAction::Mutate:BreakAction::Genre,musical_settings,map,project.tempo/10);
         }else if(v.acid&&!(settings.assign&&action==0)){
+            // Acid's RNG stream is track state even when GEN only replaces MIDI.
+            // Keep its state in the same undo as the generated notes.
+            edit.tracks_before.push_back({uint8_t(t),track_state(*this,t)});
             auto& acid=project.tracks[t].acid_gen;
             made=acid_generate_pattern(p,acid,action%2,project.root,scales()[project.scale%scales().size()].mask);
         }
@@ -223,9 +226,9 @@ void Context::gen8_action(unsigned action) {
         edit.patterns_before.push_back({uint8_t(t),tr.pattern,p});
         edit.patterns_after.push_back({uint8_t(t),tr.pattern,std::move(made)});
     }
-    if(edit.patterns_after.empty()&&choices.empty()){notice("No change: seed / track setup");return;}
+    if(edit.patterns_after.empty()&&choices.empty()&&edit.tracks_before.empty()){notice("No change: seed / track setup");return;}
     for(const auto& p:edit.patterns_after){patterns.at[p.track][p.pattern]=p.value;sync_pattern(p.track,p.pattern);}
-    for(const auto& choice:choices)edit.tracks_after.push_back({uint8_t(choice.first),track_state(*this,choice.first)});
+    for(const auto& before:edit.tracks_before)edit.tracks_after.push_back({before.first,track_state(*this,before.first)});
     edits.push(std::move(edit));
     const auto target=action<2?(settings.assign?"T"+std::to_string(from+1)+"-"+std::to_string(to):"T"+std::to_string(from+1)+"-"+std::to_string(to)):"T"+std::to_string(ui.track+1);
     notice(target+(action%2?" mutated":" generated")+(skipped?" / skipped unready":" / UNDO available"));

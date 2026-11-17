@@ -12,6 +12,8 @@
 // new one takes an entry nothing uses. The rack loads what is used and lets go
 // of the rest, so undo, a project switch or a removed effect need nothing more.
 #include "rhythmer/shell/context.h"
+#include "rhythmer/shell/ask.h"
+#include "rhythmer/shell/delete_jobs.h"
 #include "rhythmer/engine/effect_info.h"
 #include "rhythmer/model/scales.h"
 #include "rhythmer/plugin/plugin_files.h"
@@ -93,7 +95,7 @@ void Context::choose_plugin(const PluginFile& file) {
         if(ui.plugin_target!=UiState::PluginTarget::Instrument){notice("Break Engine is an instrument");return;}
         close_gesture();ui.break_from_picker=true;ui.break_load_b=false;
         ui.break_browse=true;ui.break_track=ui.track;ui.break_bars=track().break_bars?track().break_bars:2;
-        project.gen8.bars=ui.break_bars;open(PageId::Samples);notice("BREAK: choose a loop; Back cancels");return;
+        open(PageId::Samples);notice("BREAK: choose a loop; Back cancels");return;
     }
     if (file.folder || file.several()) { plugins->browse(file.path); ui.plugins_cursor = 0; return; } // a folder, or a bundle's plug-ins
     if (!file.loadable()) { notice(file.why.empty() ? "Not a plug-in for this MPC" : file.why); return; }
@@ -111,6 +113,15 @@ void Context::choose_plugin(const PluginFile& file) {
         if (n >= chain_count || k >= project.chain(n).size) return;
         const auto& s = project.chain(n).slots[k];
         if (s.kind == plugin_effect_kind && unsigned(s.params[0]) < max_plugins) entry = s.params[0];
+    }
+    bool replace_asked = ui.plugin_replace;
+    ui.plugin_replace = false;
+    if (entry >= 0 && project.plugins[size_t(entry)].used() && !replace_asked
+        && !(file.path == project.plugins[size_t(entry)].path && file.id == project.plugins[size_t(entry)].id)) {
+        // Another plug-in over one in use: its sound and settings would go, and undo can't keep them; ask first
+        std::snprintf(ui.ask_name.data(), ui.ask_name.size(), "%s", project.plugins[size_t(entry)].name);
+        ask(*this, UiState::Ask::ReplacePlugin, int(ui.plugins_cursor));
+        return;
     }
     if (entry < 0) entry = free_entry(project);
     if (entry < 0) { notice("Every plug-in entry is in use"); return; }
@@ -319,6 +330,7 @@ void Context::plugins_tick(uint32_t at) {
     }
     split_shared_plugins();
     plugins->sync(project, plugins_asleep());
+    delete_tick(*this); // the picker listed again once a plug-in is deleted (shell/delete_jobs.h)
     if (ui.page == PageId::Plugins && plugins->changes() != plugin_view_seen) { // the picker's rows, and where going up lands
         plugin_view_seen = plugins->changes();
         auto view = plugins->view();

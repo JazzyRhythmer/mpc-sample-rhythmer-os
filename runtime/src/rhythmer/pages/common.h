@@ -12,11 +12,14 @@
 // default control behaviours.
 namespace rhythmer {
 
+bool external_clock_tempo(const Snapshot& s);
+juce::String tempo_text(const Snapshot& s, bool decimals=false); // presentation only
 ui::Header header_of(const Snapshot& s);
 juce::String track_display_name(const Snapshot& s,unsigned track);
 ui::HeaderItem tag_of(const Snapshot& s, unsigned track);
 // The bank of patterns in view (UiState::pattern_bank): "BANK B" beside the pattern grids.
 ui::HeaderItem bank_pill(const Snapshot& s);
+ui::HeaderItem edit_pattern_chip(const Snapshot& s); // "P20": the pattern edited; amber while another plays
 std::array<ui::KnobCard, 3> cards_of(const Snapshot& s);
 // A card's label, value and unit for one Binding (also the fader's card).
 void describe_card(const Snapshot& s, const struct Binding& b, ui::KnobCard& c);
@@ -62,6 +65,9 @@ bool record_keys_shown(const Snapshot& s);
 void track_grid(ui::Paint& p, const Snapshot& s);
 // An engine as a glyph: a saw for the Prophet, FM's operators, a chip for SID, pads for a kit, a DIN plug for MIDI.
 ui::Icon engine_icon(EngineKind kind);
+// Freeze plan F3: a region's take as a wave in x, y, w, h (its level, fades and direction in it), from the takes'
+// overviews (Snapshot::audio_peaks); nothing while its take's overview is not in yet.
+void region_wave(ui::Paint& p, const Snapshot& s, const AudioRegion& r, float x, float y, float w, float h, juce::Colour c);
 
 // A sound, pad or track name as names are shown (words: capitals for labels, Title Case for names): a name stored
 // in capitals ("BASS II") in Title Case ("Bass II"), roman numerals and acronyms as written.
@@ -97,8 +103,12 @@ void octave(Context& c, int way);
 void no_wheel(Context&, int);
 void no_push(Context&);
 void play_soft(Context& c, int key); // B1-B3 open Stage on that section (Pads, Keys)
+// The pages under a soft key that steps through several (Stage's groups, the mixer's SENDS and FX, Seq's B1):
+// their names into `names`, the open one's place into `at`; 0 for a key of one page or of none.
+unsigned key_pages(const Snapshot& s, unsigned key, std::array<juce::String, 6>& names, unsigned& at);
 ui::SoftKeys mix_keys(const Snapshot& s); // the MIX hub's row (shell/mix_hub.h): TRACKS SENDS FX, the page's lit
 void mix_soft(Context& c, int key);       // and where its keys go
-void seq_hub_soft(Context& c, int key); // the SEQUENCE hub's row: B1-B3 open PATTERNS, ROLL, MOTION
+void seq_hub_soft(Context& c, int key); // the SEQUENCE hub's row: B1-B3 open SEQUENCES, ROLL, MOTION
+const char* motion_key(const Snapshot& s); // B3's label there: MOTION, or none when Basic leaves it out (shell/features.h)
 
 } // namespace rhythmer

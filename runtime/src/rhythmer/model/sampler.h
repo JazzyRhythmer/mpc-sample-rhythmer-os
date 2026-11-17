@@ -15,7 +15,13 @@ namespace rhythmer {
 
 constexpr unsigned sampler_banks = 8, sampler_pads = 16 * sampler_banks;
 constexpr unsigned legacy_pads = 64;     // banks A-D: the pads a project file's TRAK section holds
-constexpr unsigned sample_slots = 64;     // samples a project holds
+// The places a project has for samples: one for each layer of each pad of each track (16 tracks, 128 pads, 4
+// layers), so the pads run out before the places do. What a project can hold is what fits in memory
+// (shell/sample_memory.h); the tables kept for each place hold only those in use (model/slot_table.h).
+constexpr unsigned sample_slots = 8192;
+// The slots a project file's SMPL section names, and all an older build holds (64 samples a project): the slots
+// past them are kept in SMPX, which such a build skips (model/project_file.cpp).
+constexpr unsigned legacy_sample_slots = 64;
 // One more slot on the engine's side only: the browser's preview of a file
 // (B3 on Samples), never a pad's sample and never in the project.
 constexpr unsigned preview_slot = sample_slots;
@@ -40,6 +46,9 @@ inline const char* pad_filter_name(PadFilter f) {
 constexpr uint8_t warp_off = 0, warp_seq = 1, warp_min = 50, warp_max = 200;
 constexpr unsigned max_pad_beats = 64; // # Beats: 0 works it out from the length
 constexpr unsigned max_loop_xfade = 250; // ms: a loop's seam crossfade (roadmap P3)
+// A CLOUD pad on a long sample read from the card takes its grains from the first this many seconds of its region,
+// held in memory while it is a cloud (shell/stream_holds.h, engine/sampler.cpp spawn()).
+constexpr unsigned cloud_most_seconds = 30;
 
 // Volume as the MPC shows it: 0 is -inf, 1..100 run -74..0 dB, 100..127
 // run 0..+6 dB. Pad volume and kit volume both use it.
@@ -55,12 +64,14 @@ inline float volume_gain(int level) { return level <= 0 ? 0.0f : std::pow(10.0f,
 // own sample and region; layers 2-4 are each a region of another sample with
 // its tune, level and pan over the pad's. A hit plays every layer its velocity
 // reaches (Velocity, the MPC's default), the next in turn (Cycle) or one at
-// random (Random), as the MPC's layers play. Every other value of the pad
+// random (Random), as the MPC's layers play. Cycle hold and Random hold
+// pick the same way for each hit by hand, but Note Repeat keeps the layer its
+// first repeat picked until the pad is let go. Every other value of the pad
 // (envelope, filter, play, loop, warp) is the pad's and goes over each.
 constexpr unsigned pad_layers = 4;
-enum class LayerPlay : uint8_t { Velocity, Cycle, Random, Count };
+enum class LayerPlay : uint8_t { Velocity, Cycle, Random, CycleHold, RandomHold, Count }; // saved: append only
 inline const char* layer_play_name(LayerPlay l) {
-    static const char* const names[] {"VELOCITY", "CYCLE", "RANDOM"};
+    static const char* const names[] {"VELOCITY", "CYCLE", "RANDOM", "CYCLE HOLD", "RANDOM HOLD"};
     return names[unsigned(l) % unsigned(LayerPlay::Count)];
 }
 struct PadLayer {
@@ -89,7 +100,7 @@ struct PadSound {
     bool loop = false;            // Loop: after the end it plays on from the loop point
     bool loop_lock = true;        // Loop Lock (Shift + B1 on Trim): the loop point is the start
     uint32_t loop_start = 0;      // frames, when not locked
-    bool mono = true;             // a new hit stops the pad's last one at the same pitch, so 16 Levels chords sound (else Poly: they overlap)
+    bool mono = true;             // a new hit stops the pad's last one at any pitch, 16 Levels too (else Poly: they overlap)
     uint8_t link = 0;             // Pad Link: 1..16 a pad of the same bank played with it, 0 none (it links on: roadmap P3)
     uint8_t offset = 0;           // 0..100: the start waits up to a sixteenth after the hit
     uint8_t velocity_sense = 100; // 0..100: 0 every hit full, 100 soft hits quietest
@@ -112,6 +123,14 @@ struct PadSound {
     // The pad's own send into each bus A-D, 0..100 (kept in PSND): taken after its Pad FX, its volume and pan, before
     // the track's chain, at the track's level, pan and mute. The track's sends (Mix::sends) still send the whole kit.
     std::array<uint8_t, 4> sends {};
+    // Cloud (Stage's CLOUD, kept in PCLD): the pad played as grains. Where they come from, their size, how many a
+    // second, how fast the place moves (50 still), their detune; 0..100. A file from before kept one Cloud for the
+    // whole kit: it lands on every pad.
+    bool cloud = false;
+    uint8_t cloud_position = 38, cloud_size = 50, cloud_density = 24, cloud_scan = 50, cloud_spread = 12;
+    bool plain_cloud() const {
+        return !cloud && cloud_position == 38 && cloud_size == 50 && cloud_density == 24 && cloud_scan == 50 && cloud_spread == 12;
+    }
     bool sending() const { for (auto s : sends) if (s) return true; return false; }
     uint32_t loop_point() const { return loop_lock ? start : loop_start; }
     bool used() const { return sample != no_sample; }
@@ -185,7 +204,7 @@ constexpr int zone_trim_cents = 100;                  // TUNE: -100..100 cents
 constexpr int zone_trim_low = -240, zone_trim_high = 120; // LEVEL: tenths of a dB
 struct ZoneTrim {
     uint8_t pad = 0xff;  // kit pad 0..127
-    uint8_t slot = 0;    // the project's sample slot holding the instrument
+    uint16_t slot = 0;   // the project's sample slot holding the instrument
     uint16_t zone = 0;   // the zone's place in its instrument
     int8_t tune = 0;     // cents
     int16_t level = 0;   // tenths of a dB
@@ -207,7 +226,7 @@ inline bool set_trim(ZoneTrims& trims, unsigned pad, unsigned zone, unsigned slo
     const bool none = !tune && !level;
     if (!free) return none;
     if (none) { if (free->used()) *free = ZoneTrim {}; return true; }
-    free->pad = uint8_t(pad); free->zone = uint16_t(zone); free->slot = uint8_t(slot);
+    free->pad = uint8_t(pad); free->zone = uint16_t(zone); free->slot = uint16_t(slot);
     free->tune = int8_t(std::clamp(tune, -zone_trim_cents, zone_trim_cents));
     free->level = int16_t(std::clamp(level, zone_trim_low, zone_trim_high));
     return true;
@@ -215,7 +234,7 @@ inline bool set_trim(ZoneTrims& trims, unsigned pad, unsigned zone, unsigned slo
 inline void clear_trims(ZoneTrims& trims, unsigned pad) { for (auto& t : trims) if (t.used() && t.pad == pad) t = ZoneTrim {}; }
 
 struct SampleRef {
-    char path[160] {};  // on the card; empty: free
+    char path[256] {};  // on the card; empty: free (255 characters: what a project file's text holds)
     char name[28] {};
     uint32_t frames = 0; // at 44.1 kHz, once loaded
     uint16_t zones = 0;  // a multisampled instrument's zones, once read (round 3 "instrument C": Stage's ZONES walks them)
@@ -223,6 +242,7 @@ struct SampleRef {
     // the pads. Not kept in the file.
     std::array<uint64_t, 2> keys {};
     bool one_key_zones = false; // every zone a press plays on one key of its own, two keys or more: a drum or percussion layout
+    bool streamed = false;      // a long sample read from the card as it plays, once loaded (shell/stream_holds.h); not kept in the file
     bool used() const { return path[0] != 0; }
     // A multisampled instrument, by what it is called: an .sfz, an MPC keygroup
     // program (.xpm, the MPC 3's .xty), a Logic EXS24 instrument (.exs), one

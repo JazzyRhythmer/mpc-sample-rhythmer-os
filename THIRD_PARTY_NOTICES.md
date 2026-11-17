@@ -1,6 +1,6 @@
 # Rhythmer OS development build: sources and attribution
 
-Rhythmer OS is based on **Melodee 0.2.0 by Kerem Kiliç (Ellic Studio)** and sample-base, AGPL-3.0-only. Copyright and SPDX headers remain intact. The two reserved upstream boot images are replaced with original geometric CC0 artwork. The product code is mechanically renamed to Rhythmer while serialized identity and original instrument IDs remain. The upstream sequencer, sampler voice policy, mixer, effects, drivers, recovery and project format are retained.
+Rhythmer OS is based on **Melodee 0.3.0 by Kerem Kiliç (Ellic Studio)** and sample-base, AGPL-3.0-only. Copyright and SPDX headers remain intact. The two reserved upstream boot images are replaced with original geometric CC0 artwork. The product code is mechanically renamed to Rhythmer while serialized identity and original instrument IDs remain. The upstream sequencer, sampler voice policy, mixer, effects, drivers, recovery and project format are retained.
 
 | Component | Origin / licence | Local treatment |
 |---|---|---|
@@ -44,3 +44,14 @@ FM-1 predecessor authors and technical-reference distinctions are detailed in FM
 The 0.2.0 host includes the MIT-licensed CLAP 1.2.9 headers, the LV2/lilv/serd/sord/sratom sources bundled with JUCE, and upstream's extended Debian support pack (libsndfile/codecs, libsamplerate and FFTW single/double/thread libraries). Their original COPYING/licence texts and package-version notices are included in the runtime release; actual CLAP and JUCE/LV2 sources accompany the source archive. The original Melodee web wordmark is replaced with Rhythmer text and the web pages retain explicit upstream credit.
 
 The SUPPORT-SOURCE archive supplies exact Debian source packages and cross-build rules for the embedded runtime/codec libraries, plus the underlying glibc and GCC sources. SOURCE_PACKAGES.json records package versions, filenames, hashes and original source URLs. Rhythmer original Prophet/Elixir patches are GPL-3.0-only parameter edits by jazzy rhythmer, separate from the excluded external banks.
+
+## Source-built 0.2.0 additions
+
+- **Frodhes** — Leonardo Mirabal and the credited Felucca/SLOOP/Dinghy predecessors, GPL-3.0-only. Original v0.9.12 MPC VST2 synthesis and 57 factory programs; the local wrapper only rejects unavailable instances cleanly. The vendored MPC SDK headers are MIT; the bundled font and additional component notices remain in the original source and staged legal texts. See `ports/fm1-frodhes/LICENSING.md`, `SOURCE.json` and `UPSTREAM_NOTICES`.
+- **Tenebrae** — legsmechanical, MIT. Original Schwung DSP, eight oscillator models and Init + 163 bank entries, built from pinned source with the existing numeric-key wrapper. Original DSP and factory records are retained. The Schwung API headers and Open MPC wrapper retain their MIT notices. See `ports/move-tenebrae/SOURCE.json` and `original/LICENSE`.
+
+FMini-1 uses the original 2.6.0 source and bank, with all 200 original patch names and original sound-related factory extras. Its original GPL notices and complete lineage documents remain bundled.
+
+## Auxiliary separator and screen fonts
+
+The separately executed Stems separator and converted model are reused byte-for-byte from the pinned Melodee Sample v0.3.0 release. Original notices accompany the installation. SpleeterRT (GPL-3.0) is pinned to `d818fb9ca826d31cb7dda60409f3f14e6e789597`; OpenBLAS (BSD-3-Clause) to `5ef8b1964658f9cb6a6324a06f6a1a022609b0c5`. Deezer’s Spleeter four-stem model is MIT licensed. Their corresponding code, notices and pinned model-fetch instructions accompany the source distribution. Additional Google Fonts faces retain their SIL OFL notices. See the runtime’s `THIRD_PARTY.md`, dependency pins and the installed `licenses/stems/` folder.

@@ -30,13 +30,16 @@ static void design_view(var& view,AudioPluginInstance* synth,bool state_check=fa
     }
     require(int(reached.size())==rhythmer::sound_rack_parameter_count(synth)-6,"A sound control is missing from functional pages");
     if(state_check){MemoryBlock after;synth->getStateInformation(after);require(before==after,"Reading design pages changed the sound state");}
-    view.getDynamicObject()->setProperty("quick",quick_view(synth));
+    auto order=rhythmer::sound_rack_edit_order(synth);Array<var> slots;for(int id:order)slots.add(id);view.getDynamicObject()->setProperty("edit_order",slots);
+    auto quick=quick_view(synth);for(auto& card:*quick.getArray()){auto found=std::find(order.begin(),order.end(),int(card["shown"]));require(found!=order.end(),"Quick control absent from edit order");card.getDynamicObject()->setProperty("shown",int(found-order.begin()));}
+    view.getDynamicObject()->setProperty("quick",quick);
     view.getDynamicObject()->setProperty("design_pages",pages);view.getDynamicObject()->setProperty("design_source",panel.design_source);
     if(rhythmer::sound_rack_focus(synth)>=0)require(rhythmer::sound_rack_source_name(synth)==String(panel.design_source),"Focused pad source identity differs from design header");
 }
 #include "sound_transport.inc"
 #include "authored_presets.inc"
 #include "preset_audition.inc"
+#include "website_preview.inc"
 #include "preset_controls.inc"
 #include "rhythmer/plugin/kit_filter.h"
 #include "kit_filter_check.inc"
@@ -56,7 +59,7 @@ int main(int argc,char** argv){try{
     require(std::any_of(listed.begin(),listed.end(),[](const auto& f){return f.name=="Break Engine";}),"Missing Break Engine picker entry");
     for(const auto& f:listed)require(std::filesystem::path(f.path).filename().string().rfind("GROOVE - ",0)!=0,"Legacy folder duplicated the renamed browser entry");
     for(const auto& f:listed)require(!f.kit_only,"Kit-only engine leaked into picker");
-    require(listed.size()==20,"Plugin picker differs from selected release");
+    require(int(listed.size())==engines.getArray()->size()-7+2,"Plugin picker differs from selected catalogue");
     int hidden=0;
     for(const auto& e:*engines.getArray()){
         auto f=rhythmer::describe_plugin((root/e["folder"].toString().toStdString()).string());
@@ -131,6 +134,7 @@ int main(int argc,char** argv){try{
         }
         std::cout<<"DYNAMIC_LABELS Prophet slots=3 algorithm_states="<<checked<<" labels_values_unique=ok reserved_algorithms=hidden"<<std::endl;return 0;
     }
+    if(argc>3&&String(argv[3])=="websitepreview")return website_preview(catalog,loader,argv[1]);
     if(argc>3&&String(argv[3])=="musical")return musical_audition(catalog,loader,argv[1]);
     if(argc>3&&String(argv[3])=="audition")return preset_audition(catalog,loader,argv[1]);
     if(argc>3&&String(argv[3])=="authored")return authored_check(catalog,loader,argv[1]);
@@ -294,6 +298,17 @@ int main(int argc,char** argv){try{
                 }
                 var view(new DynamicObject());auto* o=view.getDynamicObject();o->setProperty("engine","Rhythmer Kit");o->setProperty("kit",k);o->setProperty("focused_pad",pad);Array<var> names,controls;names.add(rhythmer::sound_rack_preset_name(kit.get()));o->setProperty("programs",names);
                 for(int n=0;n<rhythmer::sound_rack_parameter_count(kit.get());++n){auto* p=kit->getParameters()[n];var v(new DynamicObject());v.getDynamicObject()->setProperty("name",p->getName(128));v.getDynamicObject()->setProperty("text",p->getText(p->getValue(),128));v.getDynamicObject()->setProperty("value",p->getValue());controls.add(v);}o->setProperty("parameters",controls);design_view(view,kit.get(),pad==0);factory_views.add(view);
+                rhythmer::PluginPanel mix_panel;
+                require(rhythmer::sound_rack_design_pages(kit.get(),mix_panel)&&mix_panel.design_count>0,"Kit design pages unavailable");
+                require(String(mix_panel.design_pages[0].title)=="PAD MIX","Selected-pad mixer is not the first edit page");
+                int volume=mix_panel.design_pages[0].shown[0];
+                auto edit_order=rhythmer::sound_rack_edit_order(kit.get());
+                require(edit_order.size()>=9&&edit_order[6]==volume,"Actual EDIT list does not start with selected-pad volume");
+                std::set<int> displayed;for(int id:edit_order)if(id>=0)require(displayed.insert(id).second,"Actual EDIT list duplicates a parameter");
+                require(int(displayed.size())==rhythmer::sound_rack_parameter_count(kit.get()),"Actual EDIT list lost a parameter");
+
+                require(volume>=9&&volume<rhythmer::sound_rack_parameter_count(kit.get()),"Pad volume aliases a kit-global control");
+                require(kit->getParameters()[volume]->getName(128)=="P"+String(pad+1).paddedLeft('0',2)+" Volume","First mix control does not match the selected pad's volume");
                 if(play(*kit,36+pad,32)<=1e-7){std::cerr<<kit->getProgramName(k)<<" pad="<<pad+1<<std::endl;throw std::runtime_error("Kit pad silent");}}
             std::cout<<"KIT "<<kit->getProgramName(k)<<std::endl;
         }

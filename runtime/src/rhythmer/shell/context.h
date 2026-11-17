@@ -9,6 +9,7 @@
 #include "rhythmer/model/project.h"
 #include "rhythmer/model/project_file.h"
 #include "rhythmer/model/generators.h"
+#include "rhythmer/shell/auto_sample.h"
 #include "rhythmer/shell/bindings.h"
 #include "rhythmer/shell/capture_ring.h"
 #include "rhythmer/shell/history.h"
@@ -32,6 +33,7 @@ namespace rhythmer {
 class EngineHost;
 class PluginRack;
 class PrintEngine;
+class AudioTracks;
 struct PluginFile;
 class SampleLibrary;
 struct FrameView;
@@ -124,6 +126,7 @@ public:
     void flex_pad(unsigned pad);                            // Flex Beat: pad 1 Empty, 2-16 its effects
     void set_flex(unsigned what, int value);                // as Command::FlexBeat's index: 1 mode, 2 mix, 3 quantize
     void change_setting(unsigned row, int way);             // one step along a Settings row, kept on the card
+    void set_look(unsigned row, unsigned value);            // Settings' Palette or Font row to one value, kept on the card
     void toggle_favourite();                                // the sound under the Sounds cursor, else the loaded one
     // The Name sheet: what is named, its first text and how long it may be.
     void open_name(NameTarget target, const std::string& initial, unsigned limit, bool capitals);
@@ -156,9 +159,10 @@ public:
     void toggle_note_on();    // Shift + Chop: Note On (Gate) or One shot
     void toggle_loop_lock();  // Shift + B1 on Trim: the loop point back on the start, or free
     void normalize();         // Shift + B2 on Trim: the region's loudest point to 0 dB, one undo
-    void keep_chop();         // roadmap P3: Chop's slices into the project (its sample's), before its region changes or a save
+    void keep_chop();         // Chop's slices as its sample's chop, written into the WAV when changed: before its region changes or a save
+    void write_chops();       // every chop changed since, into its sample's WAV file (shell/mpc_wav_slices.h), off this thread
     unsigned free_unused_samples(); // roadmap P3, as the project is saved: slots nothing uses any more freed; how many
-    bool restore_chop();      // the project's chop of the region Chop now holds, if it kept one; false: none
+    bool restore_chop();      // the sample's chop (its WAV's slices, or changed here), whatever the pad's region; false: none
     void layer_load();        // Shift + B1 on Layers (roadmap P3): Samples, its Push onto the layer in hand
     void layer_clear();       // Shift + B2 on Layers: the layer in hand (2-4) taken off the pad
     void load_layer(const std::string& path, const std::string& name); // Push on Samples opened by layer_load()
@@ -199,6 +203,7 @@ public:
     void gen8_action(unsigned action);
     void gen_break_load(const std::string&,const std::string&);
     void gen_break_tick();
+    void gen_break_begin();
     uint32_t acid_auto_bar=~0u;
     static constexpr uint32_t motion_sync_ms = 40;
     int motion_waiting = -1;  // track << 8 | pattern whose recorded motion the audio thread has not had yet
@@ -238,7 +243,15 @@ public:
     void restore_chop(const ChopState& value);
     void notice(const std::string& text);                    // a word over the header for a moment
     void delete_pad(unsigned kit);                           // Erase + pad on a kit, stopped: the pad empty
-    void erase_pad_notes(unsigned kit);                      // playing or recording: its notes out of the pattern, one edit
+    void erase_pad_notes(unsigned kit);                      // recording, stopped: its notes out of the pattern, one edit
+    // Erase + pad on a kit while playing, as on the MPC: the pad's notes go as the playhead passes them, only while
+    // both are held (shell/erase_copy.cpp). Every pad held at once, and the whole hold, is one undo (or part of a take).
+    struct LiveErase { std::unique_ptr<Edit> edit; std::array<int16_t, 16> keys {}; uint16_t pads = 0; uint8_t track = 0, pattern = 0; int from = -1; bool found = false; };
+    LiveErase live_erase;
+    void live_erase_press(unsigned pad, unsigned kit);
+    void live_erase_release(unsigned pad);
+    void live_erase_tick(); // each frame: the notes passed since the last one
+    void live_erase_end();
     void copy_pad(unsigned from, unsigned to);               // Shift + Erase, pad, pad: sound and effects
     void restore_pattern(unsigned track, unsigned pattern, const Pattern& value);
     void restore_pad(unsigned track, unsigned kit, const PadState& value);
@@ -258,17 +271,20 @@ public:
     // each frame, queues a chained track's next pattern in the last bar of the one playing, so it begins as that ends.
     void chain_start(unsigned pattern);
     void chain_add(unsigned pattern);
+    void chain_sequence(unsigned pattern, bool first); // a chain of sequences: the selected track's chain, every track following it
+    int8_t chain_lead = -1;                            // the track whose chain launches sequences (-1: chains are one track's)
     void chain_tick();
     std::array<bool, track_count> chain_queued {}; // the next of the chain is queued for the bar line
     bool chaining = false;                         // chain_tick() launching: the chain stays
     // Roadmap P5 (shell/scene_jobs.cpp): scenes, a column of patterns with a name and tempo of its own (Seq held +
     // Shift + pad, or a pad on SCENES), and patterns' follow actions (model/follow.h; the audio thread brings them).
-    void launch_scene(unsigned scene);                // pattern `scene` on every track with notes there and the selected one
+    void launch_scene(unsigned scene, bool quiet = false); // pattern `scene` on every used track: a sequence (shell/sequences.h); quiet: no notice (the chain)
     void set_scene_tempo(unsigned scene, int tenths); // below 30 BPM: none of its own
     void name_scene(unsigned scene);                  // the Name sheet
     void clear_scene(unsigned scene);
     void set_follow(Binding::Kind kind, int value);   // the selected track's pattern's
     void follow_to_column();                          // and onto every track's pattern in its column, one undo
+    void capture_scene(unsigned column, bool asked = false); // CAPTURE: each track's playing pattern into the column, one undo
     void follow_tick();                               // MIDI thread, often: chains told, what came followed
     std::array<uint32_t, track_count> follows_seen {};
     std::array<bool, track_count> chained_sent {};
@@ -310,17 +326,70 @@ public:
     // taken in, often, from the shell's tick.
     PrintEngine* printer = nullptr;
     PrintTable prints;
+    // Freeze plan F3, audio tracks (shell/audio_jobs.cpp): the thread that maps their takes and writes new ones (made
+    // once the app's print engine is set: none in the host tests), what each track's pack was made from, which were
+    // let go by the audio thread (a track load, another project), the take armed or recording (-1 none) and whether the
+    // audio thread has said it is (so its end can be told), the tracks whose takes it keeps quiet, the takes' overviews.
+    std::shared_ptr<AudioTracks> audio_tracks;
+    std::array<std::vector<std::pair<uint8_t, AudioRegion>>, track_count> audio_sent;
+    std::array<uint32_t, track_count> audio_serial {};
+    uint32_t audio_stale = 0xffff;
+    std::string audio_sent_path;
+    int audio_take_track = -1;
+    bool audio_began = false;
+    bool audio_prune = false; // a project just opened: its folder's takes no pattern plays go (once it has a file)
+    // An imported MPC project's takes (shell/project_store.h LoadedProject::audio_from): where they wait until its first
+    // save copies them beside it. takes_folder(): where this project's takes are ("" none yet: save first).
+    std::string audio_staging_from;
+    std::string takes_folder() const;
+    uint32_t audio_quiet_sent = 0;
+    std::shared_ptr<const TakePeaks> audio_peaks; // a new map on each change, shared with the screen
+    void add_peaks(TakePeaks&& more);
+    void sync_audio(); // each audio track's pack made again where its patterns' takes changed
+    void audio_tick(); // packs made sent, packs done freed, takes recorded put in their patterns
+    // Seq Record on an audio track: a take of one pass of its pattern, from where the pattern next comes round; false
+    // (and a notice) when it cannot be. end_audio(): it ends now and is kept, or (not begun) is let go.
+    bool record_audio(unsigned track);
+    void end_audio(bool keep);
+    void set_region_value(const Binding& b, int value); // Stage's CLIP and FADES cards on the pattern's take
     struct PrintAsk {
         uint8_t track = 0;
         std::array<uint64_t, (pattern_count + 63) / 64> patterns {};
         bool all = false; // every pattern of the track with notes
         PrintTap tap = PrintTap::PostFx;
         PrintTail tail = PrintTail::Loop;
-        enum Mode : uint8_t { Print, Freeze, Unfreeze } mode = Print; // freeze plan F2b: the same ask freezes the track
+        enum Mode : uint8_t { Print, Freeze, Unfreeze, AutoSample } mode = Print; // freeze plan F2b: the same ask freezes the track
+        AutoSampleSettings sampling; // AutoSample: `rhythmer-autosample`
+        bool check = false;          // AutoSample: the check alone, its findings in `rhythmer-print status`
+        bool probe_first = false;    // AutoSample: the check, then sampled as it heard (as the sheet does)
         bool deep = false; // freeze plan F2d: a deep freeze (every pattern with notes, Post FX)
     };
     void print(const PrintAsk& ask);
     void print_tick();
+    // The auto sampler (shell/auto_sample.h): a plug-in track sampled a key at a time into Samples/Keygroups/<name>/,
+    // then played by a new KEYGROUP track. `autosample_track`: the track being sampled, -1 none.
+    std::string autosample_name(unsigned track) const;
+    void autosample(unsigned track, const AutoSampleSettings& settings, bool probe_first = false);
+    bool autosample_check(unsigned track, const AutoSampleSettings& settings); // the check alone (AutoFindings); false: not started
+    void autosample_tick();
+    void autosample_landed(const AutoSampleResult& result);
+    int first_empty_track() const; // -1: none
+    std::array<uint32_t,track_count> track_epoch {};
+    uint32_t autosample_epoch=0, auto_probe_epoch=0;
+    int8_t auto_probe_track=-1;
+    int8_t autosample_track = -1;
+    // A MIDI track's instrument outside (engine/external_notes.h): the job under way is one; the input whose sound
+    // the input's ring and meter are given while the sheet is on a MIDI track or its job runs (-1: Input Config's own).
+    bool autosample_outside = false, autosample_playing_told = false;
+    int8_t autosample_source = -1;
+    // The AUTO SAMPLE sheet: Sample Record again on a plug-in track's PRINT. B3 (or Push) SAMPLE starts it, B1 or
+    // Sample Record calls it off, B2 the next row of cards.
+    void open_auto_sheet();
+    void auto_sheet_go();
+    void auto_sheet_cancel();
+    void auto_sheet_row(int way);
+    void auto_sheet_set(Binding::Kind kind, int value);
+    AutoSampleSettings auto_last {}; // the settings sampled with last, for the next sheet
     // Freeze plan F2b (shell/print_jobs.cpp): a track frozen plays its prints instead of its engine and chain (the
     // patterns asked; none: every pattern with notes). What is missing or changed is printed first; the track plays
     // live until every print is ready, then switches on a bar line. Unfreezing is at once and keeps the prints.
@@ -381,6 +450,7 @@ public:
     std::array<std::vector<std::pair<uint8_t, std::array<uint8_t, 96>>>, track_count> print_peaks {};
     // Sampler tracks
     SampleLibrary* library = nullptr; // set by the app; the service thread reads the files
+    std::vector<std::string> prog_paths; // the card's .progression files, as the Prog layout's wheel walks them (listed when first wanted)
     // Projects on the card
     ProjectStore* store = nullptr;
     CardLink* card = nullptr;          // SD card access (shell/card_access.h): set by the shell
@@ -394,14 +464,19 @@ public:
     std::array<BrowserPlace, 2> files_places {}, project_places {};
     int files_row_wanted = -1;        // Samples: the row to land on once the folder asked for lists
     std::string project_row_path;     // Project: the entry to land on once the folder lists (the open project, at first)
+    std::string delete_path;          // Erase in a browser (shell/delete_jobs.h): what the question on screen would delete
+    unsigned removals_seen = 0;       // the library's deletions the plug-in picker has listed again for
     bool project_list_opened = false; // the list has been opened since start
     bool dirty = false;               // changed since it was saved or loaded
+    bool import_unsaved = false;      // an MPC project just opened, with no file of its own: saved by hand (SAVE AS), never in the background
     void save_project_to(const std::string& path);
+    bool autosave(); // background save (shell/autosave.h): false with no card
     void save_project();              // to its file, or a new one
     void new_project();
     // Parity phase 10 (shell/project_jobs.cpp): New project asks first (B3 / B1); Load Kit.
     void ask_new_project();                   // the question, with what happens to unsaved changes
-    void start_new_project();                 // its B3: saved first if it has a file, then a new one, Stage
+    void start_new_project(bool kit = true);  // its B3: saved first if it has a file, then a new one with the factory kit (B2 EMPTY: without), Stage
+    std::string lesson_return;                // a lesson runs (shell/lesson_jobs.h): the file of the project open before it, "" none
     void load_kit_file(const std::string& path, const std::string& name); // a project's kit onto the selected track, once loaded
     void load_kit(const Project& from, const std::string& name);          // that kit onto the selected track, one undo
     int kit_target = -1, bank_target = -1;
@@ -435,9 +510,13 @@ public:
     };
     Reloading reloading;
     uint32_t load_us = 0; // the last parked build's time, for status
+    // The sheet goes when everything is in, or when nothing has come in for loading_most_ms (a file that will not
+    // read must not hold the controls).
     static constexpr uint32_t park_patience_ms = 3000, park_stalled_ms = 250, loading_most_ms = 20000;
+    std::bitset<sample_slots> loading_instruments; // the project's sample slots that hold an instrument, a bit each (switch_to)
+    uint32_t loading_moved = 0;       // when something last came in (ms)
     unsigned samples_to_load = sample_slots; // next sample slot to (re)load after a switch
-    std::vector<uint8_t> slots_waiting;      // slots sample_slot() named while the library's queue was full: asked for again each pass
+    std::vector<uint16_t> slots_waiting;     // slots sample_slot() named while the library's queue was full: asked for again each pass
     // Roadmap P4 (docs/MIDI_TRACKS.md M4-M5): SysEx files read for MIDI tracks, waiting for MidiIo to send them; the
     // input each MIDI track was last told it plays, and when (sent again a second on, a track reload forgets it).
     struct SysexOut { uint8_t track = 0; std::vector<uint8_t> bytes; };
@@ -490,6 +569,15 @@ public:
     void resample_pad(unsigned kit);                      // the pad: the pattern rendered onto it
     void resample_song(unsigned kit);                     // roadmap P3: Resample on Song, the song rendered onto the pad
     void mixdown(const std::string& name);                // Song's export, Audio mixdown, after the Name sheet
+    void export_mpc3(const std::string& name);            // Song's export, MPC 3 project (shell/song_export.cpp)
+    // The MPC 3 export waits for its plug-in tracks' prints: `mpc3_pending` a bit a track still to print (one job a
+    // track, as the print engine takes them), `mpc3_printing` the track whose job runs (-1 none), then mpc3_tick()
+    // hands the project, its prints in, to the export once the last result is in.
+    std::string mpc3_name;
+    uint32_t mpc3_pending = 0;
+    int mpc3_printing = -1;
+    bool mpc3_waiting = false;
+    void mpc3_tick();
     void render_tick(uint32_t at);                        // a render ended: transport back as it was
     bool render_started = false;
     uint32_t render_since = 0;
@@ -513,15 +601,25 @@ public:
     void browser_tick();
     std::string files_folder_seen;
     unsigned previews_seen = 0;
+    bool preview_break_bus=false;
     int previewing = -1; // the track a preview plays on, -1 none
     // land: 0 Extract (the next empty pad after `pad`), or Trim (`trim`); 1 onto `pad` itself (Recall,
     // Resample; one undo); 2 the take of Sample Record onto `pad`, with the pads cut from it (ui.rec_chop_*).
-    struct PendingFile { int16_t slot = -1; uint8_t track = 0; int16_t pad = -1; bool trim = false; PadSound sound {}; uint8_t land = 0; };
+    struct PendingFile { int16_t slot = -1; uint8_t track = 0; int16_t pad = -1; bool trim = false; PadSound sound {}; uint8_t land = 0; uint32_t epoch=0; };
     std::array<PendingFile, 8> pending_files {};
     // A sample slot held for a file the service thread makes, landing as `land` says; -1 when slots or the list are full.
     int hold_file(const std::string& name, unsigned track, int pad, uint8_t land);
     void drop_file(int slot);                            // a held slot nothing came for: free again
     void take_landed(unsigned track, unsigned kit, unsigned slot, const LoadedSample& loaded); // Sample Record's take onto its pads
+    // Stems (shell/stems_jobs.cpp, shell/stems.h): the STEMS sheet for the kit pad in hand, B3 SEPARATE, B1 (which
+    // calls a running job off), the job's result each pass, and its four files, once read, onto the next empty
+    // pads after the pad they came from (pending_files' land 3 to 6: DRUMS, BASS, MUSIC, VOCALS; one undo).
+    void open_stems_sheet();
+    void stems_sheet_go();
+    void stems_sheet_cancel();
+    void stems_tick();
+    void stems_landed();
+    struct StemsFrom { uint8_t track = 0, pad = 0; PadSound sound {}; uint32_t epoch=0; } stems_from; // the pad as it was at SEPARATE
     // Knob FX and the master compressor (parity phase 7, shell/knob_fx.cpp).
     void knob_fx_button();                                // Knob FX: the mode on (its page) or off
     void knob_fx_load(unsigned entry);                    // Push on the list: the entry's effect at its initial values
@@ -556,12 +654,15 @@ public:
     void keep_played(unsigned track, int key, int velocity, bool down);
     void capture_tick();
     void set_arp(bool on) { set_arp(ui.track, on); }
-    void set_arp(unsigned track, bool on); // that track's arp (Note Repeat let go after the track changed)
+    void set_arp(unsigned track, bool on); // that track's arp (Stage ARP, Shift + K2)
+    void set_repeat(bool on) { set_repeat(ui.track, on); }
+    void set_repeat(unsigned track, bool on); // that track's Note Repeat (let go after the track changed)
     // The Looper (shell/looper_jobs.cpp): refusals already said, and whether a loop records (the metronome's Rec).
     std::array<unsigned, loop_tracks> loop_errors {};
     bool loop_click = false;
     void set_click(unsigned mode); // the metronome: 0 off, 1 on, 2 only while Seq Record
     void send_click();
+    void send_repeat_velocity();
     // Capture (Shift + Seq Record; round 2, capture C; roadmap P5): the last bars every track played (the phrase, or as
     // many bars as Settings keeps), each track's into its next empty pattern, which then plays; one undo. Nothing
     // played, or no pattern empty: a notice, and nothing changes.

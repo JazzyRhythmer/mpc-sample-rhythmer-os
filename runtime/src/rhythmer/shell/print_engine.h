@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
 #pragma once
+#include "rhythmer/engine/recall_ring.h"
+#include "rhythmer/engine/engine_host.h"
 #include "rhythmer/model/print.h"
+#include "rhythmer/shell/auto_sample.h"
 #include "rhythmer/model/project.h"
+#include <algorithm>
 #include <array>
 #include <atomic>
 #include <condition_variable>
@@ -45,6 +49,17 @@ struct PrintJob {
     bool freeze = false;
     bool deep = false;                   // freeze plan F2d: its pack plays as a deep freeze (FreezePack::deep)
     uint32_t serial = 0;                 // the freeze it is for (the shell drops one a later freeze replaced)
+    // The auto sampler: the track's instrument played a note at a time into `sample_folder` as `sample_name`.xpm
+    // and its WAVs, not its patterns printed.
+    bool autosample = false;
+    // On a MIDI track: the instrument outside, played over the track's MIDI and heard at `input` (the live engine's
+    // input ring, on the input the track takes as its sound) in real time (engine/external_notes.h).
+    bool external = false;
+    const RecallRing* input = nullptr;
+    bool probing = false;                // the check alone (AutoFindings), nothing sampled
+    bool probe_first = false;            // autosample: the check, then sampled as it heard (`rhythmer-autosample ... auto`)
+    AutoSampleSettings sampling;
+    std::string sample_folder, sample_name;
 };
 
 // Freeze plan F2c: a print's first pass in small, for Stage: the loudest of each column, 0..255 full scale.
@@ -77,6 +92,7 @@ struct PrintProgress {
     bool busy = false;
     uint8_t track = 0;
     bool freeze = false;
+    bool autosample = false;   // the auto sampler's notes (`pattern`: the key, `count`: the samples)
     uint32_t serial = 0;       // the freeze it is for
     int16_t pattern = -1;      // the pattern printing now, -1 none
     float fraction = 0;        // of it, rendered
@@ -84,6 +100,18 @@ struct PrintProgress {
     float seconds_left = 0;    // the job's, estimated from the pattern printing now
     std::array<uint64_t, (pattern_count + 63) / 64> done {}, failed {}; // the job's patterns through (made or unchanged), and failed
     uint16_t count = 0, through = 0;   // the job's patterns, and how many are through
+    // The auto sampler's note under way, as AUTO SAMPLE draws it: its level a bar at a time (0-255 for -36 to 0 dB),
+    // `wave_hold` the bar where the key is let go, and the layer's velocity. The bars cover more time each (two
+    // merged into one) when a long release outgrows them.
+    static constexpr unsigned wave_bars = 128;
+    std::array<uint8_t, wave_bars> wave {};
+    uint8_t wave_count = 0, wave_hold = 0, velocity = 0;
+    // The check under way (`checking`): how far it has got (0 type, 1 glide or sounds, 2 accent, 3 takes, 4 done) and
+    // what it has heard so far.
+    bool checking = false;
+    bool opened = false; // the check's plug-in is open in the print host: its notes play (before that it is opening)
+    uint8_t check_step = 0;
+    AutoFindings found;
     bool is_done(unsigned p) const { p %= pattern_count; return (done[p / 64] >> (p % 64)) & 1; }
     bool is_failed(unsigned p) const { p %= pattern_count; return (failed[p / 64] >> (p % 64)) & 1; }
 };
@@ -101,6 +129,16 @@ public:
     bool busy() const { return running.load(std::memory_order_acquire); }
     // MIDI thread: each pattern's result, in order.
     bool take(PrintResult& out);
+    // MIDI thread: an auto sampler job's program, made or not.
+    bool take_sampled(AutoSampleResult& out);
+    // MIDI thread: a check's findings.
+    bool take_probed(AutoProbeResult& out);
+    // An instrument outside: its notes, sent by the MIDI thread once the input's clock (RecallRing::written()) has
+    // reached their frame, so their lengths do not hang on the print thread's turn. post(): the print thread;
+    // due(): the MIDI thread, each command whose frame has come, in order.
+    void post(const Command& command, uint64_t at);
+    void forget(); // the print thread: what was posted and not sent yet is not sent (a run of notes called off)
+    bool due(uint64_t now, Command& out);
     // Freeze plan F2b. The pager the audio thread reads prints with (set before any freeze). MIDI thread: a freeze's
     // prints ready; a pack the audio thread has finished with, freed on the print thread once the pager has let go of
     // its streams (and its files' mappings with it).
@@ -116,6 +154,8 @@ public:
 private:
     void run();
     PrintResult print_one(const PrintJob& job, unsigned pattern, const std::array<const SampleData*, sample_slots>& samples);
+    AutoSampleResult sample_track(const PrintJob& job, const std::array<const SampleData*, sample_slots>& samples);
+    AutoProbeResult probe_track(const PrintJob& job, const std::array<const SampleData*, sample_slots>& samples);
     FreezeReady freeze_pack(const PrintJob& job, const PrintTable& known);
     void empty_trash(); // print thread: the packs discarded, freed
     SampleLibrary* library;
@@ -126,6 +166,9 @@ private:
     std::condition_variable wake;
     std::unique_ptr<PrintJob> waiting; // under lock
     std::deque<PrintResult> results;   // under lock
+    std::deque<AutoSampleResult> sampled; // under lock
+    std::deque<AutoProbeResult> probed;   // under lock
+    std::deque<std::pair<uint64_t, Command>> outbox; // under lock: post()'s, by frame
     std::deque<std::string> lines;     // under lock: the latest results
     std::string doing;                 // under lock
     PrintProgress shown;               // under lock

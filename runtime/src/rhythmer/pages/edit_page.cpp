@@ -242,7 +242,7 @@ void soft(Context& c, int key) {
     if(break_home(c)){
         if(key>0&&c.frozen_edit(c.ui.track))return;
         if(key==0){c.open(PageId::Patterns);c.ui.sheet_open=true;c.ui.gen8_mode=2;c.ui.sheet_row=6;return;}
-        if(key==1){c.ui.break_load_b=c.ui.break_perf_page%6==2;c.ui.break_browse=true;c.ui.break_track=c.ui.track;if(c.ui.break_load_b)c.project.gen8.bars=c.track().break_bars;c.open(PageId::Samples);c.notice(c.ui.break_load_b?"Choose loop B":"Choose loop A");return;}
+        if(key==1){c.ui.break_load_b=c.ui.break_perf_page%6==2;c.ui.break_browse=true;c.ui.break_track=c.ui.track;c.ui.break_bars=c.track().break_bars;c.open(PageId::Samples);c.notice(c.ui.break_load_b?"Choose loop B":"Choose loop A");return;}
         if(key==2){c.key(18,127,true);c.key(18,0,false);c.track().break_perf[1]=c.track().break_perf[2]=0;c.notice("STRAIGHT RETURN");return;}
     }
     if (c.track().engine == EngineKind::Plugin) {

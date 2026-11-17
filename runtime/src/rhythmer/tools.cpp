@@ -2,11 +2,19 @@
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
 #include "rhythmer/tools.h"
 #include "rhythmer/shell/gen8_check.h"
+#include "rhythmer/shell/break_p1_check.h"
 #include "rhythmer/shell/track_workflow_check.h"
+#include "rhythmer/shell/navigation_check.h"
+#include "rhythmer/shell/menu.h"
 #include "rhythmer/shell/stage_map.h"
 #include "rhythmer/shell/expansion_install.h"
 #include "rhythmer/shell/mpc_program.h"
 #include "rhythmer/shell/mpc_project.h"
+#include "rhythmer/shell/delete_jobs.h"
+#include "rhythmer/shell/mpc3_export.h"
+#include "rhythmer/shell/new_track.h"
+#include "rhythmer/model/progression.h"
+#include "rhythmer/model/project_file.h"
 #include "rhythmer/shell/pad_bank.h"
 #include "rhythmer/shell/sample_library.h"
 #include "rhythmer/shell/seq_layer.h"
@@ -72,9 +80,9 @@ void drum_kit(Project& project, unsigned t) {
     load_sound(project.tracks[t], EngineKind::Sampler, 0);
     project.tracks[t].set_name("DRUMS");
     for (unsigned n = 0; n < 3; ++n) {
-        std::snprintf(project.samples[n].path, sizeof(project.samples[n].path), "/media/card/Samples/%s.wav", drum_names[n]);
-        std::snprintf(project.samples[n].name, sizeof(project.samples[n].name), "%s", drum_names[n]);
-        project.samples[n].frames = 22050;
+        std::snprintf(project.samples.edit(n).path, sizeof(SampleRef::path), "/media/card/Samples/%s.wav", drum_names[n]);
+        std::snprintf(project.samples.edit(n).name, sizeof(SampleRef::name), "%s", drum_names[n]);
+        project.samples.edit(n).frames = 22050;
         project.tracks[t].pads[n].sample = uint16_t(n);
         project.tracks[t].pads[n].play = PadPlay::OneShot;
     }
@@ -183,12 +191,12 @@ void board_project(Shell& shell) {
         const char* names[] {"KICK", "SNARE", "HAT", "OPEN", "BREAK"};
         const uint32_t lengths[] {22050, 26460, 8820, 30870, 230087};
         for (unsigned n = 0; n < 5; ++n) {
-            std::snprintf(project.samples[n].path, sizeof(project.samples[n].path), "/media/card/Samples/%s.wav", names[n]);
-            std::snprintf(project.samples[n].name, sizeof(project.samples[n].name), "%s", names[n]);
-            project.samples[n].frames = lengths[n];
+            std::snprintf(project.samples.edit(n).path, sizeof(SampleRef::path), "/media/card/Samples/%s.wav", names[n]);
+            std::snprintf(project.samples.edit(n).name, sizeof(SampleRef::name), "%s", names[n]);
+            project.samples.edit(n).frames = lengths[n];
         }
         const char* short_names[] {"Kick", "Snare", "Hat", "Open"};
-        for (unsigned n = 0; n < 4; ++n) { kit.pads[n].sample = uint16_t(n); std::snprintf(project.samples[n].name, sizeof(project.samples[n].name), "%s", short_names[n]); }
+        for (unsigned n = 0; n < 4; ++n) { kit.pads[n].sample = uint16_t(n); std::snprintf(project.samples.edit(n).name, sizeof(SampleRef::name), "%s", short_names[n]); }
         for (unsigned n = 0; n < 12; ++n) {
             kit.pads[4 + n].sample = 4; kit.pads[4 + n].start = 230087 * n / 12; kit.pads[4 + n].end = 230087 * (n + 1) / 12;
         }
@@ -246,7 +254,7 @@ void pad_waves(Snapshot& s) {
 // every velocity, all its files read, Note On as a loaded instrument is.
 void choir_pad(Snapshot& s, unsigned pad) {
     auto& sound = s.project.tracks[3].pads[pad % sampler_pads];
-    auto& ref = s.project.samples[sound.sample % sample_slots];
+    auto& ref = s.project.samples.edit(sound.sample % sample_slots);
     std::snprintf(ref.path, sizeof(ref.path), "/media/card/Samples/Choir/Choir.exs");
     std::snprintf(ref.name, sizeof(ref.name), "CHOIR");
     ref.frames = 0;
@@ -270,7 +278,7 @@ void choir_pad(Snapshot& s, unsigned pad) {
 // The same pad holding a felt piano SFZ: A0..C8 in 30 key ranges, three velocity layers, two turns of round robin.
 void piano_pad(Snapshot& s, unsigned pad) {
     auto& sound = s.project.tracks[3].pads[pad % sampler_pads];
-    auto& ref = s.project.samples[sound.sample % sample_slots];
+    auto& ref = s.project.samples.edit(sound.sample % sample_slots);
     std::snprintf(ref.path, sizeof(ref.path), "/media/card/Samples/Piano/Piano.sfz");
     std::snprintf(ref.name, sizeof(ref.name), "PIANO");
     ref.frames = 0;
@@ -372,7 +380,7 @@ void preview_projects(Snapshot& s) {
     v.folders = {"Beats", "Beats/Drafts", "Songs", "Songs/2026"};
     s.project_path = v.root + "/Project 1.mldp";
     s.dirty = true;
-    s.ui.project_rows = uint16_t(project_rows(v.entries.size(), s.project_folder)); // as the shell copies it in
+    s.ui.project_rows = uint16_t(project_rows(v.entries.size())); // as the shell copies it in
 }
 
 // Step Edit on the kit (track 4), step entry: the caret on step 5 of pattern 1, which holds a kick, a hat and
@@ -519,6 +527,41 @@ void layered_pad(Snapshot& s, LayerPlay play) {
     h.serial = 41; h.pad = 8; h.slot = 1; h.from = 0; h.to = 26460; h.at = 6000; h.level = 0.8f; h.wake = 1; h.step = 1;
 }
 
+// Freeze plan F3's previews: track 13 an audio track (VOX) on pattern A1 of two bars, with take 3 in it (`take`) or
+// none, the input heard at about -12 dB; on the Song, A1's clips on its lane at bars 17, 19 and 25.
+void audio_scene(Snapshot& s, bool take) {
+    auto& t = s.project.tracks[12];
+    t = Track {};
+    t.engine = EngineKind::Audio; t.set_name("VOX");
+    t.audio.source = InputSource::Mic; t.audio.monitor = TrackMonitor::On;
+    const unsigned bar = s.project.bar_ticks();
+    s.pattern = Pattern {};
+    s.pattern.length = 2 * bar;
+    if (take) {
+        AudioRegion r;
+        r.take = 3; r.tempo = uint16_t(s.tempo);
+        r.frames = r.take_frames = uint32_t(ticks_to_frames(2 * bar, s.tempo));
+        s.pattern.audio = r;
+    }
+    auto& sketch = s.sketches[12][0];
+    sketch = PatternSketch {};
+    sketch.length = s.pattern.length; sketch.notes = take; sketch.audio = s.pattern.audio;
+    s.has_notes[12] = take;
+    s.ui.track = 12;
+    s.take.left = 0.26f; s.take.right = 0.22f;
+    auto& song = s.project.song;
+    for (unsigned at : {16u, 18u, 24u}) { Clip c; c.track = 12; c.pattern = 0; c.bar = uint16_t(at); c.bars = 2; song.place(c); }
+    auto peaks = std::make_shared<TakePeaks>(); // a sung line: phrases rising and falling, breaths between
+    auto& v = (*peaks)[3];
+    v.resize(800);
+    for (size_t n = 0; n < v.size(); ++n) {
+        double phrase = std::fmod(double(n) / 120.0, 1.0);
+        double shape = phrase < 0.85 ? std::sin(phrase / 0.85 * 3.14159) : 0.03;
+        double grain = 0.75 + 0.25 * std::sin(double(n) * 0.9) * std::sin(double(n) * 0.13);
+        v[n] = uint8_t(std::clamp(shape * grain * 230.0, 0.0, 255.0));
+    }
+    s.audio_peaks = peaks;
+}
 void on_stage(Snapshot& s, unsigned track, unsigned group, unsigned sub) {
     s.ui.page = PageId::Stage; s.ui.track = uint8_t(track);
     s.ui.stage_group[track] = uint8_t(group); s.ui.stage_sub[track] = uint8_t(sub);
@@ -598,6 +641,38 @@ void looper_scene(Snapshot& s) {
 }
 
 // The loop's sheet (B3 MORE) on loop `l`, no change waiting, with the kit (track 4) in hand: COMMIT lands on B01.
+// A synth track on the Prog layout with a 20-chord progression (plain names for the previews).
+void prog_scene(Snapshot& s) {
+    s.ui.page = PageId::Keys; s.playing = true;
+    auto& t = s.project.tracks[0];
+    t.layout = PadLayout::Prog; t.octave = 2; t.bank = 0;
+    t.prog = Progression {};
+    std::snprintf(t.prog.name, sizeof(t.prog.name), "Minor 9ths");
+    std::snprintf(t.prog.file, sizeof(t.prog.file), "Minor 9ths");
+    t.prog.root = 9;
+    struct Row { const char* name; std::array<uint8_t, 6> notes; };
+    static const Row rows[] {
+        {"Amin9", {45, 55, 60, 64, 67, 71}}, {"Dmin9", {38, 53, 57, 60, 64, 0}}, {"GMaj9", {43, 54, 57, 59, 62, 0}}, {"CMaj7", {48, 55, 59, 64, 0, 0}},
+        {"Fmaj7/A", {45, 53, 57, 60, 64, 0}}, {"Bmin7(b5)", {47, 57, 62, 65, 0, 0}}, {"E7(#9)", {40, 56, 62, 67, 0, 0}}, {"Amin7", {45, 55, 60, 64, 0, 0}},
+        {"D9sus4", {38, 55, 60, 64, 0, 0}}, {"GMaj(add2)/B", {47, 55, 57, 62, 0, 0}}, {"Cmin9", {48, 58, 63, 67, 62, 0}}, {"F13", {41, 51, 57, 62, 0, 0}},
+        {"Bbmaj9", {46, 57, 60, 62, 65, 0}}, {"Emin11", {40, 55, 57, 62, 66, 0}}, {"A7(#9#5)", {45, 55, 60, 61, 65, 0}}, {"Dmin9", {50, 60, 64, 65, 69, 0}},
+        {"G6/9", {43, 52, 57, 59, 62, 0}}, {"C#min7", {49, 59, 64, 68, 0, 0}}, {"F#min9", {42, 57, 61, 64, 68, 0}}, {"Bsus4", {47, 59, 64, 66, 0, 0}},
+    };
+    unsigned n = 0;
+    for (const auto& r : rows) {
+        auto& c = t.prog.chords[n++];
+        std::snprintf(c.name, sizeof(c.name), "%s", r.name);
+        for (auto k : r.notes) if (k) c.notes[c.count++] = k;
+        std::array<int, notes_per_step> keys {};
+        for (unsigned k = 0; k < c.count; ++k) keys[k] = c.notes[k];
+        sort_notes(keys, c.count);
+        for (unsigned k = 0; k < c.count; ++k) c.notes[k] = uint8_t(keys[k]);
+    }
+    t.prog.chords[0].root = true;
+    t.prog.count = uint8_t(n);
+    s.ui.prog_count = 12; s.ui.prog_at = 4;
+}
+
 void looper_sheet(Snapshot& s, unsigned l) {
     looper_scene(s);
     s.ui.loop_sheet = true; s.ui.loop = uint8_t(l); s.ui.track = 3;
@@ -682,6 +757,20 @@ void on_stage(Snapshot& s, unsigned track, StageKind kind) {
     on_stage(s, track, f.at.group, f.at.sub);
     if (t.engine == EngineKind::Plugin) plugin_panel(s, t.plugin, t.plugin == 0 ? "Melodee Poly" : "Plug-in", "VST3", true, PluginStatus::Ready);
 }
+// Track 4 as a KEYGROUP track on Stage's `kind`: the .exs choir (or the break as one WAV across the keys) on its one
+// sound, pad 1.
+void keygroup_scene(Snapshot& s, StageKind kind, bool wav = false) {
+    auto& t = s.project.tracks[3];
+    t.engine = EngineKind::Keygroup;
+    t.pads[0] = t.pads[8];
+    for (unsigned n = 1; n < sampler_pads; ++n) t.pads[n] = PadSound {};
+    t.last_pad = 0;
+    t.set_name(wav ? "BREAK" : "CHOIR");
+    if (wav) s.sample = break_sample();
+    else choir_pad(s, 0);
+    on_stage(s, 3, kind);
+    s.playing = true;
+}
 // Stage B1 on track 1 (Melodee Poly, plug-in entry 0): its presets, `programs` of them (0: its face instead).
 void stage_plugin(Snapshot& s, StageKind kind, bool presets) {
     on_stage(s, 0, kind); s.playing = true;
@@ -724,11 +813,31 @@ void surge_presets(Snapshot& s) {
     s.presets.list = PluginProgramList(std::move(list));
 }
 
+// The STEMS sheet (pages/stems_page.cpp) for the kit's pad in hand, its sample 13 s long.
+void stems_scene(Snapshot& s) {
+    on_stage(s, 3, 0, 0);
+    s.ui.page = PageId::Stems;
+    auto& sheet = s.ui.stems_sheet;
+    sheet.track = 3;
+    sheet.pad = uint8_t(s.project.tracks[3].last_pad % sampler_pads);
+    sheet.sample = s.project.tracks[3].pads[sheet.pad].sample;
+    sheet.frames = 13 * 44100;
+}
+
 struct Preview {
     const char* name;
     void (*set)(Shell&, Snapshot&);
 };
 
+// Illustrative card listing for native UI documentation; no recordings bundled.
+void preview_break_files(Snapshot& s){
+    s.sample_root="/card/Samples";s.files_folder=s.sample_root;s.files.clear();
+    SampleFile folder;folder.path="/card/Samples/Breaks";folder.name="BREAKS";folder.folder=true;s.files.push_back(folder);
+    for(const auto& name:{"think-160-preview.wav","loop-2bar.flac","loop-4bar.aiff"}){
+        SampleFile f;f.path=s.sample_root+"/"+name;f.name=name;s.files.push_back(f);
+    }
+    s.ui.files_cursor=1;s.ui.files_count=uint16_t(s.files.size());
+}
 const Preview previews[] {
     {"break-seq-roll",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.project.tracks[0].engine=EngineKind::Sampler;s.project.tracks[0].break_bars=2;s.project.tracks[0].last_note=8;}},
     {"break-perf-0",[](Shell&,Snapshot& s){s.ui.page=PageId::Edit;s.ui.break_perf_page=0;s.project.tracks[s.ui.track].engine=EngineKind::Sampler;s.project.tracks[s.ui.track].break_bars=2;s.ui.held_pads=1<<6;}},
@@ -763,7 +872,15 @@ const Preview previews[] {
     {"gen-track-16",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.track=15;s.ui.sheet_open=true;s.ui.sheet_row=2;}},
     {"gen-midi-one",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.project.gen8.assign=0;s.project.gen8.first=s.project.gen8.last=11;}},
     {"gen-setup-song",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.ui.gen8_mode=3;}},
-    {"break-browse-four",[](Shell&,Snapshot& s){s.ui.page=PageId::Samples;s.ui.break_browse=true;s.files_top=true;s.project.gen8.bars=4;}},
+    {"break-sync-reading",[](Shell&,Snapshot& s){s.ui.page=PageId::Samples;s.ui.break_browse=true;s.ui.break_bars=2;s.ui.break_preview_sync=true;s.ui.preview=true;s.files_top=true;preview_break_files(s);s.preview_path=s.files[1].path;s.preview_seconds=3;s.preview_complete=false;}},
+    {"break-sync-ready",[](Shell&,Snapshot& s){s.ui.page=PageId::Samples;s.ui.break_browse=true;s.ui.break_bars=2;s.ui.break_preview_sync=true;s.ui.preview=true;s.files_top=true;preview_break_files(s);s.preview_path=s.files[1].path;s.preview_seconds=3;s.preview_complete=true;}},
+    {"break-variation-stopped",[](Shell&,Snapshot& s){s.ui.page=PageId::Edit;s.ui.break_perf_page=3;s.project.tracks[0].engine=EngineKind::Sampler;s.project.tracks[0].break_bars=2;s.project.tracks[0].break_perf[9]=0;s.playing=false;s.break_activity=0;}},
+    {"break-variation-active",[](Shell&,Snapshot& s){s.ui.page=PageId::Edit;s.ui.break_perf_page=3;s.project.tracks[0].engine=EngineKind::Sampler;s.project.tracks[0].break_bars=2;s.project.tracks[0].break_perf[9]=0;s.project.tracks[0].break_perf[1]=64;s.playing=true;s.break_activity=3;}},
+    {"break-stretch-ready",[](Shell&,Snapshot& s){s.ui.page=PageId::Edit;s.ui.break_perf_page=4;s.project.tracks[0].engine=EngineKind::Sampler;s.project.tracks[0].break_bars=2;s.playing=true;s.break_activity=3;}},
+    {"break-stretch-active",[](Shell&,Snapshot& s){s.ui.page=PageId::Edit;s.ui.break_perf_page=4;s.project.tracks[0].engine=EngineKind::Sampler;s.project.tracks[0].break_bars=2;s.playing=true;s.break_activity=7;}},
+    {"break-length-confirm",[](Shell&,Snapshot& s){s.ui.page=PageId::Samples;s.ui.break_browse=true;s.ui.break_job_bars=3;s.ui.break_bars=3;preview_break_files(s);s.ui.ask=UiState::Ask::BreakLength;s.ui.ask_target=s.ui.track;s.project.tracks[s.ui.track].engine=EngineKind::Sampler;s.project.tracks[s.ui.track].break_bars=2;}},
+    {"break-browse-b",[](Shell&,Snapshot& s){s.ui.page=PageId::Samples;s.ui.break_browse=true;s.ui.break_load_b=true;s.files_top=true;s.project.tracks[s.ui.track].break_bars=2;preview_break_files(s);s.files=sample_browser_files(std::move(s.files),true);}},
+    {"break-browse-four",[](Shell&,Snapshot& s){s.ui.page=PageId::Samples;s.ui.break_browse=true;s.files_top=true;s.ui.break_bars=4;preview_break_files(s);s.files=sample_browser_files(std::move(s.files),true);}},
 
     {"empty-track-cursor", [](Shell&,Snapshot& s){s.ui.page=PageId::Tracks;s.ui.track=7;s.project.tracks[7]=Track{};}},
     {"empty-track-overlay", [](Shell&,Snapshot& s){s.ui.page=PageId::Tracks;s.ui.track=11;s.project.tracks[11]=Track{};}},
@@ -871,6 +988,24 @@ const Preview previews[] {
     {"stagepluginface", [](Shell&, Snapshot& s) { stage_plugin(s, StageKind::PluginSound, false); }}, // B1, a plug-in with none
     {"stagepluginedit", [](Shell&, Snapshot& s) { stage_plugin(s, StageKind::PluginEdit, true); }},   // B1 again: its parameters
     {"stagemix", [](Shell&, Snapshot& s) { on_stage(s, 0, StageKind::Mix); s.playing = true; }},
+    {"keylist", [](Shell&, Snapshot& s) { // B3 just pressed on a kit's Stage: its pages by name, FILTER open
+         on_stage(s, 3, StageKind::Filter); s.sample = break_sample(); s.playing = true;
+         auto& pad = s.project.tracks[3].pads[8]; pad.filter = PadFilter::Lpf4; pad.cutoff = 45; pad.resonance = 40;
+         s.ui.key_list_key = 2; s.ui.key_list_at = s.now;
+     }},
+    {"menuhere", [](Shell&, Snapshot& s) { // the encoder held on Sequences: HERE, the page's jobs as cards
+         s.ui.page = PageId::Scenes; s.ui.track = 2; s.ui.scene = 1; s.playing = true;
+         s.ui.menu = menu_here_view; s.ui.menu_row = 0;
+     }},
+    {"menugo", [](Shell&, Snapshot& s) { // B3 GO: the sixteen places as the pads sit, the wheel on MIXER
+         s.ui.page = PageId::Scenes; s.ui.track = 2; s.playing = true;
+         s.ui.menu = menu_go_view; s.ui.menu_tile = 8;
+     }},
+    {"menumixer", [](Shell&, Snapshot& s) { // HERE on the mixer: the track's jobs
+         s.ui.page = PageId::Tracks; s.ui.track = 2; s.playing = true;
+         s.ui.menu = menu_here_view; s.ui.menu_row = 0;
+     }},
+    {"padbankheld", [](Shell&, Snapshot& s) { on_stage(s, 0, StageKind::Mix); s.playing = true; s.ui.pad_bank = true; }}, // Pad Bank held: TRACKS / MOVE / COPY over the page
     {"stagesends", [](Shell&, Snapshot& s) { on_stage(s, 0, StageKind::Sends); s.playing = true; s.ui.turning = 1; s.ui.turned_at = s.now; }}, // the four sends
     {"stagearp", [](Shell&, Snapshot& s) { on_stage(s, 0, 1, 0); s.playing = true; s.project.tracks[0].arp_octaves = 2; }},
     {"stagearpheld", [](Shell&, Snapshot& s) { // keys held: the notes it plays from them, up and down
@@ -882,6 +1017,7 @@ const Preview previews[] {
     {"stagefxempty", [](Shell&, Snapshot& s) { on_stage(s, 0, StageKind::Fx); s.playing = true; }},
     {"stagekitlayers", [](Shell&, Snapshot& s) { on_stage(s, 3, 0, 1); s.sample = break_sample(); s.playing = true; layered_pad(s, LayerPlay::Velocity); }},
     {"stagekitlayersshift", [](Shell&, Snapshot& s) { on_stage(s, 3, 0, 1); s.sample = break_sample(); layered_pad(s, LayerPlay::Random); s.ui.shift = true; }},
+    {"stagekitlayershold", [](Shell&, Snapshot& s) { on_stage(s, 3, 0, 1); s.sample = break_sample(); layered_pad(s, LayerPlay::RandomHold); s.ui.shift = true; }}, // Note Repeat keeps one layer a hold
     {"stagekitmix", [](Shell&, Snapshot& s) { on_stage(s, 3, StageKind::PadMix); s.sample = break_sample(); s.playing = true; s.project.tracks[3].pads[8].pan = 12; }},
     {"stagekitsends", [](Shell&, Snapshot& s) { // a kit's SENDS: the last pad's own, 30 % into bus A
          on_stage(s, 3, StageKind::Sends); s.sample = break_sample(); s.playing = true;
@@ -900,19 +1036,19 @@ const Preview previews[] {
     {"stagekitplay", [](Shell&, Snapshot& s) { on_stage(s, 3, StageKind::Play); s.sample = break_sample(); s.playing = true; s.project.tracks[3].pads[8].group = 2; }},
     {"stagekitcolour", [](Shell&, Snapshot& s) { on_stage(s, 3, StageKind::Colour); s.sample = break_sample(); s.playing = true; coloured_kit(s); }},
     {"stagekitfollow", [](Shell&, Snapshot& s) { on_stage(s, 3, StageKind::Follow); s.sample = break_sample(); s.playing = true; s.project.tracks[3].params[sampler::Follow] = 1; }},
-    {"stagekitcloud", [](Shell&, Snapshot& s) { on_stage(s, 3, StageKind::Cloud); s.sample = break_sample(); s.playing = true; s.project.tracks[3].params[sampler::Cloud] = 1; }},
+    {"stagekitcloud", [](Shell&, Snapshot& s) { on_stage(s, 3, StageKind::Cloud); s.sample = break_sample(); s.playing = true; auto& t = s.project.tracks[3]; t.pads[t.last_pad % sampler_pads].cloud = true; }},
     {"stagekitcloudoff", [](Shell&, Snapshot& s) { on_stage(s, 3, StageKind::Cloud); s.sample = break_sample(); s.playing = true; }},
     {"stagecloudplaying", [](Shell&, Snapshot& s) { // CLOUD while A09 is held: its grains, the bars they cover lit, where they are
          on_stage(s, 3, StageKind::Cloud); s.sample = break_sample(); s.playing = true;
-         auto& t = s.project.tracks[3]; t.params[sampler::Cloud] = 1; t.params[sampler::Position] = 38;
-         auto& pad = t.pads[8]; pad.start = 0; pad.end = 0; // the whole break
+         auto& t = s.project.tracks[3];
+         auto& pad = t.pads[8]; pad.start = 0; pad.end = 0; pad.cloud = true; pad.cloud_position = 38; // the whole break
          uint32_t end = pad.end ? pad.end : s.sample.frames;
          cloud_heard(s, pad.start + (end - pad.start) * 0.38);
      }},
     {"stagecloudscan", [](Shell&, Snapshot& s) { // Scan moving: the cloud has travelled on from K1's line, the label with it
          on_stage(s, 3, StageKind::Cloud); s.sample = break_sample(); s.playing = true;
-         auto& t = s.project.tracks[3]; t.params[sampler::Cloud] = 1; t.params[sampler::Position] = 20; t.params[sampler::Scan] = 75;
-         auto& pad = t.pads[8]; pad.start = 0; pad.end = 0; // the whole break
+         auto& t = s.project.tracks[3];
+         auto& pad = t.pads[8]; pad.start = 0; pad.end = 0; pad.cloud = true; pad.cloud_position = 20; pad.cloud_scan = 75; // the whole break
          uint32_t end = pad.end ? pad.end : s.sample.frames;
          cloud_heard(s, pad.start + (end - pad.start) * 0.52);
      }},
@@ -931,11 +1067,19 @@ const Preview previews[] {
     {"stagemidicc", [](Shell&, Snapshot& s) { stage_midi(s, 0, 2); }},
     {"stagemidiccshift", [](Shell&, Snapshot& s) { stage_midi(s, 0, 2); s.ui.shift = true; }},
     {"stagemidiarp", [](Shell&, Snapshot& s) { stage_midi(s, 1, 0); }},
-    {"stageemptysynth", [](Shell&, Snapshot& s) { on_stage(s, 12, 0, 0); s.ui.new_pick = 0; }},
-    {"stageemptykit", [](Shell&, Snapshot& s) { on_stage(s, 12, 1, 0); s.ui.new_pick = 2; s.ui.new_for = 12; }}, // picked from Tracks: B1 BACK
-    {"stageemptymidi", [](Shell&, Snapshot& s) { on_stage(s, 12, 2, 0); s.ui.new_pick = 5; }},
-    {"stageemptyslide", [](Shell&, Snapshot& s) { // the wheel just moved: Card on its way to the middle
-         on_stage(s, 12, 1, 0); s.ui.new_pick = 2; s.ui.new_pick_from = 1; s.now = 1000; s.ui.new_pick_at = 960;
+    // An empty track (shell/new_track.h): the types in the MPC's order, then a type's sources.
+    {"stageemptytypes", [](Shell&, Snapshot& s) { on_stage(s, 12, 0, 0); s.ui.new_pick = uint8_t(NewType::Drum); }},
+    {"stageemptyaudio", [](Shell&, Snapshot& s) { on_stage(s, 12, 0, 0); s.ui.new_pick = uint8_t(NewType::Audio); }}, // freeze plan F3
+    {"stageemptysynth", [](Shell&, Snapshot& s) { on_stage(s, 12, 0, 0); s.ui.new_pick = uint8_t(NewType::Plugin); }},
+    {"stageemptykeygroup", [](Shell&, Snapshot& s) { on_stage(s, 12, 0, 0); s.ui.new_pick = uint8_t(NewType::Keygroup); }}, // Push: Samples
+    {"stageemptykit", [](Shell&, Snapshot& s) { // Drum opened: where its samples come from; B1 BACK to the types
+         on_stage(s, 12, 0, 0); s.ui.new_sources = true; s.ui.new_type = uint8_t(NewType::Drum); s.ui.new_pick = 0; s.ui.new_for = 12;
+     }},
+    {"stageemptymidi", [](Shell&, Snapshot& s) { // MIDI opened: the port
+         on_stage(s, 12, 0, 0); s.ui.new_sources = true; s.ui.new_type = uint8_t(NewType::Midi); s.ui.new_pick = 1;
+     }},
+    {"stageemptyslide", [](Shell&, Snapshot& s) { // the wheel just moved: Keygroup on its way to the middle
+         on_stage(s, 12, 0, 0); s.ui.new_pick = uint8_t(NewType::Keygroup); s.ui.new_pick_from = 0; s.now = 1000; s.ui.new_pick_at = 960;
      }},
     {"trackdeleteconfirm", [](Shell&, Snapshot& s){s.ui.page=PageId::TrackActions;s.ui.track=2;s.ui.track_action=4;s.ui.ask=UiState::Ask::ClearTrack;s.ui.ask_target=2;}},
     {"trackactions", [](Shell&, Snapshot& s){s.ui.page=PageId::TrackActions;s.ui.track=2;}},
@@ -974,6 +1118,29 @@ const Preview previews[] {
     {"keys", [](Shell&, Snapshot& s) {
          s.ui.page = PageId::Keys; s.ui.held_pads = 1u << 4 | 1u << 9; s.playing = true;
          s.ui.turning = 1; s.ui.turned_at = s.now;
+     }},
+    // Prog pads (model/progression.h): bank A of a 20-chord progression, a pad held, bank B, the wheel just turned,
+    // K1 KEY moved, and storing (notes held on Chromatic with STORE on B2; then the pad to take them).
+    {"keysprog", [](Shell&, Snapshot& s) { prog_scene(s); }},
+    {"keysprogheld", [](Shell&, Snapshot& s) { prog_scene(s); s.ui.held_pads = 1u << 4; }},
+    {"keysprogbank", [](Shell&, Snapshot& s) { prog_scene(s); s.project.tracks[0].bank = 1; }},
+    {"keysprogpick", [](Shell&, Snapshot& s) {
+         prog_scene(s); s.ui.prog_shown_at = s.now ? s.now : 1;
+         std::snprintf(s.ui.prog_prev, sizeof(s.ui.prog_prev), "Major 7ths"); std::snprintf(s.ui.prog_next, sizeof(s.ui.prog_next), "Sus Chords");
+     }},
+    {"keysprogkey", [](Shell&, Snapshot& s) { prog_scene(s); s.project.tracks[0].prog_shift = 3; s.ui.turning = 0; s.ui.turned_at = s.now; }},
+    {"keysprogstore", [](Shell&, Snapshot& s) {
+         s.ui.page = PageId::Keys; s.playing = true;
+         auto& t = s.project.tracks[0]; t.layout = PadLayout::Chromatic; t.octave = 2;
+         s.ui.held_pads = 1u << 0 | 1u << 3 | 1u << 7 | 1u << 10;
+     }},
+    {"keysprogstorepad", [](Shell&, Snapshot& s) {
+         prog_scene(s);
+         for (unsigned n = 16; n < prog_chords; ++n) s.project.tracks[0].prog.chords[n] = ProgChord {};
+         for (unsigned n = 12; n < 16; ++n) s.project.tracks[0].prog.chords[n] = ProgChord {};
+         s.ui.prog_storing = true; s.ui.prog_store_count = 4;
+         const uint8_t am7[] {45, 48, 52, 55};
+         for (unsigned n = 0; n < 4; ++n) s.ui.prog_store_keys[n] = am7[n];
      }},
     {"keysdrums", [](Shell&, Snapshot& s) { // Keys on Drums pads: a drum plug-in's eleven voices (9W9's), Low Tom last, Snare held
          s.ui.page = PageId::Keys; s.playing = true;
@@ -1104,6 +1271,121 @@ const Preview previews[] {
          job.times_real = 5.8f; job.seconds_left = 9;
          for (unsigned n : {0u, 1u, 2u}) job.done[0] |= uint64_t(1) << n;
      }},
+    // The AUTO SAMPLE sheet on track 3 (a plug-in): its KEYS row, its SOUND row, and sampling (C2-C4 done, D#4 playing).
+    {"autosample", [](Shell&, Snapshot& s) {
+         print_scene(s);
+         s.ui.page = PageId::AutoSample;
+         s.ui.auto_sheet = UiState::AutoSheet {};
+         s.ui.auto_sheet.track = 2;
+         s.ui.auto_sheet.settings.layers = 2;
+     }},
+    {"autosamplesound", [](Shell&, Snapshot& s) {
+         print_scene(s);
+         s.ui.page = PageId::AutoSample;
+         s.ui.auto_sheet = UiState::AutoSheet {};
+         s.ui.auto_sheet.track = 2; s.ui.auto_sheet.row = 2;
+     }},
+    // The check: type and glide heard, the accent being listened for; then a mono sheet, a drums sheet, takes.
+    {"autosamplecheck", [](Shell&, Snapshot& s) {
+         print_scene(s);
+         s.ui.page = PageId::AutoSample;
+         s.ui.auto_sheet = UiState::AutoSheet {};
+         s.ui.auto_sheet.track = 2; s.ui.auto_sheet.checking = true;
+         auto& job = s.print;
+         job.busy = true; job.autosample = true; job.checking = true; job.opened = true; job.track = 2; job.check_step = 2;
+         job.found.kind = AutoKind::Mono; job.found.glide = 0.06f;
+     }},
+    {"autosampleopening", [](Shell&, Snapshot& s) { // the check waits for the track's plug-in to open
+         print_scene(s);
+         s.ui.page = PageId::AutoSample;
+         s.ui.auto_sheet = UiState::AutoSheet {};
+         s.ui.auto_sheet.track = 2; s.ui.auto_sheet.checking = true; s.ui.auto_sheet.check_wanted = true;
+     }},
+    {"autosamplecheckmoves", [](Shell&, Snapshot& s) { // the check on a sound that moves while held
+         print_scene(s);
+         s.ui.page = PageId::AutoSample;
+         s.ui.auto_sheet = UiState::AutoSheet {};
+         s.ui.auto_sheet.track = 2; s.ui.auto_sheet.checking = true;
+         auto& job = s.print;
+         job.busy = true; job.autosample = true; job.checking = true; job.opened = true; job.track = 2; job.check_step = 3;
+         job.found.sustains = true; job.found.moves = true; job.found.hold = 8.0f;
+     }},
+    {"autosamplepad", [](Shell&, Snapshot& s) { // a pad that sustains: LOOP at Auto loops it
+         print_scene(s);
+         s.ui.page = PageId::AutoSample;
+         s.ui.auto_sheet = UiState::AutoSheet {};
+         s.ui.auto_sheet.track = 2; s.ui.auto_sheet.row = 1; // NOTE: HOLD at Auto, 8 s for a sound that moves
+         auto& f = s.ui.auto_sheet.settings.found;
+         f.heard = true; f.sustains = true; f.moves = true; f.hold = 8.0f;
+     }},
+    {"autosamplesplit", [](Shell&, Snapshot& s) { // a split: a mono bass under a poly lead from C4
+         print_scene(s);
+         s.ui.page = PageId::AutoSample;
+         s.ui.auto_sheet = UiState::AutoSheet {};
+         s.ui.auto_sheet.track = 2;
+         auto& f = s.ui.auto_sheet.settings.found;
+         f.heard = true; f.kind = AutoKind::Mono; f.glide = 0.03f; f.tied = false; f.sustains = true; f.hold = 2.0f; f.takes = 3;
+         f.split = 60; f.upper.sustains = true; f.upper.moves = true; f.upper.hold = 8.0f;
+     }},
+    {"autosamplesplitcheck", [](Shell&, Snapshot& s) { // the check, the split heard
+         print_scene(s);
+         s.ui.page = PageId::AutoSample;
+         s.ui.auto_sheet = UiState::AutoSheet {};
+         s.ui.auto_sheet.track = 2; s.ui.auto_sheet.checking = true;
+         auto& job = s.print;
+         job.busy = true; job.autosample = true; job.checking = true; job.opened = true; job.track = 2; job.check_step = 3;
+         auto& f = job.found;
+         f.kind = AutoKind::Mono; f.glide = 0.03f; f.tied = false; f.sustains = false; f.hold = 2.0f;
+         f.split = 60; f.upper.sustains = true; f.upper.moves = true; f.upper.hold = 8.0f;
+     }},
+    {"autosamplemono", [](Shell&, Snapshot& s) {
+         print_scene(s);
+         s.ui.page = PageId::AutoSample;
+         s.ui.auto_sheet = UiState::AutoSheet {};
+         s.ui.auto_sheet.track = 2;
+         auto& f = s.ui.auto_sheet.settings.found;
+         f.heard = true; f.kind = AutoKind::Mono; f.glide = 0.06f; f.accent = 100; f.hold = 2.4f;
+     }},
+    {"autosampledrums", [](Shell&, Snapshot& s) {
+         print_scene(s);
+         s.ui.page = PageId::AutoSample;
+         s.ui.auto_sheet = UiState::AutoSheet {};
+         s.ui.auto_sheet.track = 2;
+         auto& a = s.ui.auto_sheet.settings;
+         a.low = 36; a.high = 59;
+         auto& f = a.found;
+         f.heard = true; f.kind = AutoKind::Drums; f.takes = 3; f.scan_low = 36; f.scan_high = 59;
+         for (unsigned k : {36u, 37u, 38u, 39u, 40u, 42u, 44u, 46u, 47u, 49u, 50u, 51u}) f.keys[0] |= uint64_t(1) << k;
+     }},
+    // On a MIDI track: the instrument outside. Its INPUT where a plug-in's TAP is, and the input's level.
+    {"autosamplemidi", [](Shell&, Snapshot& s) {
+         stage_midi(s, 0, 0);
+         s.project.tracks[11].params[midi_track::AudioIn] = midi_track::AudioRear;
+         s.ui.page = PageId::AutoSample;
+         s.ui.auto_sheet = UiState::AutoSheet {};
+         s.ui.auto_sheet.track = 11; s.ui.auto_sheet.row = 2;
+         s.take.left = 0.25f; s.take.right = 0.18f;
+     }},
+    {"autosamplemidinone", [](Shell&, Snapshot& s) {
+         stage_midi(s, 0, 0);
+         s.ui.page = PageId::AutoSample;
+         s.ui.auto_sheet = UiState::AutoSheet {};
+         s.ui.auto_sheet.track = 11; s.ui.auto_sheet.row = 2;
+     }},
+    {"autosampling", [](Shell&, Snapshot& s) {
+         print_scene(s);
+         s.ui.page = PageId::AutoSample;
+         auto& sheet = s.ui.auto_sheet;
+         sheet = UiState::AutoSheet {};
+         sheet.track = 2; sheet.sampling = true; sheet.settings.layers = 2;
+         auto& job = s.print;
+         job.busy = true; job.autosample = true; job.track = 2; job.count = 42; job.through = 17; job.pattern = 63; job.fraction = 0.4f;
+         job.times_real = 4.1f; job.seconds_left = 21;
+         for (unsigned k = 36; k <= 60; k += 3) job.done[0] |= uint64_t(1) << k;
+         job.velocity = 63; job.wave_hold = 76; job.wave_count = 64; // half way through the hold: a pluck settling
+         for (unsigned b = 0; b < job.wave_count; ++b)
+             job.wave[b] = uint8_t(std::lround(255 * std::clamp(0.45f + 0.5f * std::exp(-float(b) / 14.0f) - 0.07f * float((b * 7) % 5) / 4, 0.0f, 1.0f)));
+     }},
     {"printmidi", [](Shell&, Snapshot& s) {
          stage_midi(s, 0, 0);
          for (unsigned n : {0u, 1u, 2u, 3u}) { s.sketches[11][n].notes = true; s.sketches[11][n].length = 64 * sixteenth_ticks; }
@@ -1153,6 +1435,11 @@ const Preview previews[] {
          s.machine.render_load = 0.33f;
      }},
     {"seqdeep", [](Shell&, Snapshot& s) { deep_scene(s); s.ui.page = PageId::Stage; s.ui.seq_held = true; s.ui.seq_down = s.now - seq_sheet_ms; }},
+    {"askreplace", [](Shell&, Snapshot& s) { // another plug-in picked over Surge XT on track 4
+         s.ui.page = PageId::Plugins; s.ui.track = 3; s.ui.plugin_target = UiState::PluginTarget::Instrument;
+         std::snprintf(s.ui.ask_name.data(), s.ui.ask_name.size(), "%s", "Surge XT");
+         s.ui.ask = UiState::Ask::ReplacePlugin;
+     }},
     {"askthaw", [](Shell&, Snapshot& s) {
          deep_scene(s); on_stage(s, 2, 1, 0);
          s.ui.ask = UiState::Ask::Unfreeze; s.ui.ask_target = 2;
@@ -1363,11 +1650,11 @@ const Preview previews[] {
          s.ui.ask = UiState::Ask::ClearTrack; s.ui.ask_target = 0;
      }},
     {"repeat", [](Shell&, Snapshot& s) { // Note Repeat on, on Keys: 1/8, 1/16, 1/32 on B1-B3
-         s.ui.page = PageId::Keys; s.playing = true; s.project.tracks[0].arp = true; s.project.tracks[0].arp_rate = 4;
+         s.ui.page = PageId::Keys; s.playing = true; s.project.tracks[0].repeat = true; s.project.tracks[0].repeat_rate = 4;
          s.ui.held_pads = 1u << 4;
      }},
     {"repeattriplets", [](Shell&, Snapshot& s) { // and with Shift held: the triplets
-         s.ui.page = PageId::Keys; s.playing = true; s.project.tracks[0].arp = true; s.project.tracks[0].arp_rate = 5;
+         s.ui.page = PageId::Keys; s.playing = true; s.project.tracks[0].repeat = true; s.project.tracks[0].repeat_rate = 5;
          s.ui.shift = true; s.ui.shift_used = true;
      }},
     {"undo", [](Shell&, Snapshot& s) { // Shift + Minus: what came back
@@ -1382,6 +1669,23 @@ const Preview previews[] {
          for (auto name : files) s.files.push_back({std::string("/media/card/Samples/") + name + ".wav", name, 0, false});
          s.files[4].path = s.project.samples[4].path;
          s.ui.files_count = uint16_t(s.files.size()); s.ui.turning = 1; s.ui.turned_at = s.now;
+     }},
+    {"samplesdelete", [](Shell&, Snapshot& s) { // Erase on a row of the browser: the question (shell/delete_jobs.h), B3 DELETE
+         s.ui.page = PageId::Samples; s.ui.track = 3; s.ui.files_cursor = 1; s.sample_root = "/media/card/Samples";
+         s.files_folder = s.sample_root + "/Keygroups/Huge Saw"; s.files_top = false;
+         s.files.push_back({s.files_folder + "/Huge Saw.xty", "HUGE SAW", 0, false});
+         s.files.back().instrument = true;
+         s.ui.files_count = uint16_t(s.files.size()); s.ui.files_cursor = 0;
+         s.ui.ask = UiState::Ask::DeleteFile; s.ui.ask_target = int(DeleteWhat::Program);
+         std::snprintf(s.ui.ask_name.data(), s.ui.ask_name.size(), "Huge Saw.xty");
+     }},
+    {"samplesdeletefolder", [](Shell&, Snapshot& s) { // a folder: all in it goes
+         s.ui.page = PageId::Samples; s.ui.track = 3; s.sample_root = "/media/card/Samples";
+         s.files_folder = s.sample_root; s.files_top = false;
+         for (auto name : {"EDITS", "KEYGROUPS", "RECORDED"}) s.files.push_back({std::string("/media/card/Samples/") + name, name, 0, true});
+         s.ui.files_count = uint16_t(s.files.size()); s.ui.files_cursor = 0;
+         s.ui.ask = UiState::Ask::DeleteFile; s.ui.ask_target = int(DeleteWhat::Folder);
+         std::snprintf(s.ui.ask_name.data(), s.ui.ask_name.size(), "Edits");
      }},
     {"samplesinstruments", [](Shell&, Snapshot& s) { // a folder of instruments: each tagged by its kind, a kit, an expansion
          s.ui.page = PageId::Samples; s.ui.track = 3; s.playing = true; s.ui.files_cursor = 0; s.sample_root = "/media/card/Samples";
@@ -1437,6 +1741,29 @@ const Preview previews[] {
          on_stage(s, 3, 0, 0); s.playing = true; s.sample = break_sample();
          auto& pad = s.project.tracks[3].pads[8]; pad.start = 18000; pad.end = 150000;
          s.ui.turning = 0; s.ui.turned_at = s.now;
+     }},
+    // The STEMS sheet (Shift + B3 on a kit pad's TRIM): before SEPARATE, and the job two thirds done.
+    {"stems", [](Shell&, Snapshot& s) { stems_scene(s); }},
+    {"stemsrun", [](Shell&, Snapshot& s) {
+         stems_scene(s);
+         s.ui.stems_sheet.running = true;
+         s.stems.busy = true; s.stems.fraction = 0.64f; s.stems.seconds_left = 6;
+     }},
+    // Keygroup tracks: Stage on the one sound, B1 ZONES (or TRIM on a WAV), TUNE, AMP ENV, FILTER, FILT ENV; B2 PLAY,
+    // ARP, CHORD; B3 the track's MIX, SENDS, FX.
+    {"kgzones", [](Shell&, Snapshot& s) { keygroup_scene(s, StageKind::Trim); }},
+    {"kgtrim", [](Shell&, Snapshot& s) { keygroup_scene(s, StageKind::Trim, true); }},
+    {"kgtune", [](Shell&, Snapshot& s) { keygroup_scene(s, StageKind::Tune); }},
+    {"kgampenv", [](Shell&, Snapshot& s) { keygroup_scene(s, StageKind::AmpEnv); }},
+    {"kgfilter", [](Shell&, Snapshot& s) { keygroup_scene(s, StageKind::Filter); }},
+    {"kgfiltenv", [](Shell&, Snapshot& s) { keygroup_scene(s, StageKind::FiltEnv); }},
+    {"kgplay", [](Shell&, Snapshot& s) { keygroup_scene(s, StageKind::Play, true); }},
+    {"kgarp", [](Shell&, Snapshot& s) { keygroup_scene(s, StageKind::Arp); }},
+    {"kgmix", [](Shell&, Snapshot& s) { keygroup_scene(s, StageKind::Mix); }},
+    {"kgsends", [](Shell&, Snapshot& s) { keygroup_scene(s, StageKind::Sends); }},
+    {"kgfx", [](Shell&, Snapshot& s) { keygroup_scene(s, StageKind::Fx); }},
+    {"kgnamed", [](Shell&, Snapshot& s) { // a keygroup named KEYS: its sound's name in the pill, as it differs
+         keygroup_scene(s, StageKind::Trim); s.project.tracks[3].set_name("KEYS");
      }},
     {"triminstrument", [](Shell&, Snapshot& s) { // ZONES (TRIM's place) on a pad holding an .exs: a tile a zone over its keys, the one in hand named
          on_stage(s, 3, 0, 0); s.playing = true; choir_pad(s, 8);
@@ -1551,12 +1878,12 @@ const Preview previews[] {
          s.ui.page = PageId::Chop; s.ui.track = 3; s.sample = break_sample(); s.ui.chop_sample = 4;
          s.ui.slices = chop(ChopMode::Threshold, 40, 20000, 200000, s.sample.frames, s.sample.hits, s.sample.hit_count, 920);
          s.ui.chop_slice = 2; s.ui.chop_zoom = 45; s.ui.chop_focus = 1; s.ui.chop_fine = true;
-         s.project.samples[4].frames = s.sample.frames;
+         s.project.samples.edit(4).frames = s.sample.frames;
          s.ui.shift = true; s.ui.shift_used = true;
      }},
     {"chopfine", [](Shell&, Snapshot& s) { // K1 touched, zoomed in at the slice's start: the wheel's handle drawn wider
          s.ui.page = PageId::Chop; s.ui.track = 3; s.sample = break_sample(); s.ui.chop_sample = 4;
-         s.project.samples[4].frames = s.sample.frames;
+         s.project.samples.edit(4).frames = s.sample.frames;
          s.ui.slices = chop(ChopMode::Threshold, 40, 20000, 200000, s.sample.frames, s.sample.hits, s.sample.hit_count, 920);
          s.ui.chop_slice = 2; s.ui.chop_zoom = 30; s.ui.chop_focus = 0; s.ui.chop_fine = true; s.ui.turning = 0; s.ui.turned_at = s.now;
      }},
@@ -1581,6 +1908,39 @@ const Preview previews[] {
          s.usb_state = uint8_t(UsbStreamState::Waiting);
          s.ui.turning = 2; s.ui.turned_at = s.now;
      }},
+    {"stageaudioinput", [](Shell&, Snapshot& s) { audio_scene(s, false); on_stage(s, 12, 1, 0); }}, // freeze plan F3: INPUT, A1 empty
+    {"stageaudioarmed", [](Shell&, Snapshot& s) { // Seq Record pressed: Play records; the mic heard, the speaker quiet
+         audio_scene(s, false); on_stage(s, 12, 1, 0);
+         s.ui.rec_armed = true; s.speaker_quieted = true; s.take.left = 0.4f; s.take.right = 0.36f;
+     }},
+    {"stageaudiorec", [](Shell&, Snapshot& s) { // recording A1, in its second bar
+         audio_scene(s, false); on_stage(s, 12, 1, 0);
+         s.ui.recording = true; s.ui.audio_rec_track = 12; s.ui.audio_rec_running = true; s.speaker_quieted = true;
+         s.playing = true; s.position = 480; s.take.left = 0.5f; s.take.right = 0.45f;
+     }},
+    {"stageaudioagain", [](Shell&, Snapshot& s) { // recording over A1's take: the old one dim under the new
+         audio_scene(s, true); on_stage(s, 12, 1, 0);
+         s.ui.recording = true; s.ui.audio_rec_track = 12; s.ui.audio_rec_running = true; s.speaker_quieted = true;
+         s.playing = true; s.position = 230; s.take.left = 0.5f; s.take.right = 0.45f;
+     }},
+    {"stageaudioclip", [](Shell&, Snapshot& s) { // A1's take playing; its start trimmed and faded in
+         audio_scene(s, true); on_stage(s, 12, 0, 0);
+         auto& r = s.pattern.audio;
+         r.gain = 15; r.offset = 3175; r.frames -= 3175; r.fade_in = 1323; r.fade_out = 6615;
+         s.sketches[12][0].audio = r;
+         s.playing = true; s.position = 290;
+     }},
+    {"stageaudiowarp", [](Shell&, Snapshot& s) { // A1's take fitted to the tempo, kept at its pitch
+         audio_scene(s, true); on_stage(s, 12, 0, 2);
+         s.pattern.audio.warp = true; s.pattern.audio.tempo = 1080; // recorded at 108 BPM
+         s.sketches[12][0].audio = s.pattern.audio;
+     }},
+    {"stageaudiofades", [](Shell&, Snapshot& s) {
+         audio_scene(s, true); on_stage(s, 12, 0, 1);
+         s.pattern.audio.fade_in = 8820; s.pattern.audio.fade_out = 22050;
+         s.sketches[12][0].audio = s.pattern.audio;
+     }},
+    {"songaudio", [](Shell&, Snapshot& s) { audio_scene(s, true); s.ui.page = PageId::Song; s.ui.song_cursor = 24; s.ui.song_view = 16; }},
     {"record", [](Shell&, Snapshot& s) { // a take onto B01 with three pads cut from it
          s.ui.page = PageId::Record; s.ui.track = 3; s.playing = true;
          auto& in = s.ui.settings.input;
@@ -1641,6 +2001,15 @@ const Preview previews[] {
      }},
     {"songmidifile", [](Shell&, Snapshot& s) { // roadmap P4: Export with the wheel on MIDI FILE, no song: the patterns
          s.ui.page = PageId::Song; s.ui.track = 2; s.ui.song_cursor = 0; s.ui.song_export = true; s.ui.export_kind = 4;
+     }},
+    {"songmpc3", [](Shell&, Snapshot& s) { // Export with the wheel on MPC 3: a project for MPC One and up
+         s.ui.page = PageId::Song; s.ui.track = 2; s.ui.song_cursor = 0; s.ui.song_export = true; s.ui.export_kind = 5;
+         Clip clip; clip.track = 2; clip.pattern = 0; clip.bar = 0; clip.bars = 16;
+         s.project.song.place(clip);
+     }},
+    {"mpc3name", [](Shell&, Snapshot& s) { // Export on MPC 3, B2: the project's name
+         s.ui.page = PageId::Song; s.ui.track = 2; s.ui.export_kind = 5;
+         s.ui.name.start(NameTarget::Mixdown, "Project 1", 31, false);
      }},
     {"mixdownname", [](Shell&, Snapshot& s) { // Export, B2: the mixdown's name
          s.ui.page = PageId::Song; s.ui.track = 2;
@@ -1818,26 +2187,41 @@ const Preview previews[] {
          }
          s.ui.turning = 1; s.ui.turned_at = s.now;
      }},
-    {"settings", [](Shell&, Snapshot& s) { s.ui.page = PageId::SettingsPage; s.playing = true; s.ui.settings_door = 3; }}, // the doors, AUDIO in hand
+    {"settings", [](Shell&, Snapshot& s) { s.ui.page = PageId::SettingsPage; s.playing = true; s.ui.settings_door = 4; }}, // the doors, AUDIO in hand
     {"settingspads", [](Shell&, Snapshot& s) { s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 0; s.ui.settings_cursor = Settings::PadResponse; }},
-    {"settingsscreen", [](Shell&, Snapshot& s) { s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 2; s.ui.settings_cursor = Settings::Palette; }},
+    {"settingslights", [](Shell&, Snapshot& s) { s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 0; s.ui.settings_cursor = Settings::PadFade; }},
+    {"settingsseq", [](Shell&, Snapshot& s) { s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 1; s.ui.settings_cursor = Settings::SeqFollow; s.ui.settings.seq_follow = 1; }},
+    {"settingsscreen", [](Shell&, Snapshot& s) { s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 3; s.ui.settings_cursor = Settings::Palette; }},
+    // Push on Palette / Font: the cards, the screen in the one lit (DAY; Rhythmer Pixel).
+    {"settingspalette", [](Shell&, Snapshot& s) {
+         s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 3; s.ui.settings_cursor = Settings::Palette;
+         s.ui.settings_look = true; s.ui.settings.palette = 1;
+     }},
+    {"settingslcd", [](Shell&, Snapshot& s) { // LCD: no colour, Rhythmer Pixel
+         s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 3; s.ui.settings_cursor = Settings::Palette;
+         s.ui.settings_look = true; s.ui.settings.palette = uint8_t(ui::palettes.size() - 1);
+     }},
+    {"settingsfont", [](Shell&, Snapshot& s) {
+         s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 3; s.ui.settings_cursor = Settings::Font;
+         s.ui.settings_look = true; s.ui.settings.font = 6;
+     }},
     {"settingsaudio", [](Shell&, Snapshot& s) { // AUDIO's rows, 48 kHz with a dropout
-        s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 3; s.ui.settings_cursor = Settings::AudioBuffer; s.ui.settings_editing = true;
+        s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 4; s.ui.settings_cursor = Settings::AudioBuffer; s.ui.settings_editing = true;
         s.ui.settings.audio_rate = 48000; s.ui.settings.audio_periods = 4;
         s.audio_rate = 48000; s.audio_periods = 4; s.audio_xruns = 1;
         s.machine.render_load = 0.47f; // the blocks' share of their time, beside the dropout (roadmap P2)
         s.machine.pdc_frames = 152;    // a 44.1 kHz plug-in effect's converter held back (roadmap P4)
     }},
     {"settingssampling", [](Shell&, Snapshot& s) { // the sampling rows: how Audio Recall cuts, when a take ends on its own
-        s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 4; s.ui.settings_cursor = Settings::RecallGrabRow; s.ui.settings_editing = true;
+        s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 5; s.ui.settings_cursor = Settings::RecallGrabRow; s.ui.settings_editing = true;
     }},
     {"settingsmirror", [](Shell&, Snapshot& s) { // SCREEN's rows with Screen Mirror on at 1280 x 960, 60 fps, a computer showing it
-        s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 2; s.ui.settings_cursor = Settings::MirrorSize;
+        s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 3; s.ui.settings_cursor = Settings::MirrorSize;
         s.ui.settings.mirror = true; s.ui.settings.mirror_size = 3; s.ui.settings.mirror_fps = 60;
         s.mirror_state = uint8_t(MirrorState::Streaming); s.mirror_width = 1280; s.mirror_height = 960;
     }},
     {"settingsmirrorheld", [](Shell&, Snapshot& s) { // turned off while a computer shows it: it waits for the computer to close the camera
-        s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 2; s.ui.settings_cursor = Settings::Mirror;
+        s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 3; s.ui.settings_cursor = Settings::Mirror;
         s.ui.settings.mirror = false; s.ui.settings.mirror_size = 3;
         s.mirror_state = uint8_t(MirrorState::Streaming); s.mirror_width = 1280; s.mirror_height = 960; s.mirror_held = true;
     }},
@@ -1964,7 +2348,7 @@ const Preview previews[] {
          s.ui.fader = {20, false, 1}; s.ui.fader_moved_at = s.now;
      }},
     {"fadersettings", [](Shell&, Snapshot& s) { // Settings: the three takeover rows, the fader's open
-         s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 1; s.ui.settings_cursor = Settings::FaderTakeover; s.ui.settings_editing = true;
+         s.ui.page = PageId::SettingsPage; s.ui.settings_in = true; s.ui.settings_door = 2; s.ui.settings_cursor = Settings::FaderTakeover; s.ui.settings_editing = true;
      }},
     // Parity phase 9: MIDI and sync.
     {"midiconfig", [](Shell&, Snapshot& s) { // Shift + Pad 8: Sync In open on MIDI Clock, MIDI just came in
@@ -2078,12 +2462,12 @@ const Preview previews[] {
          auto& t = s.project.tracks[3]; t.params[sampler::Follow] = 1; t.last_pad = 4; t.pads[4].start = 0; t.pads[4].end = 230087; t.pads[4].own_tempo = 920;
          s.ui.turning = 1; s.ui.turned_at = s.now; }},
     {"cloudplaying", [](Shell&, Snapshot& s) { s.ui.page = PageId::CloudPage; s.ui.track = 3; s.sample = break_sample(); s.playing = true;
-         auto& t = s.project.tracks[3]; t.params[sampler::Cloud] = 1; t.params[sampler::Position] = 38; t.last_pad = 8;
-         auto& pad = t.pads[8]; pad.start = 0; pad.end = 230087;
+         auto& t = s.project.tracks[3]; t.last_pad = 8;
+         auto& pad = t.pads[8]; pad.start = 0; pad.end = 230087; pad.cloud = true; pad.cloud_position = 38;
          cloud_heard(s, 230087 * 0.38);
      }},
     {"cloud", [](Shell&, Snapshot& s) { s.ui.page = PageId::CloudPage; s.ui.track = 3; s.sample = break_sample(); s.playing = true;
-         auto& t = s.project.tracks[3]; t.params[sampler::Cloud] = 1; t.last_pad = 4; t.pads[4].start = 0; t.pads[4].end = 230087; s.ui.turning = 0; s.ui.turned_at = s.now; }},
+         auto& t = s.project.tracks[3]; t.last_pad = 4; t.pads[4].cloud = true; t.pads[4].start = 0; t.pads[4].end = 230087; s.ui.turning = 0; s.ui.turned_at = s.now; }},
     // Parity phase 10: the sampler's page map (Push) over Play.
     {"samplermap", [](Shell&, Snapshot& s) { s.ui.page = PageId::PlayPage; s.ui.track = 3; s.sample = break_sample(); s.playing = true;
          s.ui.map_open = true; s.ui.map_cursor = 7; }},
@@ -2108,7 +2492,7 @@ const Preview previews[] {
     {"trimzoom", [](Shell&, Snapshot& s) { // Shift + K1 turned: closer in round the start, smoothly (0-100%)
          on_stage(s, 3, 0, 0); s.sample = break_sample(); s.ui.shift = true;
          auto& pad = s.project.tracks[3].pads[8]; pad.start = 18000; pad.end = 150000;
-         s.project.samples[pad.sample % sample_slots].frames = s.sample.frames;
+         s.project.samples.edit(pad.sample % sample_slots).frames = s.sample.frames;
          s.ui.trim_zoom = 35; s.ui.trim_focus = 0; s.ui.last_pot = 0; s.ui.turning = 0; s.ui.turned_at = s.now;
      }},
     {"ampenv", [](Shell&, Snapshot& s) { s.ui.page = PageId::EnvelopePage; s.ui.track = 3; s.sample = break_sample(); s.playing = true;
@@ -2152,7 +2536,7 @@ const Preview previews[] {
          s.ui.page = PageId::Pads; s.ui.levels_held = true; s.ui.track = 3; s.playing = true;
          auto& t = s.project.tracks[3]; t.levels = true; t.levels_pad = 8; t.last_pad = 8; t.levels_kind = uint8_t(LevelsKind::Zones);
          t.octave = kit_level_octave;
-         auto& ref = s.project.samples[t.pads[8].sample % sample_slots];
+         auto& ref = s.project.samples.edit(t.pads[8].sample % sample_slots);
          std::snprintf(ref.path, sizeof(ref.path), "/media/card/Samples/Percussion/Percussion.dspreset");
          std::snprintf(ref.name, sizeof(ref.name), "PERCUSSION");
          ref.frames = 0; ref.zones = 67; ref.keys = {};
@@ -2180,8 +2564,17 @@ const Preview previews[] {
          s.ui.update.phase = uint8_t(UpdatePhase::Failed); s.ui.update.error = uint8_t(UpdateError::CardFull);
          std::snprintf(s.ui.update.version, sizeof s.ui.update.version, "v0.2.0");
      }},
-    {"loading", [](Shell&, Snapshot& s) { s.ui.page = PageId::Stage; s.ui.loading = true; s.ui.loading_total = s.ui.loading_left = 40; std::strncpy(s.project.name, "PROJECT 1", sizeof s.project.name - 1); }},
-    {"loadingsamples", [](Shell&, Snapshot& s) { s.ui.page = PageId::Stage; s.ui.loading = true; s.ui.loading_total = 40; s.ui.loading_left = 12; std::strncpy(s.project.name, "PROJECT 1", sizeof s.project.name - 1); }},
+    {"loading", [](Shell&, Snapshot& s) { s.ui.page = PageId::Stage; s.ui.loading = true; s.ui.loading_total = s.ui.loading_left = s.ui.loading_samples = 40; std::strncpy(s.project.name, "PROJECT 1", sizeof s.project.name - 1); }},
+    {"loadingsamples", [](Shell&, Snapshot& s) {
+         s.ui.page = PageId::Stage; s.ui.loading = true; s.ui.loading_samples = s.ui.loading_total = 40; s.ui.loading_samples_in = 28; s.ui.loading_left = 12;
+         s.ui.loading_bar = 700; s.ui.loading_slot = 3; std::strncpy(s.project.samples.edit(3).name, "KICK LONG", sizeof(SampleRef::name) - 1);
+         std::strncpy(s.project.name, "PROJECT 1", sizeof s.project.name - 1); }},
+    // A project with instruments: its samples in, its instruments' files landing, the one being read named.
+    {"loadinginstruments", [](Shell&, Snapshot& s) {
+         s.ui.page = PageId::Stage; s.ui.loading = true; s.ui.loading_samples = s.ui.loading_samples_in = 24; s.ui.loading_instruments = 3;
+         s.ui.loading_files = 108; s.ui.loading_files_in = 61; s.ui.loading_total = 132; s.ui.loading_left = 47; s.ui.loading_bar = 643;
+         s.ui.loading_slot = 5; std::strncpy(s.project.samples.edit(5).name, "GRAND PIANO", sizeof(SampleRef::name) - 1);
+         std::strncpy(s.project.name, "PROJECT 1", sizeof s.project.name - 1); }},
     {"exitcard", [](Shell&, Snapshot& s) { s.ui.page = PageId::Stage; s.ui.exit_open = true; s.projects.root = "/media/card/Rhythmer/Projects"; s.project_path = "/media/card/Rhythmer/Projects/Song.mldp"; }},
     {"exitoff", [](Shell&, Snapshot& s) { s.ui.page = PageId::Stage; s.ui.exit_open = s.ui.exit_off = true; s.projects.root = "/media/card/Rhythmer/Projects"; }},
     {"exitsaved", [](Shell&, Snapshot& s) { s.ui.page = PageId::Stage; s.ui.exit_open = s.ui.exit_off = s.ui.exit_saved = true; s.projects.root = "/media/card/Rhythmer/Projects"; }},
@@ -2240,6 +2633,11 @@ const Preview previews[] {
     {"roll", [](Shell& shell, Snapshot& s) { // the chord at 2.2.3, C4 in focus, K2 turning
          roll_bass(shell, s, 22, 60);
          s.playing = true; s.position = 26 * sixteenth_ticks; s.ui.turning = 1; s.ui.turned_at = s.now;
+     }},
+    {"rollapart", [](Shell& shell, Snapshot& s) { // Roll on P1 while P2 plays: the pattern chip amber
+         roll_bass(shell, s, 22, 60);
+         s.playing = true; s.position = 26 * sixteenth_ticks;
+         s.playing_patterns[s.ui.track % track_count] = uint8_t((s.project.tracks[s.ui.track % track_count].pattern + 1) % pattern_count);
      }},
     {"notesheet", [](Shell& shell, Snapshot& s) { // Push on the note in focus: Accent, Slide, Tie, Delete as cards
          roll_bass(shell, s, 24, 57);
@@ -2321,7 +2719,7 @@ const Preview previews[] {
      }},
     {"repeatrates", [](Shell&, Snapshot& s) { // Note Repeat on the kit's Pads at 1/64: B3 pressed again (dots under B1 and B3)
          s.ui.page = PageId::Pads; s.ui.track = 3; s.playing = true;
-         s.project.tracks[3].arp = true; s.project.tracks[3].arp_rate = 8;
+         s.project.tracks[3].repeat = true; s.project.tracks[3].repeat_rate = 8;
      }},
     {"stepslane", [](Shell& shell, Snapshot& s) { // Shift + K1 on the kit's Steps: the hat's lane loops over six steps of the bar's sixteen
          step_edit_kit(shell, s);
@@ -2354,6 +2752,28 @@ const Preview previews[] {
          auto& f = shell.patterns().at[2][1].follow;
          f.action = uint8_t(FollowAction::Again); f.other = uint8_t(FollowAction::Stop); f.chance = 50; f.count = 2; f.plays = true;
      }},
+    // Roadmap P5: SCENES (B1 again on Patterns), the bank's scenes and the selected track's pattern's follow action.
+    {"scenes", [](Shell& shell, Snapshot& s) {
+         s.ui.page = PageId::Scenes; s.ui.track = 2; s.ui.scene = 1; s.playing = true;
+         s.project.scenes[0].set_name("INTRO"); s.project.scenes[1].set_name("VERSE"); s.project.scenes[1].tempo = 1240;
+         s.project.scenes[2].set_name("DROP"); s.project.scenes[2].tempo = 1280; s.project.scenes[5].set_name("BREAK");
+         s.project.tracks[2].pattern = 1;
+         for (unsigned t = 0; t < track_count; ++t) { s.playing_patterns[t] = t == 2 ? 1 : 0; s.positions[t] = t == 5 ? -1 : int(t * sixteenth_ticks); }
+         auto& f = shell.patterns().at[2][1].follow;
+         f.action = uint8_t(FollowAction::Next); f.other = uint8_t(FollowAction::Any); f.chance = 75; f.count = 4;
+     }},
+    {"scenescapture", [](Shell&, Snapshot& s) { // Scenes, Shift + B2 CAPTURE: a pad picks the scene what plays goes to
+         s.ui.page = PageId::Scenes; s.ui.track = 2; s.ui.scene = 1; s.playing = true;
+         s.project.scenes[0].set_name("INTRO"); s.project.scenes[1].set_name("VERSE"); s.project.scenes[2].set_name("DROP");
+         for (unsigned t = 0; t < track_count; ++t) s.playing_patterns[t] = uint8_t(t % 3);
+         s.ui.scene_capture = true;
+     }},
+    {"askcapture", [](Shell&, Snapshot& s) { // CAPTURE onto S5, where tracks 1 and 3 have notes
+         s.ui.page = PageId::Scenes; s.ui.track = 2; s.ui.scene = 1; s.playing = true;
+         for (unsigned t = 0; t < track_count; ++t) s.playing_patterns[t] = uint8_t(t % 3);
+         s.sketches[0][4].notes = true; s.sketches[2][4].notes = true;
+         s.ui.ask = UiState::Ask::CaptureScene; s.ui.ask_target = 4;
+     }},
     {"stepeditshift", [](Shell& shell, Snapshot& s) { // Shift held on Step Edit: PADS, TIE, INSERT; the pattern's length, Q, time signature
          step_edit_kit(shell, s);
          s.ui.shift = true;
@@ -2361,6 +2781,8 @@ const Preview previews[] {
 };
 
 void draw(juce::Graphics& g, const Snapshot& s) {
+    ui::use_palette(s.ui.settings.palette); // Settings > SCREEN: the colours and the face this frame is drawn in
+    ui::use_face(ui::palette().face >= 0 ? unsigned(ui::palette().face) : s.ui.settings.font); // LCD sets its own
     ui::Paint p(g);
     g.fillAll(ui::colour::bg);
     page_spec(s.ui.page).draw(p, s);
@@ -2388,10 +2810,14 @@ int preview(const std::string& folder, const std::vector<std::string>& names) {
         shell.snapshot(*snapshot, 100000);
         snapshot->ui = UiState {};
         snapshot->now = 100000;
+        const Pattern before = snapshot->pattern;
         preview.set(shell, *snapshot);
-        // The pattern in view follows the track the preview picked.
+        // RHYTHMER_PALETTE / RHYTHMER_FONT: every page in another of Settings' palettes or faces (by number).
+        if (auto* v = std::getenv("RHYTHMER_PALETTE"); v && !snapshot->ui.settings_look) snapshot->ui.settings.palette = uint8_t(std::atoi(v));
+        if (auto* v = std::getenv("RHYTHMER_FONT"); v && !snapshot->ui.settings_look) snapshot->ui.settings.font = uint8_t(std::atoi(v));
+        // The pattern in view follows the track the preview picked (unless it set one of its own).
         const auto& track = snapshot->project.tracks[snapshot->ui.track];
-        snapshot->pattern = shell.patterns().at[snapshot->ui.track][track.pattern];
+        if (snapshot->pattern == before) snapshot->pattern = shell.patterns().at[snapshot->ui.track][track.pattern];
         for (int scale : {1, 2}) {
             juce::Image image(juce::Image::ARGB, screen_width * scale, screen_height * scale, true);
             std::vector<ui::TextIssue> issues;
@@ -2552,8 +2978,9 @@ static int instrument_read(const char* path) {
     for (const auto& i : read.ignored) ignored += i + ",";
     for (const auto& i : read.left_by) left_by += i + ",";
     const auto& e = read.envelope;
-    std::printf("zones=%zu left=%u left_by=%s velocity=%.0f ignored=%s attack=%.3f decay=%.3f sustain=%.1f release=%.3f\n", read.regions.size(), read.left,
-                left_by.c_str(), read.velocity, ignored.c_str(), e.attack.value_or(-1), e.decay.value_or(-1), e.sustain.value_or(-1), e.release.value_or(-1));
+    std::printf("zones=%zu left=%u left_by=%s velocity=%.0f ignored=%s attack=%.3f decay=%.3f sustain=%.1f release=%.3f mono=%d legato=%d tied=%d glide=%.3f mono_keys=%u-%u\n",
+                read.regions.size(), read.left, left_by.c_str(), read.velocity, ignored.c_str(), e.attack.value_or(-1), e.decay.value_or(-1),
+                e.sustain.value_or(-1), e.release.value_or(-1), read.mono, read.legato, read.tied, read.glide, read.mono_low, read.mono_high);
     for (const auto& r : read.regions) {
         const auto& z = r.zone;
         std::printf("  keys %u-%u root %u vel %u-%u tune %d track %d gain %.1f pan %.2f from %lld to %lld loop %d %u-%u one_shot %d seq %u/%u choke %u %s\n", z.low_key,
@@ -2598,10 +3025,29 @@ static int mpc_import(const char* path) {
     std::printf("name=%s tracks=%u sequences=%u pads=%u notes=%u over_limit=%u missing=%u tempo=%u seq_tempo=%d signature=%u/%u ms=%lld\n", project->name, report.tracks,
                 report.sequences, report.pads, report.notes, report.over_limit, report.missing, project->tempo, project->seq_tempo,
                 project->time_signature().beats, project->time_signature().unit, (long long)ms);
+    for (unsigned n = 0; n < sample_slots; ++n) { // each file's chop, from its WAV
+        const auto& c = project->chops[n];
+        if (!c.used()) continue;
+        std::printf("chop file=%s from=%u to=%u slices=%u", project->samples[n].name, c.from, c.to, c.slices.count);
+        for (unsigned k = 0; k < c.slices.count; ++k) std::printf(" %u-%u", c.slices.start[k], c.slices.stop[k]);
+        std::printf("\n");
+    }
     for (unsigned t = 0; t < track_count; ++t) {
         const auto& track = project->tracks[t];
         if (!track.used()) continue;
-        std::printf("track %u name=%s level=%u pan=%d mute=%d pattern=%u\n", t, track.name, track.mix.level, track.mix.pan, track.mix.mute, track.pattern);
+        std::printf("track %u name=%s level=%u pan=%d mute=%d pattern=%u engine=%u\n", t, track.name, track.mix.level, track.mix.pan, track.mix.mute,
+                    track.pattern, unsigned(track.engine));
+        if (track.is_audio()) { // freeze plan F3: each pattern's take, and the file it is copied from
+            for (unsigned p = 0; p < pattern_count; ++p) {
+                const auto& r = patterns->at[t][p].audio;
+                if (!r.used()) continue;
+                std::string file;
+                for (const auto& [take, source] : report.takes) if (take == r.take) file = std::filesystem::path(source).filename().string();
+                std::printf("take %u %u take=%u file=%s offset=%u frames=%u tempo=%u gain=%d warp=%d semi=%d\n", t, p, r.take, file.c_str(), r.offset,
+                            r.frames, r.tempo, r.gain, int(r.warp), int(r.semi));
+            }
+            std::printf("regions=%u regions_left_out=%u\n", report.regions, report.regions_left_out);
+        }
         for (unsigned n = 0; n < sampler_pads; ++n) {
             const auto& pad = track.pads[n];
             if (!pad.used()) continue;
@@ -2611,7 +3057,11 @@ static int mpc_import(const char* path) {
                         pad.start, pad.end, pad.level, pad.pan, pad.pitch, int(pad.play), pad.mono, pad.group, pad_filter_name(pad.filter), pad.cutoff, pad.warp, pad.attack, pad.decay, pad.loop, unsigned(pad.colour));
             const auto& ref = project->samples[pad.sample];
             std::string file, which;
-            if (ref.instrument() && split_program_pad(ref.path, file, which)) { // its layers, as the sample library will read them
+            if (ref.instrument() && split_program_pad(ref.path, file, which) && which.size() > 1 && which[0] == 'k') { // a keygroup track's
+                std::string why;
+                auto read = read_instrument(ref.path, &why);
+                std::printf("  keygroup zones=%zu%s\n", read.regions.size(), why.empty() ? "" : (" error=" + why).c_str());
+            } else if (ref.instrument() && split_program_pad(ref.path, file, which)) { // its layers, as the sample library will read them
                 std::string why;
                 auto pads = program_pads(file, why);
                 auto found = pads.find(which);
@@ -2634,9 +3084,167 @@ static int mpc_import(const char* path) {
     return 0;
 }
 
+// A Rhythmer project (.mldp) or an MPC Sample project (.xpj, read as Rhythmer reads one) written as an MPC 3 project
+// into FOLDER, for the build's checks. Each change after them is made first: "T.P=PATH" puts a file or an instrument on
+// pad P of track T (from 0), "T.P^N" plays that pad's notes N semitones up, "T.P^A,B,C" each next note at the next,
+// "T@P=PATH" makes track T a plug-in track with PATH as its print of pattern P (the prints all in one folder),
+// "T.P~W" warps that pad at W (1 Seq, 50..200 %), "S:T.P@B+N" puts a song clip of pattern P on track T's lane at bar B
+// (from 0) for N bars, "L:T.P=TICKS" sets pattern P of track T that long (96 a quarter), "K:T=PATH" makes track T a
+// keygroup of PATH (its notes kept, as MIDI notes), "M:T=CH,PROG" a MIDI track on channel CH sending program PROG
+// (as Stage shows it, 0 Off; its notes kept).
+static int mpc3_export(const char* path, const char* folder, const char* name, int changes, char** change) {
+    std::ifstream file(path, std::ios::binary);
+    std::vector<uint8_t> bytes((std::istreambuf_iterator<char>(file)), {});
+    auto project = std::make_unique<Project>();
+    auto patterns = std::make_unique<PatternBank>();
+    auto prints = std::make_unique<PrintTable>();
+    std::string prints_dir, audio_dir;
+    std::string error;
+    if (is_mpc_project(path)) {
+        MpcImport imported;
+        error = import_mpc_project(bytes, path, *project, *patterns, imported);
+    } else {
+        error = load_project(bytes, *project, *patterns, nullptr, nullptr, prints.get());
+        prints_dir = prints_folder(path);
+    }
+    if (!error.empty()) { std::printf("error=%s\n", error.c_str()); return 1; }
+    for (int c = 0; c < changes; ++c) {
+        unsigned t = 0, n = 0;
+        int used = 0;
+        unsigned bar = 0, bars = 0;
+        unsigned channel = 0, program = 0;
+        if (std::sscanf(change[c], "M:%u=%u,%u", &t, &channel, &program) == 3 && t < track_count) {
+            auto& track = project->tracks[t];
+            load_sound(track, EngineKind::Midi, 0);
+            track.params[midi_track::Channel] = int16_t(channel);
+            track.params[midi_track::Program] = int16_t(program);
+            continue;
+        }
+        if (std::sscanf(change[c], "K:%u=%n", &t, &used) == 1 && used && t < track_count) {
+            unsigned slot = 0;
+            while (slot < sample_slots && project->samples[slot].used()) ++slot;
+            if (slot == sample_slots) { std::printf("error=no free slot\n"); return 1; }
+            std::snprintf(project->samples.edit(slot).path, sizeof(SampleRef::path), "%s", change[c] + used);
+            std::snprintf(project->samples.edit(slot).name, sizeof(SampleRef::name), "%s", std::filesystem::path(change[c] + used).stem().string().c_str());
+            auto& track = project->tracks[t];
+            track.engine = EngineKind::Keygroup;
+            track.pads = {};
+            track.pads[0].sample = uint16_t(slot);
+            track.last_pad = 0;
+            { // as a Load lands it (shell/sample_files.cpp): the envelope most of its zones have goes on the pad
+                std::string why;
+                const auto e = read_instrument(project->samples[slot].path, &why).envelope;
+                auto& pad = track.pads[0];
+                if (e.attack) pad.attack = uint8_t(*e.attack > 0 ? sfz_attack_step(*e.attack) : 0);
+                if (e.decay) pad.decay = uint8_t(sfz_decay_step(*e.decay));
+                if (e.sustain) pad.sustain = uint8_t(sfz_percent_step(*e.sustain));
+                if (e.release) pad.release = uint8_t(sfz_release_step(*e.release));
+            }
+            continue;
+        }
+        unsigned ticks = 0;
+        if (std::sscanf(change[c], "L:%u.%u=%u", &t, &n, &ticks) == 3 && t < track_count && n < pattern_count && ticks) {
+            patterns->at[t][n].length = ticks;
+            continue;
+        }
+        if (std::sscanf(change[c], "S:%u.%u@%u+%u", &t, &n, &bar, &bars) == 4) {
+            Clip clip;
+            clip.track = uint8_t(t);
+            clip.pattern = uint8_t(n);
+            clip.bar = uint16_t(bar);
+            clip.bars = uint16_t(bars);
+            project->song.place(clip);
+            continue;
+        }
+        if (std::sscanf(change[c], "%u@%u=%n", &t, &n, &used) == 2 && used && t < track_count && n < pattern_count) {
+            const std::filesystem::path file(change[c] + used);
+            auto& track = project->tracks[t];
+            if (track.engine != EngineKind::Plugin) { track = Track {}; track.engine = EngineKind::Plugin; track.set_name("Synth"); }
+            PrintRecord record;
+            record.track = uint8_t(t);
+            record.pattern = uint8_t(n);
+            record.file = file.filename().string();
+            std::ifstream wav(file, std::ios::binary);
+            char chunk[12];
+            unsigned align = 0;
+            wav.read(chunk, 12); // RIFF, size, WAVE; then its chunks
+            while (wav.read(chunk, 8)) {
+                const uint32_t size = juce::ByteOrder::littleEndianInt(chunk + 4);
+                if (!std::memcmp(chunk, "fmt ", 4)) {
+                    char format[16];
+                    wav.read(format, 16);
+                    record.rate = juce::ByteOrder::littleEndianInt(format + 4);
+                    align = juce::ByteOrder::littleEndianShort(format + 12);
+                    wav.seekg(std::streamoff(size - 16 + (size & 1)), std::ios::cur);
+                } else if (!std::memcmp(chunk, "data", 4)) {
+                    record.frames = align ? size / align : 0;
+                    break;
+                } else {
+                    wav.seekg(std::streamoff(size + (size & 1)), std::ios::cur);
+                }
+            }
+            record.pass = uint32_t(std::llround(record.frames * 44100.0 / std::max(record.rate, 1u)));
+            prints->put(record);
+            prints_dir = file.parent_path().string();
+            continue;
+        }
+        if (std::sscanf(change[c], "A:%u.%u=%n", &t, &n, &used) == 2 && used && t < track_count && n < pattern_count) {
+            // Freeze plan F3: "A:T.P=FOLDER/Take NNN.wav": track T an audio track, pattern P playing that take whole.
+            const std::filesystem::path file(change[c] + used);
+            auto& track = project->tracks[t];
+            if (track.engine != EngineKind::Audio) { track = Track {}; track.engine = EngineKind::Audio; track.set_name("Vox"); }
+            WavReader reader;
+            if (!reader.open(file.string(), 3600).empty() || !reader.rate()) { std::printf("error=take %s\n", file.string().c_str()); return 1; }
+            AudioRegion r;
+            r.take = uint16_t(audio_take_of(file.filename().string()));
+            r.frames = r.take_frames = uint32_t(uint64_t(reader.frames()) * 44100 / reader.rate());
+            r.tempo = project->tempo;
+            patterns->at[t][n].audio = r;
+            audio_dir = file.parent_path().string();
+            continue;
+        }
+        if (std::sscanf(change[c], "%u.%u%n", &t, &n, &used) != 2 || t >= track_count || n >= sampler_pads) { std::printf("error=change %s\n", change[c]); return 1; }
+        const char* rest = change[c] + used;
+        auto& track = project->tracks[t];
+        if (*rest == '=') {
+            unsigned slot = 0;
+            while (slot < sample_slots && project->samples[slot].used()) ++slot;
+            if (slot == sample_slots) { std::printf("error=no free slot\n"); return 1; }
+            std::snprintf(project->samples.edit(slot).path, sizeof(SampleRef::path), "%s", rest + 1);
+            std::snprintf(project->samples.edit(slot).name, sizeof(SampleRef::name), "%s", std::filesystem::path(rest + 1).stem().string().c_str());
+            if (!track.used()) load_sound(track, EngineKind::Sampler, 0);
+            track.pads[n] = PadSound {};
+            track.pads[n].sample = uint16_t(slot);
+        } else if (*rest == '^') { // "^N" or "^A,B,C": the pad's notes in turn take each
+            std::vector<int> steps;
+            for (const char* at = rest + 1; *at; at = std::strchr(at, ',') ? std::strchr(at, ',') + 1 : at + std::strlen(at))
+                steps.push_back(std::atoi(at));
+            size_t next = 0;
+            for (auto& pattern : patterns->at[t])
+                for (auto& e : pattern.events)
+                    if (e.key == sampler_first_note + n && !steps.empty()) e.pitch = int8_t(steps[next++ % steps.size()]);
+        } else if (*rest == '~') {
+            track.pads[n].warp = uint8_t(std::atoi(rest + 1));
+            track.pads[n].own_tempo = project->tempo;
+        } else { std::printf("error=change %s\n", change[c]); return 1; }
+    }
+    Mpc3Export report;
+    auto began = std::chrono::steady_clock::now();
+    error = export_mpc3_project(*project, *patterns, folder, name, report, prints.get(), prints_dir, audio_dir);
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - began).count();
+    if (!error.empty()) { std::printf("error=%s\n", error.c_str()); return 1; }
+    std::printf("exported tracks=%u keygroups=%u audio=%u regions=%u midi=%u sequences=%u song=%u%s%s%s pads=%u notes=%u samples=%u skipped_tracks=%u skipped_pads=%u missing=%u ms=%lld chops=%u\n",
+                report.tracks, report.keygroups, report.audio, report.regions, report.midi, report.sequences, report.song_bars,
+                report.song_left_out ? " song_left_out" : "", report.song_full ? " song_full" : "", report.song_tempo_left_out ? " song_tempo_left_out" : "", report.pads, report.notes, report.samples, report.skipped_tracks, report.skipped_pads,
+                report.missing, (long long)ms, report.chops);
+    return 0;
+}
+
 std::optional<int> run_tool(int argc, char** argv) {
     if(argc==4&&!std::strcmp(argv[1],"--rhythmer-edit-preview"))return edit_preview(argv[2],argv[3]);
     if(argc==2&&!std::strcmp(argv[1],"--rhythmer-track-check"))return track_workflow_check();
+    if(argc==2&&!std::strcmp(argv[1],"--rhythmer-navigation-check"))return navigation_check();
+    if(argc==2&&!std::strcmp(argv[1],"--rhythmer-break-p1-check"))return break_p1_check();
     if(argc==2&&!std::strcmp(argv[1],"--rhythmer-gen8-check"))return gen8_shell_check();
     if (argc >= 2 && !std::strcmp(argv[1], "--rhythmer-monkey")) { // [SEED COUNT MOVES], build.sh's: 1 12 3000
         auto arg = [&](int n, unsigned fallback) { return argc > n ? unsigned(std::strtoul(argv[n], nullptr, 10)) : fallback; };
@@ -2649,7 +3257,13 @@ std::optional<int> run_tool(int argc, char** argv) {
     // --self-test is what device.py and the SD boot run before stopping the stock app.
     if (argc == 3 && (!std::strcmp(argv[1], "--rhythmer-sound") || !std::strcmp(argv[1], "--self-test"))) return sound(argv[2]);
     if (argc == 3 && !std::strcmp(argv[1], "--mpc-import")) return mpc_import(argv[2]);
+    if (argc >= 5 && !std::strcmp(argv[1], "--mpc3-export")) return mpc3_export(argv[2], argv[3], argv[4], argc - 5, argv + 5); // IN FOLDER NAME [CHANGE...]
     if (argc == 3 && !std::strcmp(argv[1], "--instrument-read")) return instrument_read(argv[2]);
+    if (argc == 4 && !std::strcmp(argv[1], "--mpc-track")) { // a keygroup program as MPC 3's track file, as the auto sampler writes it
+        const auto error = write_mpc3_track(argv[2], argv[3]);
+        std::printf("%s\n", error.empty() ? "written" : ("error=" + error).c_str());
+        return error.empty() ? 0 : 1;
+    }
     if (argc == 4 && !std::strcmp(argv[1], "--mpc-install")) { // an expansion into DIR/<its title>, as Push on one does
         ExpansionInstall install;
         auto error = install.open(argv[2], argv[3]);

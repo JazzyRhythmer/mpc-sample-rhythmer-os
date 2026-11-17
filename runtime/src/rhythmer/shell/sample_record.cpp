@@ -51,6 +51,7 @@ Command source_command(const InputConfig& in) {
 bool arm_take(Context& c, unsigned kit) {
     auto& t = c.track();
     if (t.engine != EngineKind::Sampler) { c.notice("Sample Record: kit tracks"); return false; }
+    if (c.autosample_track >= 0 && c.autosample_outside) { c.notice("Auto sample under way"); return false; } // it has the input
     const auto& in = c.ui.settings.input;
     unsigned source = in.track % track_count;
     if (in.source == InputSource::Track) { // a track records onto a kit pad: another track, with a sound
@@ -64,7 +65,7 @@ bool arm_take(Context& c, unsigned kit) {
     }
     kit %= sampler_pads;
     int slot = c.hold_file("TAKE", c.ui.track, int(kit), 2);
-    if (slot < 0) { c.notice("Record: samples full (64)"); return false; }
+    if (slot < 0) { c.notice("Record: samples full"); return false; }
     c.ui.rec_slot = int16_t(slot); c.ui.rec_pad = int16_t(kit); c.ui.rec_track = c.ui.track; c.ui.rec_chops = 0;
     c.rec_armed_at = c.now;
     t.last_pad = uint8_t(kit);
@@ -86,9 +87,11 @@ bool arm_take(Context& c, unsigned kit) {
 
 void Context::set_input_source(InputSource source, unsigned track) {
     if (host_recording()) { notice("Source stays while recording"); return; }
-    ui.settings.input.source = source;
+    Monitor monitor_was = ui.settings.input.monitor;
+    ui.settings.input.set_source(source, !(input && input->jack_out())); // the speaker in use: Monitor off for the mic
     ui.settings.input.track = uint8_t(track % track_count);
     input_changed();
+    if (ui.settings.input.monitor != monitor_was) notice(std::string("Monitor ") + monitor_name(ui.settings.input.monitor));
 }
 
 void Context::set_input_tap(bool post) {
@@ -145,7 +148,7 @@ void Context::toggle_rec_fx() {
 void Context::input_changed() {
     auto& in = ui.settings.input;
     in.clamp();
-    send(source_command(in));
+    if (autosample_source < 0) send(source_command(in)); // the auto sampler has the input: sent once it lets go (record_tick())
     send({Type::RecordGain, 0, 0, 0, int16_t(in.gain)});
     gain_sent = in.gain;
     send_knob_state(); // Rec Input FX: Knob FX on the input while monitored or during a take
@@ -215,10 +218,24 @@ void Context::audio_recall() {
 }
 
 void Context::record_tick(uint32_t at) {
-    const auto& in = ui.settings.input;
+    InputConfig in = ui.settings.input;
     bool page = ui.page == PageId::Record;
     // Monitor: Auto hears the source only while Record is in view.
     bool monitoring = in.monitoring(page);
+    // Freeze plan F3: an audio track selected (or one recording) takes its own source; with its Monitor on, its input
+    // is heard while Seq Record arms it or it records (as the MPC's Auto). While it records, its old take is not heard.
+    const int audio_t = audio_take_track >= 0 ? audio_take_track : track().is_audio() ? int(ui.track) : -1;
+    uint32_t quiet = 0;
+    if (audio_t >= 0 && autosample_source < 0) {
+        const auto& a = project.tracks[unsigned(audio_t)].audio;
+        in.source = a.source;
+        const bool armed = audio_take_track >= 0 || (int(ui.track) == audio_t && (ui.rec_armed || ui.recording));
+        monitoring = a.monitor == TrackMonitor::On && armed;
+        if (ui.audio_rec_running) quiet = 1u << unsigned(audio_t);
+    }
+    for (unsigned t = 0; t < track_count; ++t)
+        if (((quiet ^ audio_quiet_sent) >> t) & 1) host.send({Type::AudioQuiet, uint8_t(t), 0, 0, int16_t((quiet >> t) & 1)});
+    audio_quiet_sent = quiet;
     if (!monitor_known || monitoring != monitor_sent) {
         send({Type::Monitor, 0, 0, 0, int16_t(monitoring)});
         monitor_sent = monitoring; monitor_known = true;
@@ -227,10 +244,12 @@ void Context::record_tick(uint32_t at) {
     if (loop_monitor_sent != int(in.monitor)) { send({Type::LoopMonitor, 0, 0, 0, int16_t(in.monitor)}); loop_monitor_sent = int(in.monitor); }
     unsigned loops = loop_input_needs(project.looper), midi_needs = midi_input_needs(project); // roadmap P4 (M5): MIDI tracks' inputs too
     bool loop_mic = (loops & InputRoute::need_mic) && in.monitor != Monitor::Off;
-    if (input) input->want(in.source, in.mutes_speaker(page) || loop_mic, loops | midi_needs);
+    const bool quiet_speaker = audio_t >= 0 ? in.source == InputSource::Mic && monitoring : in.mutes_speaker(page); // no howl
+    if (input) input->want(in.source, quiet_speaker || loop_mic, loops | midi_needs);
     midi_audio_tick(*this, loops | midi_needs, in.source == InputSource::Mic);
     // The engine hears the settings as loaded from the card (and after a take, a source changed meanwhile).
-    if (host.recorder().state() == State::Idle
+    // Not while the auto sampler hears a MIDI track's INPUT there (autosample_tick()).
+    if (autosample_source < 0 && host.recorder().state() == State::Idle
         && (host.record_source() != unsigned(in.source)
             || (in.source == InputSource::Track && (host.record_track() != in.track % track_count || host.record_post() != in.post))))
         send(source_command(in));

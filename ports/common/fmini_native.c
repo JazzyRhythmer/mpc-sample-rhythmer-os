@@ -27,6 +27,7 @@ static const char* extra_names[]={"Reverb Type","Drive Type","Drive Tone","Drive
 static const uint8_t switch_bytes[]={FG_SW1,FG_SW1,FG_SW1,FG_SW1,FG_SW1,FG_SW1,FG_SW1,FG_SW2,FG_SW2,FG_SW2};
 static const uint8_t switch_masks[]={FS_O1,FS_O2,FS_O3,FS_NZ,FS_PINK,FS_MOSC,FS_MFLT,FT_GLIDE,FT_SQR,FT_HP};
 static unsigned bend_mode;
+#include "factory_extras.h"
 static int extra_base(void){return 2+(int)ntrack+FG_NUM+sizeof global_ids;}
 static int native_count(void){return extra_base()+X_COUNT;}
 static const char *native_name(int i){
@@ -63,13 +64,13 @@ static void native_control(int i,int v){
         if(i==X_DETUNE2||i==X_DETUNE3)fmini_det_put(p,i==X_DETUNE2?FG_DC2L:FG_DC3L,v);
         else {unsigned n=i-X_SWITCHES;p[switch_bytes[n]]=(p[switch_bytes[n]]&~switch_masks[n])|(v?switch_masks[n]:0);}
         fmini_set_patch(0,p);fmini_adopt(0);return;}
-    if(!i){selected=(unsigned)v;host_preset(&trk[0],ENGI_FMINI,(unsigned)v);return;}--i;
+    if(!i){selected=(unsigned)v;host_preset(&trk[0],ENGI_FMINI,(unsigned)v);fa_factory_extras(&trk[0],(unsigned)v);return;}--i;
     if((unsigned)i<ntrack){trk[0].p[track_ids[i]]=(int16_t)v;return;}
     i-=(int)ntrack;if(i<FG_NUM){uint8_t p[FG_SIZE];memcpy(p,fmini_patch[0],sizeof p);p[i]=(uint8_t)v;fmini_set_patch(0,p);fmini_adopt(0);}
     else {i-=FG_NUM;if(i<(int)sizeof global_ids)song.g[global_ids[i]]=(int16_t)v;else fm_vel_sens=(uint8_t)v;}
 }
 static void native_init(void){
-    host_tracks_init();host_preset(&trk[0],ENGI_FMINI,0);
+    host_tracks_init();host_preset(&trk[0],ENGI_FMINI,0);fa_factory_extras(&trk[0],0);
     for(unsigned i=0;i<P_COUNT;++i){const param_desc_t *d=track_desc(&trk[0],i);if(d->label&&d->max>d->min)track_ids[ntrack++]=i;}
 }
 static void native_note(const uint8_t *m){

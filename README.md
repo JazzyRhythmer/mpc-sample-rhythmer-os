@@ -4,17 +4,17 @@ Turn your MPC Sample into an exploratory groovebox: diverse synth engines, hands
 
 **[DOWNLOAD & INSTALL](https://jazzyrhythmer.github.io/mpc-sample/installer/)** · **[FIRST GROOVE GUIDE](https://jazzyrhythmer.github.io/mpc-sample/manual/quickstart.html)** · **[READ THE MANUAL](https://jazzyrhythmer.github.io/mpc-sample/manual/)** · **[WEBSITE](https://jazzyrhythmer.github.io/mpc-sample/)**
 
-Free and open-source custom firmware by **jazzy rhythmer**, built on **Melodee 0.2.0 by Kerem Kiliç (Ellic Studio)** and the work of the original engine authors.
+**RHYTHMER OS 0.2.0** — free and open-source custom firmware by **jazzy rhythmer**, built on **Melodee 0.3.0 by Kerem Kiliç (Ellic Studio)** and the work of the original engine authors.
 
 ## Your first groove with RHYTHMER OS.
 
-**Watch the latest guided session. Then make it yours.** Follow drums, bass, FM-106 chords, an acid phrase and a chopped Think break from the first sound to a finished four-bar groove. Shape the sounds, balance the tracks and turn the loop into a mute jam.
+**Watch the groove, then follow the current written guide.** Follow drums, bass, FM-106 chords, an acid phrase and a chopped Think break from the first sound to a finished four-bar groove. Shape the sounds, balance the tracks and turn the loop into a mute jam.
 
 [![Watch Your first groove with RHYTHMER OS — click to play the film](assets/preview/your-first-groove-v4.jpg)](https://jazzyrhythmer.github.io/mpc-sample/#first-groove)
 
 **[▶ WATCH THE FILM](https://jazzyrhythmer.github.io/mpc-sample/#first-groove)** &nbsp; · &nbsp; **[FOLLOW THE UPDATED GUIDE ↗](https://jazzyrhythmer.github.io/mpc-sample/manual/quickstart.html)** &nbsp; · &nbsp; [DOWNLOAD THE VIDEO ↗](https://github.com/jazzyrhythmer/mpc-sample-rhythmer-os/releases/download/v0.4.0-beta.3-r2/RHYTHMER-Your-First-Groove-YouTube-v4.mp4)
 
-*4 bars · 140 BPM · C minor · Follow at your own pace. Click the thumbnail to open the video.*
+*4 bars · 140 BPM · C minor. The video uses earlier screens; follow the updated 0.2.0 guide for current menu names and controls.*
 
 <p align="center"><img src="assets/manual/boot.png" width="560" alt="RHYTHMER OS startup design for MPC Sample"></p>
 
@@ -22,7 +22,7 @@ Free and open-source custom firmware by **jazzy rhythmer**, built on **Melodee 0
 
 ## Explore the engines
 
-Twenty instrument entries, with different ways to start a sound. The descriptions below follow the [website’s engine collection](https://jazzyrhythmer.github.io/mpc-sample/#engines), with synthesis identities checked against the credited original projects. The descriptions focus on the sound engines and controls available in the MPC Sample ports.
+Twenty-two instrument entries, 36 complete Rhythmer Kits and 2,888 factory sound selections across 27 source views (including kit voices and shared Acid selections). The descriptions below follow the [website’s engine collection](https://jazzyrhythmer.github.io/mpc-sample/#engines), with synthesis identities checked against the credited original projects. The descriptions focus on the sound engines and controls available in the MPC Sample ports.
 
 Individual instruments concentrate on **one selected sound per track**, played chromatically or in scale. **Rhythmer Kit** brings independently assigned sounds together on sixteen pads. The native **Sample Kit** remains a separate sampler choice.
 
@@ -266,6 +266,26 @@ The original named sound selection and available synth/effects controls are expo
 
 **Try it for:** Brass and chord stabs, pads, bass, sync leads and Poly-Mod textures.
 
+### Frodhes
+
+<img src="assets/engines/frodhes-still.png" width="400" alt="Frodhes — RHYTHMER OS 0.2.0 screen">
+
+**Electric pianos and struck-bar instruments, calculated as you play.**
+
+Four electric-piano models, vibraphone and marimba respond to velocity through the original physical-model synthesis. The port retains the original 57-program selection and source sound-design controls.
+
+**Try it for:** Warm chords, electric-piano grooves, rounded mallet melodies and more forceful, velocity-driven accents.
+
+### Tenebrae
+
+<img src="assets/engines/tenebrae-still.png" width="400" alt="Tenebrae — RHYTHMER OS 0.2.0 screen">
+
+**Eight oscillator models with a darker, moving character.**
+
+Saw, pulse, hard sync, FM, bell, wavetable, formant and pitch-drop models feed the original filter, modulation and effects. The original Init plus 163 named programs are retained.
+
+**Try it for:** Driven bass, drifting pads, evolving leads, bells and textured electronic phrases.
+
 ### The drum palette inside Rhythmer Kit
 
 DRUM-X, K-WASUB drum mode, 6W6, 8W8, 9W9, CW-78 and TR-MPC are kit-only sources. Sophie, Elixir and Hortator are available both as individual instruments and as kit-pad sources. The classic families cover 606-, 808-, 909- and CR-78-style drum colours without filling the main instrument list with kit-only duplicates.
@@ -274,7 +294,7 @@ Choose one of 36 complete kits, replace only the pads you want to change, then s
 
 ## From a sound to a groove
 
-GEN can assign a kit and three complementary melodic roles to a chosen four-track group, or write MIDI for a range or a single track while keeping its instruments. Acid and Break have dedicated generators and performance workflows. The Melodee foundation supplies patterns, scenes, song arrangement, Freeze, mixing, effects, MIDI and USB features.
+GEN can assign a kit and three complementary melodic roles to a chosen four-track group, or write MIDI for a range or a single track while keeping its instruments. Acid and Break have dedicated generators and performance workflows. The Melodee foundation supplies patterns, sequences, song arrangement, Freeze, mixing, effects, MIDI and USB features.
 
 **Save sounds for reuse. Save projects for the music.** User Sound and User Kit presets keep instrument/kit settings; project saving preserves the surrounding tracks, patterns and arrangement. [Save/load instructions](https://jazzyrhythmer.github.io/mpc-sample/manual/#user-presets) · [First pattern](https://jazzyrhythmer.github.io/mpc-sample/manual/quickstart.html).
 
@@ -285,11 +305,11 @@ Use the **complete SD ZIP** from the [installation page](https://jazzyrhythmer.g
 
 Target: **MPC Sample AC50 with stock firmware 1.3.0.12**. Back up the entire card first. **UPDATE.zip is app-only**, not a first-install package. SOURCE, MOVE-SOURCE and SUPPORT-SOURCE contain corresponding source, not installers.
 
-[Installation / stock-app recovery](docs/SD_CARD_GUIDE.md) · [Release files and notes](https://github.com/jazzyrhythmer/mpc-sample-rhythmer-os/releases/tag/v0.4.0-beta.3-hotfix.3)
+[Installation / stock-app recovery](docs/SD_CARD_GUIDE.md) · [Release files and notes](https://github.com/jazzyrhythmer/mpc-sample-rhythmer-os/releases)
 
 ## Validation and limits
 
-Software validation includes 19 runtime tests, 161 track-workflow assertions, audio self-test, three fresh-process GEN/Acid/Break checks and 12 × 3,000 random surface inputs. Current UI checks cover 430 states with zero reported text issues. Prior source/save checks cover 26 source configurations, mixed-kit state and unwritable-save errors; those results are retained for the unchanged engine DSP and preset payloads.
+Software validation covers the Linux ARM64 runtime, real plug-in controls and preset/state restoration, track and browser ownership, GEN/Acid/Break, audio self-test and random surface inputs. Current workflow checks exercise 309 track assertions and 1,248 navigation contexts. Screen previews cover 504 states across eight fonts. See [verification](docs/VERIFICATION.md) for the acceptance scope and hardware limits.
 
 **Physical-device installation/recovery, controls, audible listening, latency and long sessions remain pending owner beta testing.** These software checks do not certify hardware behavior. [Exact verification scope](docs/VERIFICATION.md).
 

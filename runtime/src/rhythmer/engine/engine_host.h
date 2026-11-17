@@ -2,6 +2,7 @@
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
 #pragma once
 #include "rhythmer/engine/arp.h"
+#include "rhythmer/engine/note_repeat.h"
 #include "rhythmer/engine/command.h"
 #include "rhythmer/engine/compensation.h"
 #include "rhythmer/engine/looper.h"
@@ -9,6 +10,7 @@
 #include "rhythmer/engine/midi_engine.h"
 #include "rhythmer/engine/plugin_engine.h"
 #include "rhythmer/engine/print_player.h"
+#include "rhythmer/engine/audio_player.h"
 #include "rhythmer/engine/effects.h"
 #include "rhythmer/engine/pad_fx_info.h"
 #include "rhythmer/engine/punch.h"
@@ -216,6 +218,7 @@ public:
 
     // Feedback, any thread.
     bool break_feedback(unsigned t,unsigned& version,unsigned& variation,unsigned& drift)const{return slots[t%track_count].sampler.manipulator.feedback(version,variation,drift); }
+    unsigned break_activity_of(unsigned t)const{return slots[t%track_count].sampler.manipulator.activity();}
     unsigned break_source_of(unsigned t)const{return slots[t%track_count].sampler.manipulator.source();}
     bool playing() const { return is_playing.load(std::memory_order_relaxed); }
     uint32_t ticks() const { return tick_count.load(std::memory_order_relaxed); } // clock ticks since Play, 96 a quarter
@@ -321,6 +324,16 @@ public:
     // print plays now, and those whose engine sleeps (a bit each); print runs that met frames not pinned yet, and
     // waits after a jump to where nothing was held.
     bool take_done_freeze(FreezePack*& pack) { return done_freezes.pop(pack); }
+    // Freeze plan F3 (engine/audio_player.h). MIDI thread: an AudioPack the audio thread has finished with, to free once
+    // the pager has seen its streams closed. Any thread: audio tracks' runs that met frames not pinned yet, and waits
+    // after a jump. The service thread drains audio_take() (Command::AudioRecord) into the take's file as it comes.
+    bool take_done_audio(AudioPack*& pack) { return done_audio.pop(pack); }
+    uint32_t audio_underruns() const { return audio_under.load(std::memory_order_relaxed); }
+    uint32_t audio_waits() const { return audio_waited.load(std::memory_order_relaxed); }
+    Bounce& audio_take() { return audio_in; }
+    const Bounce& audio_take() const { return audio_in; }
+    int audio_take_track() const { return audio_track.load(std::memory_order_relaxed); }     // -1: none
+    int audio_take_pattern() const { return audio_pattern.load(std::memory_order_relaxed); } // -1: not begun
     uint32_t frozen_tracks() const { return frozen_now.load(std::memory_order_relaxed); }
     uint32_t printing_tracks() const { return printing_now.load(std::memory_order_relaxed); }
     uint32_t sleeping_tracks() const { return sleeping_now.load(std::memory_order_relaxed); }
@@ -409,6 +422,8 @@ private:
         unsigned send_pad_fed = 0;                                                // a bit a bus: something there this block
         Arp arp;
         PendingOn arp_late;
+        NoteRepeat repeat;
+        int32_t repeat_late = -1, repeat_length = 0; // a swung step of Note Repeat: frames to it, and its notes' length
         std::array<PendingHit, 32> hits {}; // ratchets' hits to come, each on its frame
         unsigned hits_waiting = 0;
         // Trig conditions (model/trig.h): how the last weighed note went, on the track and on each key (a kit's
@@ -448,6 +463,12 @@ private:
         float* print_r = nullptr;
         bool print_fed = false;
         Ease print_mix_l, print_mix_r;
+        // Freeze plan F3: an AUDIO track's engine (its takes' voices), its patterns' takes, ones replaced whose voices
+        // still fade, and the pattern tick it followed last (a jump when the next is not the one after).
+        AudioTrackEngine audio;
+        AudioPack* audio_pack = nullptr;
+        AudioPack* audio_leaving = nullptr;
+        uint32_t audio_last = UINT32_MAX;
     };
     // The sequencing pass's calls to a track's engine: straight in at the block's first frame (nothing of it rendered
     // yet) or the old way (every track rendered up to each tick), else kept for its job, at block_at (roadmap P2).
@@ -472,6 +493,11 @@ private:
     void load_track(unsigned t, const Track& track); // a whole track's sound, kit, mix and effects
     void load_state(const Project& project, bool keep_loops = false); // all but the patterns (keep_loops: the same project at a new rate)
     void run_late(Slot& slot, unsigned frames);       // a swung arp note, when its time comes
+    void repeat_step(Slot& slot, int32_t length);     // Note Repeat: every pad held, together
+    void arp_write(unsigned t, Slot& slot, int key, int velocity, unsigned rate, unsigned gate); // Seq Record: a repeat into the pattern
+    bool clock_free(const Slot& slot) const;          // no other track repeats or arpeggiates on the shared clock
+    bool arp_live() const;                            // keys held under Note Repeat or the arp, or a swung step to come
+    unsigned next_late() const;                       // frames to the next swung step (~0u: none)
     // Ratchets: the hits due now (at block_at) play, the rest come `frames` nearer; the frames to the next one due
     // (the render loop splits there, so each lands on its frame); and every one dropped (Stop, Play).
     void run_hits(unsigned t, Slot& slot, unsigned frames);
@@ -501,6 +527,15 @@ private:
     static constexpr float sleep_floor = 3.16e-5f; // -90 dB: a frozen track's engine below it a second sleeps
     float pan_centre = 0.7071f;                    // set_pan()'s sides at the centre, as a print was made at
     MidiQueue<64, FreezePack*> done_freezes;
+    // Freeze plan F3: audio tracks.
+    void set_audio(unsigned t, AudioPack* pack);
+    void retire_audio(AudioPack* pack);
+    void audio_tick(unsigned t, Slot& slot, uint32_t at);
+    MidiQueue<64, AudioPack*> done_audio;
+    std::array<AudioPack*, 16> audio_limbo {};
+    std::atomic<uint32_t> audio_under {0}, audio_waited {0};
+    std::atomic<int> audio_track {-1};   // the track a take is armed or recording for
+    std::atomic<int> audio_pattern {-1}; // the pattern it is recording (from its first frame)
     std::array<FreezePack*, 16> freeze_limbo {};
     std::atomic<uint32_t> frozen_now {0}, printing_now {0}, sleeping_now {0}, print_under {0}, print_waited {0};
     // Roadmap P5: track t's follow action planned from where its pattern started (dice rolled now), and brought.
@@ -673,6 +708,7 @@ private:
     TakeRecorder take;
     RecallRing recall_ring; // Audio Recall: the source, always
     Bounce render_out;      // Resample and the song's mixdown
+    Bounce audio_in;        // freeze plan F3: an audio track's take, from the input as Sample Record hears it
     std::atomic<StemRing*> stem_ring {nullptr}; // roadmap P4: stems beside it (each track as it joins the mix, the returns)
     void take_stems(unsigned frames);
     std::atomic<unsigned> source_now {1};
@@ -746,6 +782,9 @@ private:
     void start_punch(const PendingPunch& p);
     double bar_length() const { return tick_length() * bar; }
     std::array<Slot, track_count> slots;
+    std::unique_ptr<SamplerEngine> break_preview; // monitoring only; never a project track
+    bool break_preview_active = false;
+    uint8_t break_preview_track=0;
     // Rendering on several cores (render_pool.h): the workers; the tracks heaviest first by what each took last
     // block, the ones with an engine in that order; each track's time this block (engine and chain), and the total.
     static constexpr int render_priority = 30;            // the audio thread's (base drivers/audio.cpp)

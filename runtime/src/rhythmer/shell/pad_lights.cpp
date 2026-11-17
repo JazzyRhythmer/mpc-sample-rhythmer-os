@@ -6,15 +6,19 @@
 // for a loss or a recording; Faint, Dim, Mid and Full for how much; a blink
 // for a wait, a flare for a sound, a pulse for the count.
 #include "rhythmer/shell/pad_lights.h"
+#include "rhythmer/shell/features.h"
 #include "rhythmer/engine/engine_host.h"
 #include "rhythmer/engine/pad_fx_info.h"
 #include "rhythmer/engine/voice_tap.h"
 #include "rhythmer/model/chords.h"
 #include "rhythmer/model/pad_params.h"
 #include "rhythmer/model/scales.h"
+#include "rhythmer/shell/lesson.h"
 #include "rhythmer/shell/looper_jobs.h"
+#include "rhythmer/shell/menu.h"
 #include "rhythmer/shell/mute_mode.h"
 #include "rhythmer/shell/roll.h"
+#include "rhythmer/shell/sequences.h"
 #include "rhythmer/shell/track_copy.h"
 #include "rhythmer/shell/shift_pad_jobs.h"
 #include "rhythmer/shell/stage_map.h"
@@ -59,11 +63,13 @@ std::array<bool, 192> keys_in(const Pattern& p) {
 
 // What sounds now, pad by pad: a voice's envelope (a kit), or the pattern at
 // the playhead (plug-in and MIDI tracks have no voice taps); and a pad let
-// go, fading (hand_ms).
+// go, fading (Settings > LIGHTS > Pad fade).
 struct Heard {
     std::array<float, 16> level {};
+    std::array<float, 16> levels {}; // under 16 Levels: what each level's pad sounds (levels_sound())
     std::array<float, 16> hand {};
 };
+float levels_sound(const PadScene& s, unsigned pad);
 // A pattern's note at `pos`: its velocity while held, fading over a sixteenth after (round the loop).
 float note_now(const Event& e, uint32_t pos, uint32_t length) {
     uint32_t since = pos >= e.tick ? pos - e.tick : pos + length - e.tick;
@@ -101,12 +107,29 @@ Heard heard_now(const PadScene& s) {
             }
         }
     }
+    const float fade = float(std::max<uint32_t>(s.ui.settings.fade_ms(), 1)); // Settings > LIGHTS > Pad fade
+    if (levels_on(t)) for (unsigned pad = 0; pad < 16; ++pad) out.levels[pad] = levels_sound(s, pad);
+    if (s.glow) { // a sound falls no faster than a pad let go fades
+        int owner = int(at) * 256 + int(t.bank) * 2 + int(levels_on(t));
+        auto& g = *s.glow;
+        float keep = g.owner == owner && s.now >= g.at ? std::exp(-float(s.now - g.at) / fade) : 0.0f;
+        auto fade = [&](std::array<float, 16>& now, std::array<float, 16>& kept) {
+            for (unsigned pad = 0; pad < 16; ++pad) {
+                float faded = kept[pad] * keep;
+                now[pad] = std::max(now[pad], faded > 0.002f ? faded : 0.0f);
+                kept[pad] = now[pad];
+            }
+        };
+        fade(out.level, g.level);
+        fade(out.levels, g.levels);
+        g.at = s.now; g.owner = owner;
+    }
     if (s.let_go)
         for (unsigned pad = 0; pad < 16; ++pad) {
             uint32_t up = (*s.let_go)[pad];
             if (!up || held(s, pad) || s.now + 1 < up) continue;
             uint32_t since = s.now + 1 - up;
-            if (since < 4 * hand_ms) out.hand[pad] = std::exp(-float(since) / hand_ms);
+            if (since < 4 * fade) out.hand[pad] = std::exp(-float(since) / fade);
         }
     return out;
 }
@@ -163,6 +186,11 @@ Look keys_base(const PadScene& s, unsigned pad) {
         if (s.ui.drum_voices.any() && !s.ui.drum_voices.at(key)) return {};
         return track(selected_index(s), key == int(t.last_note) ? full : dim);
     }
+    if (prog_pads(t)) { // Prog: a pad with a chord white, the file's Root chord in the track's colour, a pad with none dark
+        const auto& chord = t.prog.chords[prog_index(t, pad)];
+        if (!chord.used()) return {};
+        return chord.root ? track(selected_index(s), mid) : white(dim);
+    }
     if (t.layout == PadLayout::Chords) // a held pad's chord: its other notes white Full, as the pad held
         for (unsigned h = 0; h < 16; ++h) {
             if (h == pad || !held(s, h)) continue;
@@ -181,6 +209,7 @@ Look levels_base(const PadScene& s, unsigned pad) {
     if (!t.levels || (kind == LevelsKind::Filter && t.engine != EngineKind::Sampler)) kind = LevelsKind::Velocity;
     auto lv = levels_of(s.project, t, pad);
     if (kind == LevelsKind::Zones && levels_instrument(s.project, t)) return lv.none ? Look {} : track(at, full); // a pad a key, the rest dark
+    if (kind == LevelsKind::Chords) return lv.none ? Look {} : track(at, full); // a pad a chord of the progression, the rest dark
     if (kind == LevelsKind::Zones) kind = LevelsKind::Scale; // its pad no instrument: played as Scale
     if (kind == LevelsKind::Tune || kind == LevelsKind::Scale) { // notes: the key's roots in the track's colour, its other notes white
         // Scale goes up the key from its root on pad 1. Tune: a synth's pad plays its last note moved; a kit's sample
@@ -213,7 +242,7 @@ float levels_pattern(const PadScene& s, unsigned pad) {
     if (!p.length) return 0;
     const bool kit = t.engine == EngineKind::Sampler;
     auto kind = LevelsKind(t.levels_kind % unsigned(LevelsKind::Count));
-    if (!t.levels || kind == LevelsKind::Loop || drum_pads(t) || (kind == LevelsKind::Filter && !kit)) kind = LevelsKind::Velocity;
+    if (!t.levels || drum_pads(t) || (kind == LevelsKind::Filter && !kit)) kind = LevelsKind::Velocity;
     if (kind == LevelsKind::Zones && !levels_instrument(s.project, t)) kind = LevelsKind::Scale;
     auto lv = levels_of(s.project, t, pad);
     if (lv.none) return 0;
@@ -240,12 +269,15 @@ float levels_pattern(const PadScene& s, unsigned pad) {
     }
     return level;
 }
+// What a level's pad sounds: the sequence, each note on its own pad; stopped, the pad hit last as its voice fades.
+float levels_sound(const PadScene& s, unsigned pad) {
+    if (s.host.playing()) return levels_pattern(s, pad);
+    return int(pad) == s.ui.levels_hit ? levels_voice(s) : 0;
+}
 Look levels_look(const PadScene& s, const Heard& snd, unsigned pad) {
     Look base = levels_base(s, pad);
     if (held(s, pad)) return writing(s) ? red(full) : white(full);
-    float sound = snd.hand[pad];
-    if (s.host.playing()) sound = std::max(sound, levels_pattern(s, pad)); // the sequence: each note on its own pad
-    else if (int(pad) == s.ui.levels_hit) sound = std::max(sound, levels_voice(s)); // the pad hit last, white as its sound fades
+    float sound = std::max(snd.hand[pad], snd.levels[pad]);
     if (sound <= 0) return base;
     return writing(s) ? red_flare(base, sound) : blend(base, white(full), sound);
 }
@@ -262,7 +294,7 @@ bool sends_lit(const PadScene& s) {
     const auto& t = selected(s);
     if (t.engine != EngineKind::Sampler || levels_on(t)) return false;
     if (mix_sends_pads(s.ui, true)) return true; // the MIX hub's SENDS, on the kit's pads
-    return s.ui.page == PageId::Stage && stage_page_now(s.ui, t, stage_instrument(s.project, t)).kind == StageKind::Sends;
+    return s.ui.page == PageId::Stage && stage_page_now(s.ui, t, stage_skip(s.project, s.ui, t)).kind == StageKind::Sends;
 }
 Look sends_look(const PadScene& s, const Heard& snd, unsigned pad) {
     const auto& t = selected(s);
@@ -295,6 +327,27 @@ Look tracks_look(const PadScene& s, unsigned pad) {
     float m = meter(s, pad);
     return t.mix.solo ? white(between(dim, mid, m)) : track(pad, between(dim, mid, m));
 }
+// ---- SCENES (roadmap P5): a pad a scene, the column of patterns it launches. The one playing (every track with notes
+// there playing it) bright, one waiting for its bar blinking, the rest as many tracks as hold notes there; Erase held:
+// the scenes with a name or tempo to clear.
+Look scenes_look(const PadScene& s, unsigned pad) {
+    unsigned n = s.ui.pad_pattern(pad), with = 0, on = 0, waiting = 0; // the bank in view's
+    bool rolling = s.host.playing();
+    for (unsigned t = 0; t < track_count; ++t) {
+        const auto& tr = s.project.tracks[t];
+        if (!tr.used() || s.patterns.at[t][n].empty()) continue;
+        ++with;
+        bool live = rolling ? s.host.pattern_of(t) == n && !(s.host.stopped_tracks() >> t & 1) : tr.pattern == n;
+        on += live;
+        waiting += rolling && !live && tr.pattern == n;
+    }
+    if (s.ui.erase) return s.project.scenes[n].plain() ? Look {} : red(dim);
+    if (with && on == with) return white(full);
+    if (waiting) return (s.now / 150) % 2 ? white(mid) : white(faint);
+    if (!with) return s.project.scenes[n].plain() ? Look {} : white(faint);
+    return with == 1 ? white(faint) : with < 4 ? white(dim) : white(mid);
+}
+
 Look song_look(const PadScene& s, unsigned pad) {
     const auto& t = s.project.tracks[pad];
     if (!t.used()) return {};
@@ -402,17 +455,21 @@ Look steps_look(const PadScene& s, unsigned pad) {
     if (s.host.playing() && position >= 0 && elapsed % std::max<uint32_t>(loop, 1) / p.q() == step) return writing(s) ? red(mid) : white(mid);
     return velocity_look(selected_index(s), step_velocity(p, step, steps_lane(selected(s))));
 }
-Look step_edit_look(const PadScene& s, unsigned pad) {
+// Step Edit's PLAY pads: the caret's step (its notes by velocity, the selected one white), each pad flaring as it
+// sounds and white held; under 16 Levels the levels' pads, as on the track's own page.
+Look step_edit_look(const PadScene& s, const Heard& snd, unsigned pad) {
     const auto& t = selected(s);
+    if (levels_on(t)) return counting(s, levels_look(s, snd, pad));
     const auto& p = shown(s);
     int key = pad_key(s.project, t, pad);
     if (key < 0) return {};
+    Look base;
     int chosen = selected_event(p, s.ui);
-    if (chosen >= 0 && p.events[size_t(chosen)].key == key) return white(full);
     unsigned velocity = step_velocity(p, unsigned(std::max<int>(s.ui.step_cursor, 0)) % p.steps(), key);
-    if (velocity) return velocity_look(selected_index(s), velocity);
-    bool empty = t.engine == EngineKind::Sampler && !t.pads[unsigned(key - int(sampler_first_note)) % sampler_pads].used();
-    return empty ? Look {} : track(selected_index(s), faint);
+    if (chosen >= 0 && p.events[size_t(chosen)].key == key) base = white(full);
+    else if (velocity) base = velocity_look(selected_index(s), velocity);
+    else if (t.engine != EngineKind::Sampler || t.pads[unsigned(key - int(sampler_first_note)) % sampler_pads].used()) base = track(selected_index(s), faint);
+    return counting(s, playing(s, snd, base, pad));
 }
 // Roll: the row in focus, the rows of the cursor's step and, under 16 Levels on a kit, every row the pattern uses
 // (its rows are the levels pad's pitches: shell/roll.h roll_lane()), as the page draws them.
@@ -599,7 +656,8 @@ bool shift_can_act(const PadScene& s, unsigned pad) {
     case 1: return notes && std::max<uint32_t>(p.length / 2, 1) != p.length; // Half Seq
     case 2: return notes && p.length * 2 <= s.project.max_length();         // Double Seq
     case 5: case 6: case 13: return notes;                                  // Half Speed, Double Speed, Time Correct
-    case 10: return s.ui.resample_pick || (!s.ui.rendering && t.engine == EngineKind::Sampler && any_notes(s)); // Resample
+    case 10: return s.ui.resample_pick || ((t.engine == EngineKind::Plugin || t.engine == EngineKind::Midi) && s.ui.page != PageId::Song) // Resample; AUTO SAMPLE on a plug-in or MIDI track
+                    || (!s.ui.rendering && t.engine == EngineKind::Sampler && any_notes(s));
     case 12: case 14: { // Trim Sample, Warp: a kit's own sample, not an instrument's
         if (t.engine != EngineKind::Sampler) return false;
         const auto& sound = t.pads[t.last_pad % sampler_pads];
@@ -615,7 +673,7 @@ bool shift_can_act(const PadScene& s, unsigned pad) {
 }
 Look shift_look(const PadScene& s, unsigned pad) {
     unsigned level = shift_pad_level(s.ui, pad); // 0 not built, 1 a job, 2 a toggle that is on
-    if (pad == 10 && s.ui.resample_pick) level = 2;
+    if (pad == 10 && (s.ui.resample_pick || s.ui.page == PageId::AutoSample)) level = 2;
     if (!level || !shift_can_act(s, pad)) return {};
     return white(level == 2 ? full : dim);
 }
@@ -672,6 +730,13 @@ Look sheet_look(const PadScene& s, unsigned pad) {
     using A = UiState::Ask;
     const auto& ui = s.ui;
     if (ui.exit_open) return {};
+    if (ui.menu && ui.ask == A::None) { // the MENU (shell/menu.h): GO's places in their four groups, the lit tile full; HERE dark
+        if (ui.menu != menu_go_view) return {};
+        if (ui.lesson) return pad == 15 ? (blink(s.now, flash_ms) ? white(full) : white(faint)) : Look {}; // a lesson: LEAVE only
+        static const unsigned group_track[4] {0, 2, 4, 1}; // sound, sequence, mix, project: as the screen colours them
+        if (!menu_tile_shown(ui, pad)) return {}; // a place Basic leaves out
+        return track(group_track[menu_places()[pad % 16].group % 4], pad == ui.menu_tile % 16u ? full : mid);
+    }
     bool about = false; // the pad the question is about
     switch (ui.ask) {
     case A::ClearPattern: case A::ClearTrack: about = int(pad) == ui.ask_target; break;
@@ -697,14 +762,18 @@ void pad_looks(const PadScene& s, std::array<Look, 16>& out) {
     if (ui.page == PageId::Chop) slices = slices_sounding(s);
     for (unsigned pad = 0; pad < 16; ++pad) {
         Look look;
+        if (ui.lesson && !ui.menu && ui.ask == UiState::Ask::None) { // a lesson (shell/lesson.h): the step's pad blinks, every other is off
+            out[pad] = lesson_lights_pad(ui, pad) && blink(s.now, flash_ms) ? white(full) : Look {};
+            continue;
+        }
         switch (pad_context(ui, t, s.facts, pad)) {
         case PadContext::Sheet: look = sheet_look(s, pad); break;
         case PadContext::Tracks: look = tracks_look(s, pad); break;
         case PadContext::Name: look = name_look(s, pad); break;
         case PadContext::LoopHeld:
         case PadContext::LoopNow: look = loop_look(s, pad, false); break;
-        case PadContext::PatternCopy:
-        case PadContext::SeqLayer: look = seq_look(s, pad); break;
+        case PadContext::PatternCopy: look = seq_look(s, pad); break;
+        case PadContext::SeqLayer: look = sequences_lit(ui) && ui.pattern_held < 0 ? scenes_look(s, pad) : seq_look(s, pad); break; // Seq held off Patterns: the sequences
         case PadContext::RecordKeys: look = record_keys_look(s, pad); break;
         case PadContext::Mute:
             if (ui.page == PageId::Looper) { look = loop_look(s, pad, true); break; }
@@ -733,7 +802,8 @@ void pad_looks(const PadScene& s, std::array<Look, 16>& out) {
             case PageId::Looper: look = loop_look(s, pad, false); break;
             case PageId::Tracks: look = tracks_look(s, pad); break;
             case PageId::Song: look = song_look(s, pad); break;
-            case PageId::StepEdit: look = s.ui.step_pads ? steps_look(s, pad) : step_edit_look(s, pad); break; // the bar's steps, or the keys
+            case PageId::Scenes: look = scenes_look(s, pad); break; // roadmap P5
+            case PageId::StepEdit: look = s.ui.step_pads ? steps_look(s, pad) : step_edit_look(s, snd, pad); break; // the bar's steps, or the keys
             case PageId::Roll: look = roll_look(s, snd, roll, keys, pad); break;
             case PageId::TimeCorrect: look = time_correct_look(s, keys, pad); break;
             case PageId::Motion: look = motion_look(s, snd, moving, pad); break;

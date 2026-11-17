@@ -1,0 +1,416 @@
+# Sequencing
+
+Previous: [Audio tracks](audio-tracks.md) · [Contents](../GUIDE.md) · Next: [Song](song.md)
+
+## Sequences
+
+A sequence is one number on every track: sequence 3 is pattern 3 of each
+track. Launching a sequence changes the whole beat, as on the stock app. A
+track with no notes in that sequence is silent.
+
+Press **SEQ** to open the sequence pages. **B1**–**B3** are **SEQUENCES**,
+**ROLL** and **MOTION**. **SEQ** opens the page last open on the selected
+track (Sequences until you open another). On one of these pages, **SEQ**
+goes to Sequences. **SHIFT** + **SEQ** opens Step Edit (see
+[The pattern editors](#the-pattern-editors)).
+
+**Sequences** shows the bank's 16 sequences, laid out as the pads: pad 1
+bottom left, pad 13 top left. Press a pad to launch its sequence at the next
+bar (at once when stopped). See [Sequences page](#sequences-page) for the
+rest of the page.
+
+![Sequences](../images/screens/scenes.png)
+
+## Patterns
+
+Press **B1** again on Sequences to open **Patterns**. The dots under **B1**
+show which of the two pages is open. Patterns is the page for one track: use
+it to put a track on a pattern of its own, different from the other tracks.
+
+**Patterns** shows the selected track's 16 patterns of the bank in view, laid
+out as the pads. Press a pad to launch the pattern in that cell on the
+selected track only. The header shows the sequence in view (**SEQ 2**), with
+its name when it has one. The sequence in view is the number the selected
+track is on.
+
+![Patterns](../images/screens/patterns.png)
+
+Each cell shows:
+
+- The pattern number. ▶ when it plays. **NEXT** and a blinking ring when it
+  is queued for the next bar.
+- A tint when the pattern has notes.
+- An arrow when the pattern has a follow action.
+- An amber dot when the sequence has its own tempo.
+- A small dot for each other track in view: a ring when that track has notes
+  in this pattern, filled when it plays it.
+
+The right side lists the eight tracks in view: ▶, the pattern each one plays
+and a progress bar (– when nothing plays). A track on another number than
+the selected track carries a ≠ mark: it plays a pattern of its own. The pads
+light as the cells.
+
+| Control | Action |
+| --- | --- |
+| Pad | Launch the selected track's pattern at the next bar (at once when stopped). |
+| Hold a pad + pad | Copy the pattern. |
+| **ERASE** + pad | Clear the pattern (asks first). |
+| **ERASE** alone | Clear the selected track's pattern (asks first). |
+| **SHIFT** + **ERASE** | Copy a pattern: press the pattern, then where it goes (on this or another track). |
+| **SHIFT** + pad | The printed **SHIFT** jobs. |
+| Encoder | Select the previous / next track. |
+| **SHIFT** + encoder | Move the playhead by one grid step. Stopped, this sets where **SHIFT** + **PLAY** continues from. |
+| Encoder push | Launch the sequence of the selected track's pattern on every track. |
+| **PAD BANK** | Pattern bank A–H. The bank LEDs show it. |
+| **−** / **+** | Select the previous / next track. |
+| **K1** | Pattern length: 1, 2, 4 … 128 bars. **SHIFT**: any number of bars. |
+| **K2** | Grid (Q): 1/4 to 1/64, with triplets. **SHIFT**: time signature. |
+| **K3** | Swing (50–75 %). **SHIFT**: metronome level. |
+| **SHIFT** + **B1** | **SEQUENCE**: the sequence's tempo and name. |
+| **SHIFT** + **B2** | **FOLLOW**: the selected pattern's follow action. |
+| **SHIFT** + **B3** | **VARY**: the variation sheet. |
+
+**SHIFT** + **B1** or **B2** again goes back to the pattern cards. **B1**
+goes to Sequences.
+
+**VARY**
+
+![VARY](../images/screens/patternsvary.png)
+
+- Turn the encoder to pick Thinner, Busier, Humanised, Reversed, Octave up
+  or Octave down.
+- **K1** sets the amount.
+- Push the encoder or press **B3** (**DO IT**) to write the result into the
+  next empty pattern. **B1** (**BACK**) closes the sheet.
+
+## Hold SEQ
+
+Hold **SEQ** on any page. The pads become the sequences, as on the stock
+app:
+
+- The playing sequence is bright, a queued sequence blinks, sequences with
+  notes are dim.
+- Press a pad to launch that sequence at the next bar (at once when
+  stopped). Every track goes to that number. A track with no notes there is
+  silent; its empty pattern gets the sequence's length.
+- Press more pads in the same hold to make a **chain** of sequences (up to
+  eight). Each plays once, then the next. The selected track's pattern
+  sets when the next one starts.
+- **−** / **+** launch the previous / next sequence.
+- **K1**–**K3** set the length, grid and swing of the selected track's
+  pattern. The encoder sets the tempo. Push it to switch between whole BPM
+  and tenths.
+- **B1**–**B3** open Sequences, Roll and Motion.
+- **PAD BANK** steps the bank A–H (**SHIFT**: back).
+
+Some jobs with **SEQ** held work on the selected track's pattern:
+
+- Hold a pad and press another to copy the pattern. Hold a pad, step the
+  bank and press a pad to copy across banks.
+- **ERASE** + pad clears the pattern (asks first). **SHIFT** + **ERASE**
+  copies a pattern: press the pattern, then where it goes.
+- **SEQ RECORD** starts a new take in the track's next empty pattern.
+- **SAMPLE RECORD** freezes or thaws patterns. See
+  [Freeze a track](tracks.md#freeze-a-track).
+
+After 0.3 seconds the sheet shows the sequences: what plays now (**NOW**),
+what plays next (**NEXT**) and the tempo. **OWN** shows a track that is on a
+pattern of its own. With a chain, **AFTER** shows what follows, and a small
+number on a pad shows its place in the chain.
+
+![SEQ held: the sheet](../images/screens/seqchain.png)
+
+On the Patterns page, **SEQ** held keeps the pads on the selected track's
+patterns: a pad launches that track only, and a chain is that track's.
+
+## Record
+
+1. Select a track and a pattern.
+2. Press **SEQ RECORD**. When stopped, this arms recording.
+3. Press **PLAY**. Recording starts. When playing, **SEQ RECORD** records at
+   once.
+4. Press **SEQ RECORD** again to stop recording. Playback continues.
+
+![Recording armed](../images/screens/recarmed.png)
+
+Recording adds to the notes already in the pattern. Each take is one undo
+step. Turn a knob while recording to record it as Motion.
+
+- **SHIFT** + **Pad 4**: count-in on or off. A pad hit in the last
+  sixteenth of the count-in records at the start of the take, as long as
+  you held it.
+- **SHIFT** + **TAP TEMPO**: metronome Off, On, or Rec (only while
+  recording).
+- **SHIFT** + **Pad 10**: **Rec Quantize**. **B3** turns it on or off. The
+  encoder sets the grid: the pattern's Q, or its own.
+- Hold **PLAY** while playing: Fill. Notes with a FILL condition play.
+- **ERASE** + **SEQ RECORD** on a kit: erase all notes of the selected pad
+  (asks first).
+
+![Rec Quantize](../images/screens/recquantize.png)
+
+**Recall** (**SHIFT** + **SEQ RECORD**): Rhythmer always keeps the notes you
+play, recording or not. Recall puts the last phrase into patterns: every
+track that played goes into its next empty pattern, and those patterns
+start playing. This is one undo step.
+
+## The pattern editors
+
+**B2** (**ROLL**) and **B3** (**MOTION**) open the pattern editors. Press
+**SHIFT** + **SEQ** for **Step Edit**, on any page.
+
+The header of Roll, Motion and Step Edit names the pattern they edit
+(**P20**). It is amber while the track plays another pattern. The cards
+that belong to one pattern name it too: **P20 LENGTH**, **P20 Q**.
+
+**Roll**
+
+Roll is a piano roll. On a kit, each row is a pad.
+
+![Roll](../images/screens/roll.png)
+
+- Turn the encoder to walk through the notes of a step, low to high, then
+  on to the next step. **−** / **+** walk the chord in the step, then move
+  the cursor's pitch a semitone.
+- The note under the cursor is white and named in the header.
+- A pad writes a note at the cursor, one step long. **PAD BANK** moves the
+  pads up an octave (**SHIFT**: down).
+- **K1** length, **K2** velocity, **K3** chance of the note under the cursor.
+  **SHIFT** + **K1**: nudge the note early or late.
+- Hold a pad on the note under the cursor and turn **K1**–**K3** to lock
+  Motion lanes on it.
+- **ERASE** pressed alone deletes the note under the cursor.
+- Push the encoder for the note sheet: accent, slide, tie and delete as
+  cards. Turn the encoder to pick one and push it. **B1** closes it.
+- Press **ROLL** again for the note's ratchet.
+- On a kit with 16 Levels on, Roll shows the 16 Levels pad, a row for each
+  pitch.
+
+**Marked notes**: hold **SHIFT** and turn the encoder to mark notes one by
+one. The header shows how many (**4 SEL**). Let go of **SHIFT**, and the
+controls act on all the marked notes:
+
+![Marked notes on Roll](../images/screens/rollmarks.png)
+
+- The encoder moves them a step. **SHIFT** + encoder moves them a row.
+- **−** / **+** move them an octave.
+- **K1**–**K3** set their length, velocity and chance. **SHIFT** + **K2**
+  (**VEL RAMP**) ramps their velocity from the first to the last.
+- **ERASE** + encoder pulls them towards the grid, a quarter of the way
+  for each click.
+- **ERASE** deletes them. **MUTE** mutes them (drawn hollow); press it again
+  to play them.
+- **NOTE REPEAT** steps their ratchet: 2, 3, 4, 6, 8, off.
+- **SHIFT** + **ERASE** copies them. Move the cursor and push the encoder
+  to paste them there.
+- Tap **SHIFT** to clear the marks.
+
+The printed buttons act on the marked notes, or else on the note under the
+cursor. They work on Step Edit too:
+
+- **CHOP** splits each note in two.
+- **SHIFT** + **CHOP** makes the notes legato: each one lasts until the
+  next.
+- **SHIFT** + **LOOP** reverses them (with none marked, the notes in view).
+- **SHIFT** + **NOTE REPEAT** writes the track's arp over each chord as
+  notes.
+- **LOOP** plays only the bars in view over and over, until you press
+  **LOOP** again or leave the editor.
+
+**Follow**: with **Follow** set in [Settings](settings.md) (**SEQ**),
+Step Edit and Roll move with the playhead while the pattern plays:
+
+- **Off**: the view stays where you left it.
+- **Page**: when the playhead leaves the bar in view, the next bar comes into
+  view. The caret keeps its place in the bar.
+- **Step**: the caret goes to each step as it plays.
+
+While it follows, the encoder does not move the caret. Stop to move it. While
+you hold a step or a note, or a sheet is open, the view stays still.
+
+**Step Edit**
+
+Press **SHIFT** + **SEQ** to open **Step Edit**, the step editor. It shows the
+caret's bar: each step's notes stack by pitch and grow taller with velocity.
+Ratchet hits sit side by side. A step can show an accent dot, a tie arc, a
+slide sign, a lock square, a condition ring and the playhead tick. The caret's
+step is amber. The pattern's bars are blocks at the foot. The panel below
+shows the pads held, or the step's notes and the next step. The header shows
+**STEP** and **BAR**.
+
+![Step Edit](../images/screens/stepedit.png)
+
+The pads have two modes. **SHIFT** + **B1** (**PADS**) switches between them.
+The LED on **PADS** is lit in **STEPS** mode.
+
+PLAY mode (step entry):
+
+- Play a pad or a chord. It is written at the caret. The caret moves on when
+  you release the pads.
+- **B2** (**REST**) moves on without writing. **B3** (**BACKSPACE**) goes back
+  and removes that step.
+- The encoder moves the caret through every bar.
+- **K1** length, **K2** velocity (Played uses your velocity), **K3** chance
+  of what a pad writes.
+- **ERASE** + pad erases all of that pad's events (asks first).
+
+STEPS mode:
+
+![STEPS mode](../images/screens/stepeditsteps.png)
+
+- The pads are the 16 steps of the caret's bar for one sound. On a kit or
+  Drums track this is the last pad you hit; hold **SAMPLE** and press a pad
+  to pick another. On a synth it is the last note. The header shows
+  **STEPS** and the sound's name.
+- Press a pad to set or clear a step. The pads light the bar's steps.
+- **Hold a step** and turn **K1**–**K3** to lock Motion lanes on it (a
+  parameter lock). Turn the encoder to change its pitch; on a kit this moves
+  the note to the next pad.
+- **K1** length, **K2** velocity, **K3** chance of the step. On a kit,
+  **SHIFT** + **K1** sets the lane length, so a pad's lane can loop at its
+  own length.
+- **ERASE** + pad clears the step.
+
+![A step lock](../images/screens/stepslock.png)
+
+In both modes:
+
+- **B1** steps through the card sets: **NOTE**, **LOCK** (the Motion lanes
+  locked on the caret's step), **TRIG** and, on a kit or Drums lane,
+  **EUCLID**.
+- **TRIG**: **K1** ratchet (1–8 hits), **K2** ramp, **K3** trig condition
+  (Always, n:m, Fill, First, Pre, Nei and their opposites). On a kit,
+  **SHIFT** + **K2** sets a pad's pitch ramp.
+- **EUCLID**: **K1** hits, **K2** steps, **K3** rotation. **SHIFT** + **K1**
+  sets the lane length.
+- **SHIFT** + **B2** (**TIE**) ties the caret's notes into the next step.
+  Press it again to untie.
+- **SHIFT** + **B3** (**INSERT**) puts an empty step at the caret and moves
+  the rest later. The last step's notes fall off the end.
+- Otherwise **SHIFT** + **K1**–**K3** set the pattern length, Q and time
+  signature.
+- **−** / **+** change the octave (on a kit, the bank).
+- Encoder push, **SEQ** or **SHIFT** + **SEQ** go back to Sequences,
+  Patterns, Roll or Motion, whichever was open last on the track.
+
+![SHIFT held on Step Edit](../images/screens/stepeditshift.png)
+
+![The TRIG cards](../images/screens/stepsratchet.png)
+
+![The EUCLID cards](../images/screens/stepseuclid.png)
+
+**Motion**
+
+Motion shows the pattern's recorded knob movements as lanes. To record
+Motion, turn a knob while **SEQ RECORD** is on. To clear a lane, press
+**ERASE** + the knob (asks first).
+
+![Motion](../images/screens/motion.png)
+
+**B3** has three pages: **MOTION**, **MOD** and **MACRO**. Press **B3** again
+to step through them. The dots under the key show which one is open. **B1**
+and **B2** stay **SEQUENCES** and **ROLL** on all three.
+
+- **MOD**: eight modulators. Each is an LFO (synced or free) or an
+  envelope follower of a track or bus. It moves up to four parameters
+  anywhere in the project.
+- **MACRO**: eight macros. Each turns up to eight parameters at
+  once, each between its own low and high value.
+- **SHIFT** + **B3** (**ADD**) assigns the last knob you turned to the
+  modulator or macro in view.
+
+![An LFO modulator](../images/screens/modlfo.png)
+
+## Time Correct
+
+Press **SHIFT** + **Pad 14**. Time Correct changes how the pattern plays
+without moving the notes.
+
+![Time Correct](../images/screens/timecorrect.png)
+
+- **K1** grid, **K2** strength, **K3** swing.
+- **SHIFT** + **K1** humanize, **SHIFT** + **K2** velocity humanize,
+  **SHIFT** + **K3** groove amount.
+- Press a pad to take the groove from another pattern of the track.
+- **B3** (**QUANTIZE**) turns it off and on, to compare.
+- **B2** (**ALL**) applies the same settings to the track's other patterns.
+- Press **SHIFT** + **Pad 14** again to close it.
+
+**SHIFT** + **Pad 2** / **Pad 3** halve / double the pattern length.
+**SHIFT** + **Pad 6** / **Pad 7** play it at half / double speed.
+
+## Sequences and follow actions
+
+A sequence is one column of patterns: sequence 3 is pattern 3 on every track. On
+Patterns, cell n is also sequence n.
+
+- The sequence in view is the column of the selected track's pattern. On
+  Patterns, push the encoder to launch it at the next bar: every track goes
+  to pattern n, at the sequence's tempo. Tracks with no notes in that column
+  are silent.
+- **SHIFT** + **B1** (**SEQUENCE**): **K1** sets the sequence's tempo
+  (below 30 is None). Push the encoder to name the sequence. Press **ERASE**
+  to clear the sequence's name and tempo. The header shows **SEQ** and the
+  sequence's number, and its name.
+
+![SEQUENCE](../images/screens/patternsscene.png)
+
+**SHIFT** + **B2** (**FOLLOW**) sets the **follow action** of the selected
+pattern: what the pattern does after it has played for a while.
+
+![FOLLOW](../images/screens/patternsfollow.png)
+
+- **K1** (**FOLLOW**): Next, Previous, Any, Again or Stop.
+- **K2** (**AFTER**): after 1–64 bars, or 1–64 plays.
+- **K3** (**CHANCE**): the chance of the first action. **SHIFT** + **K1**
+  (**OR**) sets the second action.
+- Push the encoder to put the follow action on every track's pattern in
+  that column.
+
+### Sequences page
+
+**SEQ** opens **Sequences**. On Patterns, press **B1**.
+
+- The pads are the bank's 16 sequences, laid out as the pads. Press a pad
+  to launch its sequence at the next bar. **ERASE** + pad clears the sequence's
+  name and tempo. **PAD BANK** steps the bank.
+- The sequence launched last is the sequence in hand. The encoder sets its tempo
+  (below 30 is None). Push the encoder to name it. **ERASE** clears it.
+- **K1**–**K3** set the selected pattern's follow action, as on **FOLLOW**.
+  **SHIFT** + **K1** sets the second action. **SHIFT** + **B3** (**ALL**)
+  puts the follow action on every track's pattern in that column. In Basic
+  there are no follow actions: **K1**–**K3** set the length, grid and swing
+  of the selected track's pattern, as on Patterns.
+- **−** / **+** select the track. The dots on the right are the tracks:
+  bright in the sequence, dim on another pattern, a red ring stopped by a
+  follow action.
+- **SHIFT** + **B2** (**CAPTURE**), then a pad: the patterns playing now
+  become that sequence. Each track's playing pattern is copied into its
+  pattern of that column, as one undo. If some of those patterns hold notes,
+  Rhythmer asks first. **B1** (**CANCEL**) stops before a pad.
+
+## Tempo
+
+Tap **TAP TEMPO** to set the tempo by tapping. Hold **TAP TEMPO** and turn
+the encoder to set it by a whole BPM, as on the stock app: the **Tempo** page
+shows while you hold, and goes back when you let go.
+
+Hold **TAP TEMPO** for half a second without turning to open the Tempo page
+and keep it open. Hold **TAP TEMPO** again there to close it.
+
+![Tempo](../images/screens/tempo.png)
+
+- **K1** tempo, **K2** swing, **K3** click level. **SHIFT** + **K1** and
+  **SHIFT** + **K2** set the project's root and scale.
+- **B1** halves, **B3** doubles the tempo. **B2** (**CLICK**) sets the
+  metronome Off, On or Rec.
+- The encoder changes the tempo by 0.1 BPM, **−** / **+** by 1 BPM.
+- Push the encoder to switch between one tempo for the project and a tempo
+  for each pattern.
+
+Each tempo change is one undo step: a turn of **K1** or the encoder, or a
+press of **B1**, **B3**, **−** / **+** or **TAP TEMPO**.
+
+---
+
+Previous: [Audio tracks](audio-tracks.md) · [Contents](../GUIDE.md) · Next: [Song](song.md)

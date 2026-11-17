@@ -1,10 +1,11 @@
 {
   "base": {
-    "tag": "v0.2.0",
-    "commit": "8880d16116ccb3c69f75fb46bf2166b16c51ef0c",
+    "tag": "v0.3.0",
+    "commit": "6d6ad5efff4cef9b7b04f3aee3c3f386ee717c16",
     "sample_base": "7e2d15d9ca086608b942599f6471a82f48c139f7"
   },
-  "backports": [
+  "tracking": "Release pin plus individually reviewed fixes; unreleased HEAD is not automatically merged.",
+  "incorporated_upstream": [
     {
       "commit": "a8115fef449be0bdc1ca3c4002570da507c58004",
       "upstream": "https://github.com/keremimo/melodee-sample/commit/a8115fef449be0bdc1ca3c4002570da507c58004",
@@ -16,5 +17,5 @@
       ]
     }
   ],
-  "tracking": "Release pin plus individually reviewed fixes; unreleased HEAD is not automatically merged."
+  "backports": []
 }

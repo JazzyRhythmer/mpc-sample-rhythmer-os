@@ -5,7 +5,7 @@
     "mpc-sample"
   ],
   "firmware": "1.3.0.12",
-  "summary": "Free and open-source custom firmware built on Melodee: synth engines, 16-pad Rhythmer Kits, four-track generation, Acid Generator and Break Manipulator for Jungle, Techno, House and IDM workflows.",
+  "summary": "Free and open-source custom firmware built on Melodee: 22 instrument entries including Frodhes and Tenebrae, 36 Rhythmer Kits, sound design, four-track GEN, Acid Generator and Break Manipulator for Jungle, Techno, House and IDM.",
   "licence": "AGPL-3.0-only",
   "share": "page",
   "homepage": "https://jazzyrhythmer.github.io/mpc-sample/"

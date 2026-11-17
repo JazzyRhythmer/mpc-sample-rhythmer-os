@@ -7,3 +7,8 @@ Engine home uses original names, named preset, selected pad, common MIX/SENDS/SO
 GEN retains the original FM-1 four-track role and seed logic with 1–4/5–8/9–12/13–16 targets, one-track/range MIDI ONLY, Undo/Redo and engine-specific Acid/Break views. Source assignment is generated exclusively from the selected catalogue. Excluded engine implementations are absent. Real-device validation is pending.
 
 Track management now has native TRACK SETUP, focused kit loading and pattern-preserving instrument/type replacement. Browser ownership, cancellation, Undo/Redo, empty-track input gating and late-load target isolation are described in TRACK_WORKFLOW.md. Local host validation is complete; release and physical installation remain held.
+
+
+## Proposed Break library and guide work
+
+See [Break library and workflow improvement backlog](BREAK_LIBRARY_UX_PLAN.md) for the proposed tasks, verified baseline, priorities and acceptance criteria. These items are not implemented by their inclusion in this plan.

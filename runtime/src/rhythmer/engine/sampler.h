@@ -31,7 +31,7 @@ namespace sampler {
 enum Param : int8_t {
     Tune, Filter, Resonance, Decay, Level,      // the kit
     FilterType, Follow,                         // Filter, Follow pages
-    Cloud, Position, Size, Density, Scan, Spread, // Cloud: pads as clouds of grains
+    Cloud, Position, Size, Density, Scan, Spread, // unused: Cloud is each pad's now (PadSound::cloud); old files' move there on load
     FollowHow, PitchHow,                        // Follow: Beats / Tones / Tape; a pitch change moves speed or is stretched
     Count
 };
@@ -39,6 +39,9 @@ enum Param : int8_t {
 
 class SamplerEngine final : public Engine {
 public:
+    // The short loop for plain runs (run_plain()); off, every frame takes the full one (the tests compare the two).
+    static inline bool plain_runs = true;
+    static inline thread_local unsigned plain_taken = 0; // runs it played, on this thread (for the tests)
     static constexpr unsigned max_voices = 32;
     // Past max_voices a new voice takes the oldest's place, which fades out (a choke's quick fade) in one of
     // these spare voices instead of stopping dead (a click).
@@ -81,16 +84,28 @@ public:
     void set_pad_mutes(const std::array<uint64_t, (sampler_pads + 63) / 64>& bits);
     bool pad_muted(unsigned pad) const { return pad < sampler_pads && ((muted[pad / 64] >> (pad % 64)) & 1); }
     // A region of a sample on no pad, for Chop's audition (plays one shot).
-    void audition(uint16_t sample, uint32_t start, uint32_t end, int velocity);
+    void audition(uint16_t sample, uint32_t start, uint32_t end, int velocity, uint16_t own_tempo = 0);
     // A sample is about to change: whatever plays it stops now.
     void sample_gone(uint16_t sample);
     // A kit pad shifted by `semitones`, its filter at `cutoff` (0..100; -1 its
     // own): 16 Levels. note_off for the pad's note releases it.
     void play_pad(unsigned pad, int velocity, int semitones, int cutoff = -1);
+    // Note Repeat holds a kit pad: on a pad of Cycle hold or Random hold, every repeat plays the layer the
+    // first one picked, until the hold ends (model/sampler.h LayerPlay).
+    void hold_layer(unsigned pad, bool on) { if (pad < sampler_pads) held_layer[pad] = int8_t(on ? -2 : -1); }
+    void release_layers() { held_layer.fill(-1); }
 
+    // A KEYGROUP track's sampler (model/project.h): note k plays pad 1 at k - 60 semitones from its root, as a kit's
+    // instrument pad plays key 60 + its pitch + those (zones_on()); a kit's notes are pads (pad_note()).
+    void set_keyed(bool on) { keyed = on; }
+    bool is_keyed() const { return keyed; }
     void note_on(int key, int velocity) override;
     void set_accent(float gain) override { accent = gain; }
     void note_off(int key) override;
+    // A Slide (`glide`) or Tie step on a KEYGROUP track: the held note goes on at `to` without a new attack, its pitch
+    // sliding there over the program's portamento (else slide_seconds) or, tied, at once.
+    static constexpr float slide_seconds = 0.06f;
+    void slide(int from, int to, int velocity, bool glide) override;
     void all_notes_off() override;
     // A keyboard's pitch wheel: every voice of the kit bent up to `bend_range` semitones either way, its speed with it
     // (a stretched voice its pitch only), gliding there as any change does. New hits start bent.
@@ -153,15 +168,30 @@ private:
         // began at `step` (the pitch), each faded over `window`, a new one every `hop`.
         bool stretch = false, beats = false;
         double place = 0, advance = 1;
-        std::array<double, 2> tap {};
-        std::array<uint32_t, 2> tap_age {};
-        std::array<bool, 2> tap_on {};
+        // Beats uses taps 0 and 1; Tones up to four (two fading out at a hit while two start on it).
+        std::array<double, 4> tap {};
+        std::array<uint32_t, 4> tap_age {};
+        std::array<bool, 4> tap_on {};
+        std::array<double, 4> tap_from {};             // Tones: where each tap began
+        std::array<float, 4> tap_gain {1, 1, 1, 1};    // Tones: 1, or falling to 0 after a hit cut it
+        // Tones' hits: the next hit ahead of `place` (in its own lap on a kit pad's loop), found by reading
+        // ahead to `hit_scan`, and the last one cut on. Taps do not read across a hit ahead of them; when the place
+        // reaches it, those playing fade out over a short edge and a tap starts on it at full.
+        bool hits = false, hit_ahead = false;
+        double hit_at = 0, hit_scan = 0, hit_last = 0;
+        float hit_before = 0;
+        // Tones: the next tap's start, worked out ahead at `prepare_at` frames into the hop (a voice's own point in it,
+        // so a chord's voices do not all search in the same block).
+        bool prepared = false;
+        uint32_t prepare_at = 0;
+        double next_start = 0;
         uint32_t window = 1, hop = 1, since_hop = 0;
         unsigned next_tap = 0;
         uint8_t group = 0;
         float gain = 0, left = 0.7071f, right = 0.7071f, fade = 1;
         uint32_t age = 0;
-        double scale = 1; // its frames a 44.1 kHz frame: above 1 when it plays a copy at the device's rate (roadmap P2)
+        float rate = 44100; // Hz: its frames' (its sample's own, or its zone part's)
+        double scale = 1;   // its frames a 44.1 kHz frame: `rate` over 44.1 kHz
         uint32_t sounded = 0;   // output frames it has played (Offset's wait not counted), for its tap
         bool wrapped = false;   // went round its loop in this block
         dsp::Envelope env;
@@ -209,11 +239,13 @@ private:
         int8_t layer = -1;                  // the pad's layer it plays (layers_on), -1 the pad itself
         int16_t levels_cutoff = -1;         // 16 Levels' cutoff it was hit with, -1 the pad's own
         float accent = 1, fall = 1;         // the sequencer's accent; a release sample's rt_decay
-        bool native = false;                // reads the sample's copy at the device's rate (roadmap P2)
         const SampleGrowth* grow = nullptr; // its sample is still being read: it reads only what landed (admit_grown)
         bool follows = false;               // its speed comes from the tempo (Warp's Seq, Follow)
         Multisample* multi = nullptr;       // a zone's instrument, and the zone's place in it
         uint32_t zone_index = 0;
+        // Portamento (a mono instrument's glide, a Slide step): the pitch sits `porta` semitones from its key and
+        // moves `porta_rate` of them a frame back to it.
+        float porta = 0, porta_rate = 0;
     };
     // Each pad whose sound changed since the last render (a bit a pad); `retune_all` for the kit's values.
     std::array<uint64_t, (sampler_pads + 63) / 64> retune {};
@@ -239,16 +271,43 @@ private:
     void zones_on(Multisample& multi, const PadSound& sound, int pad, int velocity, int semitones, int cutoff, int trigger);
     void layers_on(const PadSound& sound, int pad, int velocity, int semitones, int cutoff, int trigger);
     void release_zones(int pad, int semitones); // roadmap P3: an instrument's release samples for the key let go
+    // A mono instrument's held note on `pad` carried to `semitones` (a new key), its pitch sliding there over `seconds`
+    // (0: at once). False when no note of the pad is held.
+    bool carry(int pad, int semitones, float seconds);
+    void porta_from(Voice& v, int from_key, float seconds); // a new voice's pitch starting at `from_key`, sliding to its own
+    std::array<int8_t, sampler_pads> mono_key = [] { std::array<int8_t, sampler_pads> a {}; a.fill(-1); return a; }(); // a mono instrument pad's last key
+    // A mono instrument's keys still held, oldest first (the last sixteen): when the key that sounds is let go the note
+    // goes back to the newest of them, as a mono synth's does (carried there when its program is tied, else started
+    // again).
+    struct HeldKey { int16_t pad = -1; int8_t semis = 0; uint8_t velocity = 0; };
+    std::array<HeldKey, 16> mono_held {};
+    unsigned mono_held_count = 0;
+    void hold_key(int pad, int semitones, int velocity); // pressed: the newest
+    void drop_key(int pad, int semitones);               // let go
+    const HeldKey* newest_held(int pad) const;
     Multisample* multi_of(const PadSound& sound) const;
     void end_stream(Voice& v);
+    void stream_from(Voice& v);   // a long sample's voice moved: its stream again from there
+    void follow_stream(Voice& v); // and after its block: where it reads, or round its loop
     void came_round(Voice& v);          // a zone's loop went back to its start
     bool admit(Voice& v, unsigned frames); // whether its next frames are safe to read
+    void pass(Voice& v, unsigned frames);  // a block with nothing safe to read: its time goes on
     bool admit_grown(Voice& v, unsigned frames); // the same for a sample still being read (SampleGrowth)
     void play_zone(Voice& v, float* to_l, float* to_r, unsigned from, unsigned frames);
     float frames_left(const Voice& v, double at, double speed) const; // output frames to the end, for the fades
     static float edge_gain(const Voice& v, double at);                // the region edges' fades, 0..1
     static void seam(const Voice& v, const float* l, const float* r, double at, float& out_l, float& out_r); // a loop's crossfade
     void voice_out(Voice& v, float l, float r, float a, float left_frames, float* to_l, float* to_r, unsigned f);
+    // A kit voice's next `frames` without anything to check frame by frame (no glide, duck, choke, seam, and clear of
+    // its edge fades and tail): run_plain() plays them in a shorter loop, sample for sample as the full one would.
+    bool plain_run(const Voice& v, unsigned frames) const;
+    void run_plain(Voice& v, const float* l, const float* r, float* to_l, float* to_r, unsigned from, unsigned frames, double span);
+    // The same for a zone voice (play_zone()).
+    bool zone_plain(const Voice& v, unsigned frames) const;
+    const float* tones_table(uint32_t window);              // stretch(): Tones' window weights, worked out once
+    std::array<float, 5760> tones_weights {};               // 60 ms at 96 kHz
+    uint32_t tones_window = 0;                              // the window they are for (0 none yet)
+    void zone_run_plain(Voice& v, const float* l, const float* r, float* to_l, float* to_r, unsigned from, unsigned frames);
     Voice& free_voice();
 
     struct Grain {
@@ -269,6 +328,7 @@ private:
     std::array<Grain, 48> grains {};
     uint32_t grain_serial = 0;
     unsigned tempo = 1200;
+    uint16_t audition_tempo=0;
     uint32_t seed = 99;
     // A choke's fade and an instrument zone's duck move this far a frame: 64 44.1 kHz frames (1.5 ms) at any rate.
     float edge_step = 1.0f / 64;
@@ -277,6 +337,7 @@ private:
     std::array<PadSound, sampler_pads> pads {}, base {}; // as they play (motion), and as the kit holds them
     ZoneTrims trims {};
     std::array<uint8_t, sampler_pads> layer_turn {};    // Cycle: the layer each pad plays next
+    std::array<int8_t, sampler_pads> held_layer = [] { std::array<int8_t, sampler_pads> a {}; a.fill(-1); return a; }(); // -1 not held, -2 held (none picked yet), else the layer kept
     // Roadmap P3, an instrument's release samples: each key's last press, how hard and when (frames played).
     std::array<uint8_t, 128> key_velocity {};
     std::array<uint64_t, 128> key_since {};
@@ -289,6 +350,8 @@ private:
     float accent = 1; // the sequencer's, for the voices started next (set_accent)
     float bend = 0;   // semitones, set_bend
     bool pedal = false;
+    bool keyed = false; // set_keyed()
+    void release_key(int key); // note_off() in the kit's encoding
     std::array<int32_t, max_voices> pedal_offs {}; // the note offs the sustain pedal holds back, in order
     unsigned pedal_count = 0;
     float g = 1, k = 2, s1[2] {}, s2[2] {};
@@ -316,6 +379,32 @@ private:
     std::unique_ptr<std::array<Lane, lanes>> lane = std::make_unique<std::array<Lane, lanes>>();
     Lane* lane_for(int pad); // the pad's lane, a free one, or nullptr
     void stretch(Voice& v, const float* l, const float* r, float* to_l, float* to_r, unsigned from, unsigned frames);
+    // Tones' next tap (WSOLA): where near `natural` it reads most like the playing tap over their overlap.
+    // `from` and `age`: where the playing tap will read, and its age, when the new one starts.
+    double align(const Voice& v, const float* l, const float* r, double from, uint32_t age, double natural);
+    void scan_hits(Voice& v, const float* l, const float* r);   // Tones: read ahead for the next hit
+    void cut_on_hit(Voice& v);                                    // Tones: the place reached the hit ahead
+    static float hit_energy(const Voice& v, const float* l, const float* r, long at); // 64 frames from `at`, its way
+    unsigned open_tap(Voice& v, double at, uint32_t age);
+    static int playing_tap(const Voice& v);
+    static double loop_place(const Voice& v, double at);           // Tones on a kit pad's loop: into the loop's frames
+    static double same_lap(const Voice& v, double at);             // Tones on a kit pad's loop: onto the place's lap
+    void band_read(const Voice& v, const float* l, const float* r, double at, bool pad_loop, float& out_l, float& out_r);
+    // Tones' band-limited reads, a table a voice for its speed: 33 places between two frames, each a row of weights
+    // summed to one, over `count` frames from `half` - 1 before the frame read. Worked out again when the speed moves
+    // more than 0.5 %. On the heap: 10 kB a voice.
+    struct BandRows {
+        double step = 0;
+        int half = 0, count = 0;
+        std::array<float, 33 * 76> weights {};
+    };
+    std::unique_ptr<std::array<BandRows, max_voices + spare_voices>> band_rows = std::make_unique<std::array<BandRows, max_voices + spare_voices>>();         // Tones: a free tap (else the oldest) from `at`
+    static constexpr double align_seconds = 0.012; // how far either side of its place a tap may start
+    struct AlignScratch {
+        std::array<float, 384> ref {};      // what the playing tap reads over the overlap, a point every 8 frames
+        std::array<float, 8192> span {};    // the mono sound around where it starts, on the same points' grid
+    };
+    std::unique_ptr<AlignScratch> aligning = std::make_unique<AlignScratch>(); // on the heap, as `lane`
 };
 
 } // namespace rhythmer

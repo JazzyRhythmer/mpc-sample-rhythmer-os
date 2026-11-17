@@ -649,8 +649,15 @@ JUNGLE_AUDIO_CODE int32_t read_step(struct reader *r, const uint8_t *data, uint3
         const auto* sample=reinterpret_cast<const SampleData*>(data);
         auto pcm=[&](double n){double position=n*sample->frames/src_frames;
             unsigned a=std::min<unsigned>(unsigned(position),sample->frames-1),b=std::min(a+1,sample->frames-1);float f=float(position-a);
-            float v=sample->left[a]+f*(sample->left[b]-sample->left[a]);
-            if(!sample->right.empty())v=(v+sample->right[a]+f*(sample->right[b]-sample->right[a]))*.5f;
+            float v=0;
+            if (sample->stream) {
+                if (!sample->break_cache->ready.load(std::memory_order_acquire)) return int32_t(0);
+                v=sample->break_cache->mono[a]+f*(sample->break_cache->mono[b]-sample->break_cache->mono[a]);
+            } else {
+                if (b >= sample->left.size()) return int32_t(0);
+                v=sample->left[a]+f*(sample->left[b]-sample->left[a]);
+                if(!sample->right.empty())v=(v+sample->right[a]+f*(sample->right[b]-sample->right[a]))*.5f;
+            }
             if(!std::isfinite(v))v=0;
             return int32_t(std::clamp(std::round(v*32768.f),-32768.f,32767.f));};
         int32_t a=pcm(r->pos),b=pcm(r->pos+1);

@@ -11,7 +11,7 @@ def run():
  source_root=Path(os.environ.get('RHYTHMER_AUDIT_CARD',str(WORK)))
  sp.run([HELPER,str(QA)],check=True,capture_output=True)
  single=json.loads((source_root/'edit-inspect.json').read_text());factory=json.loads((source_root/'factory-kit-edit-inspect.json').read_text());dynamic=json.loads((source_root/'dynamic-edit-inspect.json').read_text());pad11=json.loads((source_root/'kit-edit-inspect.json').read_text())
- assert len(single)==25 and len(factory)==16*len(json.loads((ROOT/'config/sound-catalog.json').read_text())['kits']) and len(pad11)==25
+ assert len(single)==len(json.loads((ROOT/'config/sound-catalog.json').read_text())['engines']) and len(factory)==16*len(json.loads((ROOT/'config/sound-catalog.json').read_text())['kits']) and len(pad11)==len(single)
  assert all(r.get("focused_pad")==10 for r in pad11),"P11 fixture must carry the actual focused pad"
  quick_states=json.loads((source_root/"preset-quick-inspect.json").read_text());assert len(quick_states)==len(single)
  homes=[]

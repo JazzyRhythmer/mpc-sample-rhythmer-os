@@ -21,12 +21,14 @@
 // Rhythmer writes only to the card: Trim and Extract go to Samples/Edits;
 // without a card they stay in memory for the session.
 #include "rhythmer/shell/context.h"
+#include "rhythmer/engine/engine_host.h"
 #include "rhythmer/shell/new_track.h"
 #include "rhythmer/shell/sample_library.h"
 #include <cstdio>
 #include <filesystem>
 #include <cstring>
 #include <algorithm>
+#include <cmath>
 
 namespace rhythmer {
 namespace {
@@ -34,15 +36,15 @@ constexpr const char* writing = "(writing)"; // a slot's path while its file is 
 
 const char* edits_folder = "Edits";
 
-// A free sample slot held for a file being made, -1 when the project's 64 are full.
+// A free sample slot held for a file being made, -1 when every slot is in use.
 int hold_slot(Project& project, const std::string& name) {
     for (unsigned n = 0; n < sample_slots; ++n) {
-        auto& ref = project.samples[n];
-        if (ref.used()) continue;
+        if (project.samples[n].used()) continue;
+        auto& ref = project.samples.edit(n);
         std::snprintf(ref.path, sizeof(ref.path), "%s", writing);
         std::snprintf(ref.name, sizeof(ref.name), "%s", name.c_str());
         ref.frames = 0;
-        project.chops[n] = SampleChop {}; // roadmap P3: no chop of what the slot held before
+        if (project.chops[n].used()) project.chops.edit(n) = SampleChop {}; // roadmap P3: no chop of what the slot held before
         return int(n);
     }
     return -1;
@@ -50,7 +52,7 @@ int hold_slot(Project& project, const std::string& name) {
 
 SampleJob job(SampleJob::Kind kind, unsigned source, int target, uint32_t from, uint32_t to, const std::string& name, const char* folder) {
     SampleJob j;
-    j.kind = kind; j.source = uint8_t(source); j.target = uint8_t(std::max(target, 0));
+    j.kind = kind; j.source = uint16_t(source); j.target = uint16_t(std::max(target, 0));
     j.from = from; j.to = to;
     std::snprintf(j.name, sizeof(j.name), "%s", name.c_str());
     std::snprintf(j.folder, sizeof(j.folder), "%s", folder);
@@ -76,7 +78,7 @@ int Context::hold_file(const std::string& name, unsigned t, int pad, uint8_t lan
 
 void Context::drop_file(int slot) {
     if (slot < 0 || slot >= int(sample_slots)) return;
-    project.samples[size_t(slot)] = SampleRef {};
+    project.samples.edit(size_t(slot)) = SampleRef {};
     for (auto& p : pending_files) if (p.slot == slot) p = PendingFile {};
 }
 
@@ -104,9 +106,9 @@ void Context::trim_sample() {
     while (free < pending_files.size() && pending_files[free].slot >= 0) ++free;
     std::string name = derived(ref, "-Trimmed");
     int slot = free < pending_files.size() ? hold_slot(project, name) : -1;
-    if (slot < 0) { notice(free < pending_files.size() ? "Trim Sample: 64 samples" : "Trim Sample: busy"); return; }
+    if (slot < 0) { notice(free < pending_files.size() ? "Trim Sample: samples full" : "Trim Sample: busy"); return; }
     if (!library->write(job(SampleJob::Kind::Derive, pad.sample, slot, pad.start, end, name, edits_folder))) {
-        project.samples[size_t(slot)] = SampleRef {};
+        project.samples.edit(size_t(slot)) = SampleRef {};
         notice("Trim Sample: busy");
         return;
     }
@@ -125,11 +127,11 @@ void Context::extract_slice() {
     const auto& ref = project.samples[ui.chop_sample];
     std::string name = derived(ref, "-Slice " + std::to_string(ui.chop_slice + 1));
     int slot = free < pending_files.size() ? hold_slot(project, name) : -1;
-    if (slot < 0) { notice(free < pending_files.size() ? "Extract: 64 samples" : "Extract: busy"); return; }
+    if (slot < 0) { notice(free < pending_files.size() ? "Extract: samples full" : "Extract: busy"); return; }
     SampleJob slice = job(SampleJob::Kind::Derive, ui.chop_sample, slot, sl.start[ui.chop_slice], sl.end(ui.chop_slice, frames), name, edits_folder);
     slice.edges = true; // faded where it was cut, as the pads play it
     if (!library->write(slice)) {
-        project.samples[size_t(slot)] = SampleRef {};
+        project.samples.edit(size_t(slot)) = SampleRef {};
         notice("Extract: busy");
         return;
     }
@@ -158,7 +160,7 @@ void Context::load_layer(const std::string& path, const std::string& name) {
     if (asked.instrument()) { notice("Layers take samples"); return; }
     if (!t.pads[kit].used()) { notice("Layer 1 first"); return; }
     int slot = sample_slot(path, name);
-    if (slot < 0) { notice("Samples full (64)"); return; }
+    if (slot < 0) { notice("Samples full"); return; }
     Edit edit;
     edit.track = ui.track; edit.pad = int16_t(kit);
     edit.pad_before = pad_state(t, kit);
@@ -177,13 +179,15 @@ void Context::load_layer(const std::string& path, const std::string& name) {
 
 void Context::load_file(const std::string& path, const std::string& name, bool next_empty) {
     auto& t = track();
-    if (t.engine != EngineKind::Sampler) return;
+    if (!t.sampled()) return;
+    const bool keyed = t.engine == EngineKind::Keygroup; // one sound, pad 1: no layers of its own, no next pad
     if (library) { stop_preview(); library->preview(""); } // the pad plays the file now, not its preview too
+    if (keyed && ui.layer_load > 0) { ui.layer_load = -1; notice("Keygroup: one sound"); return; }
     if (ui.layer_load > 0 && !next_empty) { load_layer(path, name); return; }
-    int kit = next_empty ? next_empty_pad(t.last_pad) : int(t.last_pad % sampler_pads);
+    int kit = keyed ? 0 : next_empty ? next_empty_pad(t.last_pad) : int(t.last_pad % sampler_pads);
     if (kit < 0) { notice("No empty pad"); return; }
     int slot = sample_slot(path, name);
-    if (slot < 0) { notice("Samples full (64)"); return; }
+    if (slot < 0) { notice("Samples full"); return; }
     Edit edit;
     edit.track = ui.track; edit.pad = int16_t(kit);
     edit.pad_before = pad_state(t, unsigned(kit));
@@ -198,19 +202,22 @@ void Context::load_file(const std::string& path, const std::string& name, bool n
     if (sound.sample != uint16_t(slot)) edit.pad_after.trims.clear(); // round 3: another file's zones are not these
     sound.sample = uint16_t(slot);
     if (project.samples[size_t(slot)].instrument()) { // played on keys: held while held, no region of its own
-        sound.play = PadPlay::Gate; sound.decay = 100; sound.sustain = 100; sound.mono = false; // Poly: chords on Keys
+        sound.play = PadPlay::Gate; sound.decay = 100; sound.sustain = 100;
+        if (!keep) sound.mono = false; // a fresh instrument pad is Poly (chords on Keys); a kept pad keeps its Mono
         sound.loop = false; sound.warp = warp_off; sound.beats = 0;
         const PadSound fresh; // its zones are its layers: the pad's own layers go
         sound.layers = fresh.layers; sound.low_velocity = fresh.low_velocity; sound.high_velocity = fresh.high_velocity;
         sound.layer_play = fresh.layer_play;
         landing_pads.push_back({ui.track, uint8_t(kit), uint16_t(slot)});
     }
-    edit.what = pad_text("Load", unsigned(kit));
+    if (keyed && !keep) { sound.mono = false; sound.play = PadPlay::Gate; } // a keygroup's WAV across the keys: held, chords
+    edit.what = keyed ? "Load " + name : pad_text("Load", unsigned(kit));
     restore_pad(ui.track, unsigned(kit), edit.pad_after);
     t.last_pad = uint8_t(kit);
     edits.push(std::move(edit));
     dirty = true;
-    notice(keep ? pad_text("Loaded", unsigned(kit)) + ", settings kept" : pad_text("Loaded", unsigned(kit)));
+    const std::string loaded = keyed ? "Loaded " + name : pad_text("Loaded", unsigned(kit));
+    notice(keep ? loaded + ", settings kept" : loaded);
     new_track_landed(*this); // a track SAMPLES made: back to the page it was picked on
 }
 
@@ -254,7 +261,7 @@ void Context::files_landed() {
         for (auto& p : pending_files) // a file that could not be made: its slot is free again
             if (done.failed >= 0 && p.slot == done.failed) {
                 if (p.land == 2) { ui.rec_slot = ui.rec_pad = -1; ui.rec_chops = 0; } // the take is gone
-                project.samples[size_t(p.slot)] = SampleRef {}; p = PendingFile {};
+                project.samples.edit(size_t(p.slot)) = SampleRef {}; p = PendingFile {};
             }
     }
     SampleLibrary::BankBytes bank_bytes;
@@ -267,11 +274,13 @@ void Context::files_landed() {
         else if (!rhythmer::load_bank(bank_bytes.bytes, bank)) notice("Load Bank: not a bank file");
         else load_bank(bank, name);
     }
+    stems_landed(); // a sample's four stems together (shell/stems_jobs.cpp)
     for (auto& p : pending_files) {
-        if (p.slot < 0) continue;
+        if (p.slot < 0 || p.land >= 3) continue; // 3 and up: stems, landed above
         auto loaded = library->slot(unsigned(p.slot));
         if (!loaded.ready) continue; // still being made
-        auto& ref = project.samples[size_t(p.slot)];
+        if (p.land == 2 && loaded.streamed && !loaded.shaped) continue; // a long take's cuts land on its hits, once found
+        auto& ref = project.samples.edit(size_t(p.slot));
         PendingFile was = p;
         p = PendingFile {};
         std::snprintf(ref.path, sizeof(ref.path), "%s", loaded.path.empty() ? ("(memory) " + loaded.name).c_str() : loaded.path.c_str());
@@ -372,7 +381,7 @@ void Context::take_landed(unsigned t, unsigned kit, unsigned slot, const LoadedS
 
 void Context::preview_cursor() {
     if (!library) return;
-    auto files = library->files();
+    auto files = sample_browser_files(library->files(), ui.break_browse);
     const SampleFile* file = ui.files_cursor < files.size() ? &files[ui.files_cursor] : nullptr;
     std::string path = ui.preview && file && !file->folder && !file->bank && !file->midi ? file->path : std::string(); // a MIDI file has no sound to preview
     stop_preview(); // what played stops as the cursor moves on
@@ -383,17 +392,28 @@ void Context::stop_preview() {
     if (previewing < 0) return;
     Command stop {Command::Type::Audition, uint8_t(previewing)};
     stop.pad.sample = no_sample;
-    send(stop);
-    previewing = -1;
+    stop.index=preview_break_bus?1:0;send(stop);
+    preview_break_bus=false;previewing = -1;
 }
 
 void Context::browser_tick() {
     if (!library) return;
-    bool here = ui.page == PageId::Samples && track().engine == EngineKind::Sampler;
+    bool here = ui.page == PageId::Samples && (track().engine == EngineKind::Sampler || ui.break_browse);
+    const auto visible_files=here ? sample_browser_files(library->files(), ui.break_browse) : std::vector<SampleFile>{};
+    if(here){
+        ui.files_count=uint16_t(std::min<size_t>(visible_files.size(),0xffff));
+        ui.files_cursor=uint16_t(std::min<unsigned>(ui.files_cursor,ui.files_count?ui.files_count-1:0));
+    }
     auto folder = library->folder();
     if (folder != files_folder_seen) { // a new folder: the cursor on the one it came out of, else the top
         files_folder_seen = folder;
         ui.files_cursor = uint16_t(files_row_wanted >= 0 ? files_row_wanted : std::max(library->came_from(), 0)); // B2's drive: its row
+        if(ui.break_browse && files_row_wanted<0){
+            auto all=library->files();int came=library->came_from();ui.files_cursor=0;
+            if(came>=0 && size_t(came)<all.size())for(size_t i=0;i<visible_files.size();++i)
+                if(visible_files[i].path==all[size_t(came)].path){ui.files_cursor=uint16_t(i);break;}
+        }
+        ui.files_cursor=uint16_t(std::min<unsigned>(ui.files_cursor,ui.files_count?ui.files_count-1:0));
         files_row_wanted = -1;
         ui.files_drive = uint8_t(library->drive());
         if (here && ui.preview) preview_cursor();
@@ -404,11 +424,24 @@ void Context::browser_tick() {
     }
     unsigned arrived = library->previews();
     if (arrived == previews_seen) return;
+    auto info=library->preview_info();
+    if(here && ui.break_browse && ui.break_preview_sync && !info.complete)return;
     previews_seen = arrived;
-    auto files = library->files();
+    if(info.complete && info.seconds<=0){notice("PREVIEW unavailable / choose another file");return;}
+    auto files = sample_browser_files(library->files(), ui.break_browse);
     if (!here || !ui.preview || ui.files_cursor >= files.size() || files[ui.files_cursor].path != library->previewed()) return;
     Command a {Command::Type::Audition, ui.track, 0, 0, int16_t(ui.audition_velocity)};
     a.pad.sample = uint16_t(preview_slot); a.pad.start = 0; a.pad.end = 0;
+    if(ui.break_browse || track().break_bars){
+        a.index=1;preview_break_bus=true;
+        if(ui.break_browse && ui.break_preview_sync){
+            unsigned bars=ui.break_load_b?track().break_bars:ui.break_bars;
+            double own=info.seconds>0?bars*2400.0/info.seconds:0;
+            double ratio=own>0?(host.tempo_now()?host.tempo_now():project.tempo)/own:0;
+            if(info.seconds>=30 || own<1||own>65535||ratio<.25||ratio>4){notice("SYNC: check loop bars / use ORIGINAL");return;}
+            a.pad.own_tempo=uint16_t(std::lround(own));
+        }
+    }
     send(a);
     previewing = ui.track;
 }

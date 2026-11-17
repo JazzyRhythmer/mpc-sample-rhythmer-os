@@ -45,9 +45,10 @@ EngineHost::EngineHost() : EngineHost(false, DelayPool::blocks) {}
 EngineHost::EngineHost(Lean lean) : EngineHost(true, lean.delay_blocks) {}
 
 EngineHost::EngineHost(bool lean, unsigned delay_blocks)
-    : is_lean(lean), fx_clock(lean ? &own_clock : &effect_clock), take(!lean), recall_ring(!lean), render_out(!lean),
+    : is_lean(lean), fx_clock(lean ? &own_clock : &effect_clock), take(!lean), recall_ring(!lean), render_out(!lean), audio_in(!lean),
       punch(!lean), live {Live(!lean), Live(!lean), Live(!lean), Live(!lean)}, flex(!lean),
       kept {Kept(!lean), Kept(!lean), Kept(!lean), Kept(!lean)}, pool(delay_blocks), lines(!lean) {
+    break_preview=std::make_unique<SamplerEngine>();break_preview->set_samples(&samples);
     static_assert(live_slots == 4, "one Live and one Kept a slot above");
     for (auto& t : patterns) for (auto& p : t) p = new Pattern;
     for (auto& s : positions_now) s.store(-1);
@@ -56,6 +57,7 @@ EngineHost::EngineHost(bool lean, unsigned delay_blocks)
     for (unsigned t = 0; t < track_count; ++t) {
         slots[t].sampler.set_pad_effects(&(*pad_fx)[t]); slots[t].sampler.set_pager(&pager);
         slots[t].print.set_pager(&pager); // freeze plan F2b
+        slots[t].audio.player.set_pager(&pager); // freeze plan F3
         slots[t].plugin.set_pool(&pool);   // its performance knobs' echo and reverb (engine/macros.h)
         slots[t].print_l = print_frames->data() + 2 * block * t;
         slots[t].print_r = slots[t].print_l + block;
@@ -76,7 +78,12 @@ EngineHost::~EngineHost() {
     for (auto& slot : slots) {
         slot.print.cut_all();
         delete slot.freeze; delete slot.freeze_leaving;
+        slot.audio.player.cut_all();
+        delete slot.audio_pack; delete slot.audio_leaving;
     }
+    for (auto* pack : audio_limbo) delete pack;
+    AudioPack* audio_done = nullptr;
+    while (done_audio.pop(audio_done)) delete audio_done;
     for (auto* pack : freeze_next) delete pack;
     for (auto* pack : freeze_limbo) delete pack;
     FreezePack* done = nullptr;
@@ -105,7 +112,11 @@ void EngineHost::reload(ProjectPack& pack, bool keep_loops) {
         retire_freeze(slot.freeze); retire_freeze(slot.freeze_leaving); retire_freeze(freeze_next[t]);
         slot.freeze = slot.freeze_leaving = freeze_next[t] = nullptr;
         slot.print_on = false; slot.hand.reset(); wake(slot);
+        slot.audio.player.cut_all(); // freeze plan F3: another project's regions; the shell sends its own
+        retire_audio(slot.audio_pack); retire_audio(slot.audio_leaving);
+        slot.audio_pack = slot.audio_leaving = nullptr; slot.audio_last = UINT32_MAX;
     }
+    break_preview->silence();break_preview_active=false;
     for (auto& s : slots) if (s.engine) s.engine->silence();
     pending.waiting = false; punch.clear(); punch_target = 255;
     for (auto& l : live) { l.pending.waiting = false; l.punch.stop(); l.punch.clear(); }
@@ -147,6 +158,7 @@ void EngineHost::play_parked(int32_t* out, unsigned frames, float* stems) {
 
 // Everything of a project but its patterns (Reload swaps those in by pointer).
 void EngineHost::load_state(const Project& project, bool keep_loops) {
+    break_preview->silence();break_preview_active=false;
     for (unsigned n = track_count; n < chain_count; ++n) { // the buses and the master; each track's in load_track()
         const auto& chain = project.chain(n);
         for (unsigned k = 0; k < max_slots; ++k) {
@@ -205,7 +217,7 @@ void EngineHost::set_audio_format(double frames_a_second, uint64_t latency_frame
     if (rate == dsp::sample_rate()) return;
     if (is_lean) { reformatting = true; return; } // the rate is the live host's to set: silent, its print dropped
     dsp::device_rate.store(rate, std::memory_order_relaxed);
-    take.set_rate(rate); recall_ring.set_rate(rate); render_out.set_rate(rate);
+    take.set_rate(rate); recall_ring.set_rate(rate); render_out.set_rate(rate); audio_in.set_rate(rate);
     reformatting = true;
     format_serial.fetch_add(1, std::memory_order_release);
 }
@@ -217,6 +229,7 @@ void EngineHost::follow_tempo() {
     if (now == tempo) return;
     tempo = now;
     for (auto& s : slots) s.sampler.set_tempo(tempo);
+    break_preview->set_tempo(tempo);
     tempo_shown.store(tempo, std::memory_order_relaxed);
 }
 
@@ -270,7 +283,7 @@ unsigned EngineHost::take_commands(unsigned offset, unsigned frames) {
 bool EngineHost::mid_block(Command::Type type) {
     using Type = Command::Type;
     switch (type) {
-    case Type::NoteOn: case Type::NoteOff: case Type::PadNote: case Type::ArpKey: case Type::Pressure: case Type::Audition:
+    case Type::NoteOn: case Type::NoteOff: case Type::PadNote: case Type::ArpKey: case Type::RepeatKey: case Type::Pressure: case Type::Audition:
     case Type::Param: case Type::Wheel: case Type::Bend: case Type::Control: case Type::Mod: case Type::Level: case Type::Pan: case Type::FxParam:
     case Type::PadFxParam: case Type::PatternData: case Type::Recorded:
         return true;
@@ -377,18 +390,22 @@ void EngineHost::load_track(unsigned t, const Track& track) {
     a.clear(); a.sounding = -1; slot.arp_late.key = -1; slot.arp_played = slot.arp_from = -1;
     a.on = track.arp; a.mode = ArpMode(track.arp_mode % unsigned(ArpMode::Count)); a.rate = track.arp_rate % arp_rates;
     a.octaves = track.engine == EngineKind::Sampler ? 1 : std::clamp<unsigned>(track.arp_octaves, 1, 4); a.gate = std::clamp<unsigned>(track.arp_gate, 5, 100);
+    slot.repeat.clear(); slot.repeat_late = -1; slot.sampler.release_layers();
+    slot.repeat.on = track.repeat; slot.repeat.rate = track.repeat_rate % arp_rates;
     if (slot.kind == EngineKind::Midi) midi_program(t, frame_now); // the device gets the track's sound as it loads
 }
 
 void EngineHost::select_engine(Slot& slot, EngineKind kind) {
     if (slot.engine) slot.engine->silence();
     slot.kind = kind;
-    slot.engine = kind == EngineKind::Sampler ? static_cast<Engine*>(&slot.sampler)
+    slot.engine = kind == EngineKind::Sampler || kind == EngineKind::Keygroup ? static_cast<Engine*>(&slot.sampler)
                 : kind == EngineKind::Midi ? static_cast<Engine*>(&slot.midi)
-                : kind == EngineKind::Plugin ? static_cast<Engine*>(&slot.plugin) : nullptr;
+                : kind == EngineKind::Plugin ? static_cast<Engine*>(&slot.plugin)
+                : kind == EngineKind::Audio ? static_cast<Engine*>(&slot.audio) : nullptr;
     slot.plugin.attach(kind == EngineKind::Plugin ? runner_of(slot.plugin_entry) : nullptr);
     if (kind != EngineKind::Plugin) slot.plugin.release_macros();
     slot.sampler.set_samples(&samples);
+    slot.sampler.set_keyed(kind == EngineKind::Keygroup); // its notes MIDI notes on pad 1
     slot.arp.top = kind == EngineKind::Sampler ? int(sampler_last_key) : 127; // a kit's notes run past 127
     for (auto& off : slot.offs) off.key = -1;
     slot.held = {};
@@ -441,7 +458,8 @@ void EngineHost::apply(const Command& c) {
     case Type::AllNotesOff:
         if (c.index == 1) {
             panic_latched = true;
-            for (auto& s : slots) if (s.engine) s.engine->silence();
+            break_preview->silence();break_preview_active=false;
+    for (auto& s : slots) if (s.engine) s.engine->silence();
             for (auto& chain : fx) for (auto& effect : chain) effect.clear();
             if (pad_fx) for (auto& pads : *pad_fx) for (auto& pad : pads) for (auto& effect : pad) effect.clear();
             knob.clear(); knob_in.clear(); punch.clear(); flex.clear();
@@ -562,6 +580,9 @@ void EngineHost::apply(const Command& c) {
                 retire_freeze(target.freeze); retire_freeze(target.freeze_leaving); retire_freeze(freeze_next[t]);
                 target.freeze = target.freeze_leaving = freeze_next[t] = nullptr;
                 target.print_on = false; target.hand.reset(); wake(target);
+                target.audio.player.cut_all(); // freeze plan F3: the shell sends an audio track's regions again
+                retire_audio(target.audio_pack); retire_audio(target.audio_leaving);
+                target.audio_pack = target.audio_leaving = nullptr; target.audio_last = UINT32_MAX;
             }
             load_track(pack.track, pack.value);
             std::swap(patterns[pack.track % track_count], c.track_pack->patterns); // the pack takes the old ones back to be freed
@@ -651,8 +672,33 @@ void EngineHost::apply(const Command& c) {
     case Type::ArpKey:
         if (c.value && slot.freeze && slot.freeze->deep) break; // freeze plan F2d
         if (c.value && slot.freeze) wake(slot);
+        if (c.value && !running && slot.arp.on && !slot.arp.count && clock_free(slot)) { arp_ticks = 0; until_arp = 0; } // stopped: the first key plays at once
         if (c.value) slot.arp.press(int(c.index) | int(c.position & 0xff) << 16, c.value); else slot.arp.release(c.index); // position: a 16 Levels cutoff + 1
         if (!slot.arp.count) slot.arp.position = 0;
+        break;
+    case Type::Repeat: {
+        auto& r = slot.repeat;
+        switch (c.index) {
+        case 0:
+            r.on = c.value != 0;
+            if (!r.on) {
+                for (unsigned n = 0; n < r.count; ++n) slot.sampler.hold_layer(unsigned((r.keys[n] & 0xff) - sampler_first_note), false);
+                r.clear(); slot.repeat_late = -1;
+            }
+            break;
+        case 2: r.rate = unsigned(c.value) % arp_rates; break;
+        case 5: r.pressure_velocity = c.value != 0; break;
+        }
+        break;
+    }
+    case Type::RepeatKey:
+        if (c.value && slot.freeze && slot.freeze->deep) break; // freeze plan F2d
+        if (c.value && slot.freeze) wake(slot);
+        // Stopped, the first pad held plays at once, as on the MPC, unless another track already repeats on the clock.
+        if (c.value && !running && slot.repeat.on && !slot.repeat.count && clock_free(slot)) { arp_ticks = 0; until_arp = 0; }
+        if (c.value) slot.repeat.press(int(c.index) | int(c.position & 0xff) << 16, c.value); else slot.repeat.release(c.index);
+        if (slot.engine == &slot.sampler) // a kit pad held: its per-hold layer kept from the first repeat until let go
+            slot.sampler.hold_layer(unsigned((c.index & 0xff) - sampler_first_note), c.value != 0);
         break;
     case Type::RecordArm: {
         if (take.state() != TakeRecorder::State::Idle) break;
@@ -781,6 +827,12 @@ void EngineHost::apply(const Command& c) {
     }
     case Type::Audition:
         if(c.value>0)panic_latched=false;
+        if(c.index==1){ // Break browser: audition without assigning or waking the selected track.
+            break_preview_track=c.track%track_count;
+            break_preview->audition(c.pad.sample,c.pad.start,c.pad.end,c.value,c.pad.own_tempo);
+            break_preview_active=break_preview->sounding(); // retain the native short choke fade on cancel/change
+            break;
+        }
         if (slot.freeze && slot.freeze->deep) break; // freeze plan F2d
         if (slot.freeze) wake(slot);
         if (slot.engine == &slot.sampler) {
@@ -802,6 +854,7 @@ void EngineHost::apply(const Command& c) {
         float value = std::clamp<int>(c.value, 0, 127) / 127.0f;
         engine_pressure(slot, c.index, value);
         // The arp's notes follow the pressure of the key they came from, while it is held.
+        if (slot.repeat.on) slot.repeat.press_harder(c.index, value); // Note Repeat plays the key itself: its pressure is above
         if (slot.arp.on) {
             slot.arp.press_harder(c.index, value);
             if (slot.arp_from >= 0 && arp_named(slot.arp_from) == int(c.index) && slot.arp_played >= 0 && slot.arp_played != int(c.index))
@@ -919,6 +972,10 @@ void EngineHost::apply(const Command& c) {
         sync_stop(frame_now);
         midi_all_off(255, frame_now);
         render_out.cancel(); // a render stopped by hand is dropped; one in its tail ends there
+        if (audio_in.running()) audio_in.finish(0); // freeze plan F3: a take ends here, kept
+        else if (audio_in.cued()) audio_in.cancel();
+        audio_track.store(-1, std::memory_order_relaxed);
+        for (auto& s : slots) if (s.kind == EngineKind::Audio) { s.audio.player.release(dsp::sample_rate()); s.audio_last = UINT32_MAX; }
         if (take.state() == TakeRecorder::State::Cued) take.stop();
         cue_track = -1;
         count_left = 0; count_beat.store(0, std::memory_order_relaxed); count_rest.store(0, std::memory_order_relaxed);
@@ -981,6 +1038,27 @@ void EngineHost::apply(const Command& c) {
     case Type::Swing: swing = uint8_t(std::clamp<int>(c.value, 50, 75)); break;
     case Type::Fill: fill = c.value != 0; fill_now.store(fill, std::memory_order_relaxed); break;
     case Type::TrackSpeed: speeds_now[c.track % track_count].store(uint8_t(std::clamp<int>(c.value, 0, int(speed_count) - 1)), std::memory_order_relaxed); break;
+    case Type::AudioRegions: // freeze plan F3
+        if (c.track >= track_count) retire_audio(c.audio);
+        else set_audio(c.track, c.audio);
+        break;
+    case Type::AudioQuiet: slots[c.track % track_count].audio.player.quiet = c.value != 0; break; // freeze plan F3
+    case Type::AudioRecord: // freeze plan F3
+        if (c.value == -1) { // let go before it began
+            if (audio_in.cued()) { audio_in.cancel(); audio_track.store(-1, std::memory_order_relaxed); }
+            break;
+        }
+        if (c.value == -2) { // ended here, kept
+            if (audio_in.running()) audio_in.finish(0);
+            else if (audio_in.cued()) audio_in.cancel();
+            audio_track.store(-1, std::memory_order_relaxed);
+            break;
+        }
+        if (audio_in.state() != Bounce::State::Idle) break;
+        audio_in.cue();
+        audio_pattern.store(-1, std::memory_order_relaxed);
+        audio_track.store(int(c.track % track_count), std::memory_order_relaxed);
+        break;
     case Type::Freeze: { // freeze plan F2b
         if (c.track >= track_count) { retire_freeze(c.freeze); break; }
         retire_freeze(freeze_next[c.track]); // a later one wins over one still waiting for its bar
@@ -1038,6 +1116,46 @@ void EngineHost::print_tick(unsigned, Slot& slot, uint32_t at, uint32_t length) 
     slot.print_on = clip != nullptr;
     if (!clip && !slot.freeze->deep) wake(slot); // freeze plan F2d: a deep freeze stays asleep (its plug-ins are gone)
     slot.print.follow(clip, at, pattern_frames(at), tick_samples(tick_now), rate);
+}
+
+// --- Freeze plan F3: audio tracks' regions (engine/audio_player.h) ---
+
+void EngineHost::retire_audio(AudioPack* pack) {
+    if (!pack) return;
+    if (done_audio.push(pack)) return;
+    for (auto& q : audio_limbo) if (!q) { q = pack; return; }
+    // limbo full too: kept (a leak) rather than freed here
+}
+
+// The track's takes from now: the voices of the last ones fade out (their pack freed once they have); the next tick
+// finds the new ones.
+void EngineHost::set_audio(unsigned t, AudioPack* pack) {
+    auto& slot = slots[t % track_count];
+    if (slot.audio_pack == pack) return;
+    auto& player = slot.audio.player;
+    if (slot.audio_leaving) { player.cut_all(); retire_audio(slot.audio_leaving); slot.audio_leaving = nullptr; }
+    if (player.sounding()) {
+        player.fade_all(dsp::sample_rate());
+        slot.audio_leaving = slot.audio_pack;
+    } else {
+        retire_audio(slot.audio_pack);
+    }
+    slot.audio_pack = pack;
+    slot.audio_last = UINT32_MAX; // found afresh on the next tick
+}
+
+// On a tick of an audio track's pattern (`at` ticks into it): its take where the pattern is. An armed take starts
+// where the pattern comes round and ends where it comes round again: one pass, whatever plays it.
+void EngineHost::audio_tick(unsigned t, Slot& slot, uint32_t at) {
+    if (at == 0 && int(t) == audio_track.load(std::memory_order_relaxed)) {
+        if (audio_in.cued()) { audio_in.begin(block_at); audio_pattern.store(int(slot.pattern), std::memory_order_relaxed); }
+        else if (audio_in.running()) { audio_in.finish(block_at); audio_track.store(-1, std::memory_order_relaxed); }
+    }
+    const bool jumped = slot.audio_last == UINT32_MAX || at != slot.audio_last + 1;
+    slot.audio_last = at;
+    const RegionClip* clip = slot.audio_pack ? slot.audio_pack->clips[slot.pattern % pattern_count] : nullptr;
+    slot.audio.player.set_tempo(tempo); // a warped take follows the tempo playing
+    slot.audio.player.follow(clip, pattern_frames(at), at == 0, jumped, dsp::sample_rate());
 }
 
 // --- One dispatch a block (roadmap P2) ---
@@ -1289,7 +1407,7 @@ void EngineHost::mod_write(unsigned t, unsigned param, unsigned pad, int value) 
     if (param == motion_wheel) { if (slot.engine) engine_wheel(slot, std::clamp(value / 127.0f, 0.0f, 1.0f)); return; }
     if (param == motion_bend) { if (slot.engine) engine_bend(slot, std::clamp(value / 64.0f, -1.0f, 1.0f)); return; }
     if (int which = pad_param_of(param); which >= 0) {
-        if (slot.kind == EngineKind::Sampler) slot.sampler.move_pad(pad % sampler_pads, PadParam(which), value);
+        if (slot.kind == EngineKind::Sampler || slot.kind == EngineKind::Keygroup) slot.sampler.move_pad(pad % sampler_pads, PadParam(which), value);
         return;
     }
     if (param >= motion_fx_base) {
@@ -1463,7 +1581,7 @@ void EngineHost::restore(Slot& slot) {
             for (unsigned q = 0; q < effect_params; ++q) fx[t][k].set_param(q, slot.fx_base[k][q]);
         slot.fx_moved = false;
     }
-    if (slot.kind == EngineKind::Sampler) { // a kit pad's own values, if motion moved them
+    if (slot.kind == EngineKind::Sampler || slot.kind == EngineKind::Keygroup) { // a kit pad's own values (a keygroup's sound's), if motion moved them
         EngineCall call;
         call.op = EngineCall::Op::RestorePads;
         if (!keep_call(slot, call)) slot.sampler.restore_pads();
@@ -1564,8 +1682,8 @@ void EngineHost::move_lane(unsigned t, Slot& slot, unsigned param, unsigned pad,
         if (slot.engine) { engine_bend(slot, std::clamp(value / 64.0f, -1.0f, 1.0f)); slot.bend_moved = true; }
         return;
     }
-    if (param >= motion_pad_base) { // a kit pad's own value
-        if (slot.kind == EngineKind::Sampler) {
+    if (param >= motion_pad_base) { // a kit pad's own value (a keygroup's sound's)
+        if (slot.kind == EngineKind::Sampler || slot.kind == EngineKind::Keygroup) {
             EngineCall call;
             call.op = EngineCall::Op::MovePad; call.a = int32_t(pad); call.b = int32_t(param - motion_pad_base); call.c = value;
             if (!keep_call(slot, call)) slot.sampler.move_pad(pad, PadParam(param - motion_pad_base), value);
@@ -1589,7 +1707,7 @@ void EngineHost::restore_lane(unsigned t, Slot& slot, unsigned param, unsigned p
     if (param == motion_wheel) { engine_wheel(slot, slot.wheel); return; }
     if (param == motion_bend) { engine_bend(slot, slot.bend); return; }
     if (param >= motion_pad_base) {
-        if (slot.kind == EngineKind::Sampler) {
+        if (slot.kind == EngineKind::Sampler || slot.kind == EngineKind::Keygroup) {
             EngineCall call;
             call.op = EngineCall::Op::RestorePad; call.a = int32_t(pad); call.b = int32_t(param - motion_pad_base);
             if (!keep_call(slot, call)) slot.sampler.restore_pad(pad, PadParam(param - motion_pad_base));
@@ -1763,6 +1881,19 @@ void EngineHost::mtc_place(double seconds) {
 void EngineHost::arp_tick() {
     for (auto& slot : slots) {
         unsigned t = unsigned(&slot - slots.data());
+        auto& r = slot.repeat;
+        if (!r.on || !r.count || !slot.engine) continue;
+        unsigned rate = arp_rate_ticks(r.rate);
+        if (arp_ticks % rate) continue;
+        if (song_recording && running && !count_left && !slot.silent) // Seq Record: each repeat goes into the pattern as a note
+            for (unsigned n = 0; n < r.count; ++n) arp_write(t, slot, r.keys[n], r.velocity_of(n), rate, NoteRepeat::gate);
+        auto length = std::max<int32_t>(64, int32_t(arp_tick_length() * rate * NoteRepeat::gate / 100.0));
+        double late = arp_swing_ticks(r.rate, (arp_ticks % (4 * arp_ticks_per_quarter)) / rate, swing); // every second straight step, as the project swings
+        if (late > 0) { slot.repeat_late = int32_t(arp_tick_length() * late); slot.repeat_length = length; continue; }
+        repeat_step(slot, length);
+    }
+    for (auto& slot : slots) {
+        unsigned t = unsigned(&slot - slots.data());
         auto& a = slot.arp;
         if (!a.on || !slot.engine) continue;
         unsigned rate = arp_rate_ticks(a.rate);
@@ -1770,15 +1901,7 @@ void EngineHost::arp_tick() {
         int velocity = 0, key = a.next(velocity);
         if (key < 0) continue;
         velocity = a.velocity_of(a.from, velocity); // a held pad's pressure, as on the MPC (roadmap P1)
-        if (song_recording && running && !count_left && !slot.silent) { // Seq Record: the repeat goes into the pattern as a note
-            const auto& p = *patterns[t][slot.pattern];
-            int64_t len = std::max<uint32_t>(p.length, 1), at = (int64_t(arp_origin) + arp_ticks - int64_t(slot.start)) % len;
-            ArpWritten w;
-            w.track = uint8_t(t); w.pattern = slot.pattern; w.key = uint16_t(key); w.cutoff = uint8_t(key >> 16); w.velocity = uint8_t(std::clamp(velocity, 1, 127));
-            Speed sp = speed_of(speeds_now[t].load(std::memory_order_relaxed)); // its pattern plays scaled: written as it reads
-            w.tick = uint32_t(uint64_t(at < 0 ? at + len : at) * sp.num / sp.den); w.length = uint16_t(std::max(1u, rate * a.gate * sp.num / sp.den / 100));
-            if (!arp_written.push(w)) {}
-        }
+        if (song_recording && running && !count_left && !slot.silent) arp_write(t, slot, key, velocity, rate, a.gate); // Seq Record: the note into the pattern
         auto length = std::max<int32_t>(64, int32_t(arp_tick_length() * rate * a.gate / 100.0));
         double late = arp_swing_ticks(a.rate, (arp_ticks % (4 * arp_ticks_per_quarter)) / rate, swing); // every second straight note, as the project swings
         if (late > 0) { slot.arp_late = {key, int16_t(velocity), a.from, int32_t(arp_tick_length() * late), length}; continue; }
@@ -1787,13 +1910,61 @@ void EngineHost::arp_tick() {
     ++arp_ticks;
 }
 
+// Seq Record: an arp or Note Repeat note written into the track's pattern at the step it plays.
+void EngineHost::arp_write(unsigned t, Slot& slot, int key, int velocity, unsigned rate, unsigned gate) {
+    const auto& p = *patterns[t][slot.pattern];
+    int64_t len = std::max<uint32_t>(p.length, 1), at = (int64_t(arp_origin) + arp_ticks - int64_t(slot.start)) % len;
+    ArpWritten w;
+    w.track = uint8_t(t); w.pattern = slot.pattern; w.key = uint16_t(key); w.cutoff = uint8_t(key >> 16); w.velocity = uint8_t(std::clamp(velocity, 1, 127));
+    Speed sp = speed_of(speeds_now[t].load(std::memory_order_relaxed)); // its pattern plays scaled: written as it reads
+    w.tick = uint32_t(uint64_t(at < 0 ? at + len : at) * sp.num / sp.den); w.length = uint16_t(std::max(1u, rate * gate * sp.num / sp.den / 100));
+    if (!arp_written.push(w)) {}
+}
+
+bool EngineHost::clock_free(const Slot& slot) const {
+    for (const auto& s : slots) if (&s != &slot && ((s.arp.on && s.arp.count) || (s.repeat.on && s.repeat.count))) return false;
+    return true;
+}
+
+void EngineHost::repeat_step(Slot& slot, int32_t length) {
+    auto& r = slot.repeat;
+    for (unsigned n = 0; n < r.count; ++n) {
+        engine_note_on(slot, r.keys[n], r.velocity_of(n));
+        schedule_off(slot, r.keys[n], length);
+        midi_note(unsigned(&slot - slots.data()), r.keys[n] & 0xff, r.velocity_of(n), frame_now + block_at, length); // a kit pad's note, its semitones off
+    }
+}
+
+// A swung step plays at the start of the run its frame begins (next_late() ends the run before at it), then the
+// run counts down the ones still to come.
 void EngineHost::run_late(Slot& slot, unsigned frames) {
+    if (slot.repeat_late >= 0) {
+        if (slot.repeat_late == 0) { slot.repeat_late = -1; if (slot.engine && slot.repeat.on) repeat_step(slot, slot.repeat_length); } // the pads held now
+        else slot.repeat_late = std::max(0, slot.repeat_late - int32_t(frames));
+    }
     auto& late = slot.arp_late;
     if (late.key < 0) return;
-    late.samples -= int32_t(frames);
-    if (late.samples > 0) return;
-    if (slot.engine && slot.arp.on) arp_note(slot, late.key, late.velocity, late.from, late.length);
-    late.key = -1;
+    if (late.samples <= 0) {
+        if (slot.engine && slot.arp.on) arp_note(slot, late.key, late.velocity, late.from, late.length);
+        late.key = -1;
+        return;
+    }
+    late.samples = std::max(0, late.samples - int32_t(frames));
+}
+
+unsigned EngineHost::next_late() const {
+    unsigned n = ~0u;
+    for (const auto& slot : slots) {
+        if (slot.repeat_late > 0) n = std::min(n, unsigned(slot.repeat_late));
+        if (slot.arp_late.key >= 0 && slot.arp_late.samples > 0) n = std::min(n, unsigned(slot.arp_late.samples));
+    }
+    return n;
+}
+
+bool EngineHost::arp_live() const {
+    for (const auto& slot : slots)
+        if ((slot.repeat.on && slot.repeat.count) || (slot.arp.on && slot.arp.count) || slot.repeat_late >= 0 || slot.arp_late.key >= 0) return true;
+    return false;
 }
 
 void EngineHost::run_hits(unsigned t, Slot& slot, unsigned frames) {
@@ -1858,7 +2029,7 @@ void EngineHost::arp_note(Slot& slot, int key, int velocity, int from, int32_t l
     if (pressure > 0) engine_pressure(slot, key, pressure);
     slot.arp_played = key; slot.arp_from = from;
     schedule_off(slot, key, length);
-    midi_note(unsigned(&slot - slots.data()), key & 0xff, velocity, frame_now, length); // a kit pad's note, its semitones off
+    midi_note(unsigned(&slot - slots.data()), key & 0xff, velocity, frame_now + block_at, length); // a kit pad's note, its semitones off
 }
 
 // --- MIDI out and sync (parity phase 9) ---
@@ -2251,6 +2422,9 @@ void EngineHost::tick() {
         count_rest.store(count_left, std::memory_order_relaxed);
         if (!count_left) count_beat.store(0, std::memory_order_relaxed);
         until_tick += tick_length();
+        // The arps' and Note Repeat's clock ran through the count-in: it starts again with the take's first tick, so
+        // Seq Record writes their notes from the pattern's start, not a bar on.
+        if (!count_left) { arp_ticks = 0; until_arp = until_tick; arp_origin = tick_now; }
         return;
     }
     // The song's clocks start with its first tick, after any count-in: Start from the top, else Song Position and Continue.
@@ -2296,6 +2470,8 @@ void EngineHost::tick() {
         bool sound = slot.engine != nullptr, midi = out_channel[t] && out_mode[t]; // an empty track may still play MIDI out
         if ((!sound && !midi) || slot.silent) {
             if (slot.print_on || slot.print.playing()) { slot.print.release(dsp::sample_rate()); slot.print_on = false; } // a STOP, no clip
+            if (slot.audio.player.playing()) slot.audio.player.release(dsp::sample_rate()); // freeze plan F3
+            slot.audio_last = UINT32_MAX;
             continue;
         }
         const auto& pattern = *patterns[t][slot.pattern];
@@ -2314,6 +2490,7 @@ void EngineHost::tick() {
         if (at == 0 && int(t) == cue_track) { take.go(block_at); cue_track = -1; } // Rec length Seq: the take starts with the pattern
         if (sound && (at == 0 || !pattern.motion.empty() || slot.locks_on)) play_motion(t, slot, pattern, at);
         if (slot.freeze && sound) print_tick(t, slot, at, length); // freeze plan F2b
+        if (slot.kind == EngineKind::Audio) audio_tick(t, slot, at); // freeze plan F3: its pattern's take
         // Its print plays the notes: they go out by MIDI alone (freeze plan F2d: a deep freeze's engine never hears them).
         const bool seq = sound && !slot.print_on && !(slot.freeze && slot.freeze->deep);
         const auto& events = pattern.events;
@@ -2409,6 +2586,7 @@ void EngineHost::render(int32_t* out, unsigned frames, float volume, const int32
     Offer offer;
     while (offers.pop(offer)) {
         if (offer.slot > preview_slot) continue;
+        break_preview->sample_gone(offer.slot);
         for (auto& slot : slots) slot.sampler.sample_gone(offer.slot); // nothing may play the old one past here
         const SampleData* old = samples[offer.slot];
         samples[offer.slot] = offer.sample;
@@ -2462,9 +2640,6 @@ void EngineHost::render(int32_t* out, unsigned frames, float volume, const int32
         fx_clock->song = std::max(0.0, (from - std::max(until_tick, 0.0) / tick_length()) / ticks_per_quarter);
     }
     if (mods_on) run_modulators(frames); // roadmap P4: before the tracks' buffers are cleared (a follower hears the last block)
-    // The arps' clock, at the block's start (within 3 ms of the beat).
-    until_arp -= frames;
-    while (until_arp <= 0) { arp_tick(); until_arp += arp_tick_length(); }
     bool solo = false;
     for (auto& strip : loop_strips) solo |= strip.solo && loops.on();
     for (auto& slot : slots) {
@@ -2513,6 +2688,11 @@ void EngineHost::render(int32_t* out, unsigned frames, float volume, const int32
                 n = std::min<unsigned>(n, unsigned(std::ceil(until_tick / speed)));
             }
         }
+        // The arps' and Note Repeat's clock: a tick at the start of the run it falls in. With keys held (or a swung
+        // step to come) the run ends where the next is due, so each repeat plays on its own frame, as the
+        // sequencer's notes do; with none, the runs are not split for ticks that play nothing.
+        if (until_arp <= 0) { block_at = done; arp_tick(); until_arp += arp_tick_length(); continue; }
+        if (arp_live()) n = std::min({n, unsigned(std::ceil(until_arp)), next_late()});
         // Ratchets' hits on their frames: the run ends where the next one is due.
         n = std::min(n, next_hit());
         block_at = done;
@@ -2559,7 +2739,10 @@ void EngineHost::render(int32_t* out, unsigned frames, float volume, const int32
             slot.print.render(slot.print_l + done, slot.print_r + done, n, to_l, to_r);
             slot.send_pad_fed |= slot.print.sends_fed();
         }
+        for (auto& slot : slots) // freeze plan F3: audio tracks' regions, each where the song is (into the track's own buffers)
+            if (slot.kind == EngineKind::Audio && slot.audio.player.sounding()) slot.audio.player.render(slot.left + done, slot.right + done, n);
         sync.run(frame_now + done, n, quarter_samples(), [&](const MidiOutEvent& e) { emit(e); });
+        until_arp -= n;
         if (running && !held) {
             until_tick -= n * speed;                                     // MTC in trims the pace; 1 otherwise
             if (mtc_on) mtc_at += n * speed / clock.frames_a_second();
@@ -2649,7 +2832,7 @@ void EngineHost::render(int32_t* out, unsigned frames, float volume, const int32
         if (slot.print_fed && post)
             for (unsigned f = 0; f < frames; ++f) { slot.left[f] += slot.print_l[f] * slot.print_mix_l.at(f); slot.right[f] += slot.print_r[f] * slot.print_mix_r.at(f); }
         if (frozen && !asleep) { // asleep after a second below the floor, nothing held by hand and no pattern played live
-            bool keep = !slot.freeze->deep && (slot.hand.any() || slot.arp.count || (running && !slot.silent && !slot.print_on));
+            bool keep = !slot.freeze->deep && (slot.hand.any() || slot.arp.count || slot.repeat.count || (running && !slot.silent && !slot.print_on));
             slot.quiet = keep || awake_peak >= sleep_floor ? 0 : slot.quiet + frames;
             if (slot.quiet >= uint32_t(dsp::sample_rate())) slot.awake = false;
         }
@@ -2887,6 +3070,7 @@ void EngineHost::render(int32_t* out, unsigned frames, float volume, const int32
     punch_on.store(punch.on() || sounding, std::memory_order_relaxed);
     if (resampling) take_input(); // the mix itself, before main volume
     take.process(record_l, record_r, frames);
+    audio_in.process(record_l, record_r, frames); // freeze plan F3: an audio track's take, between its bars
     // The meters' fall over this block: meter_fall_db a second at the device's rate.
     float meter_fall = std::pow(10.0f, -meter_fall_db / 20 * float(frames) / float(dsp::sample_rate()));
     auto meter = [&](std::atomic<float>& held, float peak) {
@@ -2901,6 +3085,12 @@ void EngineHost::render(int32_t* out, unsigned frames, float volume, const int32
     keep_sources(input, usb, frames);
     take_stems(frames); // roadmap P4: the stems by the same bounds, before the bounce moves on
     render_out.process(master_l, master_r, frames);
+    // Monitoring after prints/stems/recall/master effects: preview never edits or prints the project.
+    if(break_preview_active){
+        std::array<float,block> l{},r{};break_preview->render_stereo(l.data(),r.data(),frames);
+        for(unsigned f=0;f<frames;++f){master_l[f]+=l[f];master_r[f]+=r[f];}
+        if(!break_preview->sounding())break_preview_active=false;
+    }
     volume_now.aim(volume, frames, snap_mix); // main volume eased too: the knob's steps are up to dB apart
     park_gain.aim(park_wanted ? 0.0f : 1.0f, frames); // a Park fades out (and the next project in), never a jump
     bool park_fading = !(park_gain.flat() && park_gain.to == 1.0f);
@@ -2918,7 +3108,7 @@ void EngineHost::render(int32_t* out, unsigned frames, float volume, const int32
         }
         out_l = std::max(out_l, std::fabs(master_l[f])); out_r = std::max(out_r, std::fabs(master_r[f])); // the mix, for the meters
         float v = panic_latched ? 0.0f : park_fading ? volume_now.at(f) * park_gain.at(f) : volume_now.at(f);
-        float left = dsp::soft_clip(master_l[f] * v), right = dsp::soft_clip(master_r[f] * v);
+        float left = dsp::master_clip(master_l[f] * v), right = dsp::master_clip(master_r[f] * v);
         peak = std::max(peak, std::max(std::fabs(left), std::fabs(right)));
         out[2 * f] = int32_t(std::clamp(left, -0.999f, 0.999f) * 2147483647.0f);
         out[2 * f + 1] = int32_t(std::clamp(right, -0.999f, 0.999f) * 2147483647.0f);
@@ -2954,6 +3144,7 @@ void EngineHost::render(int32_t* out, unsigned frames, float volume, const int32
         for (unsigned t = 0; t < track_count; ++t) {
             auto& slot = slots[t];
             if (slot.freeze_leaving && !slot.print.leaving()) { retire_freeze(slot.freeze_leaving); slot.freeze_leaving = nullptr; }
+            if (slot.audio_leaving && !slot.audio.player.leaving()) { retire_audio(slot.audio_leaving); slot.audio_leaving = nullptr; }
             frozen_bits |= uint32_t(slot.freeze != nullptr) << t;
             playing_bits |= uint32_t(slot.print.playing()) << t;
             sleeping_bits |= uint32_t(slot.freeze && !slot.awake) << t;
@@ -2964,6 +3155,10 @@ void EngineHost::render(int32_t* out, unsigned frames, float volume, const int32
         sleeping_now.store(sleeping_bits, std::memory_order_relaxed);
         print_under.store(under, std::memory_order_relaxed);
         print_waited.store(waited, std::memory_order_relaxed);
+        uint32_t audio_u = 0, audio_w = 0; // freeze plan F3
+        for (auto& slot : slots) { audio_u += slot.audio.player.underruns; audio_w += slot.audio.player.waits; }
+        audio_under.store(audio_u, std::memory_order_relaxed);
+        audio_waited.store(audio_w, std::memory_order_relaxed);
     }
     // Last of all: a Park whose fade has gone silent hands the state to the loader, nothing touched after it.
     if (park_wanted && park_gain.silent()) go_parked();
@@ -3068,7 +3263,8 @@ void EngineHost::publish_taps(unsigned frames) {
     taps.track = uint8_t(watched);
     taps.stamp = frame_now + frames;
     auto& slot = slots[size_t(watched)];
-    if (slot.engine == &slot.sampler) slot.sampler.taps(taps);
+    if(break_preview_active && watched==break_preview_track)break_preview->taps(taps);
+    else if (slot.engine == &slot.sampler) slot.sampler.taps(taps);
     tap_board.publish(taps);
 }
 

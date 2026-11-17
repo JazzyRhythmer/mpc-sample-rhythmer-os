@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
 #include "rhythmer/shell/bindings.h"
+#include "rhythmer/shell/levels_keys.h"
+#include "rhythmer/shell/features.h"
 #include "rhythmer/shell/mix_hub.h"
 #include "rhythmer/model/note_edits.h"
 #include "rhythmer/shell/midi_ports.h"
@@ -63,6 +65,8 @@ const ParamInfo pad_infos[pad_param_count] {
     {"RELEASE", 0, 100, 20}, {"VEL SENS", 0, 100, 100}, {"OFFSET", 0, 100, 0}, {"F ATTACK", 0, 100, 0},
     {"F DECAY", 0, 100, 50}, {"F SUSTAIN", 0, 100, 0}, {"F RELEASE", 0, 100, 20}, {"F DEPTH", 0, 100, 0},
     {"CUTOFF", 0, 100, 100}, {"RESO", 0, 100, 0}, {"SEND A", 0, 100, 0}, {"SEND B", 0, 100, 0}, {"SEND C", 0, 100, 0}, {"SEND D", 0, 100, 0},
+    {"POSITION", 0, 100, 38}, {"SIZE", 0, 100, 50}, {"DENSITY", 0, 100, 24, Format::Number}, {"SCAN", 0, 100, 50},
+    {"SPREAD", 0, 100, 12, Format::Cents},
 };
 Binding::Kind pad_kind(PadParam p) {
     using K = Binding::Kind;
@@ -85,8 +89,17 @@ Binding::Kind pad_kind(PadParam p) {
     case PadParam::FilterCutoff: return K::PadCutoff;
     case PadParam::FilterResonance: return K::PadResonance;
     case PadParam::SendA: case PadParam::SendB: case PadParam::SendC: case PadParam::SendD: return K::PadSend; // id: the bus
+    case PadParam::CloudPosition: case PadParam::CloudSize: case PadParam::CloudDensity: case PadParam::CloudScan:
+    case PadParam::CloudSpread: return K::PadCloud; // id: cloud_id()
     default: return K::None;
     }
+}
+// A PadCloud card's id for a cloud lane (0 is Cloud on or off, which has none), and the card of one.
+int cloud_id(PadParam p) { return int(p) - int(PadParam::CloudPosition) + 1; }
+Binding cloud_card(const PadSound& pad, int id) {
+    if (!id) return {Kind::PadCloud, 0, 0, 1, pad.cloud};
+    auto p = PadParam(int(PadParam::CloudPosition) + id - 1);
+    return {Kind::PadCloud, id, 0, 100, pad_param_value(pad, p)};
 }
 // The Sample Mode cards of the last pad hit (parity phase 4).
 Binding trim_zoom(const UiState& ui, int handle) { return {Kind::TrimZoom, handle, 0, zoom_top, ui.trim_zoom}; }
@@ -124,7 +137,7 @@ MotionParam motion_param(const Track& track, int lane, const Project* project) {
     if (lane < 0) return {};
     int param = int(lane_param(lane));
     if (unsigned(param) == motion_wheel) return {&wheel_info, track.wheel};
-    if (unsigned(param) == motion_bend) return track.engine == EngineKind::Plugin || track.engine == EngineKind::Sampler ? MotionParam {&bend_info, track.bend} : MotionParam {};
+    if (unsigned(param) == motion_bend) return track.engine == EngineKind::Plugin || track.sampled() ? MotionParam {&bend_info, track.bend} : MotionParam {};
     if (is_mix_lane(unsigned(param))) { // roadmap P4
         unsigned p = unsigned(param);
         if (p == motion_level) return {&level_info, track.mix.level};
@@ -141,7 +154,7 @@ MotionParam motion_param(const Track& track, int lane, const Project* project) {
     }
     if (int which = pad_param_of(unsigned(param)); which >= 0) { // a kit pad's own value
         auto p = PadParam(which);
-        if (track.engine != EngineKind::Sampler) return {};
+        if (!track.sampled()) return {};
         return {&pad_infos[which], pad_param_value(track.pads[lane_pad(lane) % sampler_pads], p)};
     }
     if (unsigned(param) < motion_fx_base) {
@@ -170,7 +183,7 @@ std::string lane_name(const Track& track, int lane, const Project* project) {
 Binding lane_binding(const Track& track, unsigned t, int lane, const Project* project) {
     int param = int(lane_param(lane));
     if (unsigned(param) == motion_wheel) return {Kind::ModWheel, 0, 0, 127, track.wheel};
-    if (unsigned(param) == motion_bend) return track.engine == EngineKind::Plugin || track.engine == EngineKind::Sampler ? Binding {Kind::PitchBend, 0, -64, 63, track.bend} : Binding {};
+    if (unsigned(param) == motion_bend) return track.engine == EngineKind::Plugin || track.sampled() ? Binding {Kind::PitchBend, 0, -64, 63, track.bend} : Binding {};
     if (is_mix_lane(unsigned(param))) { // roadmap P4: the card that turns it (the selected track's strip, the master's, a return)
         auto m = motion_param(track, lane, project);
         if (!m.info) return {};
@@ -185,8 +198,9 @@ Binding lane_binding(const Track& track, unsigned t, int lane, const Project* pr
     if (int which = pad_param_of(unsigned(param)); which >= 0) { // the pad's card, as on the sampler pages (they edit the last pad hit)
         auto m = motion_param(track, lane);
         if (!m.info || lane_pad(lane) != track.last_pad % sampler_pads) return {};
-        int bus = which >= int(PadParam::SendA) ? which - int(PadParam::SendA) : 0; // a send's card names its bus
-        return {pad_kind(PadParam(which)), bus, m.info->min, m.info->max, m.value};
+        int id = which >= int(PadParam::CloudPosition) ? cloud_id(PadParam(which)) // a cloud card names its value
+               : which >= int(PadParam::SendA) ? which - int(PadParam::SendA) : 0; // a send's its bus
+        return {pad_kind(PadParam(which)), id, m.info->min, m.info->max, m.value};
     }
     if (param >= int(motion_fx_base)) {
         auto m = motion_param(track, param);
@@ -253,9 +267,10 @@ int binding_lane(const Track& track, const Binding& b) {
     if (b.kind == Kind::Param) return motion_lane(unsigned(b.id));
     if (b.kind == Kind::ModWheel) return motion_lane(motion_wheel);
     if (b.kind == Kind::PitchBend) return motion_lane(motion_bend);
-    if (track.engine != EngineKind::Sampler) return -1;
+    if (!track.sampled()) return -1;
     for (unsigned p = 0; p < pad_param_count; ++p) // a kit pad's own value: its lane on the last pad hit
-        if (pad_kind(PadParam(p)) == b.kind && (b.kind != Kind::PadSend || p == unsigned(PadParam::SendA) + unsigned(b.id) % bus_count))
+        if (pad_kind(PadParam(p)) == b.kind && (b.kind != Kind::PadSend || p == unsigned(PadParam::SendA) + unsigned(b.id) % bus_count)
+            && (b.kind != Kind::PadCloud || cloud_id(PadParam(p)) == b.id))
             return motion_lane(motion_pad_param(PadParam(p)), track.last_pad % sampler_pads);
     return -1;
 }
@@ -354,17 +369,17 @@ std::array<Binding, 3> pad_page_bindings(const Project& project, const Track& tr
         return {handle_card(Kind::PadStart, 0, h.start, 0, last, view), handle_card(Kind::PadEnd, 0, h.end, h.start + 1, h.frames, view),
                 handle_card(Kind::PadLoopPoint, 0, std::min(h.loop, last), h.start, std::max(h.start + 1, last), view)};
     }
-    if (track.engine != EngineKind::Sampler) return {};
+    if (!track.sampled()) return {};
     switch (page) { // Rhythmer's kit-wide pages, with or without a pad
     case PageId::FilterPage: return {param(track, sampler::Filter), param(track, sampler::Resonance), param(track, sampler::FilterType)};
     case PageId::FollowPage: return {param(track, sampler::Follow), param(track, sampler::FollowHow), param(track, sampler::PitchHow)};
-    case PageId::CloudPage: // where, grain size, grains a second; row 2 scan, spread and Cloud on or off
-        if (row2) return {param(track, sampler::Scan), param(track, sampler::Spread), param(track, sampler::Cloud)};
-        return {param(track, sampler::Position), param(track, sampler::Size), param(track, sampler::Density)};
     default: break;
     }
     if (!pad.used()) return {};
     switch (page) {
+    case PageId::CloudPage: // the pad's cloud: where, grain size, grains a second; row 2 scan, spread and Cloud on or off
+        if (row2) return {cloud_card(pad, 4), cloud_card(pad, 5), cloud_card(pad, 0)};
+        return {cloud_card(pad, 1), cloud_card(pad, 2), cloud_card(pad, 3)};
     case PageId::LayersPage: { // roadmap P3: K1 the layer in hand, K2 / K3 its velocities (Velocity alone)
         unsigned n = ui.pad_layer % pad_layers;
         const PadLayer l = pad.layer(n);
@@ -427,7 +442,9 @@ std::array<Binding, 3> pad_page_shift(const Project& project, const Track& track
         const auto& l = pad.layers[n - 1];
         return {play, Binding {Kind::LayerPitch, int32_t(n), -24, 24, l.pitch}, Binding {Kind::LayerGain, int32_t(n), -480, 120, l.gain / 10}};
     }
-    case PageId::CloudPage: return {param(track, sampler::Scan), param(track, sampler::Spread), param(track, sampler::Cloud)};
+    case PageId::CloudPage:
+        if (!pad.used()) return {};
+        return {cloud_card(pad, 4), cloud_card(pad, 5), cloud_card(pad, 0)};
     default: return {};
     }
 }
@@ -450,9 +467,9 @@ unsigned new_engines(std::array<EngineKind, size_t(EngineKind::Count)>& out) {
     return n;
 }
 
-std::array<Binding, 3> stage_bindings(const Project& project, const UiState& ui, bool shift_row) {
+std::array<Binding, 3> stage_bindings(const Project& project, const UiState& ui, const Pattern& pattern, bool shift_row) {
     const auto& track = project.tracks[ui.track % track_count];
-    const auto& page = stage_page_now(ui, track, stage_instrument(project, track));
+    const auto& page = stage_page_now(ui, track, stage_skip(project, ui, track));
     using SK = StageKind;
     if (PageId kit = stage_kit_page(page.kind); kit != PageId::Count) {
         if (shift_row) return page.kind == SK::PadMix ? std::array<Binding, 3> {} : pad_page_shift(project, track, ui, kit);
@@ -481,25 +498,48 @@ std::array<Binding, 3> stage_bindings(const Project& project, const UiState& ui,
         return {Binding {Kind::StageSound, 0, 0, int(std::max(listed, 2u)) - 1, at}, Binding {Kind::SoundList, 0, 0, 2, ui.sounds_filter},
                 Binding {Kind::Engine, 0, 0, int(std::max(count, 2u)) - 1, int(here)}};
     }
+    case SK::Clip: case SK::Fades: case SK::Warp: { // freeze plan F3: the take of the pattern in hand
+        const auto& r = pattern.audio;
+        if (!r.used()) return {};
+        if (page.kind == SK::Warp) {
+            if (shift_row) return {Binding {}, Binding {}, Binding {Kind::RegionFine, 0, -50, 50, r.fine}};
+            const int how = r.warp ? (r.mode == WarpMode::Repitch ? 2 : 1) : 0;
+            return {Binding {Kind::RegionWarp, 0, 0, 2, how}, Binding {Kind::RegionBpm, 0, 300, 3000, r.tempo}, Binding {Kind::RegionSemi, 0, -24, 24, r.semi}};
+        }
+        if (shift_row) return {};
+        auto ms = [](uint32_t frames) { return int((uint64_t(frames) * 10 + 220) / 441); };
+        const int take_ms = ms(r.take_frames), start = ms(r.offset), end = ms(r.offset + r.frames), length = end - start;
+        if (page.kind == SK::Clip)
+            return {Binding {Kind::RegionGain, 0, region_gain_min, region_gain_max, r.gain}, Binding {Kind::RegionStart, 0, 0, std::max(end - 1, 1), start},
+                    Binding {Kind::RegionEnd, 0, std::min(start + 1, take_ms - 1), std::max(take_ms, 1), end}};
+        return {Binding {Kind::RegionFadeIn, 0, 0, std::max(length, 1), ms(r.fade_in)}, Binding {Kind::RegionFadeOut, 0, 0, std::max(length, 1), ms(r.fade_out)},
+                Binding {Kind::RegionReverse, 0, 0, 1, int(r.reverse)}};
+    }
+    case SK::AudioInput: { // freeze plan F3: what the track records from, whether it is heard, the input's gain
+        if (shift_row) return {};
+        return {Binding {Kind::AudioSource, 0, 0, int(audio_source_count) - 1, int(audio_source_index(track.audio.source))},
+                Binding {Kind::AudioMonitorMode, 0, 0, int(TrackMonitor::Count) - 1, int(track.audio.monitor)},
+                Binding {Kind::RecGain, 0, -12, 24, ui.settings.input.gain}};
+    }
     case SK::Mix: // level, pan and the quick send, into bus A (SENDS has all four)
         if (shift_row) return {};
         return {Binding {Kind::Level, 0, 0, 127, track.mix.level}, Binding {Kind::Pan, 0, -50, 50, track.mix.pan},
                 Binding {Kind::Send, 0, 0, 100, track.mix.sends[0]}};
-    case SK::Sends: { // K1 the bus (A-D, the one Tracks' SENDS and Bus show too), K2 the track's send into it, K3 its return
+    case SK::Sends: { // as MIX's SENDS: K1 the track's send, K2 the bus (A-D, the one Sends and Bus show too), K3 its return
         unsigned bus = ui.sends_bus % bus_count;
         Binding own {Kind::Send, int(bus), 0, 100, track.mix.sends[bus]};
-        if (track.engine == EngineKind::Sampler) { // a kit: K2 the last pad's own send, Shift + K2 the whole kit's (KIT SEND)
-            if (shift_row) return {Binding {}, own, Binding {}};
+        if (track.engine == EngineKind::Sampler) { // a kit: K1 the last pad's own send, Shift + K1 the whole kit's (KIT SEND)
+            if (shift_row) return {own, Binding {}, Binding {}};
             const auto& pad = track.pads[track.last_pad % sampler_pads];
             own = pad.used() ? Binding {Kind::PadSend, int(bus), 0, 100, pad.sends[bus]} : Binding {};
         } else if (shift_row) {
             return {};
         }
-        return {Binding {Kind::SendBus, 0, 0, int(bus_count) - 1, int(bus)}, own,
+        return {own, Binding {Kind::SendBus, 0, 0, int(bus_count) - 1, int(bus)},
                 Binding {Kind::BusReturn, int16_t(bus), 0, 100, project.buses[bus].level}};
     }
     case SK::Arp:
-        if (shift_row) return {Binding {Kind::ArpGate, 0, 5, 100, track.arp_gate}, Binding {}, Binding {Kind::ArpHold, 0, 0, 1, track.arp_latch}};
+        if (shift_row) return {Binding {Kind::ArpGate, 0, 5, 100, track.arp_gate}, Binding {Kind::ArpOn, 0, 0, 1, track.arp}, Binding {Kind::ArpHold, 0, 0, 1, track.arp_latch}};
         return {Binding {Kind::ArpMode, 0, 0, 4, track.arp_mode}, Binding {Kind::ArpRate, 0, 0, int(arp_rates) - 1, track.arp_rate},
                 Binding {Kind::ArpOctaves, 0, 1, 4, track.arp_octaves}};
     case SK::Chord:
@@ -544,13 +584,16 @@ namespace {
 // The TRIG row of Steps (`step`: its step in hand's notes) and Roll (the note in focus), roadmap P1: K1 the ratchet's
 // hits, K2 its velocity ramp, K3 its trig condition (beside the chance, K3 of the main row).
 // 16 Levels held, on any page (sample_mode.h): K1 the type, K2 and K3 the two ends (pad 1's and pad 16's), or of
-// type Scale the key's root and scale; Zones only the type (− / + its pages).
+// type Scale the key's root and scale; Chords the progression's key and voicing; Zones only the type (− / + its pages).
 std::array<Binding, 3> levels_cards(const Project& project, const Track& track) {
-    std::array<LevelsKind, 5> types {};
+    std::array<LevelsKind, 6> types {};
     unsigned count = levels_types(project, track, types), at = 0;
     auto kind = LevelsKind(track.levels_kind % unsigned(LevelsKind::Count));
     for (unsigned n = 0; n < count; ++n) if (types[n] == kind) at = n;
-    if (kind == LevelsKind::Loop || (kind == LevelsKind::Filter && track.engine != EngineKind::Sampler)) return {};
+    if (kind == LevelsKind::Filter && track.engine != EngineKind::Sampler) return {};
+    if (kind == LevelsKind::Chords) // the progression's key and voicing, as Keys' Prog layout has them
+        return {Binding {Kind::LevelsType, 0, 0, int(count) - 1, int(at)}, Binding {Kind::ProgKey, 0, 0, 11, int(prog_key(track))},
+                Binding {Kind::ProgVoicing, 0, 0, int(ProgVoicing::Count) - 1, track.prog_voicing}};
     if (kind == LevelsKind::Zones) return {Binding {Kind::LevelsType, 0, 0, int(count) - 1, int(at)}};
     if (kind == LevelsKind::Scale) { // pad 1 the root, up the scale from there
         auto key = project_key(project);
@@ -587,7 +630,8 @@ std::array<Binding, 3> shift_bindings(const Project& project, const UiState& ui,
     const auto& track = project.tracks[ui.track % track_count];
     if (ui.name.open()) return {};
     if (ui.seq_held) return pattern_shift_cards(project, ui, pattern); // Seq held: the pattern's, on any page
-    if (ui.levels_held) return {}; // 16 Levels held: its cards have no Shift row
+    if (ui.pad_bank || ui.copying == UiState::Copying::Tracks) return {}; // Pad Bank held (or a track move): the track's strip has one row
+    if (ui.levels_held || ui.levels_sheet) return {}; // 16 Levels held, or its FILE or SET: no Shift row
     if (auto pads = sample_held_page(project, ui); pads != PageId::Count) { // Sample held: its pads' (Pads, Keys)
         UiState on = ui; on.page = pads; on.sample_held = false;
         return shift_bindings(project, on, pattern);
@@ -613,10 +657,14 @@ std::array<Binding, 3> shift_bindings(const Project& project, const UiState& ui,
     }
     case PageId::Patterns: // FOLLOW: Shift + K1 the follow action's second, on the odds the first leaves; SCENE none
         if (ui.sheet_open || ui.patterns_cards == 1) return {};
-        if (ui.patterns_cards == 2)
+        if (ui.patterns_cards == 2 && follow_shown(ui))
             return track.used() ? std::array<Binding, 3> {Binding {Kind::FollowOther, 0, 0, int(FollowAction::Count) - 1, pattern.follow.other}, Binding {}, Binding {}}
                                 : std::array<Binding, 3> {};
         return pattern_shift_cards(project, ui, pattern);
+    case PageId::Scenes: // roadmap P5: Shift + K1 the follow action's second, on the odds the first leaves
+        if (!follow_shown(ui)) return pattern_shift_cards(project, ui, pattern); // Basic: as Patterns' Shift row
+        if (!track.used()) return {};
+        return {Binding {Kind::FollowOther, 0, 0, int(FollowAction::Count) - 1, pattern.follow.other}, Binding {}, Binding {}};
     case PageId::Song: { // roadmap P5: the tempo lane at the cursor's bar: its tempo, and (a point there) its shape
         if (ui.song_export) return {};
         const auto& lane = project.song.tempo;
@@ -699,7 +747,7 @@ std::array<Binding, 3> shift_bindings(const Project& project, const UiState& ui,
                 Binding {Kind::PunchTail, 0, 0, 2, project.punch_tail}};
     case PageId::Compressor: // Shift + K3: In Boost
         return {Binding {}, Binding {}, Binding {Kind::CompBoost, 0, 0, 24, project.compressor.boost}};
-    case PageId::Stage: return stage_bindings(project, ui, true);
+    case PageId::Stage: return stage_bindings(project, ui, pattern, true);
     case PageId::Pads: case PageId::Tempo: return project_key(project); // Shift + K1 / K2: the project's key, no synth track needed
     case PageId::TimeCorrect: { // Shift: humanize, its velocity, the groove's amount (a pad picks the groove)
         auto feel = feel_cards(pattern, 0), more = feel_cards(pattern, 1);
@@ -715,7 +763,10 @@ std::array<Binding, 3> page_bindings(const Project& project, const UiState& ui, 
     // SD card access: the card is away, every mode waits (shell/card_access.h).
     if (ui.page == PageId::CardAccess || ui.card.state != 0) return {};
     // Knob FX on: the pots are its, on every page (as on the MPC), but for the Name sheet and Seq held.
-    if (knob_owns(project, ui) && !(ui.seq_held && !ui.name.open())) return knob_bindings(project, shift);
+    // A held key's cards win as well: Seq held (the pattern's), Pad Bank held (the track's strip), Sample held (the pad's).
+    bool held_key = ui.seq_held || ui.pad_bank || ui.copying == UiState::Copying::Tracks || sample_held_page(project, ui) != PageId::Count
+                 || ui.levels_sheet; // 16 Levels' SET: the chord's cards
+    if (knob_owns(project, ui) && !(held_key && !ui.name.open())) return knob_bindings(project, shift);
     auto cards = base_bindings(project, ui, pattern);
     if (!shift) return cards;
     auto second = shift_bindings(project, ui, pattern);
@@ -737,10 +788,19 @@ std::array<Binding, 3> base_bindings(const Project& project, const UiState& ui, 
     }
     if(ui.page==PageId::Patterns && ui.sheet_open && ui.gen8_mode==2 && ui.break_pending>=0 && ui.break_job_track==ui.track)return {};
     if (ui.seq_held) return pattern_cards(project, pattern); // Seq held: the pattern's, on any page
+    if (ui.pad_bank || ui.copying == UiState::Copying::Tracks) { // Pad Bank held, or a track move or copy picking its tracks:
+        if (!track.used()) return {};                             // the selected track's strip, as the mixer's Tracks and Stage MIX
+        return {Binding {Kind::Level, 0, 0, 127, track.mix.level}, Binding {Kind::Pan, 0, -50, 50, track.mix.pan},
+                Binding {Kind::Send, 0, 0, 100, track.mix.sends[0]}};
+    }
     if (auto pads = sample_held_page(project, ui); pads != PageId::Count) { // Sample held: its pads' (Pads, Keys)
         UiState on = ui; on.page = pads; on.sample_held = false;
         return base_bindings(project, on, pattern);
     }
+    if (ui.levels_sheet == levels_sheet_chord) // 16 Levels' SET: the chord on the pad picked
+        return {Binding {Kind::BuildRoot, 0, 0, 11, ui.chord_root}, Binding {Kind::BuildChord, 0, 0, int(built_chord_count) - 1, ui.chord_type},
+                Binding {Kind::BuildInvert, 0, 0, int(built_inversions) - 1, ui.chord_invert}};
+    if (ui.levels_sheet) return {}; // FILE's list, or SET waiting for its pad: no cards
     if (levels_held_cards(project, ui)) return levels_cards(project, track); // 16 Levels held: its settings, on any page
     if (ui.page == PageId::Looper) { // the Looper (docs/LOOPER.md): LOOPS, the loop tracks' MIX, or the loop's sheet
         unsigned l = ui.loop % loop_tracks;
@@ -761,6 +821,9 @@ std::array<Binding, 3> base_bindings(const Project& project, const UiState& ui, 
     }
     switch (ui.page) {
     case PageId::Keys:
+        if (prog_pads(track)) // the progression's key and voicing (the wheel picks the progression)
+            return {Binding {Kind::ProgKey, 0, 0, 11, int(prog_key(track))}, Binding {Kind::ProgVoicing, 0, 0, int(ProgVoicing::Count) - 1, track.prog_voicing},
+                    Binding {Kind::Layout, 0, 0, int(PadLayout::Count) - 1, int(track.layout)}};
         return project_key(project, Binding {Kind::Layout, 0, 0, int(PadLayout::Count) - 1, int(track.layout)});
     case PageId::Sounds: { // every list: K1 jumps, the other pots draw nothing (the engine is Stage PRESET's K3)
         std::array<uint16_t, max_listed> list {};
@@ -831,7 +894,7 @@ std::array<Binding, 3> base_bindings(const Project& project, const UiState& ui, 
                 if(project.gen8.assign)return {Binding{Kind::GenGroup,0,0,3,project.gen8.group},Binding{},Binding{Kind::GenAssign,0,0,1,project.gen8.assign}};
                 return {Binding{Kind::GenFirst,0,0,15,project.gen8.first},Binding{Kind::GenLast,0,0,15,project.gen8.last},Binding{Kind::GenAssign,0,0,1,project.gen8.assign}};
             }
-            if(ui.gen8_mode==2)return {Binding{Kind::GenBars,0,1,4,project.gen8.bars},Binding{Kind::Gen8Genre,0,0,60,project.gen8.genre},Binding{Kind::Gen8Seed,0,0,9999,project.gen8.seed}};
+            if(ui.gen8_mode==2)return {pattern_cards(project,pattern)[0],Binding{Kind::Gen8Genre,0,0,60,project.gen8.genre},Binding{Kind::Gen8Seed,0,0,9999,project.gen8.seed}};
             if(ui.gen8_mode==1) return {Binding {Kind::VaryAmount, 0, 0, 100, ui.vary_amount}, Binding {}, Binding {}};
             return {Binding {Kind::Gen8Amount,0,0,100,project.gen8.amount},
                     Binding {Kind::Gen8Genre,0,0,int(gen8_genre_count)+1,project.gen8.genre},
@@ -849,6 +912,13 @@ std::array<Binding, 3> base_bindings(const Project& project, const UiState& ui, 
                     Binding {Kind::FollowChance, 0, 0, 100, f.chance}};
         }
         return pattern_cards(project, pattern);
+    }
+    case PageId::Scenes: { // roadmap P5: the selected track's pattern's follow action, after how long, on what odds
+        if (!follow_shown(ui)) return pattern_cards(project, pattern); // Basic: the pattern's length, Q and swing, as on Patterns
+        if (!track.used()) return {};
+        const auto& f = pattern.follow;
+        return {Binding {Kind::FollowAction, 0, 0, int(FollowAction::Count) - 1, f.action}, Binding {Kind::FollowAfter, 0, 0, 127, follow_after_card(f)},
+                Binding {Kind::FollowChance, 0, 0, 100, f.chance}};
     }
     case PageId::ModPage: { // roadmap P4: the modulator in hand, its rate (or a follower's rise), the target in hand's depth; a macro, its value, a target's high
         if (ui.mod_view == 1) {
@@ -907,6 +977,27 @@ std::array<Binding, 3> base_bindings(const Project& project, const UiState& ui, 
         auto feel = feel_cards(pattern, 0);
         return {Binding {Kind::Division, 0, 0, int(Division::Count) - 1, int(pattern.division)}, feel[0], feel[1]};
     }
+    case PageId::AutoSample: { // the AUTO SAMPLE sheet: its row of three; nothing while it runs
+        const auto& sheet = ui.auto_sheet;
+        const auto& a = sheet.settings;
+        if (sheet.sampling || sheet.checking) return {};
+        switch (sheet.row % 3) {
+        case 0: // drums: every key that sounds, no STEP
+            if (a.found.kind == AutoKind::Drums) return {Binding {Kind::AutoLow, 0, 0, 127, a.low}, Binding {Kind::AutoHigh, 0, 0, 127, a.high}, Binding {}};
+            return {Binding {Kind::AutoLow, 0, 0, 127, a.low}, Binding {Kind::AutoHigh, 0, 0, 127, a.high}, Binding {Kind::AutoStep, 0, 1, 12, a.step}};
+        case 1: return {Binding {Kind::AutoLayers, 0, 1, 4, a.layers}, Binding {Kind::AutoHold, 0, 0, 100, a.hold_auto ? 0 : int(std::lround(a.hold * 10))},
+                        Binding {Kind::AutoTail, 0, 0, 200, int(std::lround(a.tail * 10))}};
+        default: { // a MIDI track: its INPUT (the Audio page's) where a plug-in's TAP is
+            const auto& from = project.tracks[sheet.track % track_count];
+            const Binding first = from.engine == EngineKind::Midi
+                ? Binding {Kind::Param, int16_t(midi_track::AudioIn), 0, midi_track::AudioCount - 1, from.params[midi_track::AudioIn]}
+                : Binding {Kind::AutoTap, 0, 0, 1, int(a.post_fx)};
+            return {first, Binding {Kind::AutoLoop, 0, 0, 2, a.loop_auto ? 0 : a.loop ? 1 : 2},
+                    Binding {Kind::AutoLevel, 0, 0, 1, int(a.normalize)}};
+        }
+        }
+    }
+    case PageId::Stems: return {}; // the STEMS sheet: no cards
     case PageId::Print: { // freeze plan F2c: K1 TAP, K2 TAIL; K3 empty (no Song lane print yet); still while printing
         const auto& sheet = ui.print_sheet;
         if (sheet.printing || project.tracks[sheet.track % track_count].engine == EngineKind::Midi) return {};
@@ -956,8 +1047,10 @@ std::array<Binding, 3> base_bindings(const Project& project, const UiState& ui, 
         if (!frames || n >= ui.slices.count) return {Binding {}, Binding {}, type};
         const auto& sl = ui.slices; // in frames; zoomed in, each pot turns across the view on screen
         uint32_t start = sl.start[n], end = sl.end(n, frames);
-        uint32_t start_lo = n ? sl.start[n - 1] + min_slice : 0, start_hi = end > min_slice ? end - min_slice : 0;
-        uint32_t end_hi = n + 1 < sl.count ? sl.end(n + 1, frames) - min_slice : frames;
+        // A neighbour touching the edge moves with it (keeping 20 ms); across a gap the edge stops at the neighbour.
+        uint32_t start_lo = !n ? 0 : sl.touches(n - 1, frames) ? sl.start[n - 1] + min_slice : sl.end(n - 1, frames);
+        uint32_t start_hi = end > min_slice ? end - min_slice : 0;
+        uint32_t end_hi = sl.touches(n, frames) ? sl.end(n + 1, frames) - min_slice : n + 1 < sl.count ? sl.start[n + 1] : frames;
         FrameView view = ui.chop_zoom ? chop_view(project, ui) : FrameView {};
         return {handle_card(Kind::ChopStart, int(n), start, start_lo, start_hi, view),
                 handle_card(Kind::ChopEnd, int(n), end, start + min_slice, end_hi, view), type};
@@ -1008,8 +1101,8 @@ std::array<Binding, 3> base_bindings(const Project& project, const UiState& ui, 
     case PageId::FlexBeat: // K1 One Shot / Loop, K3 mix (as on the MPC)
         return {Binding {Kind::FlexMode, 0, 0, 1, project.flex.mode}, Binding {}, Binding {Kind::FlexMix, 0, 0, 100, project.flex.mix}};
     case PageId::Samples:
-        if(ui.break_browse&&ui.break_load_b)return {}; // Break loop length is chosen before loading
-        if(ui.break_browse)return {Binding{Kind::GenBars,0,1,4,project.gen8.bars},Binding{},Binding{}};
+        if(ui.break_browse&&ui.break_load_b)return {Binding{},Binding{Kind::BreakPreviewMode,0,0,1,ui.break_preview_sync},Binding{}}; // Break loop length is chosen before loading
+        if(ui.break_browse)return {Binding{Kind::GenBars,0,1,4,ui.break_bars},Binding{Kind::BreakPreviewMode,0,0,1,ui.break_preview_sync},Binding{}};
         return {Binding {Kind::FileJump, 0, 0, std::max(int(ui.files_count) - 1, 1), ui.files_cursor}, Binding {}, Binding {}};
     case PageId::TrackActions: return {};
     case PageId::Plugins:
@@ -1028,13 +1121,16 @@ std::array<Binding, 3> base_bindings(const Project& project, const UiState& ui, 
         return {Binding {Kind::EventLength, 0, 1, 64, int(std::min(steps, 64u))}, Binding {Kind::EventVelocity, 0, 1, 127, e.velocity},
                 Binding {Kind::EventChance, 0, 0, 100, e.chance}};
     }
-    case PageId::Stage: return stage_bindings(project, ui, false);
+    case PageId::Stage: return stage_bindings(project, ui, pattern, false);
     // System pages: their rows take the wheel; no pots, so no cards (never the synth's favourites there). The Fader
     // page keeps the favourites (fader C): a pot turned there is what the fader learns.
-    case PageId::SettingsPage: case PageId::About: case PageId::MidiConfig: return {};
-    case PageId::Tracks: // the strip in hand: K1 the track, K2 its level, K3 its pan
-        return {Binding {Kind::TrackPick, 0, 0, int(track_count) - 1, ui.track % int(track_count)},
-                Binding {Kind::Level, 0, 0, 127, track.mix.level}, Binding {Kind::Pan, 0, -50, 50, track.mix.pan}};
+    case PageId::SettingsPage: // on the doors K1 is FEATURES, Basic or Full (shell/features.h); behind a door the rows take the wheel
+        if (!ui.settings_in) return {Binding {Kind::Features, 0, 0, 1, int(ui.settings.full_features)}, Binding {}, Binding {}};
+        return {};
+    case PageId::About: case PageId::MidiConfig: return {};
+    case PageId::Tracks: // the strip in hand, as Stage's MIX: K1 its level, K2 its pan, K3 its send into bus A (pads and the wheel pick the track)
+        return {Binding {Kind::Level, 0, 0, 127, track.mix.level}, Binding {Kind::Pan, 0, -50, 50, track.mix.pan},
+                Binding {Kind::Send, 0, 0, 100, track.mix.sends[0]}};
     default: return favourite_bindings(track);
     }
 }

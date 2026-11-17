@@ -9,8 +9,17 @@
 // (each clip its pattern repeated from the clip's start, muted clips left
 // out) for the song's length, at most 128 bars. One undo. Motion and the
 // song's punches stay in the song (a pattern holds neither).
+//
+// MPC 3 project (the wheel's last): the project as MPC 3 opens it (MPC One,
+// Live, Key, X, the MPC 3 app), Rhythmer/MPC 3/<name>.xpj on the card
+// (shell/mpc3_export.h): the kits, their patterns, the song, the prints.
 #include "rhythmer/model/song_flatten.h"
 #include "rhythmer/shell/context.h"
+#include "rhythmer/plugin/plugin_rack.h"
+#include "rhythmer/shell/project_store.h"
+#include "rhythmer/shell/print_engine.h"
+#include "rhythmer/shell/sample_library.h"
+#include <filesystem>
 #include <algorithm>
 
 namespace rhythmer {
@@ -18,10 +27,68 @@ namespace rhythmer {
 void Context::song_export_soft(int key) {
     ui.song_export = false;
     if (key == 1) { // roadmap P4: the wheel picked what (a MIDI file needs no song: the patterns playing then)
-        if (!project.song.length() && ui.export_kind != 4) { notice("Mixdown: the song is empty"); return; }
+        if (!project.song.length() && ui.export_kind < 4) { notice("Mixdown: the song is empty"); return; }
         open_name(NameTarget::Mixdown, project.name[0] ? project.name : "Song", sizeof(project.name) - 1, false);
     }
     if (key == 2) song_to_pattern();
+}
+
+// Plug-in tracks go to MPC 3 as their prints: each one with notes is printed first (the print engine skips a pattern
+// whose print is up to date), a track at a time, then the export starts (mpc3_tick()).
+void Context::export_mpc3(const std::string& name) {
+    if (!store) return;
+    if (store->exporting() || mpc3_waiting) { notice("MPC 3: an export runs"); return; }
+    uint32_t tracks = 0;
+    for (unsigned t = 0; t < track_count; ++t) {
+        if (project.tracks[t].engine != EngineKind::Plugin) continue;
+        for (const auto& pattern : patterns.at[t]) if (!pattern.empty()) { tracks |= 1u << t; break; }
+    }
+    if (tracks && printer) {
+        if (project_path.empty()) { notice("MPC 3: save first, prints go beside the project"); return; }
+        mpc3_name = name;
+        mpc3_pending = tracks;
+        mpc3_printing = -1;
+        mpc3_waiting = true;
+        notice("MPC 3: printing plug-in tracks");
+        return;
+    }
+    PluginStates states;
+    if (plugins) states = plugins->states();
+    store->export_mpc3(project_path, rhythmer::save_project(project, patterns, &states, &prints), name);
+    notice("MPC 3: exporting");
+}
+
+void Context::mpc3_tick() {
+    if (!mpc3_waiting || !printer || !store) return;
+    if (printer->busy()) return; // ours, or a freeze's: its turn first
+    if (mpc3_printing >= 0) { mpc3_printing = -1; return; } // ours finished: its results are taken on the next pass
+    if (mpc3_pending) {
+        unsigned t = 0;
+        while (!((mpc3_pending >> t) & 1)) ++t;
+        PrintJob job;
+        job.project_path = project_path;
+        job.track = t;
+        for (unsigned p = 0; p < pattern_count; ++p)
+            if (!patterns.at[t][p].empty()) job.patterns.push_back(uint8_t(p));
+        job.project = std::make_unique<Project>(project);
+        job.bank = std::make_unique<PatternBank>(patterns);
+        if (plugins) job.states = plugins->states();
+        if (library) {
+            auto root = library->root();
+            job.card_top = root.empty() ? std::string() : std::filesystem::path(root).parent_path().string();
+        }
+        job.known = prints;
+        if (!printer->start(std::move(job))) return; // busy after all: the next pass
+        mpc3_pending &= ~(1u << t);
+        mpc3_printing = int(t);
+        notice("MPC 3: printing track " + std::to_string(t + 1));
+        return;
+    }
+    mpc3_waiting = false;
+    PluginStates states;
+    if (plugins) states = plugins->states();
+    store->export_mpc3(project_path, rhythmer::save_project(project, patterns, &states, &prints), mpc3_name);
+    notice("MPC 3: exporting");
 }
 
 void Context::song_to_pattern() {

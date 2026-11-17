@@ -19,6 +19,7 @@ void copy_track(Context& c, unsigned from, unsigned to);
 TrackState track_state(const Context& c, unsigned t);
 // Sets the track and its patterns, then hands both, with the project's motion, to the audio thread.
 void restore_track(Context& c, unsigned t, const TrackState& state);
+void invalidate_track_jobs(Context& c, unsigned t); // source replacement invalidates late loads/checks
 
 // Track move (B2 MOVE with Pad Bank held, or Shift + B2 on Tracks, then two pads): `from` goes to `to` whole,
 // mix strip and all, as one undo; a track already at `to` trades places with it (shell/track_swap.h).

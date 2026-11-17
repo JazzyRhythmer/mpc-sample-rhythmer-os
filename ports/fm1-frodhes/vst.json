@@ -1,0 +1,16 @@
+{
+  "name": "Frodhes",
+  "vendor": "Leonardo Mirabal",
+  "uid": "Frd1",
+  "version": 912,
+  "so": "rhythmer-frodhes.so",
+  "module": "contract.json",
+  "custom_skin": true,
+  "targets": [
+    "aarch64"
+  ],
+  "build_mode": "upstream-vst2",
+  "preset_parameters": [
+    68
+  ]
+}

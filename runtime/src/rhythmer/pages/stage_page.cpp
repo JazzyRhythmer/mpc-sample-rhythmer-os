@@ -17,12 +17,15 @@
 // The pads play the track; on a kit the pad played is the pad edited.
 #include "rhythmer/engine/arp.h"
 #include "rhythmer/engine/macros.h"
+#include "rhythmer/shell/features.h"
 #include "rhythmer/engine/dsp.h"
 #include "rhythmer/engine/effect_info.h"
 #include "rhythmer/engine/midi_engine.h"
 #include "rhythmer/engine/sampler.h"
 #include "rhythmer/model/chords.h"
+#include "rhythmer/model/print.h"
 #include "rhythmer/model/scales.h"
+#include "rhythmer/pages/input_meter.h"
 #include "rhythmer/pages/sampler_common.h"
 #include "rhythmer/shell/key_pick.h"
 #include "rhythmer/shell/meter_lights.h"
@@ -271,9 +274,9 @@ void mix_picture(Paint& p, const Snapshot& s) {
 }
 
 // SENDS: the track's level on the left, a line from it to each of the four buses as thick as its send, each bus
-// with its first effect's glyph and name and a bar of what it receives. The bus in view (K1) wears its letter on a
-// chip in K1's shade, its line and bar in K2's (the send); the other three grey. On a kit the last pad's own sends,
-// under its name; Shift held, the whole kit's (KIT SEND) under the track's.
+// with its first effect's glyph and name and a bar of what it receives. The bus in view (K2) wears its letter on a
+// chip in K2's shade, its line and bar in K1's (the send); the other three grey. On a kit the last pad's own sends,
+// under its name; Shift held, the whole kit's (KIT SEND, Shift + K1) under the track's.
 void sends_picture(Paint& p, const Snapshot& s) {
     const auto& t = s.track();
     const auto& m = t.mix;
@@ -297,7 +300,7 @@ void sends_picture(Paint& p, const Snapshot& s) {
         unsigned b = n == bus_count - 1 ? in_view : n < in_view ? n : n + 1; // the bus in view last, its line on top
         bool picked = b == in_view;
         float by = top + 4 + b * (bh + gap), mid = by + bh / 2, amount = send_of(b) / 100.0f;
-        auto shade = picked ? knob_shade(s.ui.track, 1) : colour::mid;
+        auto shade = picked ? knob_shade(s.ui.track, 0) : colour::mid;
         const auto& bus = s.project.buses[b];
         bool has_fx = bus.fx.slots[0].used();
         juce::Path line;
@@ -316,7 +319,7 @@ void sends_picture(Paint& p, const Snapshot& s) {
         else p.circle(bx + 16, mid, 2, colour::dim);
         auto letter = juce::String::charToString(juce::juce_wchar('A' + b));
         if (picked) {
-            p.fill(bx + 29, mid - 8, 16, 16, knob_shade(s.ui.track, 0), 3);
+            p.fill(bx + 29, mid - 8, 16, 16, knob_shade(s.ui.track, 1), 3);
             p.text(letter, bx + 29, mid - 8, 16, 16, plain(colour::bg, type::body, Weight::Bold), juce::Justification::centred);
         } else {
             p.text(letter, bx + 31, by, 14, bh, plain(has_fx ? colour::text : colour::dim, type::body, Weight::Bold));
@@ -487,11 +490,11 @@ void layers_picture(Paint& p, const Snapshot& s) {
             p.fill(x1 - 1, ly - 7, 2, 14, in_hand ? knob_shade(s.ui.track, 2) : colour::mid);
         } else { // a dot a sounding layer: Cycle lights this one's turn, Random every one at half
             const float dx = 12, dw = dx * float(used - 1), x0 = lane_x + lane_w / 2 - dw / 2;
+            const bool cycle = pad.layer_play == LayerPlay::Cycle || pad.layer_play == LayerPlay::CycleHold;
             for (unsigned k = 0; k < used; ++k) {
                 bool mine = k == turn[n];
-                auto ink = pad.layer_play == LayerPlay::Cycle ? (mine ? (in_hand ? c : colour::sec) : colour::dim)
-                                                              : (in_hand ? c : colour::sec).withAlpha(0.5f);
-                p.circle(x0 + dx * k, ly, mine || pad.layer_play == LayerPlay::Random ? 3.5f : 2.5f, ink);
+                auto ink = cycle ? (mine ? (in_hand ? c : colour::sec) : colour::dim) : (in_hand ? c : colour::sec).withAlpha(0.5f);
+                p.circle(x0 + dx * k, ly, mine || !cycle ? 3.5f : 2.5f, ink);
             }
         }
     }
@@ -499,6 +502,8 @@ void layers_picture(Paint& p, const Snapshot& s) {
 
 // A kit whose last pad holds a multisampled instrument (round 3 "instrument C": its TRIM is ZONES).
 bool instrument_pad(const Snapshot& s) { return stage_instrument(s.project, s.track()); }
+// What Stage passes over for the track in view: LAYERS on an instrument pad, and what Basic leaves out (shell/features.h).
+StageSkip skip_of(const Snapshot& s) { return stage_skip(s.project, s.ui, s.track()); }
 
 // How the pad's layers play, as an LED-less pill in the header (Shift + K1 turns it).
 HeaderItem layers_pill(const Snapshot& s) {
@@ -538,6 +543,7 @@ void wave_picture(Paint& p, const Snapshot& s, const StagePage& page) {
     float wx = px + 13, ww = pw - 26, wy = top + 20, wh = zone::picture_h - 40;
     char label[4];
     pad_label(t.last_pad, label);
+    if (t.engine == EngineKind::Keygroup) label[0] = 0; // one sound: no pad to name
     if (pad.used() && s.sample.instrument) { instrument_picture(p, s, page.kind); return; }
     if (page.kind == StageKind::Layers && pad.used()) { layers_picture(p, s); return; }
     if (!pad.used() || !s.sample.frames) {
@@ -548,6 +554,17 @@ void wave_picture(Paint& p, const Snapshot& s, const StagePage& page) {
         if (empty_source_pad(t, page))
             p.text(empty_kit(t) ? "PUSH: TRACK TYPE" : "PUSH: LOAD SAMPLE", px, wy + 66, pw, 14,
                    caps_text(colour::mid), juce::Justification::centred);
+        if (!pad.used()) { // where a sound comes from: the printed buttons, glyph and name
+            struct Way { Icon glyph; const char* name; };
+            Way ways[2] {{Icon::Folder, "SAMPLE SELECT"}, {Icon::Rec, "SAMPLE RECORD"}};
+            unsigned count = t.engine == EngineKind::Sampler ? 2 : 1; // a keygroup records nothing in
+            float col = pw / float(count), gy = wy + 90;
+            for (unsigned n = 0; n < count; ++n) {
+                float cx = px + col * (float(n) + 0.5f);
+                icon(p, ways[n].glyph, cx - 8, gy, 16, c, 1.4f);
+                p.text(ways[n].name, cx - col / 2, gy + 20, col, 14, caps_text(colour::sec), juce::Justification::centred);
+            }
+        }
         return;
     }
     // How it plays, as glyphs on the bottom row (lit when on): one shot or note on, loop (locked: the lock), reverse;
@@ -673,10 +690,10 @@ void wave_picture(Paint& p, const Snapshot& s, const StagePage& page) {
 
     float cloud_x = -1;
     if (page.kind == StageKind::Cloud) { // POSITION the line (K1), SIZE the band round it (K2), Spread a paler band, Scan an arrow
-        cloud_x = x_of(region_from + (region_to - region_from) * t.params[sampler::Position] / 100.0f);
-        float size = std::max(3.0f, ww / (to - from) * float(0.01 * std::pow(100.0, t.params[sampler::Size] / 100.0) * 44100 / frames));
-        float spread = size * (1 + 3 * t.params[sampler::Spread] / 100.0f);
-        auto shade = t.params[sampler::Cloud] ? 1.0f : 0.5f;
+        cloud_x = x_of(region_from + (region_to - region_from) * pad.cloud_position / 100.0f);
+        float size = std::max(3.0f, ww / (to - from) * float(0.01 * std::pow(100.0, pad.cloud_size / 100.0) * 44100 / frames));
+        float spread = size * (1 + 3 * pad.cloud_spread / 100.0f);
+        auto shade = pad.cloud ? 1.0f : 0.5f;
         // While a cloud is heard its window travels with the grains (Scan); K1's line stays where K1 put it.
         float centre = cloud.centre >= 0 ? x_of(float(cloud.centre / frames)) : cloud_x;
         p.fill(centre - spread / 2, wy, spread, wh, knob_shade(s.ui.track, 1).withAlpha(0.08f * shade));
@@ -697,9 +714,9 @@ void wave_picture(Paint& p, const Snapshot& s, const StagePage& page) {
         icon(p, Icon::Flag, ex - 2, wy - 14, 12, knob_shade(s.ui.track, 1), 1.5f);
         if (loop_x >= 0) icon(p, Icon::Flag, loop_x - 2, wy - 14, 12, knob_shade(s.ui.track, 2).withAlpha(pad.loop ? 1.0f : 0.5f), 1.5f);
     }
-    if (page.kind == StageKind::Cloud && t.params[sampler::Scan] > 0) { // Scan: the way the window travels
+    if (page.kind == StageKind::Cloud && pad.cloud_scan > 0) { // Scan: the way the window travels
         juce::Path arrow;
-        float ay = wy - 7, ax = cloud_x + 6, bx = ax + 8 + 18 * t.params[sampler::Scan] / 100.0f;
+        float ay = wy - 7, ax = cloud_x + 6, bx = ax + 8 + 18 * pad.cloud_scan / 100.0f;
         arrow.startNewSubPath(ax, ay); arrow.lineTo(bx, ay);
         arrow.startNewSubPath(bx - 4, ay - 3.5f); arrow.lineTo(bx, ay); arrow.lineTo(bx - 4, ay + 3.5f);
         p.g.setColour(knob_shade(s.ui.track, 0));
@@ -755,13 +772,14 @@ void wave_picture(Paint& p, const Snapshot& s, const StagePage& page) {
     };
     if (page.kind == StageKind::Trim && heard) { // the time heard, of the time kept; going round, which pass
         double into = heard->reverse() ? double(end) - heard->at : heard->at - double(start);
+        if (heard->slot != pad.sample) into = double(head_through(*heard)) * double(end - start); // another layer's voice: as far through as it is
         juce::String now = seconds(uint32_t(std::clamp(into, 0.0, double(end - start))));
         if ((heard->flags & tap::Loop) && heard->pass) two_part("PASS " + juce::String(heard->pass + 1), dot + now);
         else two_part(now, " OF " + seconds(end - start));
         return;
     }
     if (page.kind == StageKind::Cloud) { // where the grains come from (or are now), at the line; the file's length dim
-        double at = cloud.centre >= 0 && cloud.view.sounding() ? cloud.centre : double(start) + (end - start) * t.params[sampler::Position] / 100.0;
+        double at = cloud.centre >= 0 && cloud.view.sounding() ? cloud.centre : double(start) + (end - start) * pad.cloud_position / 100.0;
         juce::String place = seconds(uint32_t(at)), whole = seconds(zoomed ? end - start : uint32_t((to - from) * frames));
         auto a_style = plain(colour::text, type::small, Weight::SemiBold), b_style = plain(colour::dim, type::small, Weight::SemiBold);
         float aw = p.width(place, a_style), bw = p.width(whole, b_style);
@@ -807,21 +825,146 @@ void cc_picture(Paint& p, const Snapshot& s) {
     rows(p, {}, list, 44); // DEVICE says where they go
 }
 
-// An empty track: what it can become, as a carousel; the wheel moves along it, Push makes the card in the middle.
+// An empty track: what it can become, as a carousel in two steps (shell/new_track.h): the track types in the MPC's
+// order, then the sources of the type opened. The wheel moves along it, Push opens or makes the card in the middle.
+// Freeze plan F3, an audio track's pattern in hand. Its bars across the picture (numbered over a frame), and in it
+// the take as long as it plays at the tempo now: CLIP and FADES draw it, its fades over it; INPUT draws what Seq Record
+// + Play will do (glyphs on an empty pattern; armed, a dashed red frame; recording, the take so far in red over the old
+// one), then the input's level, left over right.
+constexpr float take_x = px + 6, take_w = pw - 12, take_y = top + 22;
+void take_frame(Paint& p, const Snapshot& s, float h) {
+    const unsigned bar = std::max(1u, s.project.bar_ticks()), bars = std::max(1u, (s.pattern.length + bar - 1) / bar);
+    p.fill(take_x, take_y, take_w, h, colour::panel, 3);
+    const unsigned every = bars <= 8 ? 1 : bars <= 16 ? 2 : 4;
+    for (unsigned b = 0; b < bars; ++b) {
+        float bx = take_x + take_w * float(b * bar) / s.pattern.length;
+        if (b) p.fill(bx, take_y, 1, h, colour::line);
+        if (b % every == 0) p.text(juce::String(b + 1), bx + 3, take_y - 16, 30, 14, plain(colour::mid, type::small, Weight::SemiBold));
+    }
+}
+// The take's width in the pattern's frame: its frames at the tempo playing now, no wider than the pattern.
+float take_span(const Snapshot& s, const AudioRegion& r) {
+    const float ticks = float(frames_to_ticks(r.frames, r.warp ? r.tempo : s.tempo)); // warped, it keeps its bars
+    return std::min(take_w, take_w * ticks / std::max<uint32_t>(s.pattern.length, 1));
+}
+void glyph_hint(Paint& p, float cy, const juce::String& words, bool armed) {
+    float x = zone::width / 2.0f;
+    if (!armed) {
+        p.circle(x - 30, cy, 6, colour::rec);
+        p.text("+", x - 22, cy - 9, 18, 18, plain(colour::mid, type::body, Weight::SemiBold), juce::Justification::centred);
+        icon(p, Icon::Play, x - 2, cy - 7, 14, colour::text, 1.6f);
+    } else {
+        icon(p, Icon::Play, x - 7, cy - 7, 14, colour::text, 1.6f);
+    }
+    p.text(words, 0, cy + 12, zone::width, 14, caps_text(armed ? colour::rec : colour::sec), juce::Justification::centred);
+}
+void region_picture(Paint& p, const Snapshot& s, const StagePage& page) {
+    const auto& r = s.pattern.audio;
+    auto c = colour_of(s);
+    const float h = 92;
+    take_frame(p, s, h);
+    if (!r.used()) { glyph_hint(p, take_y + h / 2 - 8, "RECORDS P" + juce::String(s.track().pattern + 1) + " ONCE", false); return; }
+    const float w = take_span(s, r);
+    region_wave(p, s, r, take_x + 2, take_y + 2, w - 4, h - 4, c);
+    if (page.kind == StageKind::Fades || page.kind == StageKind::Clip) {
+        p.g.setColour(colour::text);
+        if (r.fade_in) { float fw = w * float(r.fade_in) / r.frames; p.g.drawLine(take_x, take_y + h - 2, take_x + fw, take_y + 2, 1.4f); }
+        if (r.fade_out) { float fw = w * float(r.fade_out) / r.frames; p.g.drawLine(take_x + w - fw, take_y + 2, take_x + w, take_y + h - 2, 1.4f); }
+    }
+    if (r.reverse) icon(p, Icon::Reverse, take_x + w - 16, take_y + 3, 12, colour::text, 1.4f);
+    if (s.playing && s.has_notes[s.ui.track % track_count]) { // where the pattern plays
+        float at = take_x + take_w * float(s.position % std::max<uint32_t>(s.pattern.length, 1)) / std::max<uint32_t>(s.pattern.length, 1);
+        p.fill(at, take_y - 2, 1, h + 4, colour::text);
+    }
+    const unsigned bar = std::max(1u, s.project.bar_ticks()), bars = std::max(1u, (s.pattern.length + bar - 1) / bar);
+    juce::String what = juce::String(bars) + (bars == 1 ? " BAR" : " BARS") + juce::String::fromUTF8(" \xc2\xb7 ") + "TAKE " + juce::String(r.take);
+    if (page.kind == StageKind::Warp) { // its beats at its BPM, and whether it keeps to the tempo
+        const unsigned beat = std::max(1u, s.project.beat_ticks()), ticks = unsigned(frames_to_ticks(r.frames, r.warp ? r.tempo : s.tempo));
+        const float w = take_span(s, r);
+        if (ticks / beat <= 128)
+            for (unsigned b = 0; b * beat <= ticks; ++b) {
+                const bool line = (b * beat) % bar == 0;
+                p.fill(take_x + w * float(b * beat) / std::max(1u, ticks), take_y + h - (line ? 9 : 5), 1, line ? 9 : 5, line ? colour::mid : colour::line);
+            }
+        what = juce::String(r.tempo / 10) + "." + juce::String(r.tempo % 10) + " BPM" + juce::String::fromUTF8(" \xc2\xb7 ")
+             + (r.warp ? juce::String("FITS THE TEMPO") : juce::String("AS RECORDED"));
+    }
+    auto style = plain(colour::mid, type::small, Weight::SemiBold);
+    float ww = p.width(what, style);
+    p.text(what, px + pw - ww - 4, take_y + h + 6, ww + 1, 14, style);
+}
+void input_picture(Paint& p, const Snapshot& s) {
+    const unsigned t = s.ui.track % track_count;
+    const auto& r = s.pattern.audio;
+    auto c = colour_of(s);
+    const bool armed = s.ui.audio_rec_track == int(t) || (s.ui.rec_armed && !s.ui.recording);
+    const bool running = s.ui.audio_rec_track == int(t) && s.ui.audio_rec_running;
+    const float h = 72;
+    take_frame(p, s, h);
+    const uint32_t length = std::max<uint32_t>(s.pattern.length, 1);
+    const float at = s.playing ? take_w * float(s.position % length) / length : 0;
+    if (running) { // the old take dim, the new one so far in red over it
+        if (r.used()) region_wave(p, s, r, take_x + 2, take_y + 2, take_span(s, r) - 4, h - 4, c.withAlpha(0.35f));
+        p.fill(take_x, take_y, at, h, colour::panel, 3);
+        const float level = std::clamp((20 * std::log10(std::max(1e-5f, std::max(s.take.left, s.take.right))) + 60) / 60, 0.05f, 1.0f);
+        for (float x = take_x + 2; x < take_x + at - 1; x += 2.4f) {
+            float wobble = 0.55f + 0.45f * std::sin(x * 0.7f) * std::sin(x * 0.13f + 1);
+            float half = std::max(0.5f, level * wobble * (h / 2 - 2));
+            p.fill(x, take_y + h / 2 - half, 1.5f, half * 2, colour::rec);
+        }
+        p.fill(take_x + at, take_y - 2, 1.5f, h + 4, colour::rec);
+    } else if (armed) {
+        if (r.used()) region_wave(p, s, r, take_x + 2, take_y + 2, take_span(s, r) - 4, h - 4, c.withAlpha(0.35f));
+        juce::Path frame;
+        frame.addRoundedRectangle(take_x + 0.5f, take_y + 0.5f, take_w - 1, h - 1, 3);
+        juce::Path dashed;
+        const float dashes[] {4, 4};
+        juce::PathStrokeType(1.0f).createDashedStroke(dashed, frame, dashes, 2);
+        p.g.setColour(colour::rec); p.g.fillPath(dashed);
+        glyph_hint(p, take_y + h / 2 - 8, "PLAY RECORDS", true);
+    } else if (r.used()) {
+        region_wave(p, s, r, take_x + 2, take_y + 2, take_span(s, r) - 4, h - 4, c);
+    } else {
+        glyph_hint(p, take_y + h / 2 - 8, "RECORDS P" + juce::String(s.track().pattern + 1) + " ONCE", false);
+    }
+    // The input's level, left over right; recording, which bar of how many.
+    const float my = take_y + h + 10;
+    auto fraction = [](float level) { return level > 0 ? std::clamp((20 * std::log10(level) + 96) / 96, 0.0f, 1.0f) : 0.0f; };
+    for (int side = 0; side < 2; ++side) {
+        float level = fraction(side ? s.take.right : s.take.left), sy = my + side * 4.5f;
+        p.fill(px, sy, pw, 3, colour::line, 1.5f);
+        if (level > 0) p.fill(px, sy, pw * level, 3, c, 1.5f);
+    }
+    if (running) {
+        const unsigned bar = std::max(1u, s.project.bar_ticks()), bars = std::max(1u, (length + bar - 1) / bar);
+        juce::String where = "BAR " + juce::String(std::min(bars, s.position % length / bar + 1)) + " OF " + juce::String(bars);
+        auto style = plain(colour::rec, type::small, Weight::Bold);
+        float ww = p.width(where, style);
+        p.text(where, px + pw - ww, my + 12, ww + 1, 14, style);
+    }
+}
+
 void new_track_picture(Paint& p, const Snapshot& s) {
     p.fill(0, zone::picture_y, zone::width, zone::height - zone::picture_y, colour::bg); // the knob strip too: no pots here
     juce::String channel = juce::String::fromUTF8("MIDI \xc2\xb7 CH ") + juce::String(std::clamp<int>(s.ui.new_channel, 1, 16));
-    std::vector<CarouselCard> cards(new_choice_count);
-    cards[size_t(NewChoice::Plugin)] = {Icon::Plug, "PLUG-IN", "Synth", "VST CLAP LV2"};
-    cards[size_t(NewChoice::Kit)] = {Icon::Pads, "KIT", "Empty", "EMPTY PADS"};
-    cards[size_t(NewChoice::Samples)] = {Icon::Folder, "KIT", "Card", "SAMPLES"};
-    cards[size_t(NewChoice::Record)] = {Icon::Mic, "KIT", "Input", "RECORD"};
-    cards[size_t(NewChoice::MidiOut)] = {Icon::Din, "MIDI", "Out jack", channel};
-    cards[size_t(NewChoice::MidiUsb)] = {Icon::Din, "MIDI", "USB-C", channel};
-    cards[size_t(NewChoice::MidiAllUsb)] = {Icon::Din, "MIDI", "All USB", channel};
-    p.text("PLUG-IN / SAMPLE KIT / MIDI", zone::pad, zone::picture_y + 4, zone::width - 2 * zone::pad, 16, caps_text(colour::sec, type::small), juce::Justification::centred);
-    carousel(p, cards, new_pick_shown(s.ui, s.now), colour_of(s), zone::picture_y + 24, zone::height - zone::picture_y - 52);
-    p.text("TURN TO CHOOSE / PUSH TO LOAD", zone::pad, zone::height - 23, zone::width - 2 * zone::pad, 16, plain(colour::sec, type::small), juce::Justification::centred);
+    std::vector<CarouselCard> cards;
+    if (!s.ui.new_sources) {
+        cards = {{Icon::Pads, "", "Drum", "PADS"}, {Icon::Keyboard, "", "Keygroup", "INSTRUMENT"}, {Icon::Plug, "", "Plugin", "VST CLAP LV2"},
+                 {Icon::Din, "", "MIDI", juce::String::fromUTF8("OUT \xc2\xb7 USB")}, {Icon::Wav, "", "Audio", "RECORDING"}};
+        cards.resize(new_types_shown(s.ui)); // Basic: Drum, Keygroup and Plugin
+    } else {
+        auto list = type_sources(NewType(s.ui.new_type % new_type_count));
+        for (unsigned n = 0; n < list.count; ++n) switch (list.items[n]) {
+            case NewChoice::Samples: cards.push_back({Icon::Folder, "DRUM", "Card", "SAMPLES"}); break;
+            case NewChoice::Kit: cards.push_back({Icon::Pads, "DRUM", "Empty", "NO SAMPLES"}); break;
+            case NewChoice::Record: cards.push_back({Icon::Mic, "DRUM", "Input", "RECORD"}); break;
+            case NewChoice::MidiOut: cards.push_back({Icon::Din, "MIDI", "Out jack", channel}); break;
+            case NewChoice::MidiUsb: cards.push_back({Icon::Din, "MIDI", "USB-C", channel}); break;
+            case NewChoice::MidiAllUsb: cards.push_back({Icon::Din, "MIDI", "All USB", channel}); break;
+            default: break;
+        }
+    }
+    carousel(p, cards, new_pick_shown(s.ui, s.now), colour_of(s), zone::picture_y + 8, zone::height - zone::picture_y - 12);
 }
 
 void bars_picture(Paint& p, const Snapshot& s, const StagePage& page, bool shift_row, float y0 = top) {
@@ -922,7 +1065,8 @@ ui::SoftKeys stage_keys(const Snapshot& s) {
     if(!t.used())return SoftKeys{{"BACK","SAMPLE KIT","MIDI"},-1,colour_of(s)};
     const auto& g = stage_groups(t.engine);
     const bool instrument = instrument_pad(s);
-    auto at = stage_at(s.ui, t, instrument);
+    const StageSkip skip = skip_of(s);
+    auto at = stage_at(s.ui, t, skip);
     std::array<juce::String, 3> labels;
     SoftKeys keys {labels, int(at.group), colour_of(s)};
     for (unsigned n = 0; n < 3; ++n) {
@@ -931,9 +1075,9 @@ ui::SoftKeys stage_keys(const Snapshot& s) {
         keys.labels[n] = stage_page_at(t, n, sub).key;
         if (stage_page_at(t, n, sub).kind == StageKind::PluginSound && !plugin_has_presets(s)) keys.labels[n] = "PLUG-IN"; // its face
         if (stage_page_at(t, n, sub).kind == StageKind::Trim && instrument) keys.labels[n] = "ZONES"; // round 3 "instrument C"
-        const unsigned shown = stage_shown(g, n, instrument); // an instrument pad's B1: no LAYERS, three dots
+        const unsigned shown = stage_shown(g, n, skip); // an instrument pad's B1: no LAYERS, three dots
         keys.dots[n] = uint8_t(shown > 1 ? shown : 0);
-        keys.dot_at[n] = uint8_t(stage_shown_at(g, n, sub, instrument));
+        keys.dot_at[n] = uint8_t(stage_shown_at(g, n, sub, skip));
     }
     return keys;
 }
@@ -960,7 +1104,7 @@ void plugin_sound_picture(Paint& p, const Snapshot& s) {
     const auto& t = s.track();
     const auto& panel = s.ui.plugin_panel;
     if (!plugin_ready(s)) { draw_plugin_view(p, s, t.plugin, top); return; }
-    const bool artwork = panel.layout_revision && performance_kind(plugin_name(s,t.plugin)) < 20;
+    const bool artwork = panel.layout_revision && performance_kind(plugin_name(s,t.plugin)) < 22;
     if (artwork) performance_art(p, s, plugin_name(s, t.plugin), juce::String::fromUTF8(panel.preset),
                                 px + 4, top + 43, pw - 8, bottom - top - 65, int(t.last_pad), 1.0f, true);
     auto poster_at = [&](const juce::String& name, juce::Colour colour) {
@@ -1007,9 +1151,9 @@ void plugin_sound_picture(Paint& p, const Snapshot& s) {
     }
 }
 
-// Cloud's on or off, as an LED in the header (its K3 on Shift turns it).
+// The last pad's Cloud on or off, as an LED in the header (its K3 on Shift turns it).
 HeaderItem cloud_pill(const Snapshot& s) {
-    bool on = s.track().params[sampler::Cloud];
+    bool on = s.track().pads[s.track().last_pad % sampler_pads].cloud;
     return pill(on ? Icon::Rec : Icon::Ring, "CLOUD", on ? colour_of(s) : colour::mid);
 }
 // Follow (round 2, follow A): on or off as an LED in the header, as Cloud's.
@@ -1018,23 +1162,32 @@ HeaderItem follow_pill(const Snapshot& s) {
     return pill(on ? Icon::Rec : Icon::Ring, "FOLLOW", on ? colour_of(s) : colour::mid);
 }
 
+// A keygroup named after its sound already says it in its tag: no pill to say it again.
+bool kit_pill_shown(const Snapshot& s) {
+    const auto& t = s.track();
+    if (t.engine != EngineKind::Keygroup) return true;
+    auto name = pad_name(s, t.last_pad % sampler_pads, false);
+    return name.isNotEmpty() && !name.equalsIgnoreCase(juce::String(t.name).trim());
+}
+
 // The kit header pill, Stage's and the sample pages' alike: the pad and its sample.
 HeaderItem kit_pill(const Snapshot& s) {
     const auto& t = s.track();
     char label[4];
     pad_label(t.last_pad, label);
     auto name = pad_name(s, t.last_pad % sampler_pads, false);
+    if (t.engine == EngineKind::Keygroup) return pill(name.isNotEmpty() ? name_case(name) : juce::String("EMPTY"), colour_of(s)); // one sound: no pad to name
     return pill(juce::String(label) + (name.isNotEmpty() ? dot + name_case(name) : dot + "EMPTY"), colour_of(s));
 }
 
 void draw(Paint& p, const Snapshot& s) {
     const auto& t = s.track();
-    const auto& page = stage_page_now(s.ui, t, instrument_pad(s));
+    const auto& page = stage_page_now(s.ui, t, skip_of(s));
     auto c = colour_of(s);
     Header h = header_of(s);
     bool kit_sends = page.kind == StageKind::Sends && t.engine == EngineKind::Sampler; // the last pad's own sends
     if (stage_kit_page(page.kind) != PageId::Count || page.kind == StageKind::Colour || kit_sends) {
-        h.left.push_back(kit_pill(s));
+        if (kit_pill_shown(s)) h.left.push_back(kit_pill(s));
         if (page.kind == StageKind::Cloud) h.left.push_back(cloud_pill(s));
         if (page.kind == StageKind::Follow) h.left.push_back(follow_pill(s));
         if (page.kind == StageKind::Layers) h.left.push_back(layers_pill(s));
@@ -1044,6 +1197,16 @@ void draw(Paint& p, const Snapshot& s) {
     } else if (page.kind == StageKind::PluginEdit && plugin_ready(s)) { // the share of each audio block it takes, as Edit's
         const auto& panel = s.ui.plugin_panel;
         h.left.push_back(pill(panel.layout_revision&&panel.row>=2?juce::String("EDIT ")+juce::String(panel.row-1)+"/"+juce::String(std::max(1,int(panel.rows)-2)):juce::String(panel.load/10)+" %"));
+    } else if (t.is_audio() && t.used()) { // freeze plan F3: the pattern in hand and its bars; red armed, filled recording
+        const unsigned bar = std::max(1u, s.project.bar_ticks()), bars = std::max(1u, (s.pattern.length + bar - 1) / bar);
+        juce::String name = "P" + juce::String(t.pattern + 1) + juce::String::fromUTF8(" \xc2\xb7 ") + juce::String(bars)
+                          + (bars == 1 ? " BAR" : " BARS");
+        const bool mine = s.ui.audio_rec_track == int(s.ui.track % track_count);
+        if (mine && s.ui.audio_rec_running) h.left.push_back(chip(Icon::Pattern, name, colour::rec));
+        else if (mine || (s.ui.rec_armed && !s.ui.recording)) h.left.push_back(pill(Icon::Pattern, name, colour::rec));
+        else h.left.push_back(pill(Icon::Pattern, name));
+        if (s.speaker_quieted) h.left.push_back(pill(Icon::SpeakerOff, "SPEAKER OFF", colour::amber));
+        else if (page.kind == StageKind::AudioInput) h.left.push_back(pill(source_icon(t.audio.source), juce::String(audio_source_label(t.audio.source)).toUpperCase()));
     } else if (page.kind == StageKind::Arp || page.kind == StageKind::Chord) { // on or off, as the LED on the MPC would say
         bool on = page.kind == StageKind::Arp ? t.arp : t.chord;
         h.left.push_back(pill(on ? Icon::Check : Icon::None, on ? "ON" : "OFF", on ? c : colour::mid));
@@ -1064,12 +1227,16 @@ void draw(Paint& p, const Snapshot& s) {
         if (!deep) { keys.glyphs[2] = Icon::DeepSnow; keys.tints[2] = colour::ice; }
     }
     if (s.ui.shift && page.kind == StageKind::Trim && t.engine == EngineKind::Sampler && !instrument_pad(s)) // the old Trim's Shift jobs on B1 and B2
-        { keys = SoftKeys {{"LOOP LOCK", "NORMALIZE", ""}, -1, c}; keys.toggles = 1; keys.lit = sampler_pad(s).loop_lock ? 1 : 0; keys.leds[0] = c; }
+        { // and STEMS on B3 (shell/stems_jobs.cpp), where the pad holds a sample
+            const bool stems = sampler_pad(s).used();
+            keys = SoftKeys {{"LOOP LOCK", "NORMALIZE", stems ? "STEMS" : ""}, -1, c}; keys.toggles = 1; keys.lit = sampler_pad(s).loop_lock ? 1 : 0; keys.leds[0] = c;
+            if (stems) keys.glyphs[2] = Icon::Layers;
+        }
     if (s.ui.shift && page.kind == StageKind::Layers && t.engine == EngineKind::Sampler) keys = layers_keys(s);
-    if (!t.used()) { // what it becomes: B1 CANCEL to the nearest track that is not empty
-        bool any = false;
+    if (!t.used()) { // what it becomes: B1 BACK to the types, or CANCEL to the nearest track that is not empty
+        bool any = s.ui.new_sources;
         for (const auto& other : s.project.tracks) any |= other.used();
-        keys = SoftKeys {{any ? "BACK" : "", "SAMPLE KIT", "MIDI"}, -1, c, {any ? KeyIcon::Back : KeyIcon::None, KeyIcon::None, KeyIcon::None}};
+        keys = SoftKeys {{s.ui.new_sources ? "BACK" : any ? "CANCEL" : "TRACKS", "", ""}, -1, c, {KeyIcon::Back, KeyIcon::None, KeyIcon::None}};
     }
     frame(p, s, keys, h);
     if (!t.used()) { new_track_picture(p, s); return; }
@@ -1098,12 +1265,14 @@ void draw(Paint& p, const Snapshot& s) {
     case StagePicture::PluginEdit: draw_plugin_view(p, s, t.plugin, top); break;
     case StagePicture::Engines: case StagePicture::Sources: case StagePicture::Ports: break; // new_track_picture
     case StagePicture::Colours: colours_picture(p, s); break;
+    case StagePicture::Region: region_picture(p, s, page); break;
+    case StagePicture::Input: input_picture(p, s); break;
     }
 }
 
 void soft(Context& c, int key) {
     const bool zones = stage_instrument(c.project, c.track()); // ZONES: no Trim jobs, no LAYERS
-    const auto& page = stage_page_now(c.ui, c.track(), zones);
+    const auto& page = stage_page_now(c.ui, c.track(), stage_skip(c.project, c.ui, c.track()));
     if (c.ui.shift && c.frozen(c.ui.track) && page.picture != StagePicture::Mix && page.picture != StagePicture::Sends
         && page.picture != StagePicture::Colours) {
         if (key == 2) c.deep_freeze(c.ui.track); // freeze plan F2d
@@ -1112,6 +1281,7 @@ void soft(Context& c, int key) {
     if (c.ui.shift && page.kind == StageKind::Trim && c.track().engine == EngineKind::Sampler && !zones) {
         if (key == 0) c.toggle_loop_lock(); // Shift + B1, as on the MPC's Trim
         if (key == 1) c.normalize();        // Shift + B2
+        if (key == 2) c.open_stems_sheet(); // Shift + B3: the pad's sample into its stems
         return;
     }
     if (c.ui.shift && page.kind == StageKind::Layers && c.track().engine == EngineKind::Sampler) {
@@ -1120,18 +1290,16 @@ void soft(Context& c, int key) {
         return;
     }
     c.stage_tick(UINT32_MAX); // a sound still waiting to load lands first
-    if (!c.track().used()) { // B1 CANCEL: the nearest track that is not empty, on the page this one was picked on
-        if(key==0)cancel_new_track(c);
-        if(key==1)make_new_track(c,NewChoice::Kit);
-        if(key==2)make_new_track(c,NewChoice::MidiOut);
+    if (!c.track().used()) { // B1 BACK: the types; CANCEL: the nearest track that is not empty, on the page this one was picked on
+        if (key == 0) { if (c.ui.new_sources) new_track_types(c); else cancel_new_track(c); }
         return;
     }
     if (stage_opens_edit(c.track(), unsigned(key))) { c.open(PageId::Edit); return; } // a MIDI track's B3 EDIT
-    stage_press(c.ui, c.track(), unsigned(key), zones);
+    stage_press(c.ui, c.track(), unsigned(key), stage_skip(c.project, c.ui, c.track()));
 }
 
 void wheel(Context& c, int delta) {
-    const auto& page = stage_page_now(c.ui, c.track(), stage_instrument(c.project, c.track()));
+    const auto& page = stage_page_now(c.ui, c.track(), stage_skip(c.project, c.ui, c.track()));
     auto cards = page_bindings(c.project, c.ui, c.pattern(), false);
     if (page.kind == StageKind::Preset) { // the sounds, one a detent
         if (cards[0].kind == Binding::Kind::StageSound) c.preset_turn(cards[0].value + delta);
@@ -1154,10 +1322,10 @@ void wheel(Context& c, int delta) {
 
 void push(Context& c) {
     auto& t = c.track();
-    const auto& page = stage_page_now(c.ui, t, stage_instrument(c.project, t));
-    if (!t.used()) { make_new_track(c,NewChoice(c.ui.new_pick % new_choice_count)); return; }
+    const auto& page = stage_page_now(c.ui, t, stage_skip(c.project, c.ui, t));
+    if (!t.used()) { new_track_push(c); return; }
     if(t.engine==EngineKind::Sampler&&t.break_bars&&!t.pads[t.last_pad%sampler_pads].used()){
-        c.ui.break_browse=true;c.ui.break_load_b=false;c.ui.break_track=c.ui.track;c.ui.break_bars=t.break_bars;c.project.gen8.bars=t.break_bars;c.open(PageId::Samples);c.notice("Choose loop A");return;
+        c.ui.break_browse=true;c.ui.break_load_b=false;c.ui.break_track=c.ui.track;c.ui.break_bars=t.break_bars;c.open(PageId::Samples);c.notice("Choose loop A");return;
     } // the card in the middle
     if (empty_source_pad(t, page)) {
         if (c.ui.recording || c.host_recording()) { c.notice("Finish recording first"); return; }
@@ -1225,7 +1393,7 @@ void nudge(Context& c, int way) {
 // whichever way it was reached. `row`: the second row of cards on pages that have one, as two dots on the bottom row.
 void kit_page(Paint& p, const Snapshot& s, StageKind kind, int row) {
     Header h = header_of(s);
-    h.left.push_back(kit_pill(s));
+    if (kit_pill_shown(s)) h.left.push_back(kit_pill(s));
     if (kind == StageKind::Cloud) h.left.push_back(cloud_pill(s));
     if (kind == StageKind::Follow) h.left.push_back(follow_pill(s));
     if (kind == StageKind::Layers) h.left.push_back(layers_pill(s));

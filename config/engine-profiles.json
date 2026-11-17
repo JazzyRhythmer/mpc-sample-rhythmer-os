@@ -100,6 +100,26 @@
     ]
   },
   {
+    "id": "frodhes",
+    "name": "Frodhes",
+    "uid": "Frd1",
+    "folder_needle": "rhythmer - fm1 - frodhes - ",
+    "drums": false,
+    "mono": false,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
     "id": "guru600",
     "name": "Guru-600",
     "uid": "GG61",
@@ -344,6 +364,26 @@
     "name": "Plaits",
     "uid": "wM8p",
     "folder_needle": "rhythmer - move - plaits - ",
+    "drums": false,
+    "mono": false,
+    "low": 24,
+    "high": 96,
+    "drum_keys": [
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "id": "tenebrae",
+    "name": "Tenebrae",
+    "uid": "RTnb",
+    "folder_needle": "rhythmer - move - tenebrae - ",
     "drums": false,
     "mono": false,
     "low": 24,

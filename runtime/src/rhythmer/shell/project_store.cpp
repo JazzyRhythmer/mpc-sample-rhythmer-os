@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
 #include "rhythmer/shell/project_store.h"
+#include "rhythmer/model/card_folders.h"
 #include "drivers/platform.h"
 #include "rhythmer/crash_log.h"
 #include "rhythmer/engine/engine_info.h"
 #include "rhythmer/model/project_file.h"
 #include "rhythmer/shell/mpc_program.h"
 #include "rhythmer/shell/mpc_project.h"
+#include "rhythmer/shell/mpc3_export.h"
 #include "runtime/app.h"
 #include <algorithm>
 #include <cstdlib>
@@ -77,6 +79,9 @@ std::string card_folder_of(const std::string& card, const std::string& root, con
 
 ProjectStore::ProjectStore() = default;
 ProjectStore::~ProjectStore() {
+    if (exporter.joinable()) exporter.join();
+    std::string* n;
+    while (notes.pop(n)) delete n;
     Request* r;
     while (requests.pop(r)) delete r;
     LoadedProject* l;
@@ -88,7 +93,53 @@ void ProjectStore::list(const std::string& f) { push(new Request {Request::Kind:
 void ProjectStore::save(const std::string& path, std::vector<uint8_t> bytes, const std::string& from) {
     push(new Request {Request::Kind::Save, path, std::move(bytes), from});
 }
-void ProjectStore::load(const std::string& path) { push(new Request {Request::Kind::Load, path, {}}); }
+void ProjectStore::load(const std::string& path) {
+    load_count.fetch_add(1, std::memory_order_release); // before the request: the app sees it no later than service() does
+    push(new Request {Request::Kind::Load, path, {}});
+}
+void ProjectStore::export_mpc3(const std::string& path, std::vector<uint8_t> bytes, const std::string& name) {
+    push(new Request {Request::Kind::ExportMpc3, name, std::move(bytes), path});
+}
+std::unique_ptr<std::string> ProjectStore::take_note() {
+    std::string* n = nullptr;
+    return std::unique_ptr<std::string>(notes.pop(n) ? n : nullptr);
+}
+
+// The export on a thread of its own, the request's bytes moved to it: read back as the project, written beside the
+// projects as Rhythmer/MPC 3/<name>.xpj and its data folder. One at a time.
+void ProjectStore::start_export(Request& r) {
+    auto note = [this](std::string text) { auto* n = new std::string(std::move(text)); if (!notes.push(n)) delete n; };
+    if (export_busy.load(std::memory_order_acquire)) { note("MPC 3: an export runs"); return; }
+    if (root.empty()) { note("MPC 3: no card"); return; }
+    if (exporter.joinable()) exporter.join();
+    std::string clean;
+    for (char ch : r.path) clean += std::string("/\\:\"*?<>|").find(ch) != std::string::npos ? '-' : ch;
+    if (clean.empty()) clean = "Project";
+    const fs::path folder = fs::path(root).parent_path() / "MPC 3";
+    std::error_code error;
+    std::string name = clean;
+    for (unsigned n = 2; n < 1000 && fs::exists(folder / (name + ".xpj"), error); ++n) name = clean + " " + std::to_string(n);
+    export_busy.store(true, std::memory_order_release);
+    exporter = std::thread([this, bytes = std::move(r.bytes), from = r.from, folder, name, note] {
+        auto project = std::make_unique<Project>();
+        auto bank = std::make_unique<PatternBank>();
+        auto prints = std::make_unique<PrintTable>();
+        std::string why = load_project(bytes, *project, *bank, nullptr, nullptr, prints.get());
+        Mpc3Export report;
+        if (why.empty())
+            why = export_mpc3_project(*project, *bank, folder.string(), name, report, prints.get(), prints_folder(from), audio_folder(from));
+        if (!why.empty()) note("MPC 3: " + why);
+        else {
+            std::string text = "MPC 3/" + name;
+            const unsigned left = report.skipped_tracks + (report.missing ? 1 : 0);
+            if (report.skipped_tracks) text += ", " + std::to_string(report.skipped_tracks) + (report.skipped_tracks == 1 ? " track left out" : " tracks left out");
+            if (report.missing) text += ", " + std::to_string(report.missing) + " files missing";
+            if (!left && report.skipped_pads) text += ", " + std::to_string(report.skipped_pads) + " sounds left out";
+            note(text);
+        }
+        export_busy.store(false, std::memory_order_release);
+    });
+}
 void ProjectStore::duplicate(const std::string& path) { push(new Request {Request::Kind::Duplicate, path, {}}); }
 void ProjectStore::remove(const std::string& path) { push(new Request {Request::Kind::Remove, path, {}}); }
 void ProjectStore::new_folder() { push(new Request {Request::Kind::NewFolder, {}, {}}); }
@@ -214,7 +265,7 @@ void ProjectStore::service(Hardware& hardware) {
             scan();
             const auto& resume = !start.empty() && fs::exists(start, error) ? start : last;
             if (!started && !resume.empty() && fs::exists(resume, error)) {
-                auto* l = new LoadedProject {resume, {}, read_file(resume), false, {}};
+                auto* l = new LoadedProject {resume, {}, read_file(resume), false, {}, {}};
                 if (l->bytes.empty() || !loaded.push(l)) delete l;
             }
             started = true;
@@ -230,10 +281,11 @@ void ProjectStore::service(Hardware& hardware) {
     }
 }
 
-// A project's loops (docs/LOOPER.md) sit beside it in "<name> Loops", and its prints (freeze plan F2a, model/print.h)
-// in "<name> Prints"; those folders belong to the project, are not listed, and go wherever the project goes.
+// A project's loops (docs/LOOPER.md) sit beside it in "<name> Loops", its prints (freeze plan F2a, model/print.h)
+// in "<name> Prints" and its audio tracks' takes (freeze plan F3, model/audio_track.h) in "<name> Audio"; those
+// folders belong to the project, are not listed, and go wherever the project goes.
 namespace {
-constexpr const char* project_folders[] {" Loops", " Prints"};
+constexpr const char* project_folders[] {" Loops", " Prints", " Audio"};
 fs::path folder_of(const fs::path& project, const char* tail) { return project.parent_path() / (project.stem().string() + tail); }
 bool is_loops_folder(const fs::path& dir, const char* extension) {
     auto name = dir.filename().string();
@@ -244,6 +296,8 @@ bool is_loops_folder(const fs::path& dir, const char* extension) {
             return true;
     return false;
 }
+// A dot file or folder (.Trashes, a Mac's ._ copies): never listed.
+bool dot_name(const fs::path& path) { auto name = path.filename().string(); return name.empty() || name[0] == '.'; }
 // An MPC project's samples, beside its .xpj: not a folder of projects.
 bool is_hidden_folder(const fs::path& dir, const char* extension) {
     const std::string tail = "_[ProjectData]", name = dir.filename().string();
@@ -252,11 +306,25 @@ bool is_hidden_folder(const fs::path& dir, const char* extension) {
 unsigned projects_in(const fs::path& dir, const char* extension) {
     unsigned count = 0;
     std::error_code error;
-    for (const auto& inner : fs::directory_iterator(dir, error)) count += inner.path().extension() == extension || is_mpc_project(inner.path().string());
+    for (const auto& inner : fs::directory_iterator(dir, error))
+        count += !dot_name(inner.path()) && (inner.path().extension() == extension || is_mpc_project(inner.path().string()));
     return count;
 }
+// Freeze plan F3: the hidden folders an import's takes wait in until its project is first saved, all of them gone
+// before the next import fills its own.
+constexpr const char* import_prefix = ".Import ";
+void clear_import_takes(const fs::path& root) {
+    std::error_code error;
+    std::vector<fs::path> going;
+    for (const auto& entry : fs::directory_iterator(root, error)) {
+        const auto name = entry.path().filename().string();
+        if (!name.rfind(import_prefix, 0) && entry.is_directory(error)) going.push_back(entry.path());
+    }
+    for (const auto& path : going) { std::error_code e; fs::remove_all(path, e); }
+}
+
 // An MPC project read and turned into a Rhythmer project's bytes (on the service thread: it takes a moment).
-void import_mpc(LoadedProject& l) {
+void import_mpc(LoadedProject& l, const std::string& root) {
     auto project = std::make_unique<Project>();
     auto patterns = std::make_unique<PatternBank>();
     MpcImport report;
@@ -265,11 +333,24 @@ void import_mpc(LoadedProject& l) {
     l.bytes.clear();
     if (!l.error.empty()) { l.note = l.error; return; }
     layers_from_programs(*project); // roadmap P3: pads of two to four layers take them as their own where slots allow
+    if (!root.empty()) clear_import_takes(root);
+    if (!report.takes.empty() && !root.empty()) { // its Audio tracks' files, as takes, where the project will find them
+        const std::string stem = std::string(import_prefix) + fs::path(l.path).stem().string();
+        const fs::path from = fs::path(root) / (stem + ".mldp");
+        const fs::path folder = audio_folder(from.string());
+        std::error_code error;
+        fs::create_directories(folder, error);
+        for (const auto& [take, file] : report.takes) {
+            std::error_code e;
+            if (!fs::copy_file(file, folder / audio_take_name(take), fs::copy_options::overwrite_existing, e)) ++report.missing;
+        }
+        l.audio_from = from.string();
+    }
     l.bytes = save_project(*project, *patterns);
     l.imported = true;
     l.note = "Opened a copy of " + fs::path(l.path).stem().string();
     if (report.missing) l.note = std::to_string(report.missing) + " samples missing";
-    else if (report.over_limit) l.note += ", some left out";
+    else if (report.over_limit || report.regions_left_out) l.note += ", some left out";
 }
 void carry_loops(const fs::path& from, const fs::path& to, bool copy) {
     for (const char* tail : project_folders) {
@@ -283,17 +364,19 @@ void carry_loops(const fs::path& from, const fs::path& to, bool copy) {
     }
 }
 // Freeze plan F2d: Save As takes the prints along, so a frozen track plays them under the new name without printing
-// again (a print still being written, a .part, stays behind).
+// again, and (F3) the audio tracks' takes, which cannot be made again (a file still being written, a .part, stays behind).
 void copy_prints(const fs::path& from, const fs::path& to) {
-    std::error_code error;
-    auto source = folder_of(from, " Prints");
-    if (!fs::is_directory(source, error)) return;
-    auto target = folder_of(to, " Prints");
-    fs::create_directories(target, error);
-    for (const auto& entry : fs::directory_iterator(source, error)) {
-        std::error_code e;
-        if (!entry.is_regular_file(e) || entry.path().extension() == ".part") continue;
-        fs::copy_file(entry.path(), target / entry.path().filename(), fs::copy_options::overwrite_existing, e);
+    for (const char* tail : {" Prints", " Audio"}) {
+        std::error_code error;
+        auto source = folder_of(from, tail);
+        if (!fs::is_directory(source, error)) continue;
+        auto target = folder_of(to, tail);
+        fs::create_directories(target, error);
+        for (const auto& entry : fs::directory_iterator(source, error)) {
+            std::error_code e;
+            if (!entry.is_regular_file(e) || entry.path().extension() == ".part") continue;
+            fs::copy_file(entry.path(), target / entry.path().filename(), fs::copy_options::overwrite_existing, e);
+        }
     }
 }
 } // namespace
@@ -320,10 +403,13 @@ void ProjectStore::run(Request& r) {
         saved.fetch_add(1, std::memory_order_release);
         break;
     }
+    case Request::Kind::ExportMpc3:
+        start_export(r);
+        return;
     case Request::Kind::Load: {
-        auto* l = new LoadedProject {r.path, {}, read_file(r.path), false, {}};
+        auto* l = new LoadedProject {r.path, {}, read_file(r.path), false, {}, {}};
         if (l->bytes.empty()) l->error = "Could not read";
-        else if (is_mpc_project(r.path) || is_drum_program(r.path)) import_mpc(*l);
+        else if (is_mpc_project(r.path) || is_drum_program(r.path)) import_mpc(*l, root);
         if (!loaded.push(l)) delete l;
         return;
     }
@@ -427,12 +513,14 @@ void ProjectStore::scan() {
     auto dir = folder_dir(root, folder);
     if (!dir.empty() && fs::is_directory(dir, error)) {
         for (const auto& item : fs::directory_iterator(dir, error)) {
+            if (dot_name(item.path())) continue;
             ProjectEntry e;
             e.path = item.path().string();
             e.name = item.path().stem().string();
             if (item.is_directory(error)) {
                 if (is_hidden_folder(item.path(), extension)) continue; // a project's loops or samples
                 if (on_card_top(folder) && skip_on_card(item.path())) continue;
+                if (rhythmer_own_folder(item.path())) continue; // Rhythmer/Cache, Rhythmer/Crashes
                 e.kind = ProjectEntry::Kind::Folder;
                 e.projects = projects_in(item.path(), extension);
             } else if (item.path().extension() == extension) {
@@ -476,7 +564,7 @@ void ProjectStore::scan() {
     if (!root.empty()) {
         std::function<void(const fs::path&, const std::string&, unsigned)> walk = [&](const fs::path& at, const std::string& rel, unsigned depth) {
             for (const auto& item : fs::directory_iterator(at, error)) {
-                if (!item.is_directory(error) || folders.size() >= 128 || is_hidden_folder(item.path(), extension)) continue;
+                if (dot_name(item.path()) || !item.is_directory(error) || folders.size() >= 128 || is_hidden_folder(item.path(), extension)) continue;
                 auto name = rel.empty() ? item.path().filename().string() : rel + "/" + item.path().filename().string();
                 folders.push_back(name);
                 if (depth < 4) walk(item.path(), name, depth + 1);

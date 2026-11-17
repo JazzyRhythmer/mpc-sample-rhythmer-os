@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
 #include "rhythmer/shell/mpc_project.h"
+#include "rhythmer/shell/mpc_wav_slices.h"
 #include "rhythmer/engine/engine_info.h"
 #include "rhythmer/engine/dsp.h"
+#include "rhythmer/engine/sample_data.h"
 #include "rhythmer/model/scales.h"
 #include <juce_core/juce_core.h>
 #include <algorithm>
@@ -110,33 +112,35 @@ public:
         std::error_code error;
         missing = !fs::exists(path, error);
         if (path.size() >= sizeof(SampleRef::path)) return -1;
-        for (unsigned n = 0; n < sample_slots; ++n) {
-            auto& ref = project.samples[n];
-            if (ref.used() && path == ref.path) return int(n);
-            if (ref.used()) continue;
-            std::strncpy(ref.path, path.c_str(), sizeof(ref.path) - 1);
-            std::strncpy(ref.name, name.stem().string().c_str(), sizeof(ref.name) - 1);
-            auto rate = wav_rate(path);
-            rates[n] = rate ? double(dsp::model_rate) / rate : 1.0;
-            return int(n);
-        }
-        return -1;
+        const int n = free_or_same(path);
+        if (n < 0 || project.samples[size_t(n)].used()) return n;
+        auto& ref = project.samples.edit(size_t(n));
+        std::strncpy(ref.path, path.c_str(), sizeof(ref.path) - 1);
+        std::strncpy(ref.name, name.stem().string().c_str(), sizeof(ref.name) - 1);
+        auto rate = wav_rate(path);
+        rates[size_t(n)] = rate ? double(dsp::model_rate) / rate : 1.0;
+        return n;
     }
     // A slot for a pad's layers, played as an instrument: the path names the pad.
     int instrument(const std::string& path, const std::string& name) {
         if (path.size() >= sizeof(SampleRef::path)) return -1;
-        for (unsigned n = 0; n < sample_slots; ++n) {
-            auto& ref = project.samples[n];
-            if (ref.used() && path == ref.path) return int(n);
-            if (ref.used()) continue;
-            std::snprintf(ref.path, sizeof(ref.path), "%s", path.c_str());
-            std::snprintf(ref.name, sizeof(ref.name), "%s", name.c_str());
-            return int(n);
-        }
-        return -1;
+        const int n = free_or_same(path);
+        if (n < 0 || project.samples[size_t(n)].used()) return n;
+        auto& ref = project.samples.edit(size_t(n));
+        std::snprintf(ref.path, sizeof(ref.path), "%s", path.c_str());
+        std::snprintf(ref.name, sizeof(ref.name), "%s", name.c_str());
+        return n;
     }
     double to_model(unsigned slot) const { return rates[slot % sample_slots]; }
 private:
+    // The slot holding `path`, else the first free one (the slots are filled from the first on); -1: none.
+    int free_or_same(const std::string& path) const {
+        for (unsigned n = 0; n < sample_slots; ++n) {
+            const auto& ref = project.samples[n];
+            if (!ref.used() || path == ref.path) return int(n);
+        }
+        return -1;
+    }
     Project& project;
     fs::path folder;
     std::array<double, sample_slots> rates {};
@@ -342,6 +346,29 @@ unsigned read_notes(const juce::var& clip, const std::array<int, 128>& pad_of_no
     return added;
 }
 
+// A keygroup track's clip: its notes as MIDI notes, as a KEYGROUP track keeps them.
+unsigned read_keys(const juce::var& clip, Pattern& pattern) {
+    unsigned added = 0;
+    const auto* events = clip["eventList"]["events"].getArray();
+    if (!events) return 0;
+    for (const auto& event : *events) {
+        if (integer(event, "type") != note_event || flag(event, "muted")) continue;
+        const auto& note = event["note"];
+        int key = integer(note, "note", -1);
+        if (key < 0 || key > 127) continue;
+        uint32_t tick = uint32_t(std::lround(number(event, "time") / mpc_ticks_per_tick));
+        if (tick >= pattern.length) continue;
+        Event e;
+        e.tick = tick;
+        e.length = uint16_t(std::clamp(std::lround(number(note, "length") / mpc_ticks_per_tick), 1l, 65535l));
+        e.key = uint8_t(key);
+        e.velocity = uint8_t(std::clamp(std::lround(number(note, "velocity", 1) * 127), 1l, 127l));
+        e.chance = uint8_t(std::clamp(integer(note, "probability", 100), 0, 100));
+        added += pattern.add(e);
+    }
+    return added;
+}
+
 } // namespace
 
 bool is_mpc_project(const std::string& path) { return fs::path(path).extension() == ".xpj"; }
@@ -375,18 +402,11 @@ std::map<std::string, KeygroupInstrument> mpc_project_pads(const std::vector<uin
     return pads;
 }
 
-std::string read_mpc_json_program(const std::vector<uint8_t>& file, const std::string& path, KeygroupProgram& out) {
-    const auto data = read_document(file);
-    if (data.isVoid()) return "Unreadable";
-    const auto& program = data["program"].isObject() ? data["program"] : data;
+namespace {
+// An MPC 3 program in JSON as the .xpm reader's tree, its layers' files in `data_folder` (relative to the file).
+std::string program_tree(const juce::var& program, const std::string& data_folder, KeygroupProgram& out) {
     const auto* instruments = program["drum"]["instruments"].getArray();
     if (!instruments) return "Not an MPC program";
-    // Its samples: in "<name>_[TrackData]" (an .xty) or "<name>_[ProgramData]" beside it, else beside it.
-    const fs::path where(path);
-    std::string data_folder;
-    std::error_code error;
-    for (const char* tail : {"_[TrackData]", "_[ProgramData]"})
-        if (data_folder.empty() && fs::is_directory(where.parent_path() / (where.stem().string() + tail), error)) data_folder = where.stem().string() + tail;
     out = KeygroupProgram {};
     out.type = integer(program, "type") == 1 ? "Keygroup" : "Drum";
     out.tags["ProgramName"] = program["name"].toString().toStdString();
@@ -398,9 +418,39 @@ std::string read_mpc_json_program(const std::vector<uint8_t>& file, const std::s
         out.tags["KeygroupNumKeygroups"] = std::to_string(integer(program["keygroup"], "numKeygroups", 128));
         out.tags["KeygroupTranspose"] = std::to_string(integer(program["keygroup"], "transpose"));
     }
+    // Mono and Portamento, an .xpm's program tags (engine/keygroup.cpp read_keygroup()).
+    const auto& voices = program["drum"];
+    out.tags["Mono"] = flag(voices, "monophonic") ? "True" : "False";
+    out.tags["PortamentoTime"] = std::to_string(number(voices, "portamentoTime", 0));
+    out.tags["PortamentoLegato"] = flag(voices, "portamentoLegato") ? "True" : "False";
+    // Mono Retrig (MPC 3.9): a key pressed while one is held starts the note again. A project saved before it has none.
+    if (!voices["monoRetrigger"].isVoid()) out.tags["MonoRetrigger"] = flag(voices, "monoRetrigger") ? "True" : "False";
     for (int n = 0; n < std::min(instruments->size(), mpc_pads); ++n)
         out.instruments.push_back(instrument_tags(instruments->getReference(n), n + 1, data_folder));
     return {};
+}
+} // namespace
+
+std::string read_mpc_json_program(const std::vector<uint8_t>& file, const std::string& path, KeygroupProgram& out) {
+    const auto data = read_document(file);
+    if (data.isVoid()) return "Unreadable";
+    const auto& program = data["program"].isObject() ? data["program"] : data;
+    // Its samples: in "<name>_[TrackData]" (an .xty) or "<name>_[ProgramData]" beside it, else beside it.
+    const fs::path where(path);
+    std::string data_folder;
+    std::error_code error;
+    for (const char* tail : {"_[TrackData]", "_[ProgramData]"})
+        if (data_folder.empty() && fs::is_directory(where.parent_path() / (where.stem().string() + tail), error)) data_folder = where.stem().string() + tail;
+    return program_tree(program, data_folder, out);
+}
+
+std::string mpc_project_keygroup(const std::vector<uint8_t>& file, const std::string& path, unsigned track, KeygroupProgram& out) {
+    const auto data = read_document(file);
+    const auto* tracks = data["tracks"].getArray();
+    if (!tracks || track >= unsigned(tracks->size())) return "Track not found";
+    const auto& program = tracks->getReference(int(track))["program"];
+    if (integer(program, "type") != 1) return "Not a keygroup";
+    return program_tree(program, fs::path(path).stem().string() + "_[ProjectData]", out);
 }
 
 std::string import_mpc_project(const std::vector<uint8_t>& file, const std::string& path, Project& project, PatternBank& patterns, MpcImport& report) {
@@ -427,12 +477,111 @@ std::string import_mpc_project(const std::vector<uint8_t>& file, const std::stri
     Samples samples(project, where.parent_path() / (where.stem().string() + "_[ProjectData]"));
     unsigned used = 0;
     int raw_index = -1;
+    std::map<std::string, unsigned> take_of; // an Audio track's file: its take number
+    const fs::path data_folder = where.parent_path() / (where.stem().string() + "_[ProjectData]");
     for (const auto& source : *tracks) {
         ++raw_index;
         const auto& program = source["program"];
+        if (integer(program, "type") == 6) { // an MPC 3 Audio track (freeze plan F3): an AUDIO track
+            const auto name = source["name"].toString();
+            std::map<unsigned, const juce::var*> firsts; // each sequence's region from its start
+            unsigned regions = 0, others = 0;
+            auto same = [](const juce::var& a, const juce::var& b) { // the take again (as a pattern looping in a longer sequence)
+                return a["sample"]["path"].toString() == b["sample"]["path"].toString() && number(a, "sliceStart") == number(b, "sliceStart")
+                    && number(a, "sliceEnd") == number(b, "sliceEnd");
+            };
+            for (const auto& [n, sequence] : sequences) {
+                const auto* events = clip_of(*sequence, name)["eventList"]["events"].getArray();
+                if (!events) continue;
+                for (const auto& event : *events)
+                    if (integer(event, "type") == 4 && integer(event, "time") <= int(mpc_ticks_per_tick) && !firsts.count(n)) firsts[n] = &event;
+                for (const auto& event : *events) {
+                    if (integer(event, "type") != 4) continue;
+                    ++regions;
+                    if (firsts.count(n) && firsts[n] != &event && !same((*firsts[n])["audio"], event["audio"])) ++others;
+                    if (!firsts.count(n)) ++others;
+                }
+            }
+            if (!regions) continue;
+            if (used == track_count) { ++report.over_limit; continue; }
+            const unsigned index = used++;
+            auto& track = project.tracks[index];
+            track = Track {};
+            track.engine = EngineKind::Audio;
+            track.set_name(name.toRawUTF8());
+            const auto& mix = program["mixable"];
+            track.mix.level = level_of(number(mix, "volume", 0.7079));
+            track.mix.pan = pan_of(number(mix, "pan", 0.5));
+            track.mix.mute = flag(mix, "mute") || flag(source, "mute");
+            track.mix.solo = flag(mix, "solo");
+            for (const auto& [n, sequence] : sequences)
+                patterns.at[index][n].length = uint32_t(std::clamp<int64_t>(int64_t(number(*sequence, "lengthPulses", 3840) / mpc_ticks_per_tick), 1, project.max_length()));
+            for (const auto& [n, event] : firsts) {
+                const auto& audio = (*event)["audio"];
+                const std::string file = audio["sample"]["path"].toString().toStdString();
+                const fs::path wav = data_folder / file;
+                WavReader reader;
+                if (file.empty() || !reader.open(wav.string(), 6 * 3600).empty() || !reader.rate()) { ++report.missing; continue; }
+                auto known = take_of.find(wav.string());
+                unsigned take = known != take_of.end() ? known->second : unsigned(take_of.size() + 1);
+                if (known == take_of.end()) { take_of[wav.string()] = take; report.takes.emplace_back(take, wav.string()); }
+                const double k = 44100.0 / double(reader.rate()); // the file's frames counted at 44.1 kHz, as a take's are
+                auto model = [&](double frames) { return uint32_t(std::max(0.0, std::round(frames * k))); };
+                const double total = double(reader.frames());
+                const double start = std::clamp(number(audio, "sliceStart", 0), 0.0, total), end = std::clamp(number(audio, "sliceEnd", total), start, total);
+                AudioRegion r;
+                r.take = uint16_t(take);
+                r.offset = model(start);
+                r.frames = model(end - start);
+                r.take_frames = std::max(model(total), r.offset + r.frames);
+                r.tempo = tenths(number(audio, "tempo", 120));
+                const double volume = number(audio, "volume", 0.5011872);
+                r.gain = int16_t(volume > 0 ? std::clamp<long>(std::lround(200 * std::log10(volume / 0.5011872)), region_gain_min, region_gain_max) : region_gain_min);
+                r.reverse = flag(audio, "reverse");
+                r.fade_in = std::min(model(number(audio, "fadeIn", 0)), r.frames);
+                r.fade_out = std::min(model(number(audio, "fadeOut", 0)), r.frames);
+                r.warp = flag(audio, "warpEnable");
+                r.semi = int8_t(std::clamp(integer(audio, "coarseTune", 0), -24, 24));
+                r.fine = int8_t(std::clamp(integer(audio, "fineTune", 0), -50, 50));
+                if (!r.used()) continue;
+                patterns.at[index][n].audio = r;
+                ++report.regions;
+            }
+            report.regions_left_out += others;
+            continue;
+        }
         const auto* instruments = program["drum"]["instruments"].getArray();
         if (!instruments) continue; // submixes and outputs are tracks in the file too
         const auto name = source["name"].toString();
+        if (integer(program, "type") == 1) { // an MPC 3 keygroup track: a KEYGROUP track playing it ("<file>#k<track>")
+            const juce::var* first = nullptr;
+            for (const auto& instrument : *instruments) if (!first && !sounding_layer(instrument).isVoid()) first = &instrument;
+            if (!first) continue;
+            if (used == track_count) { ++report.over_limit; continue; }
+            int slot = samples.instrument(path + "#k" + std::to_string(raw_index), name.toStdString().substr(0, sizeof(SampleRef::name) - 1));
+            if (slot < 0) { ++report.over_limit; continue; }
+            const unsigned index = used++;
+            auto& track = project.tracks[index];
+            load_sound(track, EngineKind::Keygroup, 0);
+            track.set_name(name.toRawUTF8());
+            const auto& mix = program["mixable"];
+            track.mix.level = level_of(number(mix, "volume", 0.7079));
+            track.mix.pan = pan_of(number(mix, "pan", 0.5));
+            track.mix.mute = flag(mix, "mute") || flag(source, "mute");
+            track.mix.solo = flag(mix, "solo");
+            // its sound: the first keygroup's envelope, filter and level; its zones' own tune and regions are theirs
+            read_pad(*first, sounding_layer(*first), unsigned(slot), 1.0, track.pads[0], true);
+            track.pads[0].play = PadPlay::Gate;
+            track.pads[0].mono = flag(program["drum"], "monophonic");
+            track.last_pad = 0;
+            ++report.pads;
+            for (const auto& [n, sequence] : sequences) {
+                auto& pattern = patterns.at[index][n];
+                pattern.length = uint32_t(std::clamp<int64_t>(int64_t(number(*sequence, "lengthPulses", 3840) / mpc_ticks_per_tick), 1, project.max_length()));
+                report.notes += read_keys(clip_of(*sequence, name), pattern);
+            }
+            continue;
+        }
         bool wanted = false;
         for (const auto& instrument : *instruments) wanted = wanted || !sounding_layer(instrument).isVoid();
         for (const auto& [n, sequence] : sequences) wanted = wanted || has_notes(clip_of(*sequence, name));
@@ -482,6 +631,9 @@ std::string import_mpc_project(const std::vector<uint8_t>& file, const std::stri
     }
     if (!used) return "Nothing to import";
     report.tracks = used;
+    // Each file's chop, as the MPC keeps it in the WAV ("atem"): Chop on a pad of the whole file finds its slices.
+    for (unsigned n = 0; n < sample_slots; ++n)
+        if (project.samples[n].used() && !project.samples[n].instrument()) project.chops.edit(n) = read_mpc_slices(project.samples[n].path);
     report.sequences = unsigned(sequences.size());
 
     // The tempo: the project's own when it is on, else each sequence's.

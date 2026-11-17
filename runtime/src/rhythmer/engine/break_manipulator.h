@@ -13,6 +13,7 @@ public:
         auto before=feedback_version.load(std::memory_order_acquire);variation=variation_view.load(std::memory_order_relaxed);drift=drift_view.load(std::memory_order_relaxed);
         auto after=feedback_version.load(std::memory_order_acquire);if(before!=after||after==version)return false;version=after;return true;
     }
+    unsigned activity()const{return activity_.load(std::memory_order_relaxed);}
     unsigned source()const{return source_.load(std::memory_order_relaxed);}
     void initial_source(unsigned value){source_=value%2;bind();}
     unsigned first_pad()const{return bank_*16;}
@@ -31,6 +32,7 @@ private:
     std::atomic<unsigned> feedback_version{0},variation_view{0},drift_view{0};
     int controls[10]{0,0,0,64,0,0,38,100,4,1};
     const SampleData* loops[2]{};
+    std::atomic<unsigned> activity_{0};
     unsigned filter_age=0,filter_q_age=0,filter_q=8;
     double tick_phase=0,phase=0;unsigned tempo_=1200,read=32;
     int32_t output[64]{};float previous=0,next=0,gain=1;

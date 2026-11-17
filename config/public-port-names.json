@@ -229,6 +229,30 @@
       "unofficial_port": true,
       "source_directory": "ports/sophie",
       "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "fm1-frodhes",
+      "engine_name": "Frodhes",
+      "variant": "",
+      "public_name": "Frodhes for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/fm1-frodhes/SOURCE.json",
+      "status": "LOCAL_PORT",
+      "unofficial_port": true,
+      "source_directory": "ports/fm1-frodhes",
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
+    },
+    {
+      "port": "move-tenebrae",
+      "engine_name": "Tenebrae",
+      "variant": "",
+      "public_name": "Tenebrae for Rhythmer OS",
+      "repository_slug": "mpc-sample-engine-ports",
+      "source_record": "ports/move-tenebrae/SOURCE.json",
+      "status": "LOCAL_PORT",
+      "unofficial_port": true,
+      "source_directory": "ports/move-tenebrae",
+      "repository_url": "https://github.com/jazzyrhythmer/mpc-sample-engine-ports"
     }
   ],
   "excluded_reused_packages": [

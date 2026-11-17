@@ -7,6 +7,8 @@
 #include "drivers/screen_mirror.h"
 #include "rhythmer/model/input_config.h"
 #include "rhythmer/model/midi_config.h"
+#include "rhythmer/ui/faces.h"
+#include "rhythmer/ui/palettes.h"
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
@@ -35,7 +37,12 @@ inline const char* takeover_name(Takeover t) {
 struct Settings {
     enum Row : uint8_t { Palette, PadResponse, PadPressure, PadLights, KnobTakeover, KnobFxTakeover, FaderTakeover, DoubleSeq, CaptureBars, CaptureQuantize,
                          Screen, PlaceBarRow, SampleRate,
-                         AudioBuffer, RecallGrabRow, RecallGap, RecallTrimEnd, TakeAutoEnd, AutoEndAfter, SilenceBelow, Mirror, MirrorSize, MirrorRate, Rows };
+                         AudioBuffer, RecallGrabRow, RecallGap, RecallTrimEnd, TakeAutoEnd, AutoEndAfter, SilenceBelow, Mirror, MirrorSize, MirrorRate, PadFade, TapLight, RepeatVelocity, SeqFollow, Font, Rows };
+    // FEATURES (shell/features.h; Settings' K1): Full shows every page, Basic the stock app's pages plus tracks,
+    // plug-ins, the mixer and Song. A first install (no settings file) starts on Basic; a file from before this
+    // row stays on Full, as it was (read()).
+    bool full_features = true;
+    uint8_t lessons_done = 0; // a bit a lesson finished (shell/lesson.h): its check on LEARN
     uint8_t pad_response = 1; // 0 soft, 1 medium, 2 hard, 3 full level (127, Shift + Pad 1)
     uint8_t response_before = 1; // what Shift + Pad 1 goes back to
     bool count_in = false;    // a bar before Seq Record records (phase 2)
@@ -56,11 +63,26 @@ struct Settings {
         else { response_before = pad_response; pad_response = 3; }
     }
     bool pressure = true;     // off: the pads send no pressure (synths, Pad FX depth)
+    // Note Repeat's velocity: Strike, every repeat as hard as the pad was struck; Pressure, each as hard as the pad is
+    // held then. Full Level plays them all at 127 either way.
+    bool repeat_pressure = false;
+    bool repeats_by_pressure() const { return repeat_pressure && pressure && !full_level(); }
     uint8_t pad_lights = 0;   // 0 track colours, 1 white, 2 off
+    // How fast a pad's light fades when its sound stops or it is let go (shell/pad_lights.cpp): ms, one of fades.
+    static constexpr std::array<uint16_t, 4> fades {{60, 100, 150, 250}};
+    uint8_t pad_fade = 1;
+    uint32_t fade_ms() const { return fades[pad_fade % fades.size()]; }
+    bool tap_light = true;    // Tap Tempo flashes on the beat while playing
+    // Step Edit and Roll while the pattern plays (shell/step_edit.cpp seq_follow): 0 Off, they stay where they are;
+    // 1 Page, the caret goes to the same step of the bar that plays when a new bar starts; 2 Step, the caret on the
+    // step that plays.
+    uint8_t seq_follow = 0;
     // The MPC's defaults: Scaled for the knobs and Knob FX, Pickup for the fader. Before parity
     // phase 8 one row, "Knob pickup" (key pickup): off reads as Instant for all three.
     Takeover knob_takeover = Takeover::Scaled, knob_fx_takeover = Takeover::Scaled, fader_takeover = Takeover::Pickup;
     uint8_t screen = 100;     // brightness, 20..100 %
+    uint8_t palette = 0;      // the screen's colours: ui/palettes.h (0 NIGHT)
+    uint8_t font = 0;         // the screen's typeface: ui/font_data.h (0 Rubik)
     bool place_bottom = false; // the place bar (shell/place_bar.h): under the knob cards, else between the soft keys and the header
     // The audio device (App::audio_format()): its rate, and the 128-frame periods queued ahead of the jacks. More
     // periods ride out a slow block (no crackle) and are heard later; a higher rate costs more CPU a second.
@@ -82,29 +104,39 @@ struct Settings {
     SamplingPrefs sampling;   // how Audio Recall cuts the ring, and when a Free take ends on its own
     MidiConfig midi;          // MIDI Config (Shift + Pad 8, parity phase 9)
     // Starred factory sounds, by engine (EngineKind's order), for the Sounds page's FAVOURITES.
-    static constexpr unsigned engines = 9, sounds = 256; // a row per EngineKind (MIDI the eighth, PLUGIN the ninth)
+    static constexpr unsigned engines = 11, sounds = 256; // a row per EngineKind (MIDI the eighth, PLUGIN the ninth, KEYGROUP the tenth, AUDIO the eleventh)
     std::array<std::bitset<sounds>, engines> favourites {};
     bool favourite(unsigned engine, unsigned sound) const { return engine < engines && sound < sounds && favourites[engine][sound]; }
     void toggle_favourite(unsigned engine, unsigned sound) { if (engine < engines && sound < sounds) favourites[engine].flip(sound); }
 
-    // MIDI Config's Reset Factory Settings: every setting back to how Rhythmer comes, the starred sounds kept.
+    // MIDI Config's Reset Factory Settings: every setting back to how Rhythmer comes, the starred sounds and
+    // FEATURES kept.
     void reset_factory() {
         auto kept = favourites;
+        bool full = full_features;
+        uint8_t lessons = lessons_done;
         *this = Settings {};
         favourites = kept;
+        full_features = full;
+        lessons_done = lessons;
     }
 
     static const char* row_name(unsigned row) {
         static const char* names[] {"Palette", "Pad response", "Pad pressure", "Pad lights", "Knob takeover", "Knob FX takeover",
                                     "Fader takeover", "Double Seq", "Capture bars", "Capture quantize", "Brightness", "Place bar", "Sample rate", "Audio buffer", "Recall grab", "Recall gap",
-                                    "Recall trim end", "Take auto end", "Auto end after", "Silence below", "Screen mirror", "Resolution", "Frame rate"};
+                                    "Recall trim end", "Take auto end", "Auto end after", "Silence below", "Screen mirror", "Resolution", "Frame rate",
+                                    "Pad fade", "Tap Tempo light", "Repeat velocity", "Follow", "Font"};
         return names[row % Rows];
     }
     std::string value_text(unsigned row) const {
         static const char* responses[] {"Soft", "Medium", "Hard", "Full level"};
         static const char* lights[] {"Track colours", "White", "Off"};
         switch (row) {
-        case Palette: return "NIGHT";
+        case Palette: return ui::palettes[palette % ui::palettes.size()].name;
+        case Font: { // a palette with a face of its own (LCD) shows that one
+            int own = ui::palettes[palette % ui::palettes.size()].face;
+            return ui::faces[own >= 0 ? unsigned(own) : font % ui::face_choices].name;
+        }
         case PadResponse: return responses[pad_response % 4];
         case PadPressure: return pressure ? "On" : "Off";
         case PadLights: return lights[pad_lights % 3];
@@ -131,12 +163,18 @@ struct Settings {
         case Mirror: return mirror ? "On" : "Off";
         case MirrorSize: { auto m = mirror_mode(); return std::to_string(m.width) + " x " + std::to_string(m.height); }
         case MirrorRate: return std::to_string(mirror_mode().fps) + " fps";
+        case PadFade: return std::to_string(fade_ms()) + " ms";
+        case TapLight: return tap_light ? "On" : "Off";
+        case RepeatVelocity: return repeat_pressure ? "Pressure" : "Strike";
+        case SeqFollow: return seq_follow == 1 ? "Page" : seq_follow == 2 ? "Step" : "Off";
         default: return std::to_string(screen) + " %";
         }
     }
-    // One step along a row (the palette has one value).
+    // One step along a row.
     void step(unsigned row, int way) {
         switch (row) {
+        case Palette: palette = uint8_t(step_in(palette % ui::palettes.size(), unsigned(ui::palettes.size()), way)); break;
+        case Font: font = uint8_t(step_in(font % ui::face_choices, ui::face_choices, way)); break;
         case PadResponse: pad_response = uint8_t((pad_response + 4 + way) % 4); break;
         case PadPressure: pressure = !pressure; break;
         case PadLights: pad_lights = uint8_t((pad_lights + 3 + way) % 3); break;
@@ -159,6 +197,10 @@ struct Settings {
         case Mirror: mirror = !mirror; break;
         case MirrorSize: mirror_size = uint8_t(step_in(mirror_size % ScreenMirror::size_count, ScreenMirror::size_count, way)); break;
         case MirrorRate: mirror_fps = way < 0 ? 30 : 60; break;
+        case PadFade: pad_fade = uint8_t(step_in(pad_fade % fades.size(), unsigned(fades.size()), way)); break;
+        case TapLight: tap_light = !tap_light; break;
+        case RepeatVelocity: repeat_pressure = !repeat_pressure; break;
+        case SeqFollow: seq_follow = uint8_t(step_in(seq_follow % 3, 3, way)); break;
         default: break;
         }
     }
@@ -193,14 +235,14 @@ struct Settings {
     std::string text() const {
         std::ostringstream out;
         // pickup= stays for the builds before parity phase 8, which know only that.
-        out << "pad_response=" << int(pad_response) << "\npad_lights=" << int(pad_lights)
+        out << "features=" << int(full_features) << "\nlessons=" << int(lessons_done) << "\npad_response=" << int(pad_response) << "\npad_lights=" << int(pad_lights) << "\npad_fade=" << int(pad_fade) << "\ntap_light=" << int(tap_light)
             << "\npickup=" << int(knob_takeover != Takeover::Instant) << "\nknob_takeover=" << int(knob_takeover)
             << "\nknob_fx_takeover=" << int(knob_fx_takeover) << "\nfader_takeover=" << int(fader_takeover)
-            << "\nscreen=" << int(screen) << "\nplace_bar=" << int(place_bottom) << "\ncount_in=" << int(count_in) << "\nrec_quantize=" << int(rec_quantize) << "\nrec_grid=" << int(rec_grid)
+            << "\nscreen=" << int(screen) << "\npalette=" << int(palette) << "\nfont=" << int(font) << "\nplace_bar=" << int(place_bottom) << "\ncount_in=" << int(count_in) << "\nrec_quantize=" << int(rec_quantize) << "\nrec_grid=" << int(rec_grid)
             << "\nzero_snap=" << int(zero_snap) << "\ndouble_copies=" << int(double_copies) << "\nclick=" << int(click) << "\nclick_level=" << int(click_level)
             << "\ncapture_bars=" << int(capture_bars) << "\ncapture_quantize=" << int(capture_quantise)
-            << "\nresponse_before=" << int(response_before) << "\npressure=" << int(pressure)
-            << "\ninput_source=" << int(input.source) << "\nmonitor=" << int(input.monitor) << "\nthreshold=" << int(input.threshold)
+            << "\nresponse_before=" << int(response_before) << "\npressure=" << int(pressure) << "\nrepeat_pressure=" << int(repeat_pressure) << "\nseq_follow=" << int(seq_follow)
+            << "\ninput_source=" << int(input.source) << "\nmonitor=" << int(input.monitor) << "\nmonitor_before_mic=" << int(input.before_mic) << "\nthreshold=" << int(input.threshold)
             << "\nrec_length=" << int(input.length) << "\nrec_fx=" << int(input.fx) << "\nrec_gain=" << int(input.gain)
             << "\ninput_track=" << int(input.track) << "\ninput_tap=" << int(input.post)
             << "\nrecall_grab=" << int(sampling.grab) << "\nrecall_gap=" << int(sampling.gap) << "\nrecall_trim=" << int(sampling.trim_end)
@@ -224,20 +266,30 @@ struct Settings {
         std::string line;
         int pickup = -1;          // the old row, read only when the file has none of the new ones
         bool takeovers = false;
+        bool any = false, features = false; // FEATURES: no row in a file with others, Full; no file, Basic
         auto takeover = [&](int value) { takeovers = true; return Takeover(std::clamp(value, 0, int(Takeover::Count) - 1)); };
         while (std::getline(in, line)) {
             auto eq = line.find('=');
             if (eq == std::string::npos) continue;
             std::string key = line.substr(0, eq);
             int value = std::atoi(line.c_str() + eq + 1);
-            if (key == "pad_response") pad_response = uint8_t(std::clamp(value, 0, 3));
+            any = true;
+            if (key == "features") { full_features = value != 0; features = true; }
+            else if (key == "lessons") lessons_done = uint8_t(std::clamp(value, 0, 255));
+            else if (key == "pad_response") pad_response = uint8_t(std::clamp(value, 0, 3));
             else if (key == "pad_lights") pad_lights = uint8_t(std::clamp(value, 0, 2));
+            else if (key == "pad_fade") pad_fade = uint8_t(std::clamp(value, 0, int(fades.size()) - 1));
+            else if (key == "tap_light") tap_light = value != 0;
             else if (key == "pickup") pickup = value != 0;
             else if (key == "knob_takeover") knob_takeover = takeover(value);
             else if (key == "knob_fx_takeover") knob_fx_takeover = takeover(value);
             else if (key == "fader_takeover") fader_takeover = takeover(value);
             else if (key == "pressure") pressure = value != 0;
+            else if (key == "repeat_pressure") repeat_pressure = value != 0;
+            else if (key == "seq_follow") seq_follow = uint8_t(std::clamp(value, 0, 2));
             else if (key == "screen") screen = uint8_t(std::clamp(value, 20, 100));
+            else if (key == "palette") palette = uint8_t(std::clamp(value, 0, int(ui::palettes.size()) - 1));
+            else if (key == "font") font = uint8_t(std::clamp(value, 0, int(ui::face_choices) - 1));
             else if (key == "place_bar") place_bottom = value != 0;
             else if (key == "count_in") count_in = value != 0;
             else if (key == "rec_quantize") rec_quantize = value != 0;
@@ -251,6 +303,7 @@ struct Settings {
             else if (key == "response_before") response_before = uint8_t(std::clamp(value, 0, 2));
             else if (key == "input_source") input.source = InputSource(std::clamp(value, 0, int(InputSource::Count) - 1));
             else if (key == "monitor") input.monitor = Monitor(std::clamp(value, 0, int(Monitor::Count) - 1));
+            else if (key == "monitor_before_mic") input.before_mic = int8_t(std::clamp(value, -1, int(Monitor::Count) - 1));
             else if (key == "threshold") input.threshold = int8_t(std::clamp(value, int(InputConfig::threshold_min), 0));
             else if (key == "rec_length") input.length = uint8_t(std::clamp(value, 0, int(rec_lengths) - 1));
             else if (key == "rec_fx") input.fx = value != 0;
@@ -279,6 +332,7 @@ struct Settings {
                     if (!item.empty()) { int s = std::atoi(item.c_str()); if (s >= 0 && unsigned(s) < sounds) favourites[e].set(unsigned(s)); }
             }
         }
+        if (!features) full_features = any; // a file from before the row: Full, as it was; nothing read: a first install, Basic
         if (!takeovers && pickup == 0) knob_takeover = knob_fx_takeover = fader_takeover = Takeover::Instant; // "Knob pickup Off"
     }
 };

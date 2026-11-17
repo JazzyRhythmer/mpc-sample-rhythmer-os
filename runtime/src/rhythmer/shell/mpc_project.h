@@ -19,6 +19,11 @@ struct MpcImport {
     unsigned tracks = 0, sequences = 0, pads = 0, notes = 0;
     unsigned over_limit = 0; // tracks, sequences or pads Rhythmer has no room for
     unsigned missing = 0;    // pads whose file is not in the project's data folder
+    // Freeze plan F3: Audio tracks' regions as patterns' takes (a sequence's region from its start), each take's WAV
+    // file to copy as "Take NNN.wav" (number, file), and regions left out (a second in a sequence, or one starting
+    // later than its start: a pattern plays one take, from its top).
+    unsigned regions = 0, regions_left_out = 0;
+    std::vector<std::pair<unsigned, std::string>> takes;
 };
 
 bool is_mpc_project(const std::string& path);
@@ -33,6 +38,10 @@ std::map<std::string, KeygroupInstrument> mpc_project_pads(const std::vector<uin
 // An MPC 3 program in JSON (an .xty track's, or a gzip .xpm) as the tree .xpm programs read into
 // (engine/keygroup.h), drum or keygroup alike. Empty on success.
 std::string read_mpc_json_program(const std::vector<uint8_t>& file, const std::string& path, KeygroupProgram& program);
+
+// A keygroup track of an MPC 3 project (its `track`, as the file lists them) as the .xpm reader's tree, its files in the
+// project's data folder: what "<project>.xpj#k<track>" plays (a KEYGROUP track's instrument). Empty on success.
+std::string mpc_project_keygroup(const std::vector<uint8_t>& file, const std::string& path, unsigned track, KeygroupProgram& program);
 
 // The sample rate of a WAV file; 0 when it cannot tell.
 unsigned mpc_wav_rate(const std::string& path);

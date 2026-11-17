@@ -2,11 +2,13 @@
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
 #include "rhythmer/model/project_file.h"
 #include "rhythmer/model/gen_menu_order.h"
+#include "rhythmer/model/keygroup_track.h"
 #include "rhythmer/model/fader.h"
 #include "rhythmer/model/pad_params.h"
 #include "rhythmer/model/scales.h"
 #include "rhythmer/engine/engine_info.h"
 #include "rhythmer/engine/midi_engine.h"
+#include "rhythmer/engine/sampler.h"
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
@@ -179,6 +181,22 @@ void read_pad4(Reader& r, PadSound* pads, unsigned count) {
 // A kit pad's layers (roadmap P3), in LAYR: how a hit picks, layer 1's
 // velocities, then layers 2-4 as they are set. Older builds skip the section
 // and play layer 1 alone; older files have no layers.
+// A pad's cloud (PCLD, BCLD): pad, on or off, position, size, density, scan, spread.
+void write_cloud(Writer& w, unsigned n, const PadSound& pad) {
+    w.u8(n); w.u8(pad.cloud);
+    w.u8(pad.cloud_position); w.u8(pad.cloud_size); w.u8(pad.cloud_density); w.u8(pad.cloud_scan); w.u8(pad.cloud_spread);
+}
+void read_cloud(Reader& r, PadSound* pads, unsigned count) {
+    unsigned n = r.u8();
+    bool on = r.u8() != 0;
+    std::array<uint8_t, 5> v {};
+    for (auto& one : v) one = uint8_t(std::min(r.u8(), 100u));
+    if (!r.ok) return;
+    auto& pad = pads[n % count];
+    pad.cloud = on;
+    pad.cloud_position = v[0]; pad.cloud_size = v[1]; pad.cloud_density = v[2]; pad.cloud_scan = v[3]; pad.cloud_spread = v[4];
+}
+
 void write_layers(Writer& w, unsigned n, const PadSound& pad) {
     w.u8(n); w.u8(unsigned(pad.layer_play)); w.u8(pad.low_velocity); w.u8(pad.high_velocity);
     w.u8(pad_layers - 1);
@@ -222,12 +240,16 @@ std::vector<uint8_t> save_project(const Project& project, const PatternBank& pat
     at = w.begin("PVER"); // which engine parameters TRAK's values cover
     w.u8(params_version);
     w.end(at);
+    at = w.begin("KGVR"); // saved with keygroup tracks: an instrument on a kit pad is one on purpose (no migration)
+    w.u8(1);
+    w.end(at);
     for (unsigned t = 0; t < track_count; ++t) {
         const auto& tr = project.tracks[t];
         at = w.begin("TRAK");
-        // A MIDI or PLUGIN track is None here and itself in MIDT / PLGT, so older builds load it empty (not as the engine
-        // after their last).
-        bool own_section = tr.engine == EngineKind::Midi || tr.engine == EngineKind::Plugin;
+        // A MIDI, PLUGIN, KEYGROUP or AUDIO track is None here and itself in MIDT / PLGT / KGRP / AUDT, so older builds
+        // load it empty (not as the engine after their last). A keygroup's instrument is its pad 1, kept with the pads as a kit's.
+        bool own_section = tr.engine == EngineKind::Midi || tr.engine == EngineKind::Plugin || tr.engine == EngineKind::Keygroup
+                        || tr.engine == EngineKind::Audio;
         w.u8(t); w.u8(own_section ? 0u : unsigned(tr.engine)); w.u16(tr.preset); w.text(tr.name);
         auto values = tr.params;
         if (tr.engine == EngineKind::Midi) // P1-P16's own programs where older builds kept them (Pattern::program now)
@@ -551,6 +573,16 @@ std::vector<uint8_t> save_project(const Project& project, const PatternBank& pat
             if (tr.pads[n].used() && tr.pads[n].sending()) { w.u8(n); for (auto send : tr.pads[n].sends) w.u8(send); }
         w.end(at);
     }
+    for (unsigned t = 0; t < track_count; ++t) { // kit pads with a cloud, or cloud values of their own
+        const auto& tr = project.tracks[t];
+        unsigned used = 0;
+        for (const auto& pad : tr.pads) used += pad.used() && !pad.plain_cloud();
+        if (!used) continue;
+        at = w.begin("PCLD");
+        w.u8(t); w.u8(used);
+        for (unsigned n = 0; n < sampler_pads; ++n) if (tr.pads[n].used() && !tr.pads[n].plain_cloud()) write_cloud(w, n, tr.pads[n]);
+        w.end(at);
+    }
     for (unsigned t = 0; t < track_count; ++t) { // kit pads with layers, or layer values of their own (roadmap P3)
         const auto& tr = project.tracks[t];
         unsigned used = 0;
@@ -561,16 +593,26 @@ std::vector<uint8_t> save_project(const Project& project, const PatternBank& pat
         for (unsigned n = 0; n < sampler_pads; ++n) if (tr.pads[n].used() && !tr.pads[n].plain_layers()) write_layers(w, n, tr.pads[n]);
         w.end(at);
     }
-    for (unsigned t = 0; t < track_count; ++t) { // instruments' zones trimmed (round 3 "instrument C"): pad, slot, zone, cents, tenths of a dB
-        const auto& tr = project.tracks[t];
-        auto live = [&](const ZoneTrim& z) { return z.used() && tr.pads[z.pad % sampler_pads].sample == z.slot; }; // stale ones not kept
-        unsigned used = unsigned(std::count_if(tr.zone_trims.begin(), tr.zone_trims.end(), live));
-        if (!used) continue;
-        at = w.begin("ZTRM");
-        w.u8(t); w.u8(used);
-        for (const auto& z : tr.zone_trims) if (live(z)) { w.u8(z.pad); w.u8(z.slot); w.u16(z.zone); w.u8(uint8_t(z.tune)); w.i16(z.level); }
-        w.end(at);
-    }
+    // Instruments' zones trimmed (round 3 "instrument C"): pad, slot, zone, cents, tenths of a dB. ZTRM names the slot
+    // in a byte; the trims of an instrument in a slot past legacy_sample_slots go in ZTRX, the slot in two.
+    for (unsigned t = 0; t < track_count; ++t)
+        for (bool wide : {false, true}) {
+            const auto& tr = project.tracks[t];
+            auto live = [&](const ZoneTrim& z) { // stale ones not kept
+                return z.used() && tr.pads[z.pad % sampler_pads].sample == z.slot && (z.slot >= legacy_sample_slots) == wide;
+            };
+            unsigned used = unsigned(std::count_if(tr.zone_trims.begin(), tr.zone_trims.end(), live));
+            if (!used) continue;
+            at = w.begin(wide ? "ZTRX" : "ZTRM");
+            w.u8(t); w.u8(used);
+            for (const auto& z : tr.zone_trims) {
+                if (!live(z)) continue;
+                w.u8(z.pad);
+                if (wide) w.u16(z.slot); else w.u8(z.slot);
+                w.u16(z.zone); w.u8(uint8_t(z.tune)); w.i16(z.level);
+            }
+            w.end(at);
+        }
     for (unsigned t = 0; t < track_count; ++t) { // the four sends of a track that sends to more than one bus (round 2)
         const auto& sends = project.tracks[t].mix.sends;
         if (std::count_if(sends.begin(), sends.end(), [](uint8_t v) { return v > 0; }) < 2) continue; // TRAK says it already
@@ -594,6 +636,20 @@ std::vector<uint8_t> save_project(const Project& project, const PatternBank& pat
         w.u8(t); w.u8(tr.fader_target); w.u8(tr.fader_on);
         const auto& l = tr.fader_learned; // fader C, after what older builds read: the pot it learned, and PIN
         w.u8(uint8_t(l.what)); w.u16(l.lane); w.u8(l.engine); w.u8(l.pot); w.u8(tr.fader_pin);
+        w.end(at);
+    }
+    for (unsigned t = 0; t < track_count; ++t) { // the Prog layout's progression, its key and voicing, where it has one
+        const auto& tr = project.tracks[t];
+        if (tr.prog.empty() && !tr.prog_shift && !tr.prog_voicing && !tr.prog.name[0]) continue;
+        at = w.begin("PROG");
+        w.u8(t); w.u8(1); // the section's version
+        w.text(tr.prog.name); w.text(tr.prog.file); w.u8(tr.prog.root); w.u8(uint8_t(tr.prog_shift)); w.u8(tr.prog_voicing);
+        w.u8(tr.prog.count);
+        for (unsigned n = 0; n < tr.prog.count && n < prog_chords; ++n) {
+            const auto& chord = tr.prog.chords[n];
+            w.u8(chord.root ? 1 : 0); w.text(chord.name); w.u8(chord.count);
+            for (unsigned k = 0; k < chord.count; ++k) w.u8(chord.notes[k]);
+        }
         w.end(at);
     }
     for (unsigned t = 0; t < track_count; ++t) { // a pattern chain (seq-sheet2 B): the patterns in the order they play
@@ -628,6 +684,33 @@ std::vector<uint8_t> save_project(const Project& project, const PatternBank& pat
         w.text(midi.sysex);
         w.end(at);
     }
+    for (unsigned t = 0; t < track_count; ++t) { // a KEYGROUP track (model/project.h); TRAK said None
+        if (project.tracks[t].engine != EngineKind::Keygroup) continue;
+        at = w.begin("KGRP");
+        w.u8(t); w.u8(1); // the section's version
+        w.end(at);
+    }
+    for (unsigned t = 0; t < track_count; ++t) { // an AUDIO track (freeze plan F3) and its source and monitor; TRAK said None
+        const auto& tr = project.tracks[t];
+        if (tr.engine != EngineKind::Audio) continue;
+        at = w.begin("AUDT");
+        w.u8(t); w.u8(1); // the section's version
+        w.u8(unsigned(tr.audio.source)); w.u8(unsigned(tr.audio.monitor));
+        w.end(at);
+    }
+    for (unsigned t = 0; t < track_count; ++t) // an audio track's pattern's take (freeze plan F3, model/audio_track.h)
+        for (unsigned p = 0; p < pattern_count; ++p) {
+            const auto& g = patterns.at[t][p].audio;
+            if (!g.used()) continue;
+            at = w.begin("PAUD");
+            w.u8(1); // the section's version
+            w.u8(t); w.u8(p); w.u16(g.take);
+            w.u32(g.offset); w.u32(g.frames); w.u32(g.take_frames); w.u16(g.tempo); w.i16(g.gain);
+            w.u32(g.fade_in); w.u32(g.fade_out);
+            w.u8(unsigned(g.reverse) | unsigned(g.warp) << 1);
+            w.u8(unsigned(g.mode)); w.i16(g.semi); w.i16(g.fine);
+            w.end(at);
+        }
     for (unsigned t = 0; t < track_count; ++t) { // a PLUGIN track and the entry of PLUG it plays; TRAK said None
         const auto& tr = project.tracks[t];
         if (tr.engine != EngineKind::Plugin) continue;
@@ -665,20 +748,16 @@ std::vector<uint8_t> save_project(const Project& project, const PatternBank& pat
         for (auto bits : tr.pad_mutes) { w.u32(uint32_t(bits)); w.u32(uint32_t(bits >> 32)); }
         w.end(at);
     }
-    for (unsigned n = 0; n < sample_slots; ++n) { // a sample's chop (roadmap P3): its region, type, amount and slices
-        const auto& c = project.chops[n];
-        if (!c.used() || !project.samples[n].used()) continue;
-        at = w.begin("CHOP");
-        w.u8(n); w.u32(c.from); w.u32(c.to); w.u8(unsigned(c.mode)); w.i16(c.amount);
-        w.u8(c.slices.count); w.u32(c.slices.last);
-        for (unsigned k = 0; k < c.slices.count; ++k) w.u32(c.slices.start[k]);
-        w.end(at);
-    }
+    // A sample's chop is kept in its WAV file (shell/mpc_wav_slices.h), not here; older files' CHOP is read.
+    // SMPL names its slot in a byte and holds the first legacy_sample_slots, as it always has; the slots past them
+    // go in SMPX, the slot in two. A build that holds 64 samples a project skips SMPX and loads the pads that name
+    // those slots empty (its read_pad() takes a slot past its own as none).
     for (unsigned n = 0; n < sample_slots; ++n) {
         const auto& s = project.samples[n];
         if (!s.used()) continue;
-        at = w.begin("SMPL");
-        w.u8(n); w.text(s.path); w.text(s.name);
+        if (n < legacy_sample_slots) { at = w.begin("SMPL"); w.u8(n); }
+        else { at = w.begin("SMPX"); w.u16(n); }
+        w.text(s.path); w.text(s.name);
         w.end(at);
     }
     at=w.begin("GN8S"); w.u8(2); w.u16(project.gen8.seed); w.u8(project.gen8.genre);
@@ -720,6 +799,7 @@ std::string load_project(const std::vector<uint8_t>& data, Project& target, Patt
     std::array<std::vector<uint8_t>, max_plugins> plugin_states;
     PrintTable prints;
     unsigned file_version = 0;
+    bool keygroups_known = false; // KGVR: saved since keygroup tracks
     if (data.size() < 8 || std::memcmp(data.data(), magic, 8)) return "not a Rhythmer project";
     auto project = std::make_unique<Project>();
     auto patterns = std::make_unique<PatternBank>();
@@ -785,6 +865,8 @@ std::string load_project(const std::vector<uint8_t>& data, Project& target, Patt
             for (unsigned k = 0; k < used && r.ok; ++k) read_pad(r, tr.pads.data(), sampler_pads);
         } else if (name == "PVER") {
             file_version = r.u8();
+        } else if (name == "KGVR") {
+            keygroups_known = r.u8() >= 1;
         } else if (name == "KITX") {
             unsigned t = r.u8();
             if (t >= track_count) continue;
@@ -796,20 +878,24 @@ std::string load_project(const std::vector<uint8_t>& data, Project& target, Patt
             pad4[t] = true;
             unsigned used = r.u8();
             for (unsigned k = 0; k < used && r.ok; ++k) read_pad4(r, project->tracks[t].pads.data(), sampler_pads);
-        } else if (name == "CHOP") { // a sample's chop (roadmap P3); without it Chop cuts afresh
+        } else if (name == "CHOP") { // before chops were kept in the WAV files: written into them at the next save
             unsigned n = r.u8();
             SampleChop c;
             c.from = r.u32(); c.to = r.u32();
             c.mode = ChopMode(std::min(r.u8(), unsigned(ChopMode::Count) - 1));
             c.amount = int16_t(r.i16());
             unsigned count = std::min(r.u8(), max_slices);
-            c.slices.count = count; c.slices.last = r.u32();
+            c.slices.count = count;
+            uint32_t last = r.u32();
             bool sorted = true;
             for (unsigned k = 0; k < count && r.ok; ++k) {
                 c.slices.start[k] = r.u32();
+                if (k) c.slices.stop[k - 1] = c.slices.start[k];
                 sorted = sorted && (!k || c.slices.start[k] > c.slices.start[k - 1]);
             }
-            if (r.ok && sorted && n < sample_slots) project->chops[n] = c; // a damaged one is cut afresh
+            if (count) c.slices.stop[count - 1] = last;
+            c.unwritten = true;
+            if (r.ok && sorted && n < sample_slots) project->chops.edit(n) = c; // a damaged one is cut afresh
         } else if (name == "MODS") { // modulators (roadmap P4); without it none
             unsigned used = r.u8();
             for (unsigned k = 0; k < used && r.ok; ++k) {
@@ -877,17 +963,23 @@ std::string load_project(const std::vector<uint8_t>& data, Project& target, Patt
                 for (auto& send : sends) send = uint8_t(std::min(r.u8(), 100u));
                 if (r.ok) project->tracks[t].pads[n % sampler_pads].sends = sends;
             }
+        } else if (name == "PCLD") { // kit pads' clouds; without it a pad plays as a cloud only from an older file's kit-wide Cloud
+            unsigned t = r.u8();
+            if (t >= track_count) continue;
+            unsigned used = r.u8();
+            for (unsigned k = 0; k < used && r.ok; ++k) read_cloud(r, project->tracks[t].pads.data(), sampler_pads);
         } else if (name == "LAYR") { // pad layers (roadmap P3); without it every pad plays its one sample
             unsigned t = r.u8();
             if (t >= track_count) continue;
             unsigned used = r.u8();
             for (unsigned k = 0; k < used && r.ok; ++k) read_layers(r, project->tracks[t].pads.data(), sampler_pads, sample_slots);
-        } else if (name == "ZTRM") { // instruments' zones trimmed (round 3 "instrument C"); without it none are
+        } else if (name == "ZTRM" || name == "ZTRX") { // instruments' zones trimmed (round 3 "instrument C"); without it none are
+            const bool wide = name == "ZTRX"; // the slot in two bytes
             unsigned t = r.u8();
             if (t >= track_count) continue;
             unsigned used = r.u8();
             for (unsigned k = 0; k < used && r.ok; ++k) {
-                unsigned pad = r.u8(), slot = r.u8(), zone = r.u16();
+                unsigned pad = r.u8(), slot = wide ? r.u16() : r.u8(), zone = r.u16();
                 int tune = int8_t(uint8_t(r.u8())), level = r.i16();
                 if (r.ok && pad < sampler_pads && slot < sample_slots) set_trim(project->tracks[t].zone_trims, pad, zone, slot, tune, level);
             }
@@ -1137,6 +1229,31 @@ std::string load_project(const std::vector<uint8_t>& data, Project& target, Patt
             unsigned tempo = r.u16();
             scene.tempo = uint16_t(tempo ? std::clamp(tempo, 300u, 3000u) : 0);
             if (r.ok && n < pattern_count) project->scenes[n] = scene;
+        } else if (name == "PROG") { // the Prog layout's progression; without it none
+            unsigned t = r.u8(), version = r.u8();
+            Progression prog;
+            r.text(prog.name, sizeof(prog.name)); r.text(prog.file, sizeof(prog.file));
+            prog.root = uint8_t(r.u8() % 12);
+            int shift = int8_t(r.u8());
+            unsigned voicing = r.u8(), count = r.u8();
+            for (unsigned n = 0; n < count && r.ok; ++n) {
+                ProgChord chord;
+                chord.root = r.u8() != 0;
+                r.text(chord.name, sizeof(chord.name));
+                unsigned notes = r.u8();
+                for (unsigned k = 0; k < notes && r.ok; ++k) {
+                    unsigned key = r.u8();
+                    if (k < notes_per_step) chord.notes[k] = uint8_t(std::min(key, 127u));
+                }
+                chord.count = uint8_t(std::min(notes, notes_per_step));
+                if (n < prog_chords) prog.chords[n] = chord;
+            }
+            if (!r.ok || t >= track_count || version < 1) continue;
+            prog.count = uint8_t(std::min(count, prog_chords));
+            auto& tr = project->tracks[t];
+            tr.prog = prog;
+            tr.prog_shift = int8_t(std::clamp(shift, -6, 5));
+            tr.prog_voicing = uint8_t(voicing % 4);
         } else if (name == "CHAN") { // a pattern chain (seq-sheet2 B); without it a track plays the one pattern
             unsigned t = r.u8(), count = r.u8();
             if (!r.ok || t >= track_count) continue;
@@ -1163,6 +1280,33 @@ std::string load_project(const std::vector<uint8_t>& data, Project& target, Patt
                     r.text(tr.midi.sysex, sizeof(tr.midi.sysex));
                 }
             }
+        } else if (name == "KGRP") { // a KEYGROUP track; TRAK, before it, said None
+            unsigned t = r.u8(), version = r.u8();
+            if (r.ok && t < track_count && version >= 1) project->tracks[t].engine = EngineKind::Keygroup;
+        } else if (name == "AUDT") { // an AUDIO track (freeze plan F3); TRAK, before it, said None
+            unsigned t = r.u8(), version = r.u8();
+            if (!r.ok || t >= track_count || version < 1) continue;
+            auto& tr = project->tracks[t];
+            tr.engine = EngineKind::Audio;
+            tr.audio.source = InputSource(std::min<unsigned>(r.u8(), unsigned(InputSource::Count) - 1));
+            tr.audio.monitor = TrackMonitor(std::min<unsigned>(r.u8(), unsigned(TrackMonitor::Count) - 1));
+        } else if (name == "PAUD") { // an audio track's pattern's take (freeze plan F3); a later version is skipped
+            if (r.u8() != 1) continue;
+            unsigned t = r.u8(), p = r.u8();
+            AudioRegion g;
+            g.take = uint16_t(r.u16());
+            g.offset = r.u32(); g.frames = r.u32(); g.take_frames = r.u32();
+            g.tempo = uint16_t(std::clamp<unsigned>(r.u16(), 300, 3000));
+            g.gain = int16_t(std::clamp(r.i16(), region_gain_min, region_gain_max));
+            g.fade_in = r.u32(); g.fade_out = r.u32();
+            unsigned flags = r.u8();
+            g.reverse = flags & 1; g.warp = flags & 2;
+            g.mode = WarpMode(std::min<unsigned>(r.u8(), unsigned(WarpMode::Count) - 1));
+            g.semi = int8_t(std::clamp(r.i16(), -24, 24)); g.fine = int8_t(std::clamp(r.i16(), -50, 50));
+            if (!r.ok || t >= track_count || p >= pattern_count || !g.used()) continue;
+            g.take_frames = std::max(g.take_frames, g.offset + g.frames);
+            g.fade_in = std::min(g.fade_in, g.frames); g.fade_out = std::min(g.fade_out, g.frames);
+            patterns->at[t][p].audio = g;
         } else if (name == "PLGT") { // a PLUGIN track; TRAK, before it, said None
             unsigned t = r.u8(), entry = r.u8();
             if (r.ok && t < track_count) {
@@ -1332,17 +1476,30 @@ std::string load_project(const std::vector<uint8_t>& data, Project& target, Patt
             if (!r.done()) { c.sidechain = r.u8() != 0; c.key = uint8_t(r.u8() % track_count); }
             c.key_pad = MasterComp::whole_kit;
             if (!r.done()) { unsigned pad = r.u8(); c.key_pad = pad < sampler_pads ? uint8_t(pad) : MasterComp::whole_kit; }
-        } else if (name == "SMPL") {
-            unsigned n = r.u8();
+        } else if (name == "SMPL" || name == "SMPX") { // SMPX: a slot past the first 64, named in two bytes
+            unsigned n = name == "SMPX" ? r.u16() : r.u8();
             if (n >= sample_slots) continue;
-            r.text(project->samples[n].path, sizeof(project->samples[n].path));
-            r.text(project->samples[n].name, sizeof(project->samples[n].name));
+            auto& ref = project->samples.edit(n);
+            r.text(ref.path, sizeof(ref.path));
+            r.text(ref.name, sizeof(ref.name));
         }
         if (!r.ok) return "damaged section " + name;
     }
     if (!file.ok) return "damaged file";
     for (unsigned t = 0; t < track_count; ++t) // before parity phase 4 a pad's decay ran from its start, and pads were Poly
         if (!pad4[t]) for (auto& pad : project->tracks[t].pads) { pad.decay_from_start = true; pad.mono = false; }
+    for (unsigned t = 0; t < track_count; ++t) { // before Cloud was each pad's, a kit had one: when on, its values onto every pad
+        auto& tr = project->tracks[t];
+        if (tr.engine != EngineKind::Sampler || !tr.params[sampler::Cloud]) continue;
+        const auto& info = engine_info(EngineKind::Sampler);
+        auto value = [&](unsigned p) { return uint8_t(std::clamp<int>(tr.params[p], 0, 100)); };
+        for (auto& pad : tr.pads) {
+            pad.cloud = tr.params[sampler::Cloud] != 0;
+            pad.cloud_position = value(sampler::Position); pad.cloud_size = value(sampler::Size); pad.cloud_density = value(sampler::Density);
+            pad.cloud_scan = value(sampler::Scan); pad.cloud_spread = value(sampler::Spread);
+        }
+        for (unsigned p = sampler::Cloud; p <= sampler::Spread; ++p) tr.params[p] = info.params[p].initial;
+    }
     for (unsigned t = 0; t < track_count; ++t) // PROPHET, CZ and SID as their plug-ins; FM6 and the 909 empty, patterns kept
         for (const auto& synth : legacy_synths)
             if (legacy[t] == synth.engine) open_as_plugin(*project, t, synth, file_version, plugin_states);
@@ -1361,6 +1518,10 @@ std::string load_project(const std::vector<uint8_t>& data, Project& target, Patt
         m.tick = sixteenth * sixteenth_ticks; m.param = e.param; m.pad = e.pad; m.value = e.value;
         pattern.write_motion(m);
     }
+    // From before keygroup tracks: each kit's instrument pad its own keygroup track (model/keygroup_track.h).
+    if (!keygroups_known) migrate_instrument_pads(*project, *patterns);
+    for (unsigned t = 0; t < track_count; ++t) // freeze plan F3: takes only on audio tracks' patterns
+        if (project->tracks[t].engine != EngineKind::Audio) for (auto& p : patterns->at[t]) p.audio = AudioRegion {};
     target = *project;
     target_patterns = *patterns;
     if (version) *version = file_version;
@@ -1438,6 +1599,14 @@ std::vector<uint8_t> save_bank(const BankFile& bank) {
             if (bank.pads[k].used() && bank.pads[k].sending()) { w.u8(k); for (auto send : bank.pads[k].sends) w.u8(send); }
         w.end(at);
     }
+    unsigned clouded = 0; // the pads' clouds, as PCLD
+    for (const auto& pad : bank.pads) clouded += pad.used() && !pad.plain_cloud();
+    if (clouded) {
+        at = w.begin("BCLD");
+        w.u8(clouded);
+        for (unsigned k = 0; k < bank_pads; ++k) if (bank.pads[k].used() && !bank.pads[k].plain_cloud()) write_cloud(w, k, bank.pads[k]);
+        w.end(at);
+    }
     if (layered) {
         at = w.begin("BLYR");
         w.u8(layered);
@@ -1499,6 +1668,9 @@ bool load_bank(const std::vector<uint8_t>& data, BankFile& out) {
                 for (auto& send : sends) send = uint8_t(std::min(r.u8(), 100u));
                 if (r.ok) bank.pads[n % bank_pads].sends = sends;
             }
+        } else if (name == "BCLD") {
+            unsigned clouded = r.u8();
+            for (unsigned k = 0; k < clouded && r.ok; ++k) read_cloud(r, bank.pads.data(), bank_pads);
         } else if (name == "BLYR") {
             unsigned used = r.u8();
             for (unsigned k = 0; k < used && r.ok; ++k) read_layers(r, bank.pads.data(), bank_pads, unsigned(bank.samples.size()));

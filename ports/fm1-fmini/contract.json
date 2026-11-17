@@ -18,7 +18,7 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 104,
+      "default": 108,
       "dynamic_display": true
     },
     {
@@ -62,7 +62,7 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 70,
+      "default": 81,
       "dynamic_display": true
     },
     {
@@ -117,7 +117,7 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 60,
+      "default": 89,
       "dynamic_display": true
     },
     {
@@ -150,7 +150,7 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 0,
+      "default": 81,
       "dynamic_display": true
     },
     {
@@ -1184,7 +1184,7 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 51,
+      "default": 44,
       "dynamic_display": true
     },
     {
@@ -1525,7 +1525,7 @@
       "display": "int",
       "min": 0,
       "max": 120,
-      "default": 60,
+      "default": 45,
       "dynamic_display": true
     },
     {
@@ -1558,7 +1558,7 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 90,
+      "default": 60,
       "dynamic_display": true
     },
     {
@@ -1569,7 +1569,7 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 67,
+      "default": 80,
       "dynamic_display": true
     },
     {
@@ -1580,7 +1580,7 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 40,
+      "default": 47,
       "dynamic_display": true
     },
     {
@@ -1613,7 +1613,7 @@
       "display": "int",
       "min": 0,
       "max": 4,
-      "default": 0,
+      "default": 1,
       "options": [
         "ROOM",
         "HALL",
@@ -1631,7 +1631,7 @@
       "display": "int",
       "min": 0,
       "max": 1,
-      "default": 0,
+      "default": 1,
       "options": [
         "SOFT",
         "TUBE"
@@ -1646,7 +1646,7 @@
       "display": "int",
       "min": 0,
       "max": 127,
-      "default": 64,
+      "default": 70,
       "dynamic_display": true
     },
     {
@@ -1756,7 +1756,7 @@
       "display": "int",
       "min": 0,
       "max": 1,
-      "default": 1,
+      "default": 0,
       "options": [
         "Off",
         "On"

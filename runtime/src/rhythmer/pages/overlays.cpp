@@ -5,6 +5,8 @@
 // rates, the Shift + K cards while Shift is held, and the Exit sheet after a
 // short press of Power; and over all of them the place bar.
 #include "rhythmer/pages/pages.h"
+#include "rhythmer/shell/levels_keys.h"
+#include "rhythmer/shell/lesson.h"
 #include "rhythmer/shell/sample_mode.h"
 #include "rhythmer/engine/arp.h"
 #include "rhythmer/pages/common.h"
@@ -73,12 +75,35 @@ void draw_overlays(Paint& p, const Snapshot& s) {
     }
     if (!sheet && s.ui.ask != UiState::Ask::None) draw_ask_sheet(p, s); // B1 Cancel / B3 Do it before an erase
     if (!sheet && s.ui.ask == UiState::Ask::None && !tracks && !seq && !sound) draw_fader_header(p, s);
+    // 16 Levels' FILE or SET (shell/levels_keys.h), or, while it is held with Chords on, what each pad plays.
+    if (!sheet && !tracks && !seq && !sound && s.ui.ask == UiState::Ask::None && !s.ui.menu) {
+        if (s.ui.levels_sheet) draw_levels_sheet(p, s);
+        else if (levels_held_cards(s.project, s.ui) && levels_chords_on(s.track()) && (s.ui.levels_used || s.now - s.ui.levels_down >= levels_hold_ms))
+            draw_levels_chords(p, s);
+    }
     draw_notice(p, s); // over the fader's line: a copy in hand or what an undo did comes first
+    if (!sheet && s.ui.menu && s.ui.ask == UiState::Ask::None) draw_menu(p, s); // the MENU over the page (shell/menu.h)
+    else if (!sheet && !tracks && !seq && !sound && s.ui.ask == UiState::Ask::None && !s.ui.shift && s.now - s.ui.key_list_at < key_list_ms) draw_key_list(p, s);
     if (s.ui.name.open()) draw_name_sheet(p, s);
     if (s.ui.exit_open) draw_exit_sheet(p, s);
     else if (s.ui.shift && !s.ui.shift_used && !s.ui.name.open()) draw_shift_layer(p, s);
     if (!sheet && !tracks && !seq && !sound && repeat_keys(s.project, s.ui)) draw_repeat_keys(p, s);
+    if (s.ui.lesson && !s.ui.menu && s.ui.ask == UiState::Ask::None && !s.ui.name.open()) draw_lesson(p, s);
     draw_place_bar(p, s); // over everything: where the music is stays in view
+}
+
+// A lesson's step on a control with no light (shell/lesson.h): its soft key, under the key itself, or its knob
+// card, over the knob, pulses.
+void draw_lesson(Paint& p, const Snapshot& s) {
+    const auto ring = colour::text.withAlpha((s.now / 250) % 2 ? 1.0f : 0.3f);
+    if (int key = lesson_soft_key(s.ui); key >= 0) {
+        const float w = zone::width / 3.0f;
+        p.ring(key * w + 1.5f, zone::soft_y + 1.5f, w - 3, zone::soft_h - 3, ring, 4, 2);
+    }
+    if (int card = lesson_knob_card(s.ui); card >= 0) {
+        const float gap = 4, w = (zone::width - 2 * zone::pad - 2 * gap) / 3.0f;
+        p.ring(zone::pad + card * (w + gap) - 1, zone::knobs_y + 1, w + 2, zone::knobs_h - 4, ring, 5, 2);
+    }
 }
 
 // Note Repeat on: B1-B3 are its rate, 1/8, 1/16, 1/32, and with Shift held their triplets; B1 and B3 again 1/4 and
@@ -86,7 +111,7 @@ void draw_overlays(Paint& p, const Snapshot& s) {
 void draw_repeat_keys(Paint& p, const Snapshot& s) {
     bool shift = s.ui.shift;
     int active = -1;
-    unsigned now = s.track().arp_rate;
+    unsigned now = s.track().repeat_rate;
     SoftKeys keys {{}, -1, colour_of(s)};
     for (int k = 0; k < 3; ++k) {
         unsigned rate = repeat_shown(now, k, shift);
@@ -138,6 +163,24 @@ void draw_fader_header(Paint& p, const Snapshot& s) {
 
 // Over the header: copying a pad (until it is done), or for a moment what
 // an undo, redo, delete or copy did.
+// A soft key that steps through several pages: their names under the key for a moment after a press, the open
+// one lit, so a press again is not a guess (the dots under the key only count them).
+void draw_key_list(Paint& p, const Snapshot& s) {
+    std::array<juce::String, 6> names {};
+    unsigned at = 0, key = s.ui.key_list_key % 3, n = key_pages(s, key, names, at);
+    if (!n) return;
+    constexpr float row = 15;
+    float column = zone::width / 3.0f, w = column - 8, x = key * column + 4, y = zone::header_y + 1, h = n * row + 6;
+    auto c = colour_of(s);
+    p.fill(x, y, w, h, colour::raised, 4);
+    p.ring(x, y, w, h, colour::dim, 4, 1);
+    for (unsigned k = 0; k < n; ++k) {
+        float ry = y + 3 + k * row;
+        if (k == at) p.fill(x + 2, ry, w - 4, row, c, 3);
+        p.text(names[k], x + 8, ry, w - 12, row, p.fit(names[k], caps_text(k == at ? colour::bg : colour::sec), w - 12, type::floor));
+    }
+}
+
 void draw_notice(Paint& p, const Snapshot& s) {
     juce::String text;
     bool copying = s.ui.copying != UiState::Copying::Off;
@@ -151,7 +194,9 @@ void draw_notice(Paint& p, const Snapshot& s) {
         header(p, h);
         return;
     }
-    if (s.ui.copying == UiState::Copying::Pads) {
+    if (s.ui.scene_capture && s.ui.page == PageId::Scenes) {
+        text = "Capture: pick a sequence"; // Scenes' Shift + B2: a pad takes what plays
+    } else if (s.ui.copying == UiState::Copying::Pads) {
         char label[4]; pad_label(unsigned(std::max<int>(s.ui.copy_from, 0)), label);
         text = s.ui.copy_from < 0 ? juce::String("Copy: pick a pad") : "Copy " + juce::String(label) + ": pick where";
     } else if (s.ui.copying == UiState::Copying::Patterns) {
@@ -180,7 +225,8 @@ void draw_notice(Paint& p, const Snapshot& s) {
     header(p, h);
 }
 
-// A project loading (Context::send_reload): its name, and a bar of its samples as they come in.
+// A project loading (Context::send_reload): its name, a bar of what is in, a row for its samples and one for its
+// instruments' files with how many of each are in, and the name of the one being read.
 void draw_loading_sheet(Paint& p, const Snapshot& s) {
     p.fill(0, 0, zone::width, zone::height, colour::bg); // the knob strip too: K1-K3 set nothing while it loads
     Header h = header_of(s);
@@ -191,14 +237,27 @@ void draw_loading_sheet(Paint& p, const Snapshot& s) {
     juce::String name = juce::String::fromUTF8(s.project.name, int(strnlen(s.project.name, sizeof s.project.name)));
     if (name.isEmpty()) name = "NEW PROJECT";
     auto title = p.fit(name, plain(colour::text, type::title, Weight::SemiBold), w, type::body);
-    p.text(name, x, zone::picture_y + 28, w, 28, title, juce::Justification::centred);
-    unsigned total = s.ui.loading_total, in = total - std::min<unsigned>(s.ui.loading_left, total);
-    float fill = total ? float(in) / float(total) : 0.0f;
-    gauge(p, x, zone::picture_y + 78, w, fill, colour::amber, 4);
-    if (!total) return;
-    icon(p, Icon::Wav, x, zone::picture_y + 92, 14, colour::mid);
-    p.text(juce::String(in) + " / " + juce::String(total), x, zone::picture_y + 92, w, 14, caps_text(colour::sec),
-           juce::Justification::centredRight);
+    p.text(name, x, zone::picture_y + 8, w, 28, title, juce::Justification::centred);
+    const unsigned total = s.ui.loading_total;
+    gauge(p, x, zone::picture_y + 46, w, total ? float(s.ui.loading_bar) / 1000.0f : 0.0f, colour::amber, 6);
+    float y = zone::picture_y + 64;
+    auto row = [&](Icon glyph, const char* label, unsigned in, unsigned of) {
+        if (!of) return;
+        const bool done = in >= of;
+        icon(p, done ? Icon::Check : glyph, x, y + 2, 14, done ? colour::play : colour::mid);
+        p.text(label, x + 22, y, w - 22, 18, caps_text(colour::sec));
+        p.text(juce::String(std::min(in, of)) + " / " + juce::String(of), x, y, w, 18, caps_text(done ? colour::play : colour::text),
+               juce::Justification::centredRight);
+        y += 20;
+    };
+    row(Icon::Wav, "SAMPLES", s.ui.loading_samples_in, s.ui.loading_samples);
+    row(Icon::Keyboard, "INSTRUMENT FILES", s.ui.loading_files_in, s.ui.loading_files);
+    // The one being read now, by its name in the project.
+    if (s.ui.loading_slot >= 0 && s.ui.loading_left) {
+        const auto& ref = s.project.samples[unsigned(s.ui.loading_slot) % sample_slots];
+        juce::String reading = juce::String::fromUTF8(ref.name, int(strnlen(ref.name, sizeof ref.name))).toUpperCase();
+        if (reading.isNotEmpty()) p.text(reading, x, y + 6, w, 14, p.fit(reading, caps_text(colour::mid), w, type::floor), juce::Justification::centred);
+    }
 }
 
 void draw_exit_sheet(Paint& p, const Snapshot& s) {

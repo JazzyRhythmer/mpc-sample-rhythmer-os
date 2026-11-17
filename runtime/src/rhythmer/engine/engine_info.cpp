@@ -30,6 +30,11 @@ const EngineInfo& engine_info(EngineKind kind) {
     static const Sound kits[] {{"NEW KIT", {{{-1, 0}}}}};
     static const EngineInfo sampler {EngineKind::Sampler, "SAMPLER", true, kit_params, sampler::Count, nullptr, 0,
                                      {sampler::Tune, sampler::Filter, sampler::Decay}, kits, 1};
+    // KEYGROUP: the sampler with one sound, an instrument or a WAV, played by MIDI notes; its parameters the kit's.
+    // Not offered among the engines yet (round K2 gives it its new-track choice and Stage pages).
+    static const Sound keygroups[] {{"NEW KEYGROUP", {{{-1, 0}}}}};
+    static const EngineInfo keygroup {EngineKind::Keygroup, "KEYGROUP", false, kit_params, sampler::Count, nullptr, 0,
+                                      {sampler::Tune, sampler::Filter, sampler::Decay}, keygroups, 1};
     // MIDI (docs/MIDI_TRACKS.md): where the track's notes go out; bank and program (Off sends none); 24 knob slots
     // (the first three on Stage's CC page), each slot's address; pressure, bend, delay, pads, an input as its sound,
     // SysEx on load, each pattern's own program (roadmap P4, M2-M5).
@@ -101,10 +106,23 @@ const EngineInfo& engine_info(EngineKind kind) {
         {"KIND 3", 0, int16_t(MacroKind::End) - 1, 0, Format::Number}};
     static const EngineInfo plugin {EngineKind::Plugin, "PLUGIN", true, plugin_params, plugin_track::Count, nullptr, 0, {-1, -1, -1},
                                     plugin_sounds, 1, nullptr, 0, false, &plugin_stage};
+    // AUDIO (freeze plan F3, model/audio_track.h): records into its patterns and plays their takes; no values of its own.
+    // Offered by the new-track picker, not among the engines.
+    static const Sound audio_sounds[] {{"AUDIO", {{{-1, 0}}}}};
+    // B1 the pattern's take (CLIP, FADES, WARP), B2 what records (INPUT), B3 the track's mix, sends and effects.
+    static const StageGroups audio_stage {{{
+        {{{{"CLIP", StageKind::Clip, StagePicture::Region}, {"FADES", StageKind::Fades, StagePicture::Region},
+           {"WARP", StageKind::Warp, StagePicture::Region}}}, 3},
+        {{{{"INPUT", StageKind::AudioInput, StagePicture::Input}}}, 1},
+        {{{stage_mix, stage_sends, stage_fx}}, 3},
+    }}};
+    static const EngineInfo audio {EngineKind::Audio, "AUDIO", false, nullptr, 0, nullptr, 0, {-1, -1, -1}, audio_sounds, 1, nullptr, 0, false, &audio_stage};
     switch (kind) {
+    case EngineKind::Audio: return audio;
     case EngineKind::Midi: return midi;
     case EngineKind::Plugin: return plugin;
     case EngineKind::Sampler: return sampler;
+    case EngineKind::Keygroup: return keygroup;
     default: return none;
     }
 }
@@ -130,6 +148,14 @@ const StageGroups& stage_groups(EngineKind kind) {
         {{{stage_arp, stage_chord}}, 2},
         {{{{"EDIT", K::OpenEdit, P::Bars}}}, 1},
     }}};
+    // A keygroup, on its one sound: B1 the sound (TRIM, or ZONES on an instrument), its tune, envelopes and filter;
+    // B2 how it plays (one shot or held, mono or poly), the arp and chord; B3 the track's mix, sends and effects.
+    static const StageGroups keygroup {{{
+        {{{{"TRIM", K::Trim, P::Wave}, {"TUNE", K::Tune, P::Wave}, {"AMP ENV", K::AmpEnv, P::Wave}, {"FILTER", K::Filter, P::Wave},
+           {"FILT ENV", K::FiltEnv, P::Wave}}}, 5},
+        {{{{"PLAY", K::Play, P::Wave}, stage_arp, stage_chord}}, 3},
+        {{{stage_mix, stage_sends, stage_fx}}, 3},
+    }}};
     // An empty track: what it becomes.
     static const StageGroups empty {{{
         {{{{"SYNTH", K::NewSynth, P::Engines}, {}, {}}}, 1},
@@ -141,6 +167,7 @@ const StageGroups& stage_groups(EngineKind kind) {
     case EngineKind::None: return empty;
     case EngineKind::Sampler: return kit;
     case EngineKind::Midi: return midi;
+    case EngineKind::Keygroup: return keygroup;
     default: {
         const auto* own = engine_info(kind).stage;
         return own ? *own : nothing;

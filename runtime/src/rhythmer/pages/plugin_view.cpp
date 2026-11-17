@@ -62,8 +62,8 @@ void draw_plugin_view(Paint& p, const Snapshot& s, unsigned entry, float top) {
     // Six rows: the three in hand raised on one panel, ticked in their knobs' colours.
     if(panel.preset[0]) {
         auto style=plain(colour::text,type::body,Weight::SemiBold);
-        auto caption=juce::String::fromUTF8(panel.preset);if(panel.focused_pad>=0&&panel.row==2){const bool modified=caption.endsWith(" *");caption=caption.upToFirstOccurrenceOf(" / Pad ",false,false)+" / ALL PADS"+(modified?" *":"");}
-        else if(panel.focused_pad>=0&&panel.row>=3){
+        auto caption=juce::String::fromUTF8(panel.preset);if(panel.focused_pad>=0&&panel.row>=2&&panel.params[0].used&&juce::String(panel.params[0].name).startsWith("KIT ")){const bool modified=caption.endsWith(" *");caption=caption.upToFirstOccurrenceOf(" / Pad ",false,false)+" / ALL PADS"+(modified?" *":"");}
+        else if(panel.focused_pad>=0&&panel.row>=2){
             auto sound=caption.fromFirstOccurrenceOf(" / Pad ",false,false).fromFirstOccurrenceOf(": ",false,false);
             auto source=juce::String::fromUTF8(panel.design_source);if(source.isEmpty())source="Empty";
             caption="P"+juce::String(panel.focused_pad+1).paddedLeft('0',2)+" / "+source;
