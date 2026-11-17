@@ -153,7 +153,7 @@ A normal instrument plays **one sound across pitches**. It does not assign a dif
 
 ![FMini-1: source sound-design controls](../assets/manual/020-fmini-edit.png)
 
-![User Sound: choose a slot, name it and save](../assets/manual/020-fmini-save.png)
+![User Sound: choose a slot and save](../assets/manual/020-fmini-save.png)
 
 
 
