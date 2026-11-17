@@ -18,3 +18,7 @@ Scope: RHYTHMER OS for MPC Sample. No MPC 3 plug-in changes or public deployment
 - Preview: 511 pages, zero text issues. Manual and first-groove page order and first two screen captures updated locally.
 
 These are software/native-host results. Physical-device behavior remains to be confirmed. No new public release or installer upload was performed.
+
+## FX command pressure
+
+Live and recorded effect commands preserve the sounding chop gain. Their pad/MIDI velocity does not act as a second master volume. The first live hold captures the current chop level; overlapping holds retain it. Chop MIDI velocity and the original effect envelopes remain unchanged. Comparing the same repeat command at velocities 32 and 127 reproduced a -11.973 dB difference before correction and 0 dB after it. The 16-command sanitizer regression now compares different pad pressures as well as overlapping holds and sequencer events.

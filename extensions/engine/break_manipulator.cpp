@@ -31,11 +31,14 @@ void BreakManipulator::sources(const SampleData* a,const SampleData* b){
     // The host retires source data only after sample_gone/silence on the audio task.
     stop();loops[0]=a;loops[1]=b;bind();
 }
-void BreakManipulator::live_note(int key,int velocity){
+void BreakManipulator::live_note(int key,int /*velocity*/){
     if(!enabled()||key<0||key>=16)return;
+    // FX pads are switches, not a second instrument velocity control.
+    // Preserve the sounding chop level across overlapping live commands.
+    const uint8_t level=live_count?live_velocity[live_order[live_count-1]]:uint8_t(std::clamp(std::lround(gain*127.f),0l,127l));
     // A repeated down updates priority, without making an unbalanced gate.
     for(unsigned i=0;i<live_count;++i)if(live_order[i]==key){for(unsigned j=i+1;j<live_count;++j)live_order[j-1]=live_order[j];--live_count;break;}
-    live_order[live_count++]=uint8_t(key);live_velocity[unsigned(key)]=uint8_t(std::clamp(velocity,1,127));
+    live_order[live_count++]=uint8_t(key);live_velocity[unsigned(key)]=level;
     state->jungle_roll(unsigned(key));state->jungle_play(1);
 }
 void BreakManipulator::live_off(int key){
@@ -53,7 +56,7 @@ void BreakManipulator::note(int key,int velocity){
         return;
     }
     if(key==18){param(1,0);param(2,0);state->jungle_straight();return;}
-    if(key>=0&&key<16){gain=std::clamp(velocity,1,127)/127.f;state->jungle_play(1);state->jungle_sequence_note(unsigned(key+16));return;}
+    if(key>=0&&key<16){state->jungle_play(1);state->jungle_sequence_note(unsigned(key+16));return;}
     int slice=key-int(sampler_first_note+bank_*16);if(slice<0||slice>=16)return;
     gain=std::clamp(velocity,1,127)/127.f;state->jungle_play(1);state->jungle_sequence_note(unsigned(slice));
 }

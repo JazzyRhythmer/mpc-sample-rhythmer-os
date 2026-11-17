@@ -25,7 +25,7 @@
   "control_noop_contexts": 81,
   "source_control_contracts": 22,
   "missing_notices": 0,
-  "runtime_sha256": "654c2ff5fc74b0821fb017d27f2cf7b750d661f42dc6aa71ba992c2a54b0bef0",
+  "runtime_sha256": "447949e4d306621edc6948543bb18dc5a5dbed2b1cad46c1f1d2309af84b5418",
   "files": {
     "config/acid-aphex-presets.json": "737b897be8c941d751b29233ed13d42e9695677cf984d6f3ae7dde951db7bd1a",
     "config/animation-profiles.json": "31d31546273ddc16b7d1732f18d903af4a50cb4e66abf0109d10bfa2968a0282",
@@ -55,9 +55,9 @@
     "config/tr-mpc-drum-map.json": "03b2a7a6a9f2f8470d558895aa22353274d30ca7eed836755d2b22094bf8fec7",
     "config/update-public-key.txt": "1e54c848e19e113f0beb040d0978610c09d16cbe4509aa20a355485f83869eab",
     "config/upstream-backports.json": "eca8142041cd7cc2d304e122685fbb5169f8203cdf03f6ab436109a49ebf94f0",
-    "config/upstream-integration.lock.json": "30cdc890320b3b467e4463559f4949fcb78c7e54556a81373ecf07dd58e023f5",
+    "config/upstream-integration.lock.json": "a06a29ec5bb51888ce5d102c5f5aaf14209b51aeb7e5fdc347f54aaa7d45a9d4",
     "config/upstream-stems.lock.json": "31dbe8ab5b3e2524ed0546c82814a67d7a08decd161cc9fba45fd6cc3ffc2d17",
-    "extensions/engine/break_manipulator.cpp": "05dadf7cad8905165c5c20c2cf0f26771b50f2a6e706c42fa986e48b0ca23ede",
+    "extensions/engine/break_manipulator.cpp": "be4992cb9168d54bcc6bd8ec16d2fd5ac9bd9a231af60a46ef0dc137aa3a1ddd",
     "extensions/engine/break_manipulator.h": "5f89082e5ca8ea570e5edbb4dec1f08f3ed01dbd302f28a494cb8b61b25ab677",
     "extensions/engine/break_sequence_hold.inc": "423a9c9d5fb1a5d7156f9f3c62115ecd12a857058612ca9a4b01990e34b49f83",
     "extensions/model/acid_gen.cpp": "a3ca875dd4c5ad63dd3301c1b1440fcfe8dc6aedc04023575698c8a5dfd29815",
@@ -83,7 +83,7 @@
     "extensions/plugin/sound_rack.cpp": "1723ed0ed586d26d81ee63b001dfd076aa7cf54232977ea1c5d6a0fa4607b86b",
     "extensions/plugin/sound_rack.h": "cde79edf3647cedea9d18570d69c78dfc1b6bcda2dd560c24abe716c4285f503",
     "extensions/runtime-v020.patch": "67d1b7cfa9c8e6984e6216bb01faf736c20b3ff5522327bf18d0c3b376a53fcf",
-    "extensions/runtime-v030.patch": "3332e580f72609e936559e2e0a77253abe04357c8bfbaf82338aee6e27285bee",
+    "extensions/runtime-v030.patch": "525d5152cf10c2ce3c4a719fefdea5e7de0745618450fab8e097531c3be1fe69",
     "extensions/shell/break_acid_check.inc": "19ffbb67c0e4c638dda4f9a6ef0e295c905e5f5b7627454884fde8c1f037c9c6",
     "extensions/shell/break_p1_check.h": "98cc4dabf11a59639241f607eb3732827a1fc036156bb8aa3adc9c738e99a89f",
     "extensions/shell/chord_gen_check.inc": "4d2d52662045c556d27e4d28ad1cf9a2f9089f57476d17c0a579684061ed35a3",
@@ -206,7 +206,7 @@
     "tests/acid_reference.c": "d43eadf647b60434e2c31d11b268e7e5a4daccf53dab25cd541be8035592ae7e",
     "tests/authored_presets.inc": "9fe6c406a4443127b06b69d1e84c6417ac6be4209a851bc3ac94b30d748fa589",
     "tests/break_acid.cpp": "a540215238e3ff707911e88985f6ad27ba685849f4be72b2a2d3954fd231fd6c",
-    "tests/break_hold.cpp": "bb76d4768bcce9e111e41982f9016df40f80b95bc5a688938598b83f0144eab4",
+    "tests/break_hold.cpp": "9e0f60a580d94a79618bc06211783147abf04a3e2f777250c9d2e19929d2adaf",
     "tests/break_reference.c": "eeeba7095dd130aca0cf6e57f92e90a0285fc9e8b6e1528342ef2df9f4c16d98",
     "tests/chord_gen.cpp": "81b94bc6567b46a6854f4b27a295ed7e51e12ee76835e1d76cf158fb58c41e5f",
     "tests/drumx.cpp": "e30c310a6e4bf5439d6d099906da4d171de9004bed01efb5345cec9f7587a9d1",
@@ -253,7 +253,7 @@
     "docs/BETA_READINESS.md": "c854fdb76b575457cf6acb1144a5ca8d3de475d681ec8231f0a9d3f5fd8545bb",
     "docs/BREAK_ACID_GUIDE_KO.md": "f51cbc6a6a5418725fb0e2a7199eb0bdd4db2eb6ba859d844aca3f6bd98acff8",
     "docs/BREAK_BETA_TEST_CHECKLIST.md": "5eb7aa6fd156ad021ae3fe7a6230131b3c25ac061e07e140fa5725da7e79f178",
-    "docs/BREAK_HOLD_QA.md": "936fe8432711209cd29ddd25faca5a5347c41cc678be6b68e398e6ecc02395c2",
+    "docs/BREAK_HOLD_QA.md": "1be818e0ac584ace1bdd836900d28f084ccc7e61d7b28aa5bc47d7b53a85ea84",
     "docs/BREAK_LIBRARY_UX_PLAN.md": "5a37862d15d972ed4eeb053e4361bf23dee51d3372616e334906d359a41c5b3d",
     "docs/BREAK_P0_QA.md": "44e19c1d860705c2a459ab7287756bfae2c1ddfea2be28217bae3323284e4439",
     "docs/BREAK_P1_QA.md": "f171f44575a1aff5d89606b604b1d2727ab746694ec7768690012a71552d8770",
@@ -662,6 +662,14 @@
         "patch-replay.log": "c879849d3a0d89cd47517a59edc3b698b67fda0a4d92965f0c758194c13c5152"
       },
       "host_delta_sha256": "cca3ab911daee307a8b2dcca554ea8aee08de1631e9f6f0a4373151260b4c2b3"
+    },
+    {
+      "scope": "FX command pressure is level-neutral for live and recorded commands; chop velocities and original DSP envelopes preserved",
+      "previous_runtime_sha256": "654c2ff5fc74b0821fb017d27f2cf7b750d661f42dc6aa71ba992c2a54b0bef0",
+      "runtime_sha256": "447949e4d306621edc6948543bb18dc5a5dbed2b1cad46c1f1d2309af84b5418",
+      "evidence_sha256": "e66b29cc16b8b0297782f3e2371910962b1dd06fbdc6c6e2448d7cc3dfd55de2",
+      "tests": "16 effects live/recorded ASan/UBSan, original audio reference, GEN shell, 384 Break matrix cases, audio self-test; earlier 50-test full suite retained as baseline",
+      "software_only": true
     }
   ]
 }

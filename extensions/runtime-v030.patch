@@ -2439,7 +2439,7 @@
 +}
 --- /dev/null
 +++ b/src/rhythmer/engine/break_manipulator.cpp
-@@ -0,0 +1,88 @@
+@@ -0,0 +1,91 @@
 +// SPDX-License-Identifier: GPL-3.0-only
 +// Per-track state around the pinned FM-1 Amenity/Jungle DSP. No audio allocations.
 +#include "rhythmer/engine/break_manipulator.h"
@@ -2473,11 +2473,14 @@
 +    // The host retires source data only after sample_gone/silence on the audio task.
 +    stop();loops[0]=a;loops[1]=b;bind();
 +}
-+void BreakManipulator::live_note(int key,int velocity){
++void BreakManipulator::live_note(int key,int /*velocity*/){
 +    if(!enabled()||key<0||key>=16)return;
++    // FX pads are switches, not a second instrument velocity control.
++    // Preserve the sounding chop level across overlapping live commands.
++    const uint8_t level=live_count?live_velocity[live_order[live_count-1]]:uint8_t(std::clamp(std::lround(gain*127.f),0l,127l));
 +    // A repeated down updates priority, without making an unbalanced gate.
 +    for(unsigned i=0;i<live_count;++i)if(live_order[i]==key){for(unsigned j=i+1;j<live_count;++j)live_order[j-1]=live_order[j];--live_count;break;}
-+    live_order[live_count++]=uint8_t(key);live_velocity[unsigned(key)]=uint8_t(std::clamp(velocity,1,127));
++    live_order[live_count++]=uint8_t(key);live_velocity[unsigned(key)]=level;
 +    state->jungle_roll(unsigned(key));state->jungle_play(1);
 +}
 +void BreakManipulator::live_off(int key){
@@ -2495,7 +2498,7 @@
 +        return;
 +    }
 +    if(key==18){param(1,0);param(2,0);state->jungle_straight();return;}
-+    if(key>=0&&key<16){gain=std::clamp(velocity,1,127)/127.f;state->jungle_play(1);state->jungle_sequence_note(unsigned(key+16));return;}
++    if(key>=0&&key<16){state->jungle_play(1);state->jungle_sequence_note(unsigned(key+16));return;}
 +    int slice=key-int(sampler_first_note+bank_*16);if(slice<0||slice>=16)return;
 +    gain=std::clamp(velocity,1,127)/127.f;state->jungle_play(1);state->jungle_sequence_note(unsigned(slice));
 +}
@@ -12760,7 +12763,7 @@
 +}
 --- /dev/null
 +++ b/tests/break_hold.cpp
-@@ -0,0 +1,33 @@
+@@ -0,0 +1,41 @@
 +// SPDX-License-Identifier: GPL-3.0-only
 +#include "rhythmer/engine/break_manipulator.h"
 +#include <array>
@@ -12774,7 +12777,7 @@
 + rhythmer::SampleData loop;loop.frames=176400;loop.left.resize(loop.frames);loop.right.resize(loop.frames);for(unsigned n=0;n<loop.frames;n++)loop.left[n]=loop.right[n]=.25f*std::sin(n*.037f);
 + auto setup=[&](BreakManipulator&m){m.configure(2,0);m.sources(&loop,&loop);m.transport(true,0);m.note(36,100);render(m);};
 + for(unsigned fx=0;fx<16;fx++){
-+  BreakManipulator a,b;setup(a);setup(b);a.live_note(fx,100);b.live_note(fx,100);render(a,100);render(b,100);
++  BreakManipulator a,b;setup(a);setup(b);a.live_note(fx,25);b.live_note(fx,127);render(a,100);render(b,100);
 +  double energy=0;
 +  for(unsigned block=0;block<1200;block++){
 +   if(block%23==0){a.note(36+(block/23)%16,25+(block%100));a.off(36+(block/23+15)%16);}
@@ -12786,13 +12789,21 @@
 +  }
 +  check(energy>.000001,"each held performance effect has audio");a.live_off(fx);a.release();render(a,4);check(!(a.activity()&6),"release clears live activity");
 + }
++ // Recorded FX velocity likewise must not become a second master gain.
++ for(unsigned fx=0;fx<16;fx++){
++  BreakManipulator a,b;setup(a);setup(b);a.note(fx,25);b.note(fx,127);
++  for(unsigned block=0;block<200;block++){
++   float al[128]{},ar[128]{},bl[128]{},br[128]{};a.render(al,ar,128,44100);b.render(bl,br,128,44100);
++   for(unsigned n=0;n<128;n++)check(std::fabs(al[n]-bl[n])<.00001f,"recorded FX velocity leaves source level unchanged");
++  }
++ }
 + // Recorded holds themselves also survive incoming chop notes.
 + {BreakManipulator m;setup(m);m.note(2,100);render(m);for(unsigned n=0;n<300;n++){m.note(36+n%16,100);m.off(36+(n+15)%16);render(m);check(m.activity()&4,"recorded STRETCH survives chops");}m.off(2);m.release();render(m);check(!(m.activity()&4),"recorded release");}
 + // Last held live command wins, and releasing it returns to the previous hold.
 + {BreakManipulator m;setup(m);m.live_note(2,110);render(m,100);m.live_note(0,100);render(m,100);m.live_off(0);render(m,100);check(m.activity()&4,"fallback to still-held STRETCH");m.live_off(2);m.release();render(m);check(!(m.activity()&6),"no stuck overlap");}
 + // Repeated downs are idempotent; one physical up is sufficient.
 + {BreakManipulator m;setup(m);for(unsigned n=0;n<300;n++)m.live_note(2,100);m.live_off(2);m.release();render(m);check(!(m.activity()&6),"duplicate down has no unbalanced gate");}
-+ std::puts("BREAK_HOLD_PASS effects=16 live_vs_sequence=isolated chops_do_not_cancel=ok overlap=ok duplicate_down=ok release=ok");
++ std::puts("BREAK_HOLD_PASS effects=16 command_pressure=level_neutral live_vs_sequence=isolated chops_do_not_cancel=ok overlap=ok duplicate_down=ok release=ok");
 +}
 --- /dev/null
 +++ b/tests/break_reference.c
