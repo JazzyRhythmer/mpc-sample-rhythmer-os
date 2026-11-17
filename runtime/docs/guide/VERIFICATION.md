@@ -13,3 +13,11 @@ Screen checks render 504 states at native and doubled resolution for each of eig
 RHYTHMER's Menu maps SHIFT + encoder push to B1 BACK; plain push still selects. The engine filter controls remain on PRESETS and stay linked to EDIT. Separate DJ FILTER / ECHO / SPACE macros remain on PERFORM. Native pad lessons retain their expected TRIM/TUNE order without removing the normal filter-first SOUND page.
 
 Install the full SD ZIP for all plug-ins, kits and presets. UPDATE contains the app only. Corresponding-source companions, licences, checksums and the signed autorun manifest accompany the installation. Physical-device installation, recovery, listening, controls, timing, latency, internal-drive access, USB/UVC and long-session stability require owner beta testing. Offline software checks do not certify these behaviors.
+
+## Illustrated manual and empty-pad navigation
+
+The English website manual is a single illustrated document with First Groove video/guide, essential controls, system structure and chapters. Legacy language/control/map URLs redirect to this document. First Groove uses Rhythmer Kit, FMini-1, FM-106, Acid Engine and Break Engine examples.
+
+A short encoder push on a normal sampler track’s empty SOUND/TRIM pad opens its sample browser even when every pad is empty. SAMPLE SELECT and SAMPLE RECORD retain the upstream direct browser/input-recording paths. True EMPTY tracks retain type cards; TRACKS → TRACK SETUP changes an existing track’s type. Loaded pads, layered pads, other editor pages, held encoder MENU, recording and Freeze protections retain their existing behavior.
+
+Focused verification: 311 track-workflow assertions, 1,248 navigation contexts / 9,538 assertions, audio self-test, native web-server tests and embedded-guide link checks. The earlier broad engine/audio and three regression receipts remain tied to their recorded runtimes; this UI/documentation revision does not change DSP or engine presets. Physical-device behavior remains unverified.

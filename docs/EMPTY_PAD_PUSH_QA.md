@@ -8,7 +8,7 @@ Actual surface-button dispatch confirmed that an empty sampler SOUND face cycles
 
 ## Implemented scope
 
-See [Track workflow](TRACK_WORKFLOW.md#empty-pad-encoder-push). Empty-kit classification checks all 128 pads and secondary layers. Only ordinary sampler SOUND/TRIM intercept empty-pad Push. SAMPLE KIT in the direct type picker opens its first-sample browser. Other editor clicks and Break retain their existing roles.
+See [Track workflow](TRACK_WORKFLOW.md#empty-pad-encoder-push). Both an entirely empty sample kit and a selected empty pad in a populated sample kit open the sample browser. Secondary layers count as playable pad content. Only ordinary sampler SOUND/TRIM intercept empty-pad Push. Track type changes remain in TRACKS → TRACK SETUP → TRACK TYPE. Other editor clicks and Break retain their existing roles.
 
 ## Evidence
 

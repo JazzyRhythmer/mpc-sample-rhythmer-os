@@ -64,9 +64,9 @@ Shift + Push cancels a confirmation dialog even if its affirmative action is sel
 
 On a normal sampler track's **SOUND / TRIM** face:
 
-- If no primary sample or secondary layer exists on any of its 128 pads (banks A–H), Push opens **TRACK TYPE**. PLUG-IN opens the native instrument picker; SAMPLE KIT opens the sample browser; MIDI and EMPTY use the existing type-change operation. Opening or cancelling this choice leaves the track and patterns untouched.
-- If another pad has a sample or layer, Push opens **SAMPLES** for the selected empty pad. Pick a file and Push to load it there. The existing browser's pad selection remains active: hitting another pad changes the load destination. B1 goes up a folder or returns to the source face at the root. Shift + Push closes the browser directly to its caller.
-- The face displays **PUSH: TRACK TYPE** or **PUSH: LOAD SAMPLE**. A pad with secondary layers is playable content, even if its primary sample is empty, so its native click is retained.
+- Push opens **SAMPLES** for the selected empty pad, even when every pad in banks A–H is empty. It does not open TRACK TYPE from a pad-owned page. Use **TRACKS → B1 TRACK SETUP → TRACK TYPE** to change the sampler track's role.
+- The sample browser keeps the selected pad as its destination. Pick a file and Push to load it there; hitting another pad changes the load destination. B1 goes up a folder or returns at the root; Shift + Push closes the browser directly to its caller.
+- The face displays **PUSH: LOAD SAMPLE**. The physical **SAMPLE SELECT** button opens the same browser; **SAMPLE RECORD** opens input recording. A pad with secondary layers retains its native click.
 - Loaded pads retain knob-focus cycling. Legacy TUNE/ENV/LAYERS page-map clicks, other Stage pages, plug-in controls, Break loop loading, Note Repeat controls and Shift + Push Back keep their existing jobs.
 - Recording and frozen-track guards apply before the new shortcut opens. Track changes from SAMPLES follow the newly selected track and dismiss the old browser, as elsewhere.
 

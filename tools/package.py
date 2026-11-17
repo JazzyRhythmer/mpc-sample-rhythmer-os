@@ -195,7 +195,7 @@ def assemble(stage_only=False):
     for path in offline.rglob('*'):
         if path.is_file():files['Documentation/'+path.relative_to(offline).as_posix()]=path.read_bytes()
     files['Documentation/LICENSE.txt']=(ROOT/'vendor/rhythmer/LICENSE').read_bytes()
-    for name in ('MANUAL_020_EN.md','FIRST_GROOVE_020_EN.md','FIRST_GROOVE_020_KO.md','QUICK_REFERENCE_020_EN.md','SYSTEM_MAP_020_EN.md','INSTALL_020_EN.md'):
+    for name in ('MANUAL_020_EN.md','FIRST_GROOVE_020_EN.md','QUICK_REFERENCE_020_EN.md','SYSTEM_MAP_020_EN.md','INSTALL_020_EN.md'):
         files['Documentation/'+name]=(ROOT/'docs'/name).read_bytes()
     files['THIRD_PARTY_NOTICES.md'] = (ROOT / 'THIRD_PARTY_NOTICES.md').read_bytes()
     files['JUCE_COMPONENTS.spdx.json']=(app/'build/deps/JUCE/JUCE.spdx.json').read_bytes()
@@ -205,7 +205,7 @@ def assemble(stage_only=False):
         for p in (ROOT/folder).rglob('*'):
             if p.is_file():files['RHYTHMER-GEN-SOURCE/'+p.relative_to(ROOT).as_posix()]=p.read_bytes()
     files['OPEN_MPC_COMPATIBILITY.md'] = (ROOT/'docs/OPEN_MPC_COMPATIBILITY.md').read_bytes()
-    for name in ('RELEASE_020_NOTES_EN.md','GETTING_STARTED_KO.md','TRACK_WORKFLOW.md','RHYTHMER_PRESETS.md','UPSTREAM_030.md','ORIGINAL_PRESET_AUDIT_KO.md','HORTATOR_KITS_KO.md','BREAK_ACID_GUIDE_KO.md','BREAK_WORKFLOW.md','PARAMETER_PAGES.md','NATIVE_PLUGIN_WORKFLOW.md','NATIVE_CONTROL_COVERAGE.md','FINAL_UI_AUDIT.md','VERIFICATION.md','GEN8_BREAK.md','DESIGN.md','ENGINE_REGISTRY.md','DRUM_KITS.md','BETA_READINESS.md','SOUND_KIT_GUIDE.md','GEN_WORKFLOW.md','USER_MANUAL_KO_DRAFT.md','REBRAND.md','SOUND_FIXES_BETA4.md'):
+    for name in ('RELEASE_020_NOTES_EN.md','TRACK_WORKFLOW.md','RHYTHMER_PRESETS.md','UPSTREAM_030.md','ORIGINAL_PRESET_AUDIT_KO.md','HORTATOR_KITS_KO.md','BREAK_ACID_GUIDE_KO.md','BREAK_WORKFLOW.md','PARAMETER_PAGES.md','NATIVE_PLUGIN_WORKFLOW.md','NATIVE_CONTROL_COVERAGE.md','FINAL_UI_AUDIT.md','VERIFICATION.md','GEN8_BREAK.md','DESIGN.md','ENGINE_REGISTRY.md','DRUM_KITS.md','BETA_READINESS.md','SOUND_KIT_GUIDE.md','GEN_WORKFLOW.md','REBRAND.md','SOUND_FIXES_BETA4.md'):
         files['Documentation/Reference/'+name]=(ROOT/'docs'/name).read_bytes()
     files['DEVICE_MARK_NOTICE.md']=(ROOT/'assets/device/NOTICE.md').read_bytes()
     # New installs use the canonical folder. The host also resolves legacy beta paths.

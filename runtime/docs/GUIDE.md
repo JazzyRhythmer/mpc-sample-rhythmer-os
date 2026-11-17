@@ -2,9 +2,9 @@
 
 Rhythmer OS 0.2.0 for MPC Sample. Developed by jazzy rhythmer, based on Melodee by Kerem Kiliç (Ellic Studio). This owner beta awaits physical-device validation.
 
-Start with the [0.2.0 practical manual](guide/MANUAL_020_EN.md), [Your first groove with RHYTHMER OS.](guide/FIRST_GROOVE_020_EN.md), [essential controls](guide/QUICK_REFERENCE_020_EN.md) and [system map](guide/SYSTEM_MAP_020_EN.md). [한국어 매뉴얼](guide/USER_MANUAL_KO_DRAFT.md).
+Start with the [0.2.0 practical manual](guide/MANUAL_020_EN.md), [Your first groove with RHYTHMER OS.](guide/FIRST_GROOVE_020_EN.md), [essential controls](guide/QUICK_REFERENCE_020_EN.md) and [system map](guide/SYSTEM_MAP_020_EN.md)..
 
-The chapters below provide the foundation reference. For RHYTHMER-specific engine controls, track setup, GEN, Acid and Break, use the 0.2.0 guides above.
+The chapters below provide the foundation reference. For RHYTHMER-specific engine controls, track setup, GEN, Acid and Break, use the 0.2.0 manual and First Groove above.
 
 ## Contents
 

@@ -24,16 +24,22 @@ inline int track_workflow_check() {
         auto tap=[&](SurfaceButton b){for(bool down:{true,false}){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(b);e.input.pressed=down;shell.surface(e,3000+checks);}};
         for(auto kind:{StageKind::Params,StageKind::Trim}) {
             reset_empty();stage_go(c.ui,EngineKind::Sampler,kind);tap(SurfaceButton::WheelPush);
-            TRACK_CHECK(c.ui.page==PageId::TrackActions&&c.ui.track_types,"empty kit source/trim opens TRACK TYPE");
-            TRACK_CHECK(c.track().engine==EngineKind::Sampler,"opening type picker leaves kit intact");
-            tap(SurfaceButton::TopLeft);TRACK_CHECK(c.ui.page==PageId::Stage&&!c.ui.track_types,"direct type screen BACK returns to source");
+            TRACK_CHECK(c.ui.page==PageId::Samples&&!c.ui.track_types&&c.ui.layer_load==-1,"empty kit source/trim opens selected pad sample browser");
+            TRACK_CHECK(c.track().engine==EngineKind::Sampler,"opening sample picker leaves kit intact");
+            c.back();TRACK_CHECK(c.ui.page==PageId::Stage&&!c.ui.track_types,"empty kit browser Back returns to source");
             tap(SurfaceButton::WheelPush); // Shift must be held for Back
             c.ui.shift=true;tap(SurfaceButton::WheelPush);c.ui.shift=false;
-            TRACK_CHECK(c.ui.page==PageId::Stage,"direct type Shift Push returns to source");
+            TRACK_CHECK(c.ui.page==PageId::Stage,"empty kit browser Shift Push returns to source");
             reset_empty(true);stage_go(c.ui,EngineKind::Sampler,kind);c.ui.layer_load=2;tap(SurfaceButton::WheelPush);
             TRACK_CHECK(c.ui.page==PageId::Samples&&c.track().last_pad==0&&c.ui.layer_load==-1,"other-bank sample opens selected empty pad browser, clears layer target");
             c.back();TRACK_CHECK(c.ui.page==PageId::Stage&&c.track().pads[127].used()&&!c.track().pads[0].used(),"browser cancel preserves both pads");
         }
+        // Printed SAMPLE SELECT / SAMPLE RECORD remain direct upstream paths.
+        reset_empty();c.track().last_pad=11;tap(SurfaceButton::SampleSelect);
+        TRACK_CHECK(c.ui.page==PageId::Samples&&c.track().last_pad==11,"SAMPLE SELECT opens selected empty pad browser");
+        c.back();tap(SurfaceButton::SampleRecord);
+        TRACK_CHECK(c.ui.page==PageId::Record&&c.track().last_pad==11,"SAMPLE RECORD opens input recording for selected pad");
+        c.back();
         // The upstream long hold owns the press; releasing it must not also
         // invoke Rhythmer's short-click type/load/save shortcut.
         reset_empty();
@@ -46,7 +52,7 @@ inline int track_workflow_check() {
         TRACK_CHECK(!c.ui.menu&&c.ui.page==PageId::Stage,"MENU Back returns to original track");
         PluginRack picker_rack(host);c.plugins=&picker_rack;
         for(unsigned pick=0;pick<6;++pick) {
-            reset_empty();tap(SurfaceButton::WheelPush);c.ui.track_action=uint8_t(pick);tap(SurfaceButton::WheelPush);
+            reset_empty();open_track_actions(c);c.ui.track_types=true;c.ui.track_action=uint8_t(pick);tap(SurfaceButton::WheelPush);
             if(pick==0) TRACK_CHECK(c.ui.page==PageId::Plugins,"direct type PLUG-IN opens native picker");
             if(pick==1) {
                 TRACK_CHECK(c.ui.page==PageId::Samples&&c.track().engine==EngineKind::Sampler,"direct SAMPLE KIT starts first sample load");
@@ -65,7 +71,7 @@ inline int track_workflow_check() {
         c.undo();TRACK_CHECK(!c.track().pads[11].used()&&c.track().pads[127].sample==0,"sample load Undo restores empty selected pad only");
         c.project.samples.edit(0)=SampleRef{};
         reset_empty();c.track().pads[127].layers[0].sample=0;tap(SurfaceButton::WheelPush);
-        TRACK_CHECK(c.ui.page==PageId::Samples,"secondary layer in another bank prevents empty-kit classification");
+        TRACK_CHECK(c.ui.page==PageId::Samples,"secondary layer in another bank preserves empty-pad sample load");
         reset_empty();c.track().pads[0].layers[0].sample=0;tap(SurfaceButton::WheelPush);
         TRACK_CHECK(c.ui.page==PageId::Stage&&!c.ui.track_types,"selected layered pad retains native click");
         reset_empty();c.track().pads[0].sample=0;tap(SurfaceButton::WheelPush);

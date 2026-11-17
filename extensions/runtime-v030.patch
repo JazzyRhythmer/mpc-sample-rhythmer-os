@@ -25,9 +25,9 @@
 -For the complete control reference, see [RHYTHMER.md](RHYTHMER.md).
 +Rhythmer OS 0.2.0 for MPC Sample. Developed by jazzy rhythmer, based on Melodee by Kerem Kiliç (Ellic Studio). This owner beta awaits physical-device validation.
 +
-+Start with the [0.2.0 practical manual](guide/MANUAL_020_EN.md), [Your first groove with RHYTHMER OS.](guide/FIRST_GROOVE_020_EN.md), [essential controls](guide/QUICK_REFERENCE_020_EN.md) and [system map](guide/SYSTEM_MAP_020_EN.md). [한국어 매뉴얼](guide/USER_MANUAL_KO_DRAFT.md).
++Start with the [0.2.0 practical manual](guide/MANUAL_020_EN.md), [Your first groove with RHYTHMER OS.](guide/FIRST_GROOVE_020_EN.md), [essential controls](guide/QUICK_REFERENCE_020_EN.md) and [system map](guide/SYSTEM_MAP_020_EN.md)..
 +
-+The chapters below provide the foundation reference. For RHYTHMER-specific engine controls, track setup, GEN, Acid and Break, use the 0.2.0 guides above.
++The chapters below provide the foundation reference. For RHYTHMER-specific engine controls, track setup, GEN, Acid and Break, use the 0.2.0 manual and First Groove above.
  
  ## Contents
  
@@ -576,12 +576,10 @@
 +브레이크 연주용 소스는 60초 이하의 오디오 루프를 사용한다. 스트리밍 파일은 오디오 스레드 밖에서 모노 연주 버퍼를 준비한다. 일반 샘플/Audio 트랙의 긴 파일 스트리밍 제한은 변경하지 않는다.
 --- /dev/null
 +++ b/docs/guide/FIRST_GROOVE_020_EN.md
-@@ -0,0 +1,144 @@
+@@ -0,0 +1,186 @@
 +# Your first groove with RHYTHMER OS.
 +
-+**Written for RHYTHMER OS 0.2.0.** This exercise builds a four-bar drum, bass and chord pattern, then saves it. Acid and Break are optional additions at the end. No downloaded break recording is required for the main exercise.
-+
-+Use these written instructions for the current controls. The earlier First Groove video was made with an older interface; its labels and screen order are not the reference for 0.2.0.
++RHYTHMER OS **0.2.0** · **4 bars · 140 BPM · C minor**. Build a drum, bass and chord pattern, then save it. Acid and Break are optional additions at the end. No downloaded break recording is required for the main exercise.
 +
 +## Before you start
 +
@@ -601,6 +599,10 @@
 +
 +## 1. Create an empty project
 +
++![Project: NEW, OPEN and SAVE AS](../images/rhythmer/020-project.png)
++
++![New project confirmation: choose EMPTY](../images/rhythmer/020-newproject.png)
++
 +1. Press **SHIFT + Pad 16** to open Project.
 +2. Press **B3 NEW**. On its confirmation, press **B2 EMPTY**.
 +3. Select track 1: hold **PAD BANK**, tap **pad 1**, then release PAD BANK.
@@ -609,6 +611,12 @@
 +**Check:** there are no notes or samples you need to keep in this new project. Choosing NEW is not a way to add an instrument to an existing project.
 +
 +## 2. Load the drum kit on track 1
++
++![Empty track: choose its type](../images/rhythmer/020-tracktypes.png)
++
++![Rhythmer Kit: choose a complete kit preset](../images/rhythmer/020-kit-presets.png)
++
++![Rhythmer Kit: kit name, selected pad and whole-kit filter](../images/rhythmer/020-kit-home.png)
 +
 +1. Press **PAD FX + KNOB FX together** to open TRACKS.
 +2. Press **B1 TRACK SETUP**, select **TRACK TYPE**, then **PLUG-IN**.
@@ -622,6 +630,10 @@
 +
 +## 3. Set tempo and the drum pattern length
 +
++![Hold TAP TEMPO and turn the encoder](../images/rhythmer/020-tempo.png)
++
++![PATTERNS: length, quantise and swing controls](../images/rhythmer/020-patterns.png)
++
 +1. Hold **TAP TEMPO** and turn the encoder to **140 BPM**, then release it.
 +2. Press **SEQ**. If an editor opens, press B1 for SEQUENCES; press B1 again for **PATTERNS**.
 +3. Select **bank A, pad 1** for pattern 1.
@@ -631,6 +643,10 @@
 +**Check:** the header still identifies track 1. The pads now play drums. On PATTERNS they select patterns instead. Pattern length belongs to this track; you will set it separately for tracks 2 and 3.
 +
 +## 4. Record drums
++
++![Record notes into the selected pattern](../images/rhythmer/020-recordseq.png)
++
++![Step Edit: select and edit the current pattern](../images/rhythmer/020-stepedit.png)
 +
 +1. Enable a count-in if useful: **SHIFT + Pad 4** toggles it.
 +2. Press **SEQ RECORD**, then **PLAY**. Wait for the count-in if enabled.
@@ -642,6 +658,12 @@
 +**Check:** after recording is off, the drums repeat without you pressing pads. If pads switch patterns instead of making drum sounds, stop, press SAMPLE and start again. SHIFT + − undoes a supported recording edit. For precise corrections use SHIFT + SEQ for Step Edit; this exercise does not require it.
 +
 +## 5. Load and record a bass on track 2
++
++![FMini-1: open the list and choose MOOG BASS](../images/rhythmer/020-fmini-presets.png)
++
++![Track 2: FMini-1 with MOOG BASS loaded](../images/rhythmer/020-fmini-home.png)
++
++![Hold SAMPLE to open the Keys settings](../images/rhythmer/020-sampleheldkeys.png)
 +
 +1. Hold **PAD BANK**, tap **pad 2**, release PAD BANK. Check **track 2** in the header.
 +2. The empty-track type cards appear. Choose **Plugin**, then **FMini-1**. If another screen remains open, press SAMPLE first.
@@ -655,15 +677,21 @@
 +
 +## 6. Add chords on track 3
 +
++![FM-106: original A11 Brass preset](../images/rhythmer/020-fm106-home.png)
++
 +1. Select **track 3** with PAD BANK + pad 3.
 +2. Choose Plugin → **FM-106**. Open its preset list and load **A11 Brass**.
 +3. In Keys, confirm **C / Minor / Scale**. In PATTERNS, set pattern 1 to **4 bars / 1/16 / 50%**.
 +4. Press SAMPLE. Play pads **1, 3 and 5 together** for a minor chord.
 +5. Record short chord hits with SEQ RECORD → PLAY. Release the pads between hits. Turn recording off afterwards.
 +
-+**Check:** the displayed preset name is A11 Brass. This is the original brass preset, not a newly authored replacement or a patch described as a pad sound.
++**Check:** the displayed preset name is **A11 Brass**. Release each chord before the next hit.
 +
 +## 7. Balance the tracks
++
++![TRACKS: select a track and balance LEVEL, PAN and SEND A](../images/rhythmer/020-tracks.png)
++
++![Rhythmer Kit: selected pad sound controls](../images/rhythmer/020-kit-edit.png)
 +
 +1. Press PAD FX + KNOB FX together for **TRACKS**.
 +2. Select track 1, 2 or 3 using the encoder or PAD BANK + its pad.
@@ -675,6 +703,10 @@
 +
 +## 8. Save and reopen
 +
++![SAVE AS: name the project, then confirm SAVE](../images/rhythmer/020-nameproject.png)
++
++![OPEN: select the saved project](../images/rhythmer/020-projectlist.png)
++
 +1. Press STOP and allow about three seconds without adjusting controls. The project can autosave while idle.
 +2. Press **SHIFT + Pad 16 → B1 SAVE AS**.
 +3. Enter a name, for example **FIRST GROOVE 020**, and press **B3 SAVE**.
@@ -684,6 +716,10 @@
 +**Check:** saving a project is different from saving a User Sound/Kit. The project is what preserves the drum, bass and chord patterns together.
 +
 +## Optional: generate an Acid line on track 4
++
++![Acid settings 1 of 2: Density, Accent and Slide](../images/rhythmer/020-acid-settings-0.png)
++
++![Acid settings 2 of 2: Octaves, Base Octave and Auto Mutate](../images/rhythmer/020-acid-settings-1.png)
 +
 +1. Select track 4 → Plugin → **Acid Engine** → preset **SQUELCH**.
 +2. Select pattern 1 and set the desired pattern length.
@@ -696,6 +732,12 @@
 +**Do not apply GENERATE SONG to tracks 1–4 here.** SOUND + MIDI can replace the instruments and patterns you just recorded. ACID GEN and GENERATE T4 work on the selected track instead.
 +
 +## Optional: add your own Break loop on track 5
++
++![Break source browser: select the source and its bar length](../images/rhythmer/020-break-browse-open.png)
++
++![BRK PERF 1: play sixteen chops](../images/rhythmer/020-break-perf-0.png)
++
++![BRK PERF 2: hold and release performance commands](../images/rhythmer/020-break-perf-1.png)
 +
 +1. Put a loop you may use in the card's Samples folder. Start with a known **two-bar** loop.
 +2. Select track 5 → Plugin → **Break Engine**.
@@ -932,14 +974,14 @@
 +[First Groove 따라 하기](FIRST_GROOVE_020_KO.md) · [전체 사용 설명서](USER_MANUAL_KO_DRAFT.md) · [English controls](QUICK_REFERENCE_020_EN.md)
 --- /dev/null
 +++ b/docs/guide/MANUAL_020_EN.md
-@@ -0,0 +1,301 @@
-+# RHYTHMER OS 0.2.0 — User manual
+@@ -0,0 +1,398 @@
++# RHYTHMER OS — User manual
 +
-+This manual describes RHYTHMER OS **0.2.0** for MPC Sample. Its foundation is Melodee Sample 0.3.0. The two version numbers refer to different projects. Instructions below use the labels in the 0.2.0 software; an earlier video may show different labels.
++RHYTHMER OS **0.2.0** for MPC Sample. Choose a chapter from the contents, or follow [Your first groove](FIRST_GROOVE_020_EN.md) to build and save a pattern from scratch.
 +
-+Start with [Your first groove](FIRST_GROOVE_020_EN.md). Keep the [button reference](QUICK_REFERENCE_020_EN.md) and [track/system map](SYSTEM_MAP_020_EN.md) open beside it.
++## Essential controls
 +
-+## 1. Read these controls first
++![Essential button combinations](../images/rhythmer/essential-controls.png)
 +
 +**Push** means press and release the large rotary encoder. **Turn** means rotate it. **B1 / B2 / B3** are the three buttons above the screen, from left to right. **K1 / K2 / K3** are the three knobs below it.
 +
@@ -960,7 +1002,54 @@
 +
 +A single PAD BANK tap changes the pad bank. Holding it while selecting a track does not. If NOTE REPEAT or ARP is active, rate choices can temporarily replace soft-key menus. Turn the repeat/arp off before following a menu instruction.
 +
-+## 2. Choose the screen for the task
++## System structure
++
++![Projects, tracks, patterns and sequences](../images/rhythmer/os-structure.png)
++
++### The four things you select
++
++| Item | Meaning | How to select it |
++| --- | --- | --- |
++| Project | The complete session: tracks, patterns, mix and arrangement | SHIFT + Pad 16 → OPEN / NEW; SAVE AS makes a named copy |
++| Track | One part of the session; its instrument/audio, patterns and mix | PAD BANK + pad 1–16, or TRACKS |
++| Pattern | Notes and supported motion for one track; up to 128 per track | SEQ → B1 PATTERNS → pattern pad |
++| Sequence | A pattern number launched across tracks | SEQ → B1 SEQUENCES → sequence pad |
++
++A track with no notes in a launched sequence is silent. Changing just one track's pattern is done on PATTERNS. Select the track, choose its pattern, then press SAMPLE to play or record its instrument.
++
++### What a track can contain
++
++- **Drum / Sample Kit:** independently loaded audio pads. Load samples or an MPC kit.
++- **Keygroup:** one sample or multisampled instrument played across notes.
++- **Plugin:** one synth/percussion instrument. **Rhythmer Kit is a plug-in** with sixteen different pad sounds; other instruments focus on one sound across pitches.
++- **MIDI, Full:** notes/control sent to an external instrument. It needs external audio routing to be heard.
++- **Audio, Full:** an input take recorded against a pattern.
++- **EMPTY:** no instrument. TRACK TYPE can make a track EMPTY while keeping its patterns. DELETE TRACK separately removes its sound and patterns after confirmation.
++
++A first install starts in Basic. Settings → FEATURES = FULL shows MIDI/Audio and advanced pages such as Sends and Motion/Mod/Macro. Existing project content is not deleted when switching modes.
++
++### Where a change applies
++
++| Control | Applies to |
++| --- | --- |
++| P11 Volume / P11 source parameter | Selected Rhythmer Kit pad 11 |
++| KIT CUTOFF / KIT RESONANCE | The whole Rhythmer Kit |
++| Individual engine CUTOFF / RESONANCE | The current instrument; linked between PRESETS and EDIT |
++| Track LEVEL / PAN / PERFORM | The selected track |
++| SEND A–D | Sends from a track/pad to shared buses, according to track type |
++| Project key/scale/tempo | Shared project settings |
++
++### Save the right thing
++
++- **Project:** the session, including notes, arrangement and instrument state. Autosaves while idle; SAVE AS makes a copy.
++- **User Sound:** a reusable instrument sound, without the song's notes.
++- **User Kit:** a reusable kit and its edited pad sounds, without the song's notes.
++- **SD backup:** keeps source samples and all project/preset files. Saving a preset is not a source-audio backup.
++
++
++### Choose the screen for the task
++
++![Hold PAD BANK and tap a pad to select its track](../images/rhythmer/020-padbankheld.png)
 +
 +| Screen | What the pads do | Use it for |
 +| --- | --- | --- |
@@ -976,6 +1065,8 @@
 +If a pad changes a pattern number instead of playing a sound, you are on PATTERNS or holding SEQ. Release SEQ and press SAMPLE.
 +
 +## 3. Start a project and add an instrument
++
++![Track type cards: choose the role of the selected empty track](../images/rhythmer/020-tracktypes.png)
 +
 +A new project normally loads one of the MPC's factory kits on track 1. To start with an empty kit instead: **SHIFT + Pad 16 → B3 NEW → B2 EMPTY** on the confirmation. Do this only when you intend to start a new project.
 +
@@ -999,11 +1090,11 @@
 +
 +Drum and MIDI have a second source-selection step. **B1 BACK / SHIFT + encoder push** returns from sources to types, then to the previous track screen. An entirely empty project can return to TRACKS.
 +
-+An intentionally empty **Sample Kit** is not the same as an EMPTY track. On its **SOUND / TRIM** page, encoder push opens **TRACK TYPE** if every pad/layer is empty. If other pads contain samples, push on the selected empty pad opens **SAMPLES** for that pad instead.
++An intentionally empty **Sample Kit** is not the same as an EMPTY track. On its **SOUND / TRIM** page, encoder push opens **SAMPLES** for the selected empty pad, even when every pad is empty. To change this track’s type, use **TRACKS → B1 TRACK SETUP → TRACK TYPE**. The printed **SAMPLE SELECT** button opens the same sample browser; **SAMPLE RECORD** opens input recording.
 +
 +## 4. Replace an instrument or change track type
 +
-+![0.2.0 trackactions — software-rendered example](../images/rhythmer/020-trackactions.png)
++![TRACK SETUP: replace an instrument, change type or delete separately](../images/rhythmer/020-trackactions.png)
 +
 +**Start:** select the target track, then press **PAD FX + KNOB FX → B1 TRACK SETUP**.
 +
@@ -1021,7 +1112,9 @@
 +
 +## 5. Find and load presets
 +
-+![0.2.0 stagepluginface — software-rendered example](../images/rhythmer/020-stagepluginface.png)
++![Rhythmer Kit: kit name, selected pad and whole-kit filter](../images/rhythmer/020-kit-home.png)
++
++![FM-106: original A11 Brass preset](../images/rhythmer/020-fm106-home.png)
 +
 +1. Select the plug-in track and press **SAMPLE**.
 +2. Press **B1** until its **PRESETS** page is selected. The engine and current preset name are shown.
@@ -1035,7 +1128,11 @@
 +
 +## 6. Edit the sound, then save a reusable preset
 +
-+![0.2.0 stagepluginedit — software-rendered example](../images/rhythmer/020-stagepluginedit.png)
++![FMini-1: source sound-design controls](../images/rhythmer/020-fmini-edit.png)
++
++![User Sound: choose a slot, name it and save](../images/rhythmer/020-fmini-save.png)
++
++
 +
 +On a plug-in sound screen, **B1 cycles PRESETS / EDIT**. Press it until **EDIT** is selected.
 +
@@ -1058,6 +1155,12 @@
 +
 +## 7. Use Rhythmer Kit
 +
++![User Kit: choose a slot and save the complete kit](../images/rhythmer/020-kit-save.png)
++
++![Rhythmer Kit: selected pad sound controls](../images/rhythmer/020-kit-edit.png)
++
++![Rhythmer Kit: choose a pad engine and sound](../images/rhythmer/020-kit-source.png)
++
 +Load **Rhythmer Kit** from the top of the plug-in list. It has **36 complete factory kits**, with pads 1–16 filled. Start with bank A.
 +
 +| Task | Procedure | Check |
@@ -1074,7 +1177,11 @@
 +
 +## 8. Load samples or an MPC kit
 +
++![Sample browser: choose and preview a file for the selected pad](../images/rhythmer/020-samplespreview.png)
++
 +### Load a file onto one pad
++
++![Empty sample pad: push to load; SAMPLE SELECT browses files and SAMPLE RECORD records input](../images/rhythmer/020-empty-sample-pad.png)
 +
 +1. Select a **Drum / Sample Kit** track. Press **SAMPLE** and hit the destination pad.
 +2. Press **SAMPLE SELECT**. Check the destination track/pad in the browser header.
@@ -1082,7 +1189,7 @@
 +4. Push on a file to load it onto that pad. Wait for loading to finish.
 +5. Press **SAMPLE**, then hit the pad to check it. Other pads remain as they were.
 +
-+WAV, MP3, FLAC, Ogg Vorbis and AIFF are supported. A long file may be streamed or cached; allow preparation to finish. An empty selected pad also opens this browser with encoder push on SOUND/TRIM when another pad already contains a sample.
++WAV, MP3, FLAC, Ogg Vorbis and AIFF are supported. A long file may be streamed or cached; allow preparation to finish. On SOUND/TRIM, encoder push on an empty selected pad opens the same sample browser, including when all pads are empty. SAMPLE SELECT opens it directly; SAMPLE RECORD opens input recording.
 +
 +### Load only a kit from another MPC project
 +
@@ -1091,6 +1198,10 @@
 +On the native sample track, press **B1/B2/B3 repeatedly until the required caption appears**: SOUND, TRIM, TUNE, AMP ENV, PLAY, MIX, FILTER and FILT ENV are available in Basic. Full adds layers, colour, sends, follow, cloud and kit-filter pages. A direct Trim shortcut can enter TRIM instead of SOUND.
 +
 +## 9. Record and play patterns
++
++![PATTERNS: set length, quantise and swing](../images/rhythmer/020-patterns.png)
++
++![Recording: enter notes on the selected track](../images/rhythmer/020-recordseq.png)
 +
 +A track's **pattern** stores its notes and supported motion. A **sequence** launches its numbered pattern across tracks. Track 1 pattern 1 and track 2 pattern 1 are different patterns.
 +
@@ -1103,9 +1214,17 @@
 +
 +If pads switch patterns, return to SAMPLE before recording. If you hear no click, use TAP TEMPO's click controls; you can also enable the count-in with **SHIFT + Pad 4**. Use **SHIFT + SEQ** for Step Edit, or the sequence editor's Roll page to correct notes. Read the editor's current header to confirm the track and pattern.
 +
-+On **SEQUENCES**, pad 1 launches pattern 1 on all tracks. A track with no notes in that sequence is silent. Use **PATTERNS** when you want to change just one track. Full exposes Motion/Mod/Macro; B3 cycles them and SHIFT + B3 ADD adds a supported target. A plug-in's internal LFO and the project's MOD page are different systems.
++On **SEQUENCES**, pad 1 launches pattern 1 on all tracks. A track with no notes in that sequence is silent. Use **PATTERNS** when you want to change just one track. ![MOTION: edit recorded parameter changes](../images/rhythmer/020-motion.png)
++
++![MOD: connect a project modulator to a target](../images/rhythmer/020-modlfo.png)
++
++Full exposes Motion/Mod/Macro; B3 cycles them and SHIFT + B3 ADD adds a supported target. A plug-in's internal LFO and the project's MOD page are different systems.
 +
 +## 10. Generate notes without losing the wrong track
++
++![GEN main menu: check the target tracks before applying](../images/rhythmer/020-gen-group-0-main.png)
++
++![GEN setup: select a four-track group and sound replacement mode](../images/rhythmer/020-gen-group-0-setup.png)
 +
 +**Entry:** select the target track → **SEQ → B1 PATTERNS → SHIFT + B3 GEN**.
 +
@@ -1125,7 +1244,7 @@
 +
 +## 11. Use Acid GEN
 +
-+![0.2.0 acid-settings-0 — software-rendered example](../images/rhythmer/020-acid-settings-0.png)
++![Acid GEN: Density, Accent and Slide](../images/rhythmer/020-acid-settings-0.png)
 +
 +1. Load **Acid Engine** on the selected track and choose a preset, for example **SQUELCH** or **Acid Squelch**.
 +2. Open **SEQ → B1 PATTERNS → SHIFT + B3 GEN → ACID GEN**.
@@ -1138,7 +1257,7 @@
 +
 +## 12. Load a Break and return to its controls
 +
-+![0.2.0 break-menu — software-rendered example](../images/rhythmer/020-break-menu.png)
++![BREAK GEN: source, generation and performance entry](../images/rhythmer/020-break-menu.png)
 +
 +Use a loop that you own or can use. Know its actual length in bars; this guide starts with **2 bars**.
 +
@@ -1153,6 +1272,18 @@
 +For a new rhythm, select **Straight / Genre / Random / Mutate / Tail Fill** in BREAK GEN and apply it. These change notes/chop order in the pattern. They do not by themselves enable LOOP variation or a STRETCH performance command.
 +
 +### BRK PERF: what each page does
++
++![BRK PERF 1: play sixteen chops](../images/rhythmer/020-break-perf-0.png)
++
++![BRK PERF 2: hold and release performance commands](../images/rhythmer/020-break-perf-1.png)
++
++![BRK PERF 3: source A, source B and Return](../images/rhythmer/020-break-perf-2.png)
++
++![BRK PERF 4: LOOP variations](../images/rhythmer/020-break-perf-3.png)
++
++![BRK PERF 5: Grain controls while STRETCH is active](../images/rhythmer/020-break-perf-4.png)
++
++![BRK PERF 6: track mix](../images/rhythmer/020-break-perf-5.png)
 +
 +Turn the encoder to move through the six numbered pages. The caption shows your position.
 +
@@ -1171,6 +1302,10 @@
 +
 +## 13. Mix and identify the filter/effect you are changing
 +
++![TRACKS: select a track and balance LEVEL, PAN and SEND A](../images/rhythmer/020-tracks.png)
++
++![Full mode: track sends to shared buses](../images/rhythmer/020-sends.png)
++
 +| Control | Scope | Where |
 +| --- | --- | --- |
 +| Main engine CUTOFF / RESONANCE | The loaded instrument; whole kit for Rhythmer Kit | Plug-in PRESETS; linked to the corresponding EDIT controls |
@@ -1186,6 +1321,10 @@
 +TRACKS uses **K1 LEVEL / K2 PAN / K3 SEND A**. The default black-and-white screen keeps colour names/metadata for kits without requiring colour to identify the selected track or pad.
 +
 +## 14. Save, reopen and back up
++
++![Project: NEW, OPEN and SAVE AS](../images/rhythmer/020-project.png)
++
++![SAVE AS: name the project, then confirm SAVE](../images/rhythmer/020-nameproject.png)
 +
 +The project autosaves about three seconds after the last control while playback, recording and printing are stopped. The Project page shows SAVED / UNSAVED. Stop and let saving finish before power-off or card removal.
 +
@@ -1499,9 +1638,9 @@
 +
 +On a normal sampler track's **SOUND / TRIM** face:
 +
-+- If no primary sample or secondary layer exists on any of its 128 pads (banks A–H), Push opens **TRACK TYPE**. PLUG-IN opens the native instrument picker; SAMPLE KIT opens the sample browser; MIDI and EMPTY use the existing type-change operation. Opening or cancelling this choice leaves the track and patterns untouched.
-+- If another pad has a sample or layer, Push opens **SAMPLES** for the selected empty pad. Pick a file and Push to load it there. The existing browser's pad selection remains active: hitting another pad changes the load destination. B1 goes up a folder or returns to the source face at the root. Shift + Push closes the browser directly to its caller.
-+- The face displays **PUSH: TRACK TYPE** or **PUSH: LOAD SAMPLE**. A pad with secondary layers is playable content, even if its primary sample is empty, so its native click is retained.
++- Push opens **SAMPLES** for the selected empty pad, even when every pad in banks A–H is empty. It does not open TRACK TYPE from a pad-owned page. Use **TRACKS → B1 TRACK SETUP → TRACK TYPE** to change the sampler track's role.
++- The sample browser keeps the selected pad as its destination. Pick a file and Push to load it there; hitting another pad changes the load destination. B1 goes up a folder or returns at the root; Shift + Push closes the browser directly to its caller.
++- The face displays **PUSH: LOAD SAMPLE**. The physical **SAMPLE SELECT** button opens the same browser; **SAMPLE RECORD** opens input recording. A pad with secondary layers retains its native click.
 +- Loaded pads retain knob-focus cycling. Legacy TUNE/ENV/LAYERS page-map clicks, other Stage pages, plug-in controls, Break loop loading, Note Repeat controls and Shift + Push Back keep their existing jobs.
 +- Recording and frozen-track guards apply before the new shortcut opens. Track changes from SAMPLES follow the newly selected track and dismiss the old browser, as elsewhere.
 +
@@ -1764,7 +1903,7 @@
 +개발자 jazzy rhythmer. 기반은 Melodee by Kerem Kiliç (Ellic Studio), sample-base와 고지된 원본 엔진들입니다. 각 라이선스·출처 고지는 설치·소스 파일에 유지합니다. 소프트웨어 검증과 실제 기기 설치·청취·타이밍·USB·장시간 사용 검증은 구분합니다.
 --- /dev/null
 +++ b/docs/guide/VERIFICATION.md
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,23 @@
 +# RHYTHMER OS 0.2.0 — verification scope
 +
 +The foundation is Melodee Sample v0.3.0 by Kerem Kiliç (Ellic Studio), on the pinned sample-base revision. This document records the packaged build’s software checks. Publication and downloads are listed on the installation page. Hardware validation remains pending.
@@ -1780,6 +1919,14 @@
 +RHYTHMER's Menu maps SHIFT + encoder push to B1 BACK; plain push still selects. The engine filter controls remain on PRESETS and stay linked to EDIT. Separate DJ FILTER / ECHO / SPACE macros remain on PERFORM. Native pad lessons retain their expected TRIM/TUNE order without removing the normal filter-first SOUND page.
 +
 +Install the full SD ZIP for all plug-ins, kits and presets. UPDATE contains the app only. Corresponding-source companions, licences, checksums and the signed autorun manifest accompany the installation. Physical-device installation, recovery, listening, controls, timing, latency, internal-drive access, USB/UVC and long-session stability require owner beta testing. Offline software checks do not certify these behaviors.
++
++## Illustrated manual and empty-pad navigation
++
++The English website manual is a single illustrated document with First Groove video/guide, essential controls, system structure and chapters. Legacy language/control/map URLs redirect to this document. First Groove uses Rhythmer Kit, FMini-1, FM-106, Acid Engine and Break Engine examples.
++
++A short encoder push on a normal sampler track’s empty SOUND/TRIM pad opens its sample browser even when every pad is empty. SAMPLE SELECT and SAMPLE RECORD retain the upstream direct browser/input-recording paths. True EMPTY tracks retain type cards; TRACKS → TRACK SETUP changes an existing track’s type. Loaded pads, layered pads, other editor pages, held encoder MENU, recording and Freeze protections retain their existing behavior.
++
++Focused verification: 311 track-workflow assertions, 1,248 navigation contexts / 9,538 assertions, audio self-test, native web-server tests and embedded-guide link checks. The earlier broad engine/audio and three regression receipts remain tied to their recorded runtimes; this UI/documentation revision does not change DSP or engine presets. Physical-device behavior remains unverified.
 --- /dev/null
 +++ b/docs/guide/break-acid.md
 @@ -0,0 +1,118 @@
@@ -5721,7 +5868,7 @@
      if (pad_view && title.isEmpty()) { char label[4]; pad_label(t.last_pad % sampler_pads, label); title = label; } // an empty pad: its place
      p.text(title, px, top + 4, 140, 20, p.fit(title, plain(colour::text, type::list, Weight::SemiBold), 140, type::floor));
      float mx = px + 4, my = top + 36, mh = zone::picture_h - 44;
-@@ -521,6 +525,17 @@
+@@ -521,6 +525,14 @@
  
  // A kit page: the last pad's sample, its volume on the left and pan on the right, chips for how it plays,
  // the region tinted; TRIM draws its handles (zoomed as Shift + K asks), the envelopes and the filter lie over it.
@@ -5732,19 +5879,16 @@
 +    return t.engine == EngineKind::Sampler && !t.break_bars && !pad.used() && !pad.layered()
 +        && (page.kind == StageKind::Params || page.kind == StageKind::Trim);
 +}
-+bool empty_kit(const Track& t) {
-+    return std::none_of(t.pads.begin(), t.pads.end(), [](const auto& pad) { return pad.used() || pad.layered(); });
-+}
 +
  void wave_picture(Paint& p, const Snapshot& s, const StagePage& page) {
      const auto& t = s.track();
      const auto& pad = sampler_pad(s);
-@@ -536,11 +551,14 @@
+@@ -536,11 +548,14 @@
          juce::String why = !pad.used() ? juce::String("EMPTY") : s.sample.error.empty() ? juce::String("LOADING") : juce::String(s.sample.error);
          p.text(why, px, wy + 42, pw, 18, p.fit(why, pad.used() && !s.sample.error.empty() ? plain(colour::amber, type::body, Weight::Medium)
                                                                                           : caps_text(colour::mid, type::body), pw, type::floor), juce::Justification::centred);
 +        if (empty_source_pad(t, page))
-+            p.text(empty_kit(t) ? "PUSH: TRACK TYPE" : "PUSH: LOAD SAMPLE", px, wy + 66, pw, 14,
++            p.text("PUSH: LOAD SAMPLE", px, wy + 66, pw, 14,
 +                   caps_text(colour::mid), juce::Justification::centred);
          if (!pad.used()) { // where a sound comes from: the printed buttons, glyph and name
              struct Way { Icon glyph; const char* name; };
@@ -5755,7 +5899,7 @@
              for (unsigned n = 0; n < count; ++n) {
                  float cx = px + col * (float(n) + 0.5f);
                  icon(p, ways[n].glyph, cx - 8, gy, 16, c, 1.4f);
-@@ -604,6 +622,7 @@
+@@ -604,6 +619,7 @@
      auto x_of = [&](float at) { return wx + (at - from) / (to - from) * ww; };
      p.g.saveState();
      p.g.reduceClipRegion(juce::Rectangle<int>(int(wx), int(wy) - 3, int(ww + 1), int(wh + 6)));
@@ -5763,7 +5907,7 @@
      float sx = x_of(region_from), ex = x_of(region_to);
      p.fill(sx, wy, ex - sx, wh, c.withAlpha(0.12f));
      // The pad as it is heard: a head a voice, the newest with its wake (not on Cloud, whose grains are the picture).
-@@ -950,6 +969,10 @@
+@@ -950,6 +966,10 @@
  
  void bars_picture(Paint& p, const Snapshot& s, const StagePage& page, bool shift_row, float y0 = top) {
      std::vector<Row> list;
@@ -5774,7 +5918,7 @@
      const auto& ids = shift_row ? page.shift : page.params;
      for (unsigned n = 0; n < 3; ++n) if (ids[n] >= 0) list.push_back(param_row(s, ids[n], n, !shift_row));
      if (list.empty()) return;
-@@ -962,7 +985,8 @@
+@@ -962,7 +982,8 @@
  void colours_picture(Paint& p, const Snapshot& s) {
      const auto& t = s.track();
      const unsigned bank = t.bank % sampler_banks;
@@ -5784,7 +5928,7 @@
      for (unsigned n = 0; n < 16; ++n) {
          const unsigned kit = bank * 16 + n, row = 3 - n / 4, column = n % 4;
          const float x = px + column * (w + gap), y = y0 + row * (h + gap);
-@@ -972,6 +996,9 @@
+@@ -972,6 +993,9 @@
          if (kit == t.last_pad) p.ring(x - 2, y - 2, w + 4, h + 4, colour::text, 5, 2);
          char label[4]; pad_label(kit, label);
          auto name = used ? pad_name(s, kit, true) : juce::String(label);
@@ -5794,7 +5938,7 @@
          auto style = plain(used ? ink_on(fill) : colour::dim, type::small, Weight::SemiBold);
          p.text(name, x + 5, y + h - 15, w - 10, 13, p.fit(name, style, w - 10, type::floor));
      }
-@@ -1035,6 +1062,7 @@
+@@ -1035,6 +1059,7 @@
  
  ui::SoftKeys stage_keys(const Snapshot& s) {
      const auto& t = s.track();
@@ -5802,7 +5946,7 @@
      const auto& g = stage_groups(t.engine);
      const bool instrument = instrument_pad(s);
      const StageSkip skip = skip_of(s);
-@@ -1076,9 +1104,12 @@
+@@ -1076,9 +1101,12 @@
      const auto& t = s.track();
      const auto& panel = s.ui.plugin_panel;
      if (!plugin_ready(s)) { draw_plugin_view(p, s, t.plugin, top); return; }
@@ -5817,7 +5961,7 @@
      };
      juce::String format = juce::String::fromUTF8(panel.format);
      if (!plugin_presets(s)) {
-@@ -1095,16 +1126,27 @@
+@@ -1095,16 +1123,27 @@
      auto name_of = [&](int n) { return juce::String::fromUTF8(list[size_t(n)].name.c_str()); };
      if (at < 0) poster_at("No preset yet", colour::sec);
      else poster_at(name_of(at), s.ui.preset_due ? colour::amber : colour::text);
@@ -5849,7 +5993,7 @@
                 juce::Justification::centredRight);
      }
  }
-@@ -1154,7 +1196,7 @@
+@@ -1154,7 +1193,7 @@
          h.left.push_back(pill((at >= 0 ? juce::String(at + 1) : juce::String::fromUTF8("\xe2\x80\x93")) + " / " + juce::String(int(s.presets.list.size()))));
      } else if (page.kind == StageKind::PluginEdit && plugin_ready(s)) { // the share of each audio block it takes, as Edit's
          const auto& panel = s.ui.plugin_panel;
@@ -5858,7 +6002,7 @@
      } else if (t.is_audio() && t.used()) { // freeze plan F3: the pattern in hand and its bars; red armed, filled recording
          const unsigned bar = std::max(1u, s.project.bar_ticks()), bars = std::max(1u, (s.pattern.length + bar - 1) / bar);
          juce::String name = "P" + juce::String(t.pattern + 1) + juce::String::fromUTF8(" \xc2\xb7 ") + juce::String(bars)
-@@ -1194,11 +1236,16 @@
+@@ -1194,11 +1233,16 @@
      if (!t.used()) { // what it becomes: B1 BACK to the types, or CANCEL to the nearest track that is not empty
          bool any = s.ui.new_sources;
          for (const auto& other : s.project.tracks) any |= other.used();
@@ -5876,7 +6020,7 @@
      switch (page.picture) {
      case StagePicture::Preset: preset_picture(p, s); break;
      case StagePicture::Filter: filter_picture(p, s, page); break;
-@@ -1276,7 +1323,34 @@
+@@ -1276,7 +1320,29 @@
  void push(Context& c) {
      auto& t = c.track();
      const auto& page = stage_page_now(c.ui, t, stage_skip(c.project, c.ui, t));
@@ -5888,15 +6032,10 @@
 +    if (empty_source_pad(t, page)) {
 +        if (c.ui.recording || c.host_recording()) { c.notice("Finish recording first"); return; }
 +        if (c.frozen_edit(c.ui.track)) return;
-+        if (empty_kit(t)) {
-+            open_track_actions(c);
-+            c.ui.track_types = true; // direct TRACK TYPE, not TRACK SETUP
-+        } else {
-+            c.ui.layer_load = -1; // load this pad's primary sample, not a previous layer target
-+            c.ui.break_browse = false;
-+            c.open(PageId::Samples);
-+            if (c.library) c.library->rescan(); // same browser as SAMPLE SELECT
-+        }
++        c.ui.layer_load = -1; // always load this pad's primary sample
++        c.ui.break_browse = false;
++        c.open(PageId::Samples);
++        if (c.library) c.library->rescan(); // same browser as SAMPLE SELECT
 +        return;
 +    }
 +    if (page.kind == StageKind::PluginEdit && c.ui.plugin_panel.entry == t.plugin && c.ui.plugin_panel.layout_revision && c.ui.plugin_panel.status == PluginStatus::Ready) {
@@ -10382,7 +10521,7 @@
  // mix strip and all, as one undo; a track already at `to` trades places with it (shell/track_swap.h).
 --- /dev/null
 +++ b/src/rhythmer/shell/track_workflow_check.h
-@@ -0,0 +1,287 @@
+@@ -0,0 +1,293 @@
 +// SPDX-License-Identifier: AGPL-3.0-only
 +#pragma once
 +#include "rhythmer/shell/new_track.h"
@@ -10409,16 +10548,22 @@
 +        auto tap=[&](SurfaceButton b){for(bool down:{true,false}){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(b);e.input.pressed=down;shell.surface(e,3000+checks);}};
 +        for(auto kind:{StageKind::Params,StageKind::Trim}) {
 +            reset_empty();stage_go(c.ui,EngineKind::Sampler,kind);tap(SurfaceButton::WheelPush);
-+            TRACK_CHECK(c.ui.page==PageId::TrackActions&&c.ui.track_types,"empty kit source/trim opens TRACK TYPE");
-+            TRACK_CHECK(c.track().engine==EngineKind::Sampler,"opening type picker leaves kit intact");
-+            tap(SurfaceButton::TopLeft);TRACK_CHECK(c.ui.page==PageId::Stage&&!c.ui.track_types,"direct type screen BACK returns to source");
++            TRACK_CHECK(c.ui.page==PageId::Samples&&!c.ui.track_types&&c.ui.layer_load==-1,"empty kit source/trim opens selected pad sample browser");
++            TRACK_CHECK(c.track().engine==EngineKind::Sampler,"opening sample picker leaves kit intact");
++            c.back();TRACK_CHECK(c.ui.page==PageId::Stage&&!c.ui.track_types,"empty kit browser Back returns to source");
 +            tap(SurfaceButton::WheelPush); // Shift must be held for Back
 +            c.ui.shift=true;tap(SurfaceButton::WheelPush);c.ui.shift=false;
-+            TRACK_CHECK(c.ui.page==PageId::Stage,"direct type Shift Push returns to source");
++            TRACK_CHECK(c.ui.page==PageId::Stage,"empty kit browser Shift Push returns to source");
 +            reset_empty(true);stage_go(c.ui,EngineKind::Sampler,kind);c.ui.layer_load=2;tap(SurfaceButton::WheelPush);
 +            TRACK_CHECK(c.ui.page==PageId::Samples&&c.track().last_pad==0&&c.ui.layer_load==-1,"other-bank sample opens selected empty pad browser, clears layer target");
 +            c.back();TRACK_CHECK(c.ui.page==PageId::Stage&&c.track().pads[127].used()&&!c.track().pads[0].used(),"browser cancel preserves both pads");
 +        }
++        // Printed SAMPLE SELECT / SAMPLE RECORD remain direct upstream paths.
++        reset_empty();c.track().last_pad=11;tap(SurfaceButton::SampleSelect);
++        TRACK_CHECK(c.ui.page==PageId::Samples&&c.track().last_pad==11,"SAMPLE SELECT opens selected empty pad browser");
++        c.back();tap(SurfaceButton::SampleRecord);
++        TRACK_CHECK(c.ui.page==PageId::Record&&c.track().last_pad==11,"SAMPLE RECORD opens input recording for selected pad");
++        c.back();
 +        // The upstream long hold owns the press; releasing it must not also
 +        // invoke Rhythmer's short-click type/load/save shortcut.
 +        reset_empty();
@@ -10431,7 +10576,7 @@
 +        TRACK_CHECK(!c.ui.menu&&c.ui.page==PageId::Stage,"MENU Back returns to original track");
 +        PluginRack picker_rack(host);c.plugins=&picker_rack;
 +        for(unsigned pick=0;pick<6;++pick) {
-+            reset_empty();tap(SurfaceButton::WheelPush);c.ui.track_action=uint8_t(pick);tap(SurfaceButton::WheelPush);
++            reset_empty();open_track_actions(c);c.ui.track_types=true;c.ui.track_action=uint8_t(pick);tap(SurfaceButton::WheelPush);
 +            if(pick==0) TRACK_CHECK(c.ui.page==PageId::Plugins,"direct type PLUG-IN opens native picker");
 +            if(pick==1) {
 +                TRACK_CHECK(c.ui.page==PageId::Samples&&c.track().engine==EngineKind::Sampler,"direct SAMPLE KIT starts first sample load");
@@ -10450,7 +10595,7 @@
 +        c.undo();TRACK_CHECK(!c.track().pads[11].used()&&c.track().pads[127].sample==0,"sample load Undo restores empty selected pad only");
 +        c.project.samples.edit(0)=SampleRef{};
 +        reset_empty();c.track().pads[127].layers[0].sample=0;tap(SurfaceButton::WheelPush);
-+        TRACK_CHECK(c.ui.page==PageId::Samples,"secondary layer in another bank prevents empty-kit classification");
++        TRACK_CHECK(c.ui.page==PageId::Samples,"secondary layer in another bank preserves empty-pad sample load");
 +        reset_empty();c.track().pads[0].layers[0].sample=0;tap(SurfaceButton::WheelPush);
 +        TRACK_CHECK(c.ui.page==PageId::Stage&&!c.ui.track_types,"selected layered pad retains native click");
 +        reset_empty();c.track().pads[0].sample=0;tap(SurfaceButton::WheelPush);

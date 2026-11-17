@@ -1,8 +1,6 @@
 # Your first groove with RHYTHMER OS.
 
-**Written for RHYTHMER OS 0.2.0.** This exercise builds a four-bar drum, bass and chord pattern, then saves it. Acid and Break are optional additions at the end. No downloaded break recording is required for the main exercise.
-
-Use these written instructions for the current controls. The earlier First Groove video was made with an older interface; its labels and screen order are not the reference for 0.2.0.
+RHYTHMER OS **0.2.0** · **4 bars · 140 BPM · C minor**. Build a drum, bass and chord pattern, then save it. Acid and Break are optional additions at the end. No downloaded break recording is required for the main exercise.
 
 ## Before you start
 
@@ -22,6 +20,10 @@ Use these written instructions for the current controls. The earlier First Groov
 
 ## 1. Create an empty project
 
+![Project: NEW, OPEN and SAVE AS](../images/rhythmer/020-project.png)
+
+![New project confirmation: choose EMPTY](../images/rhythmer/020-newproject.png)
+
 1. Press **SHIFT + Pad 16** to open Project.
 2. Press **B3 NEW**. On its confirmation, press **B2 EMPTY**.
 3. Select track 1: hold **PAD BANK**, tap **pad 1**, then release PAD BANK.
@@ -30,6 +32,12 @@ Use these written instructions for the current controls. The earlier First Groov
 **Check:** there are no notes or samples you need to keep in this new project. Choosing NEW is not a way to add an instrument to an existing project.
 
 ## 2. Load the drum kit on track 1
+
+![Empty track: choose its type](../images/rhythmer/020-tracktypes.png)
+
+![Rhythmer Kit: choose a complete kit preset](../images/rhythmer/020-kit-presets.png)
+
+![Rhythmer Kit: kit name, selected pad and whole-kit filter](../images/rhythmer/020-kit-home.png)
 
 1. Press **PAD FX + KNOB FX together** to open TRACKS.
 2. Press **B1 TRACK SETUP**, select **TRACK TYPE**, then **PLUG-IN**.
@@ -43,6 +51,10 @@ Use these written instructions for the current controls. The earlier First Groov
 
 ## 3. Set tempo and the drum pattern length
 
+![Hold TAP TEMPO and turn the encoder](../images/rhythmer/020-tempo.png)
+
+![PATTERNS: length, quantise and swing controls](../images/rhythmer/020-patterns.png)
+
 1. Hold **TAP TEMPO** and turn the encoder to **140 BPM**, then release it.
 2. Press **SEQ**. If an editor opens, press B1 for SEQUENCES; press B1 again for **PATTERNS**.
 3. Select **bank A, pad 1** for pattern 1.
@@ -52,6 +64,10 @@ Use these written instructions for the current controls. The earlier First Groov
 **Check:** the header still identifies track 1. The pads now play drums. On PATTERNS they select patterns instead. Pattern length belongs to this track; you will set it separately for tracks 2 and 3.
 
 ## 4. Record drums
+
+![Record notes into the selected pattern](../images/rhythmer/020-recordseq.png)
+
+![Step Edit: select and edit the current pattern](../images/rhythmer/020-stepedit.png)
 
 1. Enable a count-in if useful: **SHIFT + Pad 4** toggles it.
 2. Press **SEQ RECORD**, then **PLAY**. Wait for the count-in if enabled.
@@ -63,6 +79,12 @@ Use these written instructions for the current controls. The earlier First Groov
 **Check:** after recording is off, the drums repeat without you pressing pads. If pads switch patterns instead of making drum sounds, stop, press SAMPLE and start again. SHIFT + − undoes a supported recording edit. For precise corrections use SHIFT + SEQ for Step Edit; this exercise does not require it.
 
 ## 5. Load and record a bass on track 2
+
+![FMini-1: open the list and choose MOOG BASS](../images/rhythmer/020-fmini-presets.png)
+
+![Track 2: FMini-1 with MOOG BASS loaded](../images/rhythmer/020-fmini-home.png)
+
+![Hold SAMPLE to open the Keys settings](../images/rhythmer/020-sampleheldkeys.png)
 
 1. Hold **PAD BANK**, tap **pad 2**, release PAD BANK. Check **track 2** in the header.
 2. The empty-track type cards appear. Choose **Plugin**, then **FMini-1**. If another screen remains open, press SAMPLE first.
@@ -76,15 +98,21 @@ Use these written instructions for the current controls. The earlier First Groov
 
 ## 6. Add chords on track 3
 
+![FM-106: original A11 Brass preset](../images/rhythmer/020-fm106-home.png)
+
 1. Select **track 3** with PAD BANK + pad 3.
 2. Choose Plugin → **FM-106**. Open its preset list and load **A11 Brass**.
 3. In Keys, confirm **C / Minor / Scale**. In PATTERNS, set pattern 1 to **4 bars / 1/16 / 50%**.
 4. Press SAMPLE. Play pads **1, 3 and 5 together** for a minor chord.
 5. Record short chord hits with SEQ RECORD → PLAY. Release the pads between hits. Turn recording off afterwards.
 
-**Check:** the displayed preset name is A11 Brass. This is the original brass preset, not a newly authored replacement or a patch described as a pad sound.
+**Check:** the displayed preset name is **A11 Brass**. Release each chord before the next hit.
 
 ## 7. Balance the tracks
+
+![TRACKS: select a track and balance LEVEL, PAN and SEND A](../images/rhythmer/020-tracks.png)
+
+![Rhythmer Kit: selected pad sound controls](../images/rhythmer/020-kit-edit.png)
 
 1. Press PAD FX + KNOB FX together for **TRACKS**.
 2. Select track 1, 2 or 3 using the encoder or PAD BANK + its pad.
@@ -96,6 +124,10 @@ Use these written instructions for the current controls. The earlier First Groov
 
 ## 8. Save and reopen
 
+![SAVE AS: name the project, then confirm SAVE](../images/rhythmer/020-nameproject.png)
+
+![OPEN: select the saved project](../images/rhythmer/020-projectlist.png)
+
 1. Press STOP and allow about three seconds without adjusting controls. The project can autosave while idle.
 2. Press **SHIFT + Pad 16 → B1 SAVE AS**.
 3. Enter a name, for example **FIRST GROOVE 020**, and press **B3 SAVE**.
@@ -105,6 +137,10 @@ Use these written instructions for the current controls. The earlier First Groov
 **Check:** saving a project is different from saving a User Sound/Kit. The project is what preserves the drum, bass and chord patterns together.
 
 ## Optional: generate an Acid line on track 4
+
+![Acid settings 1 of 2: Density, Accent and Slide](../images/rhythmer/020-acid-settings-0.png)
+
+![Acid settings 2 of 2: Octaves, Base Octave and Auto Mutate](../images/rhythmer/020-acid-settings-1.png)
 
 1. Select track 4 → Plugin → **Acid Engine** → preset **SQUELCH**.
 2. Select pattern 1 and set the desired pattern length.
@@ -117,6 +153,12 @@ Use these written instructions for the current controls. The earlier First Groov
 **Do not apply GENERATE SONG to tracks 1–4 here.** SOUND + MIDI can replace the instruments and patterns you just recorded. ACID GEN and GENERATE T4 work on the selected track instead.
 
 ## Optional: add your own Break loop on track 5
+
+![Break source browser: select the source and its bar length](../images/rhythmer/020-break-browse-open.png)
+
+![BRK PERF 1: play sixteen chops](../images/rhythmer/020-break-perf-0.png)
+
+![BRK PERF 2: hold and release performance commands](../images/rhythmer/020-break-perf-1.png)
 
 1. Put a loop you may use in the card's Samples folder. Start with a known **two-bar** loop.
 2. Select track 5 → Plugin → **Break Engine**.
