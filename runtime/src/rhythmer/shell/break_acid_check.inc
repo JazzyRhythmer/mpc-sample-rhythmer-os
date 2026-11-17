@@ -9,7 +9,7 @@
         auto& pattern=x.pattern();pattern.length=768;pattern.events.clear();Event gate;gate.key=36;gate.length=768;pattern.add(gate);
         h.load(x.project,x.patterns);h.offer_sample(0,&a);h.offer_sample(1,&b);h.send({Command::Type::Play});
         std::array<int32_t,256> audio{};h.render(audio.data(),128,1);
-        x.ui.recording=true;x.ui.settings.rec_quantize=false;x.ui.break_perf_page=1;
+        x.ui.recording=true;x.ui.settings.rec_quantize=false;x.ui.break_perf_page=0;
         edit_page.pad(x,8,110,true);for(unsigned n=0;n<40;n++)h.render(audio.data(),128,1);edit_page.pad(x,8,0,false);
         if(steps_lane(t)!=8||key_label(t,8)!="1/16 REPEAT")return gen_failure(422,__LINE__);
         auto roll=std::find_if(pattern.events.begin(),pattern.events.end(),[](const Event& e){return e.key==8;});
@@ -133,7 +133,7 @@
         x.undo();if(x.track().engine!=EngineKind::Midi||x.pattern().events!=before)return gen_failure(443,__LINE__);
         x.redo();if(x.track().break_bars!=3||x.track().bank!=2||x.pattern().events!=made)return gen_failure(444,__LINE__);
         // A held STRETCH pad must release even after paging to GRAIN.
-        x.ui.page=PageId::Edit;x.ui.break_perf_page=1;edit_page.pad(x,2,100,true);if(x.pad_keys[2][0]!=2)return gen_failure(445,__LINE__);
+        x.ui.page=PageId::Edit;x.ui.break_perf_page=0;edit_page.pad(x,2,100,true);if(x.pad_keys[2][0]!=2)return gen_failure(445,__LINE__);
         edit_page.wheel(x,3);edit_page.pad(x,2,0,false);if(x.pad_keys[2][0]>=0)return gen_failure(446,__LINE__);
     }
     std::printf("RHYTHMER_BREAK_RELEASE cancel_paths=2 B_focus_routes=4 undo_redo=ok saved_hold_mode=compatible held_stretch_page_release=ok\n");

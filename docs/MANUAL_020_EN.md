@@ -334,9 +334,9 @@ For a new rhythm, select **Straight / Genre / Random / Mutate / Tail Fill** in B
 
 ### BRK PERF: what each page does
 
-![BRK PERF 1: play sixteen chops](../assets/manual/020-break-perf-0.png)
+![BRK PERF 1: hold and release performance commands](../assets/manual/020-break-perf-0.png)
 
-![BRK PERF 2: hold and release performance commands](../assets/manual/020-break-perf-1.png)
+![BRK PERF 2: play sixteen chops](../assets/manual/020-break-perf-1.png)
 
 ![BRK PERF 3: source A, source B and Return](../assets/manual/020-break-perf-2.png)
 
@@ -350,11 +350,11 @@ Turn the encoder to move through the six numbered pages. The caption shows your 
 
 | Page | Action to try | What must be true / expected result |
 | --- | --- | --- |
-| 1 CHOPS | Hit pads 1–16 | Play the loop's sixteen slices. B2 LOAD A browses source A. |
-| 2 ROLLS / HOLD PADS | Hold a repeat pad while the pattern plays; release it | Hear the held command; releasing ends it. Pad 3 is STRETCH. |
+| 1 ROLLS / HOLD PADS | Hold a repeat pad while the pattern plays; release it | Hear the held command; releasing ends it. Pad 3 is STRETCH. |
+| 2 CHOPS | Hit pads 1–16 | Play the loop's sixteen slices. B2 LOAD A browses source A. |
 | 3 SOURCE A / B | B2 LOAD B, then choose B; pad 1 selects A, pad 2 selects B | B must be loaded first. Pad 3 / RETURN restores straight playback. |
 | 4 LOOP VARIATIONS | Set SOURCE's PLAY MODE to LOOP; set PATTERN HOLD off; raise Variation or Drift | These variations act in LOOP playback. They do not vary ordinary CHOP playback. |
-| 5 GRAIN / STRETCH | Hold pad 3 on page 2, keep it held and turn the encoder to page 5 | Adjust grain processing while STRETCH is active. Merely turning these knobs does not start STRETCH. |
+| 5 GRAIN / STRETCH | Hold pad 3 on page 1, keep it held and turn the encoder to page 5 | Adjust grain processing while STRETCH is active. Merely turning these knobs does not start STRETCH. |
 | 6 TRACK MIX | Adjust level, pan and send A | Mix the Break track; these are not source-bar or chop controls. |
 
 **PATTERN HOLD** stops internal LOOP-pattern regeneration. It is not audio freeze, a sustained-note switch or the switch for Grain. If the status says **INACTIVE**, **WAITING** or **READY**, read its condition before expecting a change. Page 5 needs STRETCH; page 4 needs LOOP, playback and Hold off.

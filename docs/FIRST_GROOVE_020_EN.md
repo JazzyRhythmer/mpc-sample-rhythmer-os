@@ -190,10 +190,10 @@ RHYTHMER OS **0.2.0** · **4 bars · 140 BPM · C minor**. Build a drum, bass an
 3. In the browser check **LOAD A** and set **K1 LOAD BARS = 2** before selecting the file and pushing.
 4. Wait for preparation. BREAK GEN stays open; a straight pattern is prepared if the destination pattern was empty.
 5. Press PLAY. A two-bar Break pattern can repeat while tracks 1–3 play four bars; their lengths do not have to match.
-6. Choose **BRK PERF**. Page **1 CHOPS** plays slices; turn the encoder to **2 ROLLS / HOLD PADS** and hold/release a repeat command.
+6. Choose **BRK PERF**. The first page, **1 ROLLS / HOLD PADS**, plays held effects. Turn the encoder to **2 CHOPS** to play individual slices.
 7. To reopen setup: select track 5 → SEQ → B1 PATTERNS → SHIFT + B3 GEN → BREAK GEN.
 
-If it plays at half/double the intended speed, check the source's bar count. Changing Grain knobs alone does not trigger stretching: hold pad 3 STRETCH on page 2, keep it held and turn to page 5. LOOP VARIATIONS requires LOOP mode, playback and PATTERN HOLD off. See the [Break instructions](MANUAL_020_EN.md#12-load-a-break-and-return-to-its-controls) before using those pages.
+If it plays at half/double the intended speed, check the source's bar count. Changing Grain knobs alone does not trigger stretching: hold pad 3 STRETCH on page 1, keep it held and turn to page 5. LOOP VARIATIONS requires LOOP mode, playback and PATTERN HOLD off. See the [Break instructions](MANUAL_020_EN.md#12-load-a-break-and-return-to-its-controls) before using those pages.
 
 ## If you get stuck
 

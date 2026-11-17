@@ -102,8 +102,13 @@ inline int break_p1_check(){
         auto host_owner=std::make_unique<EngineHost>();auto& h=*host_owner;Shell shell(h);auto& c=shell.context();c.track().engine=EngineKind::Sampler;c.track().break_bars=2;
         for(unsigned n=0;n<16;++n){c.track().pads[n].sample=0;c.track().pads[n].end=tone.frames;}
         h.load(c.project,c.patterns);h.offer_sample(0,&tone);std::array<int32_t,256> audio{};h.render(audio.data(),128,1);
-        for(unsigned route=0;route<3;++route){c.ui.track=0;c.ui.page=PageId::Stage;c.ui.back_depth=0;c.open(PageId::Edit);c.ui.break_perf_page=1;
-            edit_page.pad(c,2,100,true);h.render(audio.data(),128,1);if(!(h.break_activity_of(0)&4))return fail(28);
+        for(unsigned route=0;route<3;++route){c.ui.track=0;c.track().repeat=route==1;c.track().arp=route==2;c.ui.page=PageId::Stage;c.ui.back_depth=0;c.open(PageId::Edit);c.ui.break_perf_page=0;
+            edit_page.pad(c,2,100,true);for(unsigned n=0;n<100;++n)h.render(audio.data(),128,1);if(!(h.break_activity_of(0)&4))return fail(28);
+            // Other chops and a recorded copy of the command cannot release a live hold.
+            for(unsigned n=0;n<160;++n){
+                Command chop{Command::Type::NoteOn,0,0,uint16_t(36+n%16),60};h.send(chop);
+                h.render(audio.data(),128,1);if(!(h.break_activity_of(0)&4))return fail(60);
+            }
             edit_page.wheel(c,3);if(c.pad_keys[2][0]<0)return fail(29);
             if(route==0)c.open(PageId::Patterns);else if(route==1)c.back();else c.select_track(1);
             h.render(audio.data(),128,1);if(c.pad_keys[2][0]>=0||h.break_activity_of(0)&4){std::fprintf(stderr,"release route=%u key=%d activity=%u page=%u\n",route,c.pad_keys[2][0],h.break_activity_of(0),unsigned(c.ui.page));return fail(30);}

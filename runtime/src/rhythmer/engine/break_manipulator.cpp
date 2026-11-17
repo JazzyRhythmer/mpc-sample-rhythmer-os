@@ -20,7 +20,7 @@ void BreakManipulator::configure(unsigned bars,unsigned bank){
 void BreakManipulator::tempo(unsigned t){tempo_=std::clamp(t,200u,4000u);state->jungle_tempo(tempo_);}
 void BreakManipulator::transport(bool playing,unsigned ticks){
     if(playing&&!transport_playing){state->jungle_start_phase(ticks*2);tick_phase=0;}
-    transport_playing=playing;state->jungle_play(playing||state->six_seq_gates);
+    transport_playing=playing;state->jungle_play(playing||state->six_seq_gates||live_count);
 }
 void BreakManipulator::bind(){
     const auto* s=loops[source_];if(!s||s->frames<16||s->multi){state->jungle_bind(nullptr,0,0);return;}
@@ -30,6 +30,20 @@ void BreakManipulator::sources(const SampleData* a,const SampleData* b){
     if(a==loops[0]&&b==loops[1])return;
     // The host retires source data only after sample_gone/silence on the audio task.
     stop();loops[0]=a;loops[1]=b;bind();
+}
+void BreakManipulator::live_note(int key,int velocity){
+    if(!enabled()||key<0||key>=16)return;
+    // A repeated down updates priority, without making an unbalanced gate.
+    for(unsigned i=0;i<live_count;++i)if(live_order[i]==key){for(unsigned j=i+1;j<live_count;++j)live_order[j-1]=live_order[j];--live_count;break;}
+    live_order[live_count++]=uint8_t(key);live_velocity[unsigned(key)]=uint8_t(std::clamp(velocity,1,127));
+    state->jungle_roll(unsigned(key));state->jungle_play(1);
+}
+void BreakManipulator::live_off(int key){
+    if(key<0||key>=16)return;
+    for(unsigned i=0;i<live_count;++i)if(live_order[i]==key){for(unsigned j=i+1;j<live_count;++j)live_order[j-1]=live_order[j];--live_count;break;}
+    if(live_count)state->jungle_roll(live_order[live_count-1]);
+    else{state->jungle_roll_off();state->six_seq_release=1;}
+    state->jungle_play(transport_playing||state->six_seq_gates||live_count);
 }
 void BreakManipulator::note(int key,int velocity){
     if(!enabled())return;
@@ -46,10 +60,10 @@ void BreakManipulator::note(int key,int velocity){
 void BreakManipulator::off(int key){
     if(key>=0&&key<16)state->jungle_sequence_off(unsigned(key+16));
     else{int slice=key-int(sampler_first_note+bank_*16);if(slice>=0&&slice<16)state->jungle_sequence_off(unsigned(slice));}
-    if(!transport_playing&&!state->six_seq_gates)state->jungle_play(0);
+    if(!transport_playing&&!state->six_seq_gates&&!live_count)state->jungle_play(0);
 }
-void BreakManipulator::release(){activity_=0;transport_playing=false;state->jungle_roll_off();state->jungle_sequence_off(32);state->jungle_play(0);}
-void BreakManipulator::stop(){activity_=0;transport_playing=false;state->jungle_init();state->view_playing=state->view_ext=0;filter_age=filter_q_age=0;filter_q=8;state->jungle_filter_resonance(8);state->jungle_sequence_mode(1);for(unsigned i=0;i<10;i++)param(i,controls[i]);tick_phase=phase=0;read=32;previous=next=0;std::fill(std::begin(output),std::end(output),0);}
+void BreakManipulator::release(){live_count=0;live_velocity.fill(0);activity_=0;transport_playing=false;state->jungle_roll_off();state->jungle_sequence_off(32);state->jungle_play(0);}
+void BreakManipulator::stop(){live_count=0;live_velocity.fill(0);activity_=0;transport_playing=false;state->jungle_init();state->jungle_sequence_off(32);state->view_playing=state->view_ext=0;filter_age=filter_q_age=0;filter_q=8;state->jungle_filter_resonance(8);state->jungle_sequence_mode(1);for(unsigned i=0;i<10;i++)param(i,controls[i]);tick_phase=phase=0;read=32;previous=next=0;std::fill(std::begin(output),std::end(output),0);}
 void BreakManipulator::param(unsigned id,int value){if(id>=10)return;
     if(id==3&&controls[3]!=value){filter_age=filter_q_age=0;filter_q=14;state->jungle_filter_resonance(14);}
     controls[id]=value;
@@ -64,10 +78,11 @@ float BreakManipulator::frame(){
     return output[2*read++]/8388608.f;
 }
 void BreakManipulator::render(float* l,float* r,unsigned frames,float rate){
+    const float playing_gain=live_count?live_velocity[live_order[live_count-1]]/127.f:gain;
     const double step=44100.0/std::max(8000.f,rate);
     for(unsigned i=0;i<frames;i++){phase+=step;while(phase>=1){previous=next;next=frame();phase-=1;}
-        l[i]=r[i]=gain*(previous+float(phase)*(next-previous));}
-    activity_.store((transport_playing?1u:0u)|(state->six_seq_gates?2u:0u)|((state->six_seq_roll==3||state->roll_now==3)?4u:0u),std::memory_order_relaxed);
+        l[i]=r[i]=playing_gain*(previous+float(phase)*(next-previous));}
+    activity_.store((transport_playing?1u:0u)|((state->six_seq_gates||live_count)?2u:0u)|((state->six_seq_roll==3||state->roll_now==3)?4u:0u),std::memory_order_relaxed);
 }
 bool BreakManipulator::sounding()const{return enabled()&&(state->jungle_playing()||state->voices[0].active||state->voices[1].active);}
 }

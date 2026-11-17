@@ -661,6 +661,12 @@ void SamplerEngine::hit(int pad, int velocity, int semitones, int cutoff) {
 // A keyed sampler's note as the kit's encoding: pad 1 at the note's semitones from 60, any cutoff above dropped.
 static int keyed_note(int key) { return pad_note(int(sampler_first_note), std::clamp(key & 0xff, 0, 127) - 60); }
 
+void SamplerEngine::break_live_on(int key,int velocity){
+    unsigned first=manipulator.first_pad();
+    const auto* a=samples&&pads[first].sample<sample_slots?(*samples)[pads[first].sample]:nullptr;
+    const auto* b=samples&&pads[first].layers[0].sample<sample_slots?(*samples)[pads[first].layers[0].sample]:nullptr;
+    manipulator.sources(a,b);manipulator.live_note(key,velocity);
+}
 void SamplerEngine::note_on(int key, int velocity) {
     if(manipulator.enabled()){
         unsigned first=manipulator.first_pad();

@@ -9,7 +9,7 @@
         auto& pattern=x.pattern();pattern.length=768;pattern.events.clear();Event gate;gate.key=36;gate.length=768;pattern.add(gate);
         h.load(x.project,x.patterns);h.offer_sample(0,&a);h.offer_sample(1,&b);h.send({Command::Type::Play});
         std::array<int32_t,256> audio{};h.render(audio.data(),128,1);
-        x.ui.recording=true;x.ui.settings.rec_quantize=false;x.ui.break_perf_page=1;
+        x.ui.recording=true;x.ui.settings.rec_quantize=false;x.ui.break_perf_page=0;
         edit_page.pad(x,8,110,true);for(unsigned n=0;n<40;n++)h.render(audio.data(),128,1);edit_page.pad(x,8,0,false);
         if(steps_lane(t)!=8||key_label(t,8)!="1/16 REPEAT")return gen_failure(422,__LINE__);
         auto roll=std::find_if(pattern.events.begin(),pattern.events.end(),[](const Event& e){return e.key==8;});
@@ -83,7 +83,7 @@
         x.ui.track=0;x.ui.page=PageId::Patterns;x.ui.sheet_open=true;x.ui.gen8_mode=2;
         x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bank=0;x.ui.break_job_bars=2;
         x.ui.break_job_b=false;x.ui.break_job_from_picker=route!=4;
-        x.project.samples[0].frames=176400;
+        x.project.samples.edit(0).frames=176400;
         x.ui.sheet_row=1;patterns_page.push(x);if(x.ui.sheet_row!=1||!x.pattern().events.empty())return gen_failure(430,__LINE__);
         if(route==1)x.ui.track=1;
         if(route==2)x.ui.sheet_open=false;
@@ -102,7 +102,7 @@
         EngineHost h;Shell s(h);auto& x=s.context();x.ui.track=0;
         x.ui.page=PageId::Patterns;x.ui.sheet_open=true;x.ui.gen8_mode=2;
         x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bars=2;
-        x.project.samples[0].frames=176400;auto old_engine=x.track().engine;auto history=x.edits.size();
+        x.project.samples.edit(0).frames=176400;auto old_engine=x.track().engine;auto history=x.edits.size();
         auto cards=page_bindings(x.project,x.ui,x.pattern());for(const auto& b:cards)if(b.kind!=Binding::Kind::None)return gen_failure(436,__LINE__);
         patterns_page.soft(x,1);if(x.ui.gen8_mode!=2)return gen_failure(437,__LINE__);
         if(back_key) x.back();else patterns_page.soft(x,0);
@@ -114,7 +114,7 @@
         x.track().engine=EngineKind::Sampler;x.track().break_bars=2;
         x.ui.page=PageId::Patterns;x.ui.sheet_open=true;x.ui.gen8_mode=2;
         x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bank=0;x.ui.break_job_bars=2;x.ui.break_job_b=true;
-        x.project.samples[0].frames=176400;
+        x.project.samples.edit(0).frames=176400;
         if(route==1)x.select_track(1);
         if(route==2)x.ui.sheet_open=false;
         if(route==3)x.ui.gen8_mode=0;
@@ -126,14 +126,14 @@
     {
         EngineHost h;Shell s(h);auto& x=s.context();x.ui.track=0;x.track().engine=EngineKind::Midi;
         x.pattern().length=768;Event e;e.key=48;e.length=96;x.pattern().add(e);auto before=x.pattern().events;
-        x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bank=2;x.ui.break_job_bars=3;x.project.samples[0].frames=264600;
+        x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bank=2;x.ui.break_job_bars=3;x.project.samples.edit(0).frames=264600;
         x.gen_break_tick();auto made=x.pattern().events;if(made!=before)return gen_failure(466,__LINE__);x.track().break_perf[4]=1;x.track().break_perf[9]=0;
         auto saved=save_project(x.project,x.patterns);auto project=std::make_unique<Project>();auto bank=std::make_unique<PatternBank>();
         if(!load_project(saved,*project,*bank).empty()||project->tracks[0].break_perf[4]!=1||project->tracks[0].break_perf[9]||bank->at[0][0].events!=made)return gen_failure(442,__LINE__);
         x.undo();if(x.track().engine!=EngineKind::Midi||x.pattern().events!=before)return gen_failure(443,__LINE__);
         x.redo();if(x.track().break_bars!=3||x.track().bank!=2||x.pattern().events!=made)return gen_failure(444,__LINE__);
         // A held STRETCH pad must release even after paging to GRAIN.
-        x.ui.page=PageId::Edit;x.ui.break_perf_page=1;edit_page.pad(x,2,100,true);if(x.pad_keys[2][0]!=2)return gen_failure(445,__LINE__);
+        x.ui.page=PageId::Edit;x.ui.break_perf_page=0;edit_page.pad(x,2,100,true);if(x.pad_keys[2][0]!=2)return gen_failure(445,__LINE__);
         edit_page.wheel(x,3);edit_page.pad(x,2,0,false);if(x.pad_keys[2][0]>=0)return gen_failure(446,__LINE__);
     }
     std::printf("RHYTHMER_BREAK_RELEASE cancel_paths=2 B_focus_routes=4 undo_redo=ok saved_hold_mode=compatible held_stretch_page_release=ok\n");
@@ -158,7 +158,7 @@
         auto engine=x.track().engine;auto history=x.edits.size();
         x.ui.page=PageId::Patterns;x.ui.sheet_open=true;x.ui.gen8_mode=2;x.ui.break_pending=0;
         x.ui.break_job_track=0;x.ui.break_job_bars=2;x.ui.break_job_from_picker=route!=2;x.ui.break_job_b=route==2;
-        x.project.samples[0].frames=8;
+        x.project.samples.edit(0).frames=8;
         if(route==1)x.select_track(1);
         x.gen_break_tick();if(x.ui.break_pending>=0||x.project.tracks[0].engine!=engine||x.edits.size()!=history)return gen_failure(450,__LINE__);
         if(route!=1){if(x.ui.page!=PageId::Samples||!x.ui.break_browse||x.ui.break_load_b!=(route==2)||x.ui.break_from_picker!=(route!=2))return gen_failure(451,__LINE__);}
@@ -169,7 +169,7 @@
     {
         EngineHost h;Shell s(h);auto& x=s.context();x.project.tracks[0].engine=EngineKind::Midi;
         x.ui.track=1;x.ui.page=PageId::Stage;x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bars=2;
-        x.project.samples[0].frames=176400;x.prints.freeze[0].state=FreezeState::Deep;
+        x.project.samples.edit(0).frames=176400;x.prints.freeze[0].state=FreezeState::Deep;
         auto history=x.edits.size();x.gen_break_tick();
         if(x.ui.ask!=UiState::Ask::None||x.ui.page!=PageId::Stage||x.ui.track!=1||x.ui.break_pending>=0||x.project.tracks[0].engine!=EngineKind::Midi||x.edits.size()!=history)return gen_failure(453,__LINE__);
     }
@@ -183,7 +183,7 @@
         x.track().pads[0].pitch=7;x.track().pads[0].cutoff=42;x.track().break_perf[4]=1;
         x.pattern().length=1152;Event note;note.key=42;note.tick=96;note.length=48;x.pattern().add(note);
         auto original=x.pattern();
-        x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bars=uint8_t(bars);x.project.samples[0].frames=264600;
+        x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bars=uint8_t(bars);x.project.samples.edit(0).frames=264600;
         x.gen_break_tick();
         if(!(x.pattern()==original)||x.track().pads[0].sample!=0||x.track().pads[0].pitch!=7||x.track().pads[0].cutoff!=42||x.track().break_perf[4]!=1)return gen_failure(454,__LINE__);
         if(x.track().pads[0].layers[0].sample!=(bars==2?2:no_sample))return gen_failure(455,__LINE__);
@@ -196,7 +196,7 @@
     for(unsigned cancel=0;cancel<3;++cancel){
         EngineHost h;Shell s(h);auto& x=s.context();x.ui.page=PageId::Samples;x.ui.break_browse=true;
         x.track().engine=EngineKind::Sampler;x.track().break_bars=2;x.ui.break_pending=0;x.ui.break_job_track=0;x.ui.break_job_bars=3;
-        x.project.samples[0].frames=264600;auto history=x.edits.size();ask(x,UiState::Ask::BreakLength,0);x.gen_break_tick();
+        x.project.samples.edit(0).frames=264600;auto history=x.edits.size();ask(x,UiState::Ask::BreakLength,0);x.gen_break_tick();
         if(x.edits.size()!=history||x.track().break_bars!=2)return gen_failure(459,__LINE__);
         if(cancel==2)x.ui.shift=true;
         ask_button(x,cancel==2?SurfaceButton::WheelPush:cancel?SurfaceButton::TopLeft:SurfaceButton::TopRight);x.gen_break_tick();

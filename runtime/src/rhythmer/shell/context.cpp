@@ -434,7 +434,9 @@ void Context::follow_zone(unsigned kit, int semitones, int velocity) {
 void Context::key(int k, int velocity, bool down, int cutoff) {
     auto& t = track();
     if(down&&t.engine==EngineKind::Sampler&&t.break_bars)t.last_note=uint8_t(k);
-    if (t.repeat) {
+    const bool break_command=t.engine==EngineKind::Sampler&&t.break_bars&&k>=0&&k<19;
+    if(break_command){note(ui.track,k,down?velocity:0);}
+    else if (t.repeat) {
         Command c {Type::RepeatKey, ui.track, 0, uint16_t(k), int16_t(down ? velocity : 0)};
         c.position = uint32_t(cutoff + 1); // a 16 Levels Filter pad's cutoff, kept on its repeats
         send(c);
@@ -446,7 +448,7 @@ void Context::key(int k, int velocity, bool down, int cutoff) {
         note(ui.track, k, down ? velocity : 0);
     }
     if (!down) record_release(k);
-    if (down && !t.repeat && !t.arp) record(k, velocity); // repeated or arpeggiated, the press is not heard: its notes are written as they play (take_arp_notes)
+    if (down && (break_command||(!t.repeat && !t.arp))) record(k, velocity); // repeated or arpeggiated, the press is not heard: its notes are written as they play (take_arp_notes)
     keep_played(ui.track, k, velocity, down); // roadmap P5: always, for Capture
 }
 

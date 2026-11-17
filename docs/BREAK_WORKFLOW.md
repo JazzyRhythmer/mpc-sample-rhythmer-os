@@ -12,8 +12,8 @@ To reopen: select the Break track → **SEQ / PATTERNS → SHIFT + B3 GEN → BR
 
 Turn or press the encoder to change pages. Hardware pads are numbered bottom-left to top-right.
 
-1. **CHOPS** — pads 1–16 play slices; Orbit and DJ Filter shape playback. Pattern Hold affects LOOP mode only.
-2. **ROLLS / HOLD PADS** — hold a pad for Repeat, Build, Stretch, Echo, Up, Down or Shrink; release it to end that command. Pad 3 is STRETCH.
+1. **ROLLS / HOLD PADS** — hold a pad for Repeat, Build, Stretch, Echo, Up, Down or Shrink; release it to end that command. Pad 3 is STRETCH.
+2. **CHOPS** — pads 1–16 play slices; Orbit and DJ Filter shape playback. Pattern Hold affects LOOP mode only.
 3. **SOURCE A / B** — Pad 1 selects A, Pad 2 selects B (load B with B2 LOAD B first), Pad 3 returns to straight playback. K1 selects CHOP or LOOP, K2 Pattern Hold, K3 DJ Filter. Both files use the declared source bar count.
 4. **LOOP VARIATIONS** — PLAY with a populated pattern, select LOOP on page 3 and leave Pattern Hold OFF. Variation/Drift apply at internal bar boundaries. Tail Fill adds automatic rolls. In CHOP, the written slice sequence remains in charge.
 5. **GRAIN / STRETCH** — changes stretched hits, not ordinary chops. With playback running, hold Pad 3 on ROLLS, keep holding while turning the encoder to this page, then adjust Grain/Splice/Slow. Release Pad 3 to finish. A recorded STRETCH command works too. Slow is a 2–4× stretch factor, not project tempo.
@@ -33,7 +33,7 @@ The hotfix preserves DSP algorithms, preset banks, command IDs and project seria
 
 ## Replace a source without replacing your music
 
-- BRK PERF pages 1, 2, 4, 5, 6: **B2 LOAD A**. Page 3 SOURCE A/B: **B2 LOAD B**. Its on-screen hint points back to CHOPS B2 for A.
+- BRK PERF pages 1, 2, 4, 5, 6: **B2 LOAD A**. Page 3 SOURCE A/B: **B2 LOAD B**. Its on-screen hint points back to ROLLS B2 for A.
 - The browser header shows **LOAD A / N BARS** or **LOAD B / N BARS**. K1 LOAD BARS declares A's 1–4-bar audio length. B shares A's declared bars. Folders and CARD/INTERNAL/PREVIEW remain; non-audio instruments, kits, banks, MIDI and expansions are hidden only here. Shift+pad does not put a Break source on a random kit pad.
 - Replacing A at the same length retains B. A changed bar count asks first: **B1 CANCEL** or **SHIFT+Push** cancels; **B3 LOAD A** keeps all pattern lengths and clears B. Undo restores the whole previous track. Source-relative slice trims are rebuilt for the new audio; filters, pitch, envelopes, sends and performance settings stay.
 - **BREAK GEN K1 LENGTH** is the native sequence-length control. It is independent of browser LOAD BARS. Set LENGTH, then explicitly apply STRAIGHT or another generation action to write a new pattern.

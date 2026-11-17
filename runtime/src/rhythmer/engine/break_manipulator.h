@@ -4,6 +4,7 @@
 #include "rhythmer/model/sampler.h"
 #include <memory>
 #include <atomic>
+#include <array>
 namespace rhythmer {
 class BreakManipulator {
 public:
@@ -21,6 +22,7 @@ public:
     void sources(const SampleData* a,const SampleData* b);
     void tempo(unsigned tenths);
     void transport(bool playing,unsigned ticks);
+    void live_note(int key,int velocity);void live_off(int key);
     void note(int key,int velocity);void off(int key);void release();void stop();
     void param(unsigned id,int value);
     void render(float*,float*,unsigned frames,float rate);
@@ -28,6 +30,7 @@ public:
 private:
     struct State;std::unique_ptr<State> state;
     bool transport_playing=false;
+    std::array<uint8_t,16> live_order{},live_velocity{};unsigned live_count=0;
     unsigned bars_=0,bank_=0;std::atomic<unsigned> source_{0};
     std::atomic<unsigned> feedback_version{0},variation_view{0},drift_view{0};
     int controls[10]{0,0,0,64,0,0,38,100,4,1};

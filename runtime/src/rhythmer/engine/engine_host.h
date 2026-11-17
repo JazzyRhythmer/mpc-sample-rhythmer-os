@@ -369,6 +369,7 @@ private:
                                   RestorePads, PadFxParam, Bend, Control };
         Op op = Op::NoteOn;
         bool flag = false;  // Slide: glide
+        bool live = false; // manual Break performance; distinct from pattern gates
         uint16_t frame = 0; // into the block
         int32_t a = 0, b = 0, c = 0, d = 0;
         float x = 1;        // NoteOn, Slide: the accent's gain; Wheel, Pressure, Bend: the value
@@ -474,8 +475,8 @@ private:
     // yet) or the old way (every track rendered up to each tick), else kept for its job, at block_at (roadmap P2).
     bool deferring = false; // the sequencing pass of a one-dispatch block is running
     bool keep_call(Slot& slot, const EngineCall& call);
-    void engine_note_on(Slot& slot, int key, int velocity, float accent = 1);
-    void engine_note_off(Slot& slot, int key);
+    void engine_note_on(Slot& slot, int key, int velocity, float accent = 1, bool live = false);
+    void engine_note_off(Slot& slot, int key, bool live = false);
     void engine_slide(Slot& slot, int from, int to, int velocity, bool glide, float accent);
     void engine_param(Slot& slot, int id, int value);
     void engine_wheel(Slot& slot, float value);

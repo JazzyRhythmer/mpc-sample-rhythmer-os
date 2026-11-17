@@ -5,7 +5,7 @@ beta.2 → beta.3은 플러그인과 카탈로그도 바뀌므로 전체 SD.zip�
 
 개발자: **jazzy rhythmer**. Instagram: https://www.instagram.com/jazzyrhythmer/ · YouTube: https://www.youtube.com/@jazzyrhythmer
 
-빌드·오프라인 검증 후 사용자가 실기기에서 테스트하는 베타다.  이 안내는 공개 베타 설치용이며, 기기 설치는 소유자가 직접 진행한다. 설치 전 프로젝트·샘플·카드 내용을 백업한다.
+빌드·오프라인 검증 후 사용자가 실기기에서 테스트하는 베타다. 기기 설치·물리 조작·청취·latency는 현재 미검증으로 표시한다. 이 안내는 공개 베타 설치용이며, 기기 설치는 소유자가 직접 진행한다. 설치 전 프로젝트·샘플·카드 내용을 백업한다.
 
 ## 파일 구조
 

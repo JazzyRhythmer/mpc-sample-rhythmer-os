@@ -387,16 +387,7 @@ void jungle_auto_roll(unsigned on) { ctl_auto = on ? 1U : 0U; }
 void jungle_freeze(unsigned on) { ctl_freeze = on ? 1U : 0U; }
 void jungle_straight(void) { ctl_straight = (uint8_t)(ctl_straight + 1U); }
 void jungle_sequence_mode(unsigned chop){if(chop&&!six_chop_mode)six_seq_release=1;six_chop_mode=(uint8_t)(chop!=0);}
-void jungle_sequence_note(unsigned command){
- if(command<32)six_seq_gates|=1u<<command;
- if(command<16){six_seq_hit=(int16_t)command;six_seq_roll=0;six_seq_new=0;six_seq_release=0;}
- else if(command<32){six_seq_roll=(uint8_t)(command-15);six_seq_new=1;six_seq_release=0;}
-}
-void jungle_sequence_off(unsigned command){
- if(command>=32){six_seq_hit=-1;six_seq_gates=0;}else six_seq_gates&=~(1u<<command);
- if(command>=16){six_seq_roll=0;six_seq_new=0;}
- if(!six_seq_gates){six_seq_hit=-1;six_seq_release=1;}
-}
+#include "rhythmer/engine/break_sequence_hold.inc"
 void jungle_roll(unsigned key)
 {
     if (key < JUNGLE_ROLL_KEYS) ctl_roll = (uint8_t)(1U + key);

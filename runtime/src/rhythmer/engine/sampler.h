@@ -50,6 +50,7 @@ public:
 
     SamplerEngine();
     BreakManipulator manipulator;
+    void break_live_on(int key,int velocity);
     void configure_break(unsigned bars,unsigned bank){manipulator.configure(bars,bank);}
     void set_samples(const Table* table) { samples = table; }
     void set_pager(StreamPager* streams) { pager = streams; } // nullptr: instruments' frames are all safe to read (tests)

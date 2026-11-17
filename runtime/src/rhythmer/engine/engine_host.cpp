@@ -447,12 +447,12 @@ void EngineHost::apply(const Command& c) {
         panic_latched = false;
         if (slot.freeze && slot.freeze->deep) break; // freeze plan F2d: a deep-frozen track's pads play nothing
         if (slot.freeze) { wake(slot); slot.hand.set(c.index & 0xff); } // freeze plan F2b: a hand wakes a frozen track's engine
-        if (c.index <= 127 || slot.kind == EngineKind::Sampler) engine_note_on(slot, c.index, c.value);
+        if (c.index <= 127 || slot.kind == EngineKind::Sampler) engine_note_on(slot, c.index, c.value, 1, true);
         if (c.pattern != 1) midi_note(c.track % track_count, c.index & 0xff, c.value, frame_now + block_at, -1); // a pad's note (not one from MIDI in)
         break;
     case Type::NoteOff:
         slot.hand.reset(c.index & 0xff);
-        if (c.index <= 127 || slot.kind == EngineKind::Sampler) engine_note_off(slot, c.index);
+        if (c.index <= 127 || slot.kind == EngineKind::Sampler) engine_note_off(slot, c.index, true);
         if (c.pattern != 1) midi_note_off(c.track % track_count, c.index & 0xff, frame_now + block_at);
         break;
     case Type::AllNotesOff:
@@ -1186,10 +1186,10 @@ void EngineHost::make_call(unsigned t, Slot& slot, const EngineCall& c) {
     switch (c.op) {
     case Op::NoteOn:
         if (c.flag) e->set_accent(c.x);
-        e->note_on(c.a, c.b);
+        if(c.live&&slot.kind==EngineKind::Sampler&&slot.sampler.manipulator.enabled()&&c.a>=0&&c.a<16)slot.sampler.break_live_on(c.a,c.b);else e->note_on(c.a, c.b);
         if (c.flag) e->set_accent(1);
         break;
-    case Op::NoteOff: e->note_off(c.a); break;
+    case Op::NoteOff: if(c.live&&slot.kind==EngineKind::Sampler&&slot.sampler.manipulator.enabled()&&c.a>=0&&c.a<16)slot.sampler.manipulator.live_off(c.a);else e->note_off(c.a); break;
     case Op::Slide: e->set_accent(c.x); e->slide(c.a, c.b, c.c, c.flag); e->set_accent(1); break;
     case Op::Param: e->set_param(c.a, c.b); break;
     case Op::Wheel: e->set_wheel(c.x); break;
@@ -1207,14 +1207,14 @@ void EngineHost::make_call(unsigned t, Slot& slot, const EngineCall& c) {
 }
 
 // accent < 0: none set around it (a note by hand); else the sequencer's, back to 1 after.
-void EngineHost::engine_note_on(Slot& slot, int key, int velocity, float accent) {
-    EngineCall call;
+void EngineHost::engine_note_on(Slot& slot, int key, int velocity, float accent, bool live) {
+    EngineCall call;call.live=live;
     call.op = EngineCall::Op::NoteOn; call.a = key; call.b = velocity; call.flag = accent >= 0; call.x = accent;
     if (!keep_call(slot, call)) make_call(unsigned(&slot - slots.data()), slot, call);
 }
 
-void EngineHost::engine_note_off(Slot& slot, int key) {
-    EngineCall call;
+void EngineHost::engine_note_off(Slot& slot, int key, bool live) {
+    EngineCall call;call.live=live;
     call.op = EngineCall::Op::NoteOff; call.a = key;
     if (!keep_call(slot, call)) make_call(unsigned(&slot - slots.data()), slot, call);
 }

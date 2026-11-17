@@ -10,7 +10,7 @@
 | 패턴 생성 | Break 트랙 → SEQ → B1 PATTERNS → SHIFT+B3 GEN → BREAK GEN → STRAIGHT / GENRE CHOPS / RANDOM CHOPS / MUTATE CHOPS / TAIL FILL → Push / B3 APPLY | 현재 패턴을 바꾸는 동작이다. SHIFT+− Undo, SHIFT++ Redo. BREAK GEN의 B1 BACK / SHIFT+Push → GEN 메인 → 한 번 더 닫기. |
 | 소스 A 교체 | BRK PERF의 1·2·4·5·6페이지 → B2 LOAD A. 또는 BREAK GEN → BROWSE SAMPLE | 기존 패턴·길이·연주 값·패드 음색 설정 유지. 새 파일의 16등분으로 트림을 다시 잡는다. 같은 마디 수면 B 유지. |
 | 소스 B 교체 | BRK PERF의 3 SOURCE A/B → B2 LOAD B → 파일 → Push | A와 같은 선언 마디 수를 사용. 패턴을 만들지 않는다. 로드 후 SOURCE A/B로 복귀. PLAY 중 패드 1 A / 2 B / 3 RETURN. |
-| 롤 연주 | BRK PERF → 인코더 회전으로 2 ROLLS → PLAY → 롤 패드 누르고 놓기 | 누른 동안 연주한다. Record+Play일 때만 시퀀스에 기록한다. B1 GEN은 BREAK GEN으로. RETURN은 Variation/Drift 복귀이며 뒤로가기가 아니다. |
+| 롤 연주 | BRK PERF → 인코더 회전으로 1 ROLLS → PLAY → 롤 패드 누르고 놓기 | 누른 동안 연주한다. Record+Play일 때만 시퀀스에 기록한다. B1 GEN은 BREAK GEN으로. RETURN은 Variation/Drift 복귀이며 뒤로가기가 아니다. |
 | 저장·다시 열기 | SHIFT+패드16 PROJECT → SAVE. 이후 OPEN으로 프로젝트 재열기 | 소스 참조·패턴·연주 설정을 프로젝트에 저장한다. 원본 샘플 파일을 이동/삭제하지 않는다. User Sound/User Kit 저장과 다르다. |
 
 ### 교체와 길이 변경
@@ -30,8 +30,8 @@ B1 BACK은 폴더 안에서는 상위 폴더로 간다. 루트에서 A는 GEN, B
 
 | 페이지 | 패드와 노브 |
 |---|---|
-| 1 CHOPS | 패드 1–16으로 슬라이스 연주. Orbit, DJ Filter, Pattern Hold |
-| 2 ROLLS | 패드를 누르는 동안 Repeat·Up·Down·Shrink·Build·Stretch·Echo 연주 |
+| 1 ROLLS | 패드를 누르는 동안 Repeat·Up·Down·Shrink·Build·Stretch·Echo 연주 |
+| 2 CHOPS | 패드 1–16으로 슬라이스 연주. Orbit, DJ Filter, Pattern Hold |
 | 3 SOURCE A / B | 패드 1은 A, 패드 2는 B, 패드 3은 Return. Play Mode, Pattern Hold, DJ Filter |
 | 4 LOOP VARIATIONS | Variation, Drift, Tail Fill. Variation·Drift는 LOOP 모드 + Pattern Hold OFF에서 내부 마디 경계부터 적용 |
 | 5 GRAIN / STRETCH | 그레인 길이, 이음새 크로스페이드, 2–4배 Stretch |
@@ -64,7 +64,7 @@ Break 트랙 선택 → **SEQ → B1 PATTERNS → SHIFT + B3 GEN → BREAK GEN �
 
 - 기본 CHOP은 시퀀스의 슬라이스를 재생한다. PATTERN HOLD는 오디오 유지가 아닌 **내부 패턴 재생성 중지**이므로 CHOP에서 효과가 들리지 않는다. 트랙 Freeze와도 다르다.
 - PLAY → 3 SOURCE A/B에서 K1 LOOP, K2 Hold OFF → 4 LOOP VARIATIONS에서 Variation/Drift를 올린다. 내부 마디가 바뀌는 소리를 듣고 3페이지 Hold ON으로 패턴을 유지한다. Variation/Drift가 0이면 ON/OFF 차이가 적을 수 있다. Hold가 라이브 롤과 모든 조작을 멈추는 것은 아니다.
-- GRAIN/STRETCH는 스트레치된 히트에 적용된다. PLAY 중 2 ROLLS에서 **패드 3 STRETCH를 계속 누른 채** 인코더를 돌려 5페이지로 이동하고 Grain/Splice/Slow를 조절한다. 패드를 놓으면 해제된다. STRETCH를 시퀀스에 녹음한 뒤 조절해도 된다. PATTERN HOLD는 필요하지 않다. Slow는 해당 히트의 2–4배 스트레치이며 전체 템포가 아니다.
+- GRAIN/STRETCH는 스트레치된 히트에 적용된다. PLAY 중 1 ROLLS에서 **패드 3 STRETCH를 계속 누른 채** 인코더를 돌려 5페이지로 이동하고 Grain/Splice/Slow를 조절한다. 패드를 놓으면 해제된다. STRETCH를 시퀀스에 녹음한 뒤 조절해도 된다. PATTERN HOLD는 필요하지 않다. Slow는 해당 히트의 2–4배 스트레치이며 전체 템포가 아니다.
 - B는 3페이지 LOAD B로 별도 파일을 넣어야 한다. 6 TRACK MIX는 트랙 음량·팬·Send A이며 패턴 생성 페이지가 아니다.
 - RETURN은 Variation/Drift를 리셋한다. 패턴 삭제나 Hold 해제가 아니다. 누른 연주 패드는 놓아서 해제한다.
 
@@ -96,7 +96,7 @@ Auto Mutate는 재생 중 지정한 마디 간격마다 변형한다. 녹음·�
 | PATTERN HOLD ON | 내부 패턴 재생성 보류 | Hold OFF. 오디오 유지 / 트랙 Freeze / Grain 켜기가 아님 |
 | READY | 정지·게이트 없음 또는 Variation/Drift가 모두 0 | 패턴 PLAY / chop 패드 게이트, Variation·Drift 한 값씩 올리기 |
 | ACTIVE | LOOP·Hold OFF·재생 조건 충족 | 다음 내부 마디에서 비교 |
-| GRAIN: WAITING | STRETCH 명령이 없음 | 2 ROLLS의 패드3 STRETCH를 누른 채 5 GRAIN으로 이동 |
+| GRAIN: WAITING | STRETCH 명령이 없음 | 1 ROLLS의 패드3 STRETCH를 누른 채 5 GRAIN으로 이동 |
 | STRETCH ACTIVE | 실시간 또는 시퀀스에 기록한 STRETCH가 실제 엔진에 전달됨 | Grain/Splice/Slow 조정. 패드를 놓으면 종료. Pattern Hold 불필요 |
 
 BRK PERF 내 페이지 이동은 누른 패드를 유지한다. GEN·뒤로·다른 트랙으로 나가면 해당 트랙의 실시간 연주 명령만 해제하며, 다른 트랙의 눌린 음은 끊지 않는다. 시퀀스에 기록된 명령은 패턴대로 재생한다. RETURN은 Variation/Drift 복귀이며 Hold OFF나 패턴 삭제가 아니다.
