@@ -173,7 +173,7 @@
     "tools/refresh_upstream_patch.py": "0d696235e7d1a4610bbc6d78c38c4f3b00230d8b412cd2a2274f9e8a145aaa3b",
     "tools/release_profile.py": "cddeea561ae553c8f1811dc1587121f616ffb83da5af4ec2c09bc9ff3103560b",
     "tools/rename_runtime.py": "cfd5b0c186a34bd1f55b83956c4b79d4e956c81a9632ad14331f42cc7dd2d5ca",
-    "tools/render_manual_020.py": "5730b181d03a83f450cef82545a490881e883663cd623107b18fcf81c2951829",
+    "tools/render_manual_020.py": "40af2e6208b9fbc877ebc0f8cf57e9e6084844550ef4c2a5c666594ce4a98255",
     "tools/render_reference_sheets.py": "ab84f4f8ab6b415c504b69152f532b1b11a0f4bdd7d920d41e0d94880f4b80e4",
     "tools/render_ui_audit.py": "101c63a9403ae57c135273891c4432fccdae75ce33719195db0c5778c787f670",
     "tools/rhythmer_presets.py": "df33f5de0acdee25e6f2f4da7511c6ad1b0db3fe82e7b30d7e0e286cdce1ce68",
@@ -520,6 +520,7 @@
       "vertical_video_sections": 0
     },
     "hardware_validated": false,
-    "previous_three_passes": "Retained as historical baseline at their recorded runtime; not rerun or claimed for this focused UI revision"
+    "previous_three_passes": "Retained as historical baseline at their recorded runtime; not rerun or claimed for this focused UI revision",
+    "manual_layout": "All images constrained to the text column, including inline images; 390px manual/First Groove has no horizontal overflow; CSS URLs are content-versioned."
   }
 }
