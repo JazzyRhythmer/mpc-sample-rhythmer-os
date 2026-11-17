@@ -16,7 +16,7 @@
  # 4-stem model, from build/deps). `make stems` builds them; the first time takes a few minutes.
 --- a/docs/GUIDE.md
 +++ b/docs/GUIDE.md
-@@ -1,8 +1,6 @@
+@@ -1,8 +1,10 @@
 -# Rhythmer user guide
 +# Rhythmer OS user guide
  
@@ -24,6 +24,10 @@
 -have not installed Rhythmer yet, start with the [quickstart](QUICKSTART.md).
 -For the complete control reference, see [RHYTHMER.md](RHYTHMER.md).
 +Rhythmer OS 0.2.0 for MPC Sample. Developed by jazzy rhythmer, based on Melodee by Kerem Kiliç (Ellic Studio). This owner beta awaits physical-device validation.
++
++Start with the [0.2.0 practical manual](guide/MANUAL_020_EN.md), [Your first groove with RHYTHMER OS.](guide/FIRST_GROOVE_020_EN.md), [essential controls](guide/QUICK_REFERENCE_020_EN.md) and [system map](guide/SYSTEM_MAP_020_EN.md). [한국어 매뉴얼](guide/USER_MANUAL_KO_DRAFT.md).
++
++The chapters below provide the foundation reference. For RHYTHMER-specific engine controls, track setup, GEN, Acid and Break, use the 0.2.0 guides above.
  
  ## Contents
  
@@ -1763,7 +1767,7 @@
 @@ -0,0 +1,15 @@
 +# RHYTHMER OS 0.2.0 — verification scope
 +
-+The foundation is Melodee Sample v0.3.0 by Kerem Kiliç (Ellic Studio), on the pinned sample-base revision. This local installation candidate is not a published release. Hardware validation remains pending.
++The foundation is Melodee Sample v0.3.0 by Kerem Kiliç (Ellic Studio), on the pinned sample-base revision. This document records the packaged build’s software checks. Publication and downloads are listed on the installation page. Hardware validation remains pending.
 +
 +The acceptance receipt binds the runtime hash, integration patch, native-library hashes and source inputs. Packaging rejects a changed runtime or changed accepted input. The current catalogue contains 22 picker entries, 27 source views, 36 complete kits and 2,888 selections, including 43 separately identified authored selections. The excluded external Prophet Sequential and Elixir Erica/Hrtl banks remain excluded. No commercial break recordings are bundled.
 +
@@ -12846,7 +12850,40 @@
          return REPO + resolved.relative_to(ROOT).as_posix() + ("#" + anchor if anchor else "")
  
      def image(self, target):
-@@ -364,7 +367,7 @@
+@@ -317,9 +320,10 @@
+     qs = Converter(DOCS / "QUICKSTART.md")
+     body = qs.convert((DOCS / "QUICKSTART.md").read_text())
+     body = re.sub(r"^<h1[^>]*>.*?</h1>\n<p>.*?</p>\n<ol>.*?</ol>", "", body, count=1, flags=re.S)  # its own contents list
++    body = re.sub(r"^<h1[^>]*>.*?</h1>", "", body, count=1, flags=re.S)
+     files["/docs/quickstart"] = shell("Quickstart · Rhythmer", "quickstart",
+         '<div class="doc-layout"><aside>%s</aside><article class="doc"><p class="kicker">Quickstart</p>'
+-        '<h1>From the zip to a saved beat</h1>%s</article></div>' % (toc(qs.headings), body))
++        '<h1>Your first groove with RHYTHMER OS.</h1>%s</article></div>' % (toc(qs.headings), body))
+     images |= qs.images
+ 
+     # The manual: a contents page of chapter cards, then a page per chapter.
+@@ -355,6 +359,20 @@
+             '</details></aside><article class="doc"><p class="kicker">Chapter %d</p><h1>%s</h1>%s%s</article></div>'
+             % (side, n + 1, html.escape(title), body, prev_next))
+ 
++    # RHYTHMER's practical guides are linked from the guide hub as well as
++    # the foundation chapters. Register them too, with their own local images.
++    for source in sorted((DOCS / "guide").glob("*.md")):
++        route = page_of(source)
++        if route in files:
++            continue
++        conv = Converter(source)
++        body = conv.convert(source.read_text())
++        images |= conv.images
++        title = source.read_text().splitlines()[0].lstrip("# ")
++        files[route] = shell(title + " · Rhythmer", "manual",
++            '<div class="doc-layout"><aside><a href="/docs/manual/rhythmer">RHYTHMER OS guides</a>%s</aside>'
++            '<article class="doc">%s</article></div>' % (toc(conv.headings), body))
++
+     # The device page, with the docs' contents on its Learn cards.
+     steps = "".join("<li>%s</li>" % re.sub(r"^\d+\.\s*", "", re.sub(r"<[^>]+>", "", t)) for lvl, t, a in qs.headings if lvl == 2 and re.match(r"\d+\.", t))
+     names = "".join("<li>%s</li>" % html.escape(t) for _, t, _ in parts)
+@@ -364,7 +382,7 @@
  
      # The wordmark at 4 screen pixels to each of its own: shown at 1 CSS pixel to each (34 px high), it lands on whole
      # device pixels at 1x, 2x and 4x, and image-rendering: pixelated keeps every block square at 3x.

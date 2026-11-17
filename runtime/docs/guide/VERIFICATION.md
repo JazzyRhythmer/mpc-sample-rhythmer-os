@@ -1,6 +1,6 @@
 # RHYTHMER OS 0.2.0 — verification scope
 
-The foundation is Melodee Sample v0.3.0 by Kerem Kiliç (Ellic Studio), on the pinned sample-base revision. This local installation candidate is not a published release. Hardware validation remains pending.
+The foundation is Melodee Sample v0.3.0 by Kerem Kiliç (Ellic Studio), on the pinned sample-base revision. This document records the packaged build’s software checks. Publication and downloads are listed on the installation page. Hardware validation remains pending.
 
 The acceptance receipt binds the runtime hash, integration patch, native-library hashes and source inputs. Packaging rejects a changed runtime or changed accepted input. The current catalogue contains 22 picker entries, 27 source views, 36 complete kits and 2,888 selections, including 43 separately identified authored selections. The excluded external Prophet Sequential and Elixir Erica/Hrtl banks remain excluded. No commercial break recordings are bundled.
 

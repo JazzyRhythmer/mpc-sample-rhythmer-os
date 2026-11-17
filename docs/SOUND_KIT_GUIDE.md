@@ -1,44 +1,40 @@
-# Rhythmer OS 0.4.0-beta.3 — Sounds and Rhythmer Kit
+# RHYTHMER OS 0.2.0 — Sounds and Rhythmer Kit
 
-## Individual sounds
+The full SD package supplies **22 instrument entries**, **36 complete Rhythmer Kits** and **2,888 factory sound selections across 27 source views**. This includes kit voices and shared Acid choices, not 2,888 unique synth patches. Frodhes supplies 57 original programs; Tenebrae supplies 164 including Init. FMini-1 uses its original 2.6.0 engine and 200 programs.
 
-Select an engine from the plugin picker. Individually selectable engines represent one selected sound on a track. On Keys, select Chromatic or Scale and the required root/scale. Melodic engines keep their original MIDI and polyphony. Drum engines select one original source voice: C4/MIDI 60 is its original pitch, and other keys transpose that sound with the existing band-limited tape-rate bridge. This changes duration and transposes existing tails together, within three octaves of C4; it is not an independent pitched drum voice allocator.
+## Load and replace an instrument
 
+Select a track with **PAD BANK + its pad**, then press **SAMPLE**. On an entirely EMPTY track, choose **Plugin** from the type cards. On a populated track, use **PAD FX + KNOB FX → B1 TRACK SETUP → CHANGE PLUG-IN**. From an instrument's preset list, **B2 PLUG-INS** opens the same instrument browser. Patterns are retained when changing the instrument; DELETE TRACK is a separate confirmed action.
 
+Individual engines use **one selected sound per track**. Melodic sounds play chromatically or in scale. A single percussion sound uses **C4 / MIDI 60** as its original pitch; other keys transpose that sound with the tape-rate bridge. Transposition changes its duration and existing tail; it does not add independent pitched drum voices.
 
-The EDIT screen's SAVE view has Save slot, Save Sound and Status. Choose slot 1–64, turn Save Sound to save, and wait for Ready. User Sound entries appear in PRESETS and survive a restart. Saving to an occupied slot replaces that slot.
+## Select a preset and edit it
 
-## Rhythmer Kit
+On **SAMPLE → B1 PRESETS**, turn the encoder to change the sound, or push for the full list and push / B3 LOAD to load a selection. Encoder and −/+ navigation wrap within the current list. Save edits before loading another factory sound.
 
-Rhythmer Kit is pinned first in the plugin picker. The PRESETS screen changes the entire kit. There are 36 named whole-kit selections, including DRUM-X, Hortator, Elixir and K-WASUB. These include original and Rhythmer-authored arrangements; see DRUM_KITS.md. The original Move drum presets, Sophie and classic drum machines are retained. Every factory selection fills pads 1–16. Smaller original kits retain their voices and gain complementary original Sophie percussion. Additional original voices remain available on later banks when needed. No recorded break or proprietary ROM is supplied.
+Press **B1 EDIT** for sound-design controls. Turn the encoder to reach another row; use **K1–K3** to adjust its values. Source-native filter, oscillator/model, envelope, LFO, modulation and effects controls depend on the selected engine. The PRESETS filter controls stay linked to EDIT. If you see SLOT / SAVE / STATUS, use **SHIFT + encoder push** to return from saving to sound editing.
 
-The EDIT screen's PAD SOURCE view is Pad / Engine / Sound. Hit a physical pad, or turn Pad, to choose the pad being edited. Engine changes only that pad's source; Sound selects that source's named sound. A melodic source uses C4 as its trigger. Original drum voices retain their original source notes. EDIT displays the source-ordered sound controls. Editing a shared factory voice forks that pad's state, leaving the remaining pad routes in place.
+## Work with Rhythmer Kit
 
-Kits share their original engine instance while unedited, preserving original choke groups and avoiding one engine instance per pad. Replaced or independently edited pads need their own original instance. Cross-engine choke groups are not added. Only selected engines are staged, from the card to RAM, by a worker. There is no new file access, allocation or host mutex in the audio callback. The original third-party VST wrapper mutex remains a device-performance consideration.
+Rhythmer Kit is first in the plug-in picker. Its preset changes the **whole kit**, with every factory kit filling pads **1–16**. Select a pad before editing: its **native Volume** comes first, followed by its supported Pan, Tune or Decay controls. The next row holds the separate whole-kit filter.
 
-The built-in KIT CUTOFF / KIT RESONANCE filter covers every pad; KIT FILTER TYPE is in EDIT. It uses no track insert and starts neutral. Save slot / Save Kit stores the whole-kit filter and complete kit into one of 64 user slots. User Kit entries appear in PRESETS. Files are under Rhythmer/Presets/Kits; individual sounds are under Rhythmer/Presets/Sounds. Project save/load independently stores every pad's engine identity, selected sound, complete engine chunk and persistent parameter values. Keep the Plugins folder and user preset files on the card.
+**P01, P11, etc.** identify the selected destination pad. **KIT / ALL PADS** identifies a kit-wide control. The selected source's original lane number is not the destination pad number. Banks A–D extend the editable routing to pads 1–64; factory layouts fill the first 16 pads.
 
-GEN drum roles use the canonical first eight Rhythmer Kit roles (kick, snare, clap, closed hat, open hat, tom, rim/percussion, cymbal). An individual engine used on a GEN percussion track instead triggers its C4 reference, so one track continues to play one sound.
+From EDIT, push the encoder to open **PAD SOURCE**. Choose the destination pad, engine and sound. **B3** cycles **PAD SOURCE → SAVE → EDIT**. Pad sources are the curated 27 views backed by 26 native VST2 instruments; arbitrary external VST3/CLAP/LV2 plug-ins are not promised as Rhythmer Kit pad sources. Seven percussion-only variants stay inside the kit picker; Elixir also remains a standalone instrument.
 
-## Updating the beta
+## Save a reusable sound or kit
 
-Back up the current card and projects. Copy the complete 0.4.0-beta.3 SD package, including Rhythmer/Plugins/RHYTHMER - Rhythmer Kit, rather than updating autorun alone. The original engine folders, IDs and mandatory notices remain. Existing sampler/WAV workflows remain available in the sample-kit track.
+On an individual engine's EDIT screen, push to open SAVE. In Rhythmer Kit, open the tools and press **B3** until SAVE appears. Set **K1 SLOT**, use **K2 SAVE**, and wait for Ready. There are 64 User Sound / User Kit slots; saving to an occupied slot replaces it. Reload saved entries from PRESETS, including in another project.
 
+User Kit stores pad assignments, source edits and the kit filter. Save the **project separately** to retain patterns, arrangement and track mix: **SHIFT + Pad 16 → B1 SAVE AS → enter name → B3 SAVE**.
 
-This is a device-test beta. CPU, latency, repeated card access and long performances with many independently loaded heavy pad engines need owner testing on MPC Sample. The kit source catalogue covers the bundled aarch64 VST2 instruments; it does not promise every external VST3 or armv7 plugin as a pad source.
+## Keep the scopes separate
 
+- Engine filters affect that instrument; Rhythmer Kit's own filter affects the combined kit output.
+- **B2 PERFORM** contains the separate track DJ FILTER / ECHO / SPACE macros, alongside ARP / CHORD pages.
+- MIX / SENDS / FX control track mixing, sends and inserts. Source-native effects are separate from these host effects.
+- A native **Drum / Sample Kit** is a separate track type for audio files and MPC kits. TRACK SETUP → LOAD MPC KIT retains this workflow. Native sample pads have their own send buses; Rhythmer Kit uses track-level sends.
 
-GEN의 트랙 범위·악기 자동 배정·MIDI 전용 모드와 1–4마디 Break 자동 준비는 [GEN_WORKFLOW.md](GEN_WORKFLOW.md)를 참고하세요.
+Use the full **0.2.0 SD ZIP**, including its plug-ins and catalogue. UPDATE alone does not install the engine collection.
 
-
-Edit labels use the focused destination pad, never the original engine lane number. Pad focus is applied before another knob edit. P01–P16 identify bank A; P17–P32 bank B, P33–P48 bank C and P49–P64 bank D. The Sound selector and PRESETS share the current factory or user slot. Native duplicate whole-bank selectors are hidden; model-specific controls and enum values remain editable.
-
-
-Seven percussion-only source variants live in Rhythmer Kit instead of the track picker; Elixir stays individually selectable. The host mixer controls the complete kit; EDIT shows only the selected pad's controls. Save Kit stores pad designs; the project retains whole-track mixer values.
-
-
-## Presets and editing
-
-Stage PRESETS displays the engine, named sound and animation. K1–K3 mirror the primary native filter or representative engine controls. Rhythmer Kit fronts its own KIT CUTOFF / KIT RESONANCE and track level. B2 PERFORM holds DJ FILTER / ECHO / SPACE, followed by ARP / CHORD. EDIT opens the native six-line sound-control list. Turn the encoder or −/+ to move by three controls. B3 switches SAVE / EDIT on an instrument, or PAD SOURCE / SAVE / EDIT in Rhythmer Kit. The host mixer contains track Level/Pan/Send A–D.
-
-BANK A–D / PAD 1–64 identifies the edit target. Source effect labels identify the original engine's effects, separate from the host effects. Original Init names and preset spelling remain. Dexed retains the 33 published banks (1,056 programs). See ORIGINAL_PRESET_AUDIT_KO.md for data origins and exclusions, and PARAMETER_PAGES.md for the current native controls.
+[Practical manual](MANUAL_020_EN.md) · [Your first groove](FIRST_GROOVE_020_EN.md) · [Essential controls](QUICK_REFERENCE_020_EN.md) · [Preset provenance](ORIGINAL_PRESET_AUDIT_KO.md)

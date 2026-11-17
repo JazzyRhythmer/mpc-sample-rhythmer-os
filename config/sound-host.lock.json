@@ -25,7 +25,7 @@
   "control_noop_contexts": 81,
   "source_control_contracts": 22,
   "missing_notices": 0,
-  "runtime_sha256": "b13f6f0438f6b6e073863aac1be8c47d34e81bfc41887ac5401736b2ae9c8e5e",
+  "runtime_sha256": "f9bd064d8469b50433b7be88e45eeeaf9fe1ab6884d41694b4eb7763ca1c4751",
   "files": {
     "config/acid-aphex-presets.json": "737b897be8c941d751b29233ed13d42e9695677cf984d6f3ae7dde951db7bd1a",
     "config/animation-profiles.json": "31d31546273ddc16b7d1732f18d903af4a50cb4e66abf0109d10bfa2968a0282",
@@ -55,7 +55,7 @@
     "config/tr-mpc-drum-map.json": "03b2a7a6a9f2f8470d558895aa22353274d30ca7eed836755d2b22094bf8fec7",
     "config/update-public-key.txt": "1e54c848e19e113f0beb040d0978610c09d16cbe4509aa20a355485f83869eab",
     "config/upstream-backports.json": "eca8142041cd7cc2d304e122685fbb5169f8203cdf03f6ab436109a49ebf94f0",
-    "config/upstream-integration.lock.json": "0b064b2fce17008fe2a5d850bc033bf8ca14a93844ea1fe4f4b3f96748210483",
+    "config/upstream-integration.lock.json": "9510d6deca25c7daa7f642b69d3991a65537a36d7ad1e54ad46e1d0a5c8c6e9d",
     "config/upstream-stems.lock.json": "31dbe8ab5b3e2524ed0546c82814a67d7a08decd161cc9fba45fd6cc3ffc2d17",
     "extensions/engine/break_manipulator.cpp": "79aefe87eb9017efeb2503d26d2aaac41a48e8f9d1107908fce17a53f53f9610",
     "extensions/engine/break_manipulator.h": "421db4c47d6dc0632c3ec2018eac1e93078bc56fc921653deee615471dc5c740",
@@ -79,7 +79,7 @@
     "extensions/plugin/sound_rack.cpp": "1723ed0ed586d26d81ee63b001dfd076aa7cf54232977ea1c5d6a0fa4607b86b",
     "extensions/plugin/sound_rack.h": "cde79edf3647cedea9d18570d69c78dfc1b6bcda2dd560c24abe716c4285f503",
     "extensions/runtime-v020.patch": "67d1b7cfa9c8e6984e6216bb01faf736c20b3ff5522327bf18d0c3b376a53fcf",
-    "extensions/runtime-v030.patch": "50ea082b5a48768d282af086b9b68719a5e0aaabdf2395646588e118c4c18f58",
+    "extensions/runtime-v030.patch": "a37b7aba43403d0333c2d2b67ac85fdef6f0b139ce8b9c00928e8c429fbaab80",
     "extensions/shell/break_acid_check.inc": "7801a5a5d0808c683ed7c2c8c8886e6136109d2e90f057e915eab86e90fe9932",
     "extensions/shell/break_p1_check.h": "6445327e69d7ad21d5c504d1c645ea5882e8cef0414bdfcc5a831d7fbff2e2d3",
     "extensions/shell/gen8_check.h": "43a7f9e3a0eaab55d78e78c1b719c4ea3ae7bc7a0d9b670f4caf60f4c2fa4ef2",
@@ -274,7 +274,7 @@
     "docs/NATIVE_CONTROL_COVERAGE.md": "3d5ea175d2e3fa9dd0dc20338ba1e04ab5fe9f33773bbe54e367b24aba3df181",
     "docs/NATIVE_PLUGIN_WORKFLOW.md": "f36931d36b931f9c053ebed918c679442e782d47d8147645a0a096f24ad440cf",
     "docs/OPEN_MPC_COMPATIBILITY.md": "145c9cefd88026221457e7d3d32e3a0f805d6e8ad4a531c5567dd29b620fb5a4",
-    "docs/ORIGINAL_PRESET_AUDIT_KO.md": "afcfdeb93056ffe3752ff10ed95a7d8c213f1f74db46c1e7de4415a02c3319a9",
+    "docs/ORIGINAL_PRESET_AUDIT_KO.md": "f1c31b4a5766a14ea2a9f1055a0524d77a4b84a8e032b9dbe1838a71b38346f6",
     "docs/PARAMETER_ORDER_020_QA.md": "7eacffa95358c64ae75f1fa32d781e0357610454890353acf22421cc76f63493",
     "docs/PARAMETER_PAGES.md": "6beb6cd6ba2beea2b17c45dbff7fdbb2f7533974044ab0c896e45f668eb84446",
     "docs/PLUGIN_PERFORMANCE_FX_REVIEW_KO.md": "18db8d9aec9f4f61969d9d0a33bfae4a0939be1b807ff00c9d953701fc6b57da",
@@ -289,7 +289,7 @@
     "docs/SD_CARD_GUIDE.md": "112d20addbd106a7c1c1270509ca0cf1764daf16d83e087e92967913b2c4341e",
     "docs/SECURITY.md": "c3cf320537d510d18eb92b9a87df5cda060d94cd7af20caea802ca45162f75ef",
     "docs/SOUND_FIXES_BETA4.md": "eb527b5f860465f75c960313cc457b2c22deaeb40ecd8489f35ad28b4ba698f9",
-    "docs/SOUND_KIT_GUIDE.md": "07920e6f0fc97cc666bccac6ebf09ce9b5ee410e2c6f5231f56ba88f7a6dfeaf",
+    "docs/SOUND_KIT_GUIDE.md": "3a256265a9bb9882e929d54d2ca3936ec4906bbb17fc2cf7f3af77af320cdef9",
     "docs/SOURCE_AUDIT.md": "5a19c6e2834bb0929adba7f3d16492c10a097dab748c288e2e5a836af77bfbfc",
     "docs/SOURCE_LICENSES.md": "a330823c56d1742af55a64ffa1b3c8be6961e77d0bfb05a5d750e53e188e0d36",
     "docs/SOURCE_LOCK.json": "23dc75820c468e2cb98cb2cd43b0cb33a3a79b37fef6d122191d8e7b384cad7f",
@@ -300,7 +300,7 @@
     "docs/UPSTREAM_020.md": "6853d2cc6f99725a9454b2b95c5e64e94d4606eca040cd5f37e58c2396d4da39",
     "docs/UPSTREAM_030.md": "79d1f57c04aca296c9dd90a7aa65c3d546ecbf505bc24623b5b7b1d18382cf57",
     "docs/USER_MANUAL_KO_DRAFT.md": "87637a56d2a07a21e925e9977bca2fccaa9b9c5e3e261a0072726e0b32a9dd7c",
-    "docs/VERIFICATION.md": "2e98fdc45b024428127bf58a6be1352b6487bc02f89eaa928b4c1c3ed91ebbd3",
+    "docs/VERIFICATION.md": "cc0e38f379a3e78642ccd878981140a097c6360823c218b5f7c762e3d128c66e",
     "assets/manual/020-acid-settings-0.png": "3e2e4eb74207873264f875fd6ea441544a48cb37c1dac36221df79ffd966f094",
     "assets/manual/020-break-menu.png": "5fc870cab0580a9bd36459340063d5c8a715dc78ebb1b87655829ee184861a52",
     "assets/manual/020-break-perf-1.png": "32983cb7399e33ef6c5378df4bc55d8d201c4c14f489d230b69b5506b951bca6",
@@ -443,12 +443,43 @@
       }
     ],
     "all_control_rows": "RHYTHMER_EDIT_PREVIEW engines=90 pages=1988 saved=3594 text_issues=0",
-    "runtime_sha256": "b13f6f0438f6b6e073863aac1be8c47d34e81bfc41887ac5401736b2ae9c8e5e"
+    "runtime_sha256": "f9bd064d8469b50433b7be88e45eeeaf9fe1ab6884d41694b4eb7763ca1c4751"
   },
   "post_validation_metadata": {
     "file": "docs/SOURCE_LOCK.json",
     "before_sha256": "7989e09b68574faf39f7d58757cd3bc77d73fe68a1985e6de509d3b890a10a00",
     "after_sha256": "23dc75820c468e2cb98cb2cd43b0cb33a3a79b37fef6d122191d8e7b384cad7f",
     "validation": "Vendor HEAD equals the tested authoritative v0.3.0 lock; runtime and sound/control inputs unchanged. This summary JSON is not embedded in the application."
+  },
+  "behavior_validation_runtime_sha256": "b13f6f0438f6b6e073863aac1be8c47d34e81bfc41887ac5401736b2ae9c8e5e",
+  "documentation_only_relink": {
+    "before_runtime_sha256": "b13f6f0438f6b6e073863aac1be8c47d34e81bfc41887ac5401736b2ae9c8e5e",
+    "after_runtime_sha256": "f9bd064d8469b50433b7be88e45eeeaf9fe1ab6884d41694b4eb7763ca1c4751",
+    "runtime_cpp_changes": [],
+    "changed_objects": [
+      "build/obj/rhythmer/web/web_bundle.o"
+    ],
+    "changed_inputs": [
+      "config/upstream-integration.lock.json",
+      "extensions/runtime-v030.patch",
+      "docs/ORIGINAL_PRESET_AUDIT_KO.md",
+      "docs/SOUND_KIT_GUIDE.md",
+      "docs/VERIFICATION.md"
+    ],
+    "web_document_validation": {
+      "entries": 156,
+      "html_pages": 38,
+      "links_checked": 1026,
+      "missing_routes_or_images": [],
+      "missing_anchors": [],
+      "all_guide_pages_registered": true
+    },
+    "web_document_changes": [
+      "Register all linked local guide pages and their images",
+      "Use the approved First Groove title once",
+      "Link practical guides from the device manual index",
+      "Replace publication-state wording with a timeless verification description"
+    ],
+    "validation": "No C++/DSP, engine, control, navigation or generator inputs changed. The three behavioral regressions remain tied to their original runtime; audio self-test, HTTP test and complete guide-link check passed on the final documentation bundle."
   }
 }

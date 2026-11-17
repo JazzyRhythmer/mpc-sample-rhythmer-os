@@ -320,9 +320,10 @@ def main():
     qs = Converter(DOCS / "QUICKSTART.md")
     body = qs.convert((DOCS / "QUICKSTART.md").read_text())
     body = re.sub(r"^<h1[^>]*>.*?</h1>\n<p>.*?</p>\n<ol>.*?</ol>", "", body, count=1, flags=re.S)  # its own contents list
+    body = re.sub(r"^<h1[^>]*>.*?</h1>", "", body, count=1, flags=re.S)
     files["/docs/quickstart"] = shell("Quickstart · Rhythmer", "quickstart",
         '<div class="doc-layout"><aside>%s</aside><article class="doc"><p class="kicker">Quickstart</p>'
-        '<h1>From the zip to a saved beat</h1>%s</article></div>' % (toc(qs.headings), body))
+        '<h1>Your first groove with RHYTHMER OS.</h1>%s</article></div>' % (toc(qs.headings), body))
     images |= qs.images
 
     # The manual: a contents page of chapter cards, then a page per chapter.
@@ -357,6 +358,20 @@ def main():
             '<div class="doc-layout"><aside><details class="chapters-menu" open><summary>Chapters</summary><ol class="chapter-list">%s</ol>'
             '</details></aside><article class="doc"><p class="kicker">Chapter %d</p><h1>%s</h1>%s%s</article></div>'
             % (side, n + 1, html.escape(title), body, prev_next))
+
+    # RHYTHMER's practical guides are linked from the guide hub as well as
+    # the foundation chapters. Register them too, with their own local images.
+    for source in sorted((DOCS / "guide").glob("*.md")):
+        route = page_of(source)
+        if route in files:
+            continue
+        conv = Converter(source)
+        body = conv.convert(source.read_text())
+        images |= conv.images
+        title = source.read_text().splitlines()[0].lstrip("# ")
+        files[route] = shell(title + " · Rhythmer", "manual",
+            '<div class="doc-layout"><aside><a href="/docs/manual/rhythmer">RHYTHMER OS guides</a>%s</aside>'
+            '<article class="doc">%s</article></div>' % (toc(conv.headings), body))
 
     # The device page, with the docs' contents on its Learn cards.
     steps = "".join("<li>%s</li>" % re.sub(r"^\d+\.\s*", "", re.sub(r"<[^>]+>", "", t)) for lvl, t, a in qs.headings if lvl == 2 and re.match(r"\d+\.", t))

@@ -2,7 +2,7 @@
   "upstream": "v0.3.0",
   "commit": "6d6ad5efff4cef9b7b04f3aee3c3f386ee717c16",
   "patch": "extensions/runtime-v030.patch",
-  "patch_sha256": "50ea082b5a48768d282af086b9b68719a5e0aaabdf2395646588e118c4c18f58",
+  "patch_sha256": "a37b7aba43403d0333c2d2b67ac85fdef6f0b139ce8b9c00928e8c429fbaab80",
   "files": [
     "Makefile",
     "docs/GUIDE.md",
@@ -403,7 +403,7 @@
     "docs/NATIVE_CONTROL_COVERAGE.md": "3d5ea175d2e3fa9dd0dc20338ba1e04ab5fe9f33773bbe54e367b24aba3df181",
     "docs/NATIVE_PLUGIN_WORKFLOW.md": "f36931d36b931f9c053ebed918c679442e782d47d8147645a0a096f24ad440cf",
     "docs/OPEN_MPC_COMPATIBILITY.md": "145c9cefd88026221457e7d3d32e3a0f805d6e8ad4a531c5567dd29b620fb5a4",
-    "docs/ORIGINAL_PRESET_AUDIT_KO.md": "afcfdeb93056ffe3752ff10ed95a7d8c213f1f74db46c1e7de4415a02c3319a9",
+    "docs/ORIGINAL_PRESET_AUDIT_KO.md": "f1c31b4a5766a14ea2a9f1055a0524d77a4b84a8e032b9dbe1838a71b38346f6",
     "docs/PARAMETER_ORDER_020_QA.md": "7eacffa95358c64ae75f1fa32d781e0357610454890353acf22421cc76f63493",
     "docs/PARAMETER_PAGES.md": "6beb6cd6ba2beea2b17c45dbff7fdbb2f7533974044ab0c896e45f668eb84446",
     "docs/PLUGIN_PERFORMANCE_FX_REVIEW_KO.md": "18db8d9aec9f4f61969d9d0a33bfae4a0939be1b807ff00c9d953701fc6b57da",
@@ -417,7 +417,7 @@
     "docs/RHYTHMER_PRESETS.md": "622ca41cfb67cccb15eed19097688f24a0b6ace2243d81c5560c8d46ed5e96de",
     "docs/SECURITY.md": "c3cf320537d510d18eb92b9a87df5cda060d94cd7af20caea802ca45162f75ef",
     "docs/SOUND_FIXES_BETA4.md": "eb527b5f860465f75c960313cc457b2c22deaeb40ecd8489f35ad28b4ba698f9",
-    "docs/SOUND_KIT_GUIDE.md": "07920e6f0fc97cc666bccac6ebf09ce9b5ee410e2c6f5231f56ba88f7a6dfeaf",
+    "docs/SOUND_KIT_GUIDE.md": "3a256265a9bb9882e929d54d2ca3936ec4906bbb17fc2cf7f3af77af320cdef9",
     "docs/SOURCE_AUDIT.md": "5a19c6e2834bb0929adba7f3d16492c10a097dab748c288e2e5a836af77bfbfc",
     "docs/SOURCE_LICENSES.md": "a330823c56d1742af55a64ffa1b3c8be6961e77d0bfb05a5d750e53e188e0d36",
     "docs/SOURCE_SOUND_CHARACTER_KO.md": "aad6ebab82f6b3fe7beef7ae7a80522c9c4dfee07fdf78afc27ebff44588ab9a",
@@ -426,7 +426,7 @@
     "docs/UI_UX_SPEC.md": "f5d3c95befb8155be3bb93056c285e2f4022325c43c4b3164b4850d8660a031e",
     "docs/UPSTREAM_020.md": "6853d2cc6f99725a9454b2b95c5e64e94d4606eca040cd5f37e58c2396d4da39",
     "docs/UPSTREAM_030.md": "79d1f57c04aca296c9dd90a7aa65c3d546ecbf505bc24623b5b7b1d18382cf57",
-    "docs/VERIFICATION.md": "2e98fdc45b024428127bf58a6be1352b6487bc02f89eaa928b4c1c3ed91ebbd3",
+    "docs/VERIFICATION.md": "cc0e38f379a3e78642ccd878981140a097c6360823c218b5f7c762e3d128c66e",
     "tools/sync_runtime_guides.py": "c3ea3c6b3fbed14ff795aa74fc6c7c04a9a55c40f6e848526a758f752bc6fc75"
   }
 }
