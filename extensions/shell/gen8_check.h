@@ -2,6 +2,7 @@
 #pragma once
 #include "rhythmer/model/project_file.h"
 #include "rhythmer/shell/ask.h"
+#include "rhythmer/shell/new_track.h"
 #include "rhythmer/shell/shell.h"
 #include "rhythmer/model/scales.h"
 #include "rhythmer/engine/engine_host.h"
@@ -9,6 +10,8 @@
 #include <cstring>
 #include <cstdlib>
 #include <thread>
+#include <set>
+#include "rhythmer/model/chord_gen_access.h"
 #include "rhythmer/plugin/plugin_rack.h"
 #include "rhythmer/pages/pages.h"
 #include "rhythmer/shell/step_edit.h"
@@ -21,7 +24,8 @@ namespace rhythmer {
 inline int gen_failure(int code,int line){std::fprintf(stderr,"GEN CHECK failure=%d line=%d\n",code,line);return code;}
 inline int gen8_shell_check() {
     if(int result=upstream_shell_check()){std::fprintf(stderr,"UPSTREAM shell failure %d\n",result);return 120+result;}
-    EngineHost host;Shell shell(host);auto& c=shell.context();
+    auto host_owner=std::make_unique<EngineHost>();auto& host=*host_owner;
+    auto shell_owner=std::make_unique<Shell>(host);auto& shell=*shell_owner;auto& c=shell.context();
     c.ui.track=0;c.project.gen8={42,2,100,50};c.project.gen8.assign=0;
     for(unsigned t=0;t<8;t++) {
         auto& tr=c.project.tracks[t];tr.engine=EngineKind::Midi;tr.pattern=0;
@@ -74,7 +78,7 @@ inline int gen8_shell_check() {
         // Duration/chop fixture: start empty; occupied-pattern preservation is tested separately.
         c.project.tracks[10]={};c.patterns.at[10]={};
         c.ui.track=10;c.ui.break_track=10;c.ui.break_bank=0;c.ui.break_bars=uint8_t(bars);c.ui.break_pending=0;
-        c.project.samples[0].frames=bars*88200;
+        c.project.samples.edit(0).frames=bars*88200;
         c.gen_break_tick();
         const auto& tr=c.project.tracks[10];if(tr.break_bars!=bars||tr.engine!=EngineKind::Sampler)return gen_failure(32,__LINE__);
         for(unsigned i=0;i<16;i++)if(!tr.pads[i].used()||tr.pads[i].start!=uint64_t(bars*88200)*i/16||tr.pads[i].own_tempo!=1200)return gen_failure(33,__LINE__);
@@ -82,6 +86,14 @@ inline int gen8_shell_check() {
     }
     if(const char* card=std::getenv("RHYTHMER_GEN_CARD")){
         PluginRack rack(host);rack.set_card(card);c.plugins=&rack;
+        auto choose=[&](const PluginFile& file){
+            c.choose_plugin(file);
+            if(c.ui.ask==UiState::Ask::ReplacePlugin){
+                // This fixture selects files directly, not through the asynchronous browser rows.
+                ask_button(c,SurfaceButton::TopLeft);
+                c.ui.plugin_replace=true;c.choose_plugin(file);
+            }
+        };
         c.ui.track=0;c.project.tracks[0]=c.project.tracks[4];c.project.gen8.first=0;c.project.gen8.last=3;c.project.gen8.assign=1;
         auto old_track=c.project.tracks[0];
         std::strcpy(c.project.plugins[old_track.plugin].path,"Plugins/GROOVE - Groove Kit");
@@ -104,27 +116,27 @@ inline int gen8_shell_check() {
         c.redo();if(c.project.tracks[0].plugin!=selected)return gen_failure(43,__LINE__);
         auto available=list_plugins(plugin_folder(card));auto drum=std::find_if(available.begin(),available.end(),[](const PluginFile& f){return f.single_drum;});
         if(drum==available.end())return gen_failure(50,__LINE__);
-        c.ui.track=5;c.project.root=0;c.project.tracks[5].transpose=0;c.project.tracks[5].octave=2;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.ui.plugin_back=PageId::Edit;c.choose_plugin(*drum);
+        c.ui.track=5;c.project.root=0;c.project.tracks[5].transpose=0;c.project.tracks[5].octave=2;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.ui.plugin_back=PageId::Edit;choose(*drum);
         if(c.track().octave!=4||pad_note(c.project,c.track(),0).key!=60||c.track().layout==PadLayout::Drums){std::fprintf(stderr,"Drum load: name=%s flag=%d octave=%d key=%d layout=%d engine=%d notice=%s\n",drum->name.c_str(),drum->single_drum,c.track().octave,pad_note(c.project,c.track(),0).key,int(c.track().layout),int(c.track().engine),c.ui.notice);return gen_failure(51,__LINE__);}
 
         auto br=std::find_if(available.begin(),available.end(),[](const PluginFile& f){return f.name=="Break Engine";});
         if(br==available.end()){return gen_failure(52,__LINE__);}
-        c.choose_plugin(*br);
+        choose(*br);
         if(c.track().engine!=EngineKind::Plugin||!c.ui.break_from_picker||!c.ui.break_browse||c.ui.page!=PageId::Samples)return gen_failure(53,__LINE__);
         auto browse_engine=std::find_if(available.begin(),available.end(),[](const PluginFile& f){return f.name=="FM-106";});if(browse_engine==available.end())return gen_failure(54,__LINE__);
-        c.ui.track=6;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.ui.plugin_back=PageId::Edit;c.choose_plugin(*browse_engine);auto entry=c.track().plugin;
+        c.ui.track=6;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.ui.plugin_back=PageId::Edit;choose(*browse_engine);auto entry=c.track().plugin;
         for(unsigned tries=0;tries<3000&&rack.status(entry)!=PluginStatus::Ready;tries++){std::this_thread::sleep_for(std::chrono::milliseconds(10));}
         if(rack.status(entry)!=PluginStatus::Ready){PluginPanel failed;rack.panel(entry,0,failed);std::fprintf(stderr,"GEN load failed name=%s status=%d error=%s\n",browse_engine->name.c_str(),int(failed.status),failed.error);return gen_failure(55,__LINE__);}
         auto programs=rack.programs(entry);if(programs.list.size()<3)return gen_failure(56,__LINE__);
         rack.set_param(entry,0,int(std::lround(2000.0/(programs.list.size()-1))));rack.states();if(rack.programs(entry).current!=2)return gen_failure(57,__LINE__);
         auto hortator=std::find_if(available.begin(),available.end(),[](const PluginFile& f){return f.name=="Hortator";});if(hortator==available.end()){return gen_failure(59,__LINE__);}
-        c.ui.track=7;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.choose_plugin(*hortator);entry=c.track().plugin;
+        c.ui.track=7;c.ui.plugin_target=UiState::PluginTarget::Instrument;choose(*hortator);entry=c.track().plugin;
         for(unsigned tries=0;tries<3000&&rack.status(entry)!=PluginStatus::Ready;tries++){std::this_thread::sleep_for(std::chrono::milliseconds(10));}if(rack.status(entry)!=PluginStatus::Ready){return gen_failure(60,__LINE__);}
-        programs=rack.programs(entry);int acid=-1;for(const auto& p:programs.list)if(p.name=="SQUELCH")acid=p.index;if(acid<0){return gen_failure(61,__LINE__);}rack.select_program(entry,acid);
+        programs=rack.programs(entry);int acid=-1;for(const auto& p:programs.list)if(p.name=="SQUELCH")acid=p.index;if(std::string(c.project.plugins[entry].path)!=hortator->path||acid<0){return gen_failure(61,__LINE__);}rack.select_program(entry,acid);
         for(unsigned tries=0;tries<3000&&rack.programs(entry).loading;tries++){std::this_thread::sleep_for(std::chrono::milliseconds(10));}rack.states();
         c.project.gen8.assign=0;c.project.gen8.first=c.project.gen8.last=7;c.gen8_action(0);int first=-1;bool varied=false;for(const auto& event:c.pattern().events){if(first<0)first=event.key;varied|=event.key!=first;}if(!varied){std::fprintf(stderr,"Hortator ACID GEN was a fixed drum note\n");return gen_failure(62,__LINE__);}
         auto kit_file=std::find_if(available.begin(),available.end(),[](const PluginFile& f){return f.name=="Rhythmer Kit";});if(kit_file==available.end())return gen_failure(220,__LINE__);
-        c.ui.track=8;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.ui.plugin_back=PageId::Edit;c.choose_plugin(*kit_file);entry=c.track().plugin;
+        c.ui.track=8;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.ui.plugin_back=PageId::Edit;choose(*kit_file);entry=c.track().plugin;
         for(unsigned tries=0;tries<3000&&rack.status(entry)!=PluginStatus::Ready;tries++)std::this_thread::sleep_for(std::chrono::milliseconds(10));
         if(rack.status(entry)!=PluginStatus::Ready)return gen_failure(221,__LINE__);
         c.ui.plugin_panel.layout_revision=1;
@@ -135,14 +147,16 @@ inline int gen8_shell_check() {
             if(rack.programs(entry).current!=int(context+1)||c.ui.plugin_row[entry]!=2)return gen_failure(222,__LINE__);
             plugin_presets_page.soft(c,0);if(c.ui.page!=PageId::Edit||c.ui.edit_page[c.ui.track]!=1||c.ui.edit_row[c.ui.track]!=(context==1?3:0))return gen_failure(223,__LINE__);
         }
-        c.ui.track=15;c.project.tracks[15]={};c.ui.page=PageId::Stage;c.ui.new_pick=1;
+        c.ui.track=15;c.project.tracks[15]={};c.ui.page=PageId::Stage;c.ui.new_sources=false;c.ui.new_pick=1;
         stage_page.wheel(c,-1);if(c.ui.new_pick!=0)return gen_failure(245,__LINE__);
+        stage_page.wheel(c,2);if(c.ui.new_pick!=unsigned(NewType::Plugin))return gen_failure(246,__LINE__);
         stage_page.push(c);if(c.ui.page!=PageId::Plugins||c.track().used())return gen_failure(243,__LINE__);
         c.back();if(c.track().used())return gen_failure(244,__LINE__);
         unsigned design_sources=0,design_controls=0;
         for(const auto& file:available){if(file.name=="Break Engine")continue;
+            if(const char* only=std::getenv("RHYTHMER_GEN_DESIGN_ONLY"))if(file.name!=only)continue;
             std::fprintf(stderr,"GEN DESIGN load=%s\n",file.name.c_str());
-            c.ui.track=9;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.ui.plugin_back=PageId::Edit;c.choose_plugin(file);entry=c.track().plugin;
+            c.ui.track=9;c.ui.plugin_target=UiState::PluginTarget::Instrument;c.ui.plugin_back=PageId::Edit;choose(file);entry=c.track().plugin;
             for(unsigned tries=0;tries<3000&&rack.status(entry)!=PluginStatus::Ready;tries++){std::this_thread::sleep_for(std::chrono::milliseconds(10));}
             if(rack.status(entry)!=PluginStatus::Ready){PluginPanel failed;rack.panel(entry,0,failed);std::fprintf(stderr,"GEN DESIGN failed=%s entry=%u status=%d error=%s notice=%s\n",file.name.c_str(),unsigned(entry),int(failed.status),failed.error,c.ui.notice);return gen_failure(230,__LINE__);}
             c.ui.page=PageId::Edit;c.ui.edit_page[c.ui.track]=1;c.refresh_plugin_panel(entry);
@@ -194,7 +208,12 @@ inline int gen8_shell_check() {
             // do not assert or advertise an Undo capability it does not have.
             rack.set_gen_state(entry,before);rack.sync(c.project,c.plugins_asleep());
             for(unsigned tries=0;tries<3000&&rack.status(entry)!=PluginStatus::Ready;++tries)std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            if(rack.status(entry)!=PluginStatus::Ready||rack.states()[entry]!=before)return gen_failure(253,__LINE__);
+            if(rack.status(entry)!=PluginStatus::Ready||rack.states()[entry]!=before){
+                PluginPanel failed;rack.panel(entry,0,failed);auto after=rack.states()[entry];
+                std::fprintf(stderr,"GEN RESTORE engine=%s status=%d error=%s before=%zu after=%zu\n",file.name.c_str(),int(failed.status),failed.error,before.size(),after.size());
+                if(const char* dir=std::getenv("RHYTHMER_GEN_DIAGNOSTICS")){std::ofstream a(std::string(dir)+"/restore-before.json"),b(std::string(dir)+"/restore-after.json");a.write(reinterpret_cast<const char*>(before.data()),before.size());b.write(reinterpret_cast<const char*>(after.data()),after.size());}
+                return gen_failure(253,__LINE__);
+            }
             ++design_sources;
         }
         std::printf("RHYTHMER_DESIGN sources=%u mapped_controls=%u navigation_state=unchanged native_stage_edit=ok preset_browse=safe quick_front_edit=linked state_restore=exact\n",design_sources,design_controls);
@@ -216,7 +235,7 @@ inline int gen8_shell_check() {
     {EngineHost h;Shell s(h);auto& x=s.context();x.load_sound(0,EngineKind::Sampler,0);
      auto press=[&](SurfaceButton b,bool down){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(b);e.input.pressed=down;s.surface(e,2000);};
      auto unchanged=x.patterns.at[0];auto seed=x.project.gen8.seed;
-     for(unsigned mode:{1u,2u,3u,4u}){
+     for(unsigned mode:{1u,2u,3u,4u,5u}){
        x.ui.page=PageId::Patterns;x.ui.sheet_open=true;x.ui.gen8_mode=uint8_t(mode);x.ui.sheet_row=1;
        press(SurfaceButton::Shift,true);press(SurfaceButton::WheelPush,true);press(SurfaceButton::WheelPush,false);press(SurfaceButton::Shift,false);
        if(x.ui.page!=PageId::Patterns||!x.ui.sheet_open||x.ui.gen8_mode||x.ui.sheet_row)return gen_failure(230,__LINE__);
@@ -305,6 +324,7 @@ inline int gen8_shell_check() {
         for(int i=0;i<8;++i){h.render(out.data(),128,1);for(auto v:out)if(v)return gen_failure(48,__LINE__);}
         h.send({Command::Type::NoteOn,0,0,60,100});h.render(out.data(),128,1);heard=false;for(auto v:out)heard|=v!=0;if(!heard)return gen_failure(49,__LINE__);
     }
+    #include "rhythmer/shell/chord_gen_check.inc"
     #include "rhythmer/shell/break_acid_check.inc"
     std::printf("RHYTHMER_GEN8_SHELL original_fm1_four_tracks range=1-16 engine_gen_back=ok undo_redo=ok break_bars=1-4 unmapped=preserved single=C4 kit=canonical\n");return 0;
 }

@@ -10,6 +10,7 @@ struct Gen8Settings {
     uint16_t seed = 1;
     uint8_t genre = 0, amount = 70, complexity = 50;
     uint8_t first=0,last=3, assign=1, bars=2; // inclusive track range, instruments or MIDI only
+    uint8_t length=0; // 0 AUTO; otherwise requested bars on generated targets
     uint8_t group=0; // song target: T1-4 / T5-8 / T9-12 / T13-16
 };
 inline unsigned gen_song_first(const Gen8Settings& settings){return 4u*(settings.group<4?settings.group:3u);}

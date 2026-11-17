@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
+#include "rhythmer/model/chord_gen_access.h"
 #include "rhythmer/shell/shell.h"
 #include "rhythmer/shell/features.h"
 #include "rhythmer/crash_log.h"
@@ -551,7 +552,7 @@ void Shell::pot(unsigned n, int position, bool syncing) {
     const auto& selected=project_->tracks[ui_.track];
     const bool break_gen=selected.engine==EngineKind::Sampler&&selected.break_bars;
     const bool acid_gen=selected.engine==EngineKind::Plugin&&selected.plugin<max_plugins&&std::string(project_->plugins[selected.plugin].name)=="Acid Engine";
-    if((ui_.gen8_mode==2&&!break_gen)||(ui_.gen8_mode==4&&!acid_gen)){ui_.gen8_mode=0;ui_.sheet_row=0;}
+    if((ui_.gen8_mode==2&&!break_gen)||(ui_.gen8_mode==4&&!acid_gen)||(ui_.gen8_mode==5&&!chord_gen_available(*project_,ui_.track))){ui_.gen8_mode=0;ui_.sheet_row=0;}
     auto bindings = page_bindings(*project_, ui_, context_.pattern());
     // A Trim or Chop handle's pot: that handle in focus, the view zoomed in round it (shell/zoom_view.h).
     if (!syncing && focus_handle(ui_, bindings[n])) bindings = page_bindings(*project_, ui_, context_.pattern());
@@ -776,7 +777,7 @@ void Shell::snapshot(Snapshot& out, uint32_t now) {
     const auto& selected=project_->tracks[ui_.track];
     const bool break_gen=selected.engine==EngineKind::Sampler&&selected.break_bars;
     const bool acid_gen=selected.engine==EngineKind::Plugin&&selected.plugin<max_plugins&&std::string(project_->plugins[selected.plugin].name)=="Acid Engine";
-    if((ui_.gen8_mode==2&&!break_gen)||(ui_.gen8_mode==4&&!acid_gen)){ui_.gen8_mode=0;ui_.sheet_row=0;}
+    if((ui_.gen8_mode==2&&!break_gen)||(ui_.gen8_mode==4&&!acid_gen)||(ui_.gen8_mode==5&&!chord_gen_available(*project_,ui_.track))){ui_.gen8_mode=0;ui_.sheet_row=0;}
     auto bindings = page_bindings(*project_, ui_, context_.pattern());
     for (unsigned n = 0; n < 3; ++n) if (bindings[n].bound()) check_pickup(n, bindings[n]);
     fader_check(context_);

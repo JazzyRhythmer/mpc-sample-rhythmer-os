@@ -768,6 +768,10 @@ std::vector<uint8_t> save_project(const Project& project, const PatternBank& pat
     at=w.begin("GNGP");w.u8(project.gen8.group);w.end(at);
     at=w.begin("BRPF");for(const auto& t:project.tracks)for(auto v:t.break_perf)w.u16(v);w.end(at);
     at=w.begin("BRSR");for(const auto& t:project.tracks)w.u8(t.break_source);w.end(at);
+    at=w.begin("CHGN");w.u8(1);for(const auto& t:project.tracks){const auto& a=t.chord_gen;
+        w.u8(a.type);w.u8(a.genre);w.u8(a.progression);w.u8(a.chords);w.u8(a.bars);w.u8(a.rhythm);w.u8(a.gate);w.u8(a.color);w.u8(a.voicing);w.u8(a.octave);
+        w.u8(a.energy);w.u8(a.play);w.u8(a.rate);w.u8(a.local);w.u8(a.root);w.u8(a.scale);w.u32(a.seed);w.u32(a.harmony);}w.end(at);
+    at=w.begin("GNLN");w.u8(project.gen8.length);w.end(at);
     at=w.begin("ACGN");for(const auto& t:project.tracks){const auto& a=t.acid_gen;
         w.u8(a.density);w.u8(a.accent);w.u8(a.slide);w.u8(a.octaves);w.u8(a.octave);w.u8(a.auto_bars);w.u32(a.seed);}w.end(at);
     if (prints)
@@ -829,6 +833,10 @@ std::string load_project(const std::vector<uint8_t>& data, Project& target, Patt
             }
         } else if(name=="BRPF") {for(auto& t:project->tracks)for(unsigned i=0;i<10;i++){unsigned lo=i==6?3:i==7?1:i==8?2:0,hi=i==4||i==5||i==9?1:i==6?80:i==7?std::min<unsigned>(300,t.break_perf[6]*10):i==8?4:127;t.break_perf[i]=uint16_t(std::clamp<unsigned>(r.u16(),lo,hi));}
         } else if(name=="BRSR") {for(auto& t:project->tracks)t.break_source=r.u8()%2;
+        } else if(name=="GNLN") {project->gen8.length=uint8_t(std::min<unsigned>(r.u8(),16));
+        } else if(name=="CHGN") {if(r.u8()==1)for(auto& t:project->tracks){auto& a=t.chord_gen;
+            a.type=r.u8()%2;a.genre=std::min<unsigned>(r.u8(),60);a.progression=r.u8()%7;a.chords=std::clamp<unsigned>(r.u8(),1,8);a.bars=std::clamp<unsigned>(r.u8(),1,16);a.rhythm=std::min<unsigned>(r.u8(),100);a.gate=std::clamp<unsigned>(r.u8(),10,100);a.color=r.u8()%4;a.voicing=r.u8()%5;a.octave=std::clamp<unsigned>(r.u8(),2,6);
+            a.energy=std::min<unsigned>(r.u8(),100);a.play=r.u8()%5;a.rate=r.u8()%4;a.local=r.u8()%2;a.root=r.u8()%12;a.scale=r.u8()%13;a.seed=r.u32();a.harmony=r.u32();}
         } else if(name=="ACGN") {for(auto& t:project->tracks){auto& a=t.acid_gen;
         a.density=std::min<unsigned>(r.u8(),100);a.accent=std::min<unsigned>(r.u8(),100);a.slide=std::min<unsigned>(r.u8(),100);
         a.octaves=std::clamp<unsigned>(r.u8(),1,3);a.octave=std::min<unsigned>(r.u8(),4);a.auto_bars=std::min<unsigned>(r.u8(),16);a.seed=r.u32();}

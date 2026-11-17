@@ -839,6 +839,7 @@ void preview_break_files(Snapshot& s){
     s.ui.files_cursor=1;s.ui.files_count=uint16_t(s.files.size());
 }
 const Preview previews[] {
+#include "rhythmer/tools/chord_preview.inc"
     {"break-seq-roll",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.project.tracks[0].engine=EngineKind::Sampler;s.project.tracks[0].break_bars=2;s.project.tracks[0].last_note=8;}},
     {"break-perf-0",[](Shell&,Snapshot& s){s.ui.page=PageId::Edit;s.ui.break_perf_page=0;s.project.tracks[s.ui.track].engine=EngineKind::Sampler;s.project.tracks[s.ui.track].break_bars=2;s.ui.held_pads=1<<6;}},
     {"break-perf-1",[](Shell&,Snapshot& s){s.ui.page=PageId::Edit;s.ui.break_perf_page=1;s.project.tracks[s.ui.track].engine=EngineKind::Sampler;s.project.tracks[s.ui.track].break_bars=2;s.ui.held_pads=1<<6;}},

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
+#include "rhythmer/model/chord_gen_access.h"
 #include "rhythmer/shell/note_jobs.h"
 #include "rhythmer/shell/menu.h"
 #include "rhythmer/shell/ask.h"
@@ -680,6 +681,9 @@ void Context::apply(const Binding& b, int value) {
     if (midi_binding(*this, b, value)) return; // roadmap P4: a MIDI track's device and SysEx file
     auto& t = track();
     switch (b.kind) {
+    case Kind::TrackGenType:if(chord_gen_available(project,ui.track)){t.chord_gen.type=uint8_t(value!=0);dirty=true;}break;
+    case Kind::ChordGenParam:if(chord_gen_available(project,ui.track)){chord_gen_set(t.chord_gen,b.id,value,project.root,project.scale);dirty=true;}break;
+    case Kind::GenLength:project.gen8.length=uint8_t(std::clamp(value,0,16));dirty=true;break;
     case Kind::AcidGenParam:{auto& a=t.acid_gen;switch(b.id){case 0:a.density=value;break;case 1:a.accent=value;break;case 2:a.slide=value;break;case 3:a.octaves=value;break;case 4:a.octave=value;break;case 5:a.auto_bars=value;break;}dirty=true;break;}
     case Kind::AcidGenSeed:t.acid_gen.seed=uint32_t(value);dirty=true;break;
     case Kind::BreakPerfParam:t.break_perf[unsigned(b.id)%10]=uint16_t(value);if(b.id==6&&t.break_perf[7]>value*10){t.break_perf[7]=uint16_t(value*10);send({Type::Param,ui.track,0,107,int16_t(value*10)});}send({Type::Param,ui.track,0,uint16_t(100+b.id),int16_t(value)});dirty=true;break;

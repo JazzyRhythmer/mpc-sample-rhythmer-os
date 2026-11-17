@@ -13,6 +13,7 @@
 // the metronome's level). B1-B3 PATTERNS / ROLL / MOTION (B1 again: SCENES); Shift + B1 SCENE (K1 the scene's tempo, Push
 // names it), Shift + B2 FOLLOW (the pattern's follow action, Shift + K1 OR, Push puts it on its column), Shift + B3
 // VARY (a variation of the pattern into the next empty one; the wheel picks, Push or B3 makes it).
+#include "rhythmer/model/chord_gen_access.h"
 #include "rhythmer/pages/common.h"
 #include "rhythmer/pages/pages.h"
 #include "rhythmer/model/generators.h"
@@ -133,8 +134,9 @@ void draw(Paint& p, const Snapshot& s) {
     h.right.push_back(tag_of(s, s.ui.track));
     SoftKeys keys {{"PATTERNS", "ROLL", motion_key(s)}, 0, c};
     keys.dots[0] = 2; keys.dot_at[0] = 1;
-    if (s.ui.sheet_open) keys = SoftKeys {{"BACK", s.ui.gen8_mode==0?"VARY":s.ui.gen8_mode==1?"SETUP":s.ui.gen8_mode==4?"SETTINGS":"GEN", s.ui.gen8_mode==3?(s.project.gen8.assign?"SELECT":"DONE"):((s.ui.gen8_mode==0&&s.ui.sheet_row>=4)||(s.ui.gen8_mode==2&&s.ui.sheet_row>=5))?"OPEN":"APPLY"}, 2, c, {KeyIcon::Back, KeyIcon::None, KeyIcon::Check}};
-    else if (s.ui.shift) {
+    if (s.ui.sheet_open) keys = SoftKeys {{"BACK", s.ui.gen8_mode==0?"VARY":s.ui.gen8_mode==1?"SETUP":s.ui.gen8_mode==5?"PAGE":s.ui.gen8_mode==4?"SETTINGS":"GEN", s.ui.gen8_mode==3?(s.project.gen8.assign?"SELECT":"DONE"):((s.ui.gen8_mode==0&&s.ui.sheet_row>=4)||(s.ui.gen8_mode==2&&s.ui.sheet_row>=5))?"OPEN":"APPLY"}, 2, c, {KeyIcon::Back, KeyIcon::None, KeyIcon::Check}};
+    if(s.ui.sheet_open&&s.ui.gen8_mode==5){keys.dots[1]=5;keys.dot_at[1]=s.ui.chord_gen_page%5;}
+    else if (s.ui.shift&&!s.ui.sheet_open) {
         keys = SoftKeys {{"SEQUENCE", follow_shown(s.ui) ? "FOLLOW" : "", "GEN"}, -1, c};
         if (s.ui.patterns_cards == 1) keys.tints[0] = colour::amber;
         if (s.ui.patterns_cards == 2) keys.tints[1] = colour::amber;
@@ -160,33 +162,35 @@ void draw(Paint& p, const Snapshot& s) {
             static const char* brk[] {"GENRE CHOPS","STRAIGHT","RANDOM CHOPS","MUTATE CHOPS","TAIL FILL","BROWSE SAMPLE","BRK PERF"};
             bool br=s.track().engine==EngineKind::Sampler&&s.track().break_bars;
             bool acid=s.track().engine==EngineKind::Plugin&&s.track().plugin<max_plugins&&std::string(s.project.plugins[s.track().plugin].name)=="Acid Engine";
-            m.count=s.ui.gen8_mode==4?2:s.ui.gen8_mode==2?7:6;
+            m.count=(s.ui.gen8_mode==4||s.ui.gen8_mode==5)?2:s.ui.gen8_mode==2?7:6;
             for(unsigned i=0;i<m.count;i++) m.rows[i]={s.ui.gen8_mode==2?brk[i]:gen[i],{},false,false,false};
             if(s.ui.gen8_mode==0&&!s.project.gen8.assign){m.rows[0]={"GENERATE MIDI",{},false,false,false};m.rows[1]={"MUTATE MIDI",{},false,false,false};}
-            if(s.ui.gen8_mode==0)m.rows[4]={br?"BREAK GEN":acid?"ACID GEN":"VARIATIONS",{},false,false,false};
+            if(s.ui.gen8_mode==0)m.rows[4]={br?"BREAK GEN":acid?"ACID GEN":chord_gen_available(s.project,s.ui.track)?"CHORD GEN":"VARIATIONS",{},false,false,false};
             if(s.ui.gen8_mode==4){m.rows[0]={"GENERATE ACID",{},false,false,false};m.rows[1]={"MUTATE ACID",{},false,false,false};}
             m.title=s.ui.gen8_mode==4?"ACID ENGINE / TRACK":s.ui.gen8_mode==2?"16 SLICES / TEMPO SYNC":(s.project.gen8.assign?juce::String("T1 KIT / T2-4 INSTRUMENTS"):"T"+juce::String(s.project.gen8.first+1)+"-"+juce::String(s.project.gen8.last+1)+" MIDI ONLY");
             if(s.ui.gen8_mode==0){
                 const auto target="T"+juce::String(s.ui.track+1);
                 m.rows[2]={"GENERATE "+target,{},false,false,false};m.rows[3]={"MUTATE "+target,{},false,false,false};
-                if(s.ui.sheet_row==2||s.ui.sheet_row==3)m.title=target+" / KEEP SOUND";
+                if(s.ui.sheet_row==2||s.ui.sheet_row==3)m.title=target+" / TRACK GEN / KEEP SOUND";
                 else if(s.project.gen8.assign)m.title="T"+juce::String(gen_song_first(s.project.gen8)+1)+"-"+juce::String(gen_song_first(s.project.gen8)+4)+(s.ui.sheet_row==1?" / KEEP SOUNDS":" / NEW SOUNDS");
                 else m.title="MIDI T"+juce::String(std::min(s.project.gen8.first,s.project.gen8.last)+1)+"-"+juce::String(std::max(s.project.gen8.first,s.project.gen8.last)+1);
             }
-            if(s.ui.gen8_mode==0&&s.ui.sheet_row>=4)m.title=s.ui.sheet_row==5?"TARGET / SOUND OR MIDI":br?"LOOP / CHOP GENERATOR":acid?"ACID / TRACK GENERATOR":"PATTERN / VARIATIONS";
+            if(s.ui.gen8_mode==0&&s.ui.sheet_row>=4)m.title=s.ui.sheet_row==5?"TARGET / SOUND OR MIDI":br?"LOOP / CHOP GENERATOR":acid?"ACID / TRACK GENERATOR":chord_gen_available(s.project,s.ui.track)?"HARMONY / PLAY STYLE":"PATTERN / VARIATIONS";
             if(s.ui.gen8_mode==2){
                 bool ready=true;for(unsigned i=0;i<16;++i)ready&=s.track().pads[(s.track().bank%sampler_banks)*16+i].used();
                 m.title="T"+juce::String(s.ui.track+1)+(ready?" / 16 CHOPS":" / LOAD A LOOP");
                 if(!ready)for(unsigned i=0;i<5;++i)m.rows[i].off=true;
                 if(s.ui.break_pending>=0 && s.ui.break_job_track==s.ui.track){m.title="LOADING LOOP / PLEASE WAIT";for(unsigned i=0;i<m.count;++i)m.rows[i].off=true;}
             }
+            if(s.ui.gen8_mode==5){m.title="T"+juce::String(s.ui.track+1)+" / "+juce::String(s.ui.chord_gen_page%5+1)+" OF 5";m.rows[0]={"NEW CHORDS",{},false,false,false};m.rows[1]={"MUTATE CHORDS",{},false,false,false};}
             if(s.ui.gen8_mode==4)m.title="T"+juce::String(s.ui.track+1)+" / SETTINGS "+juce::String(s.ui.acid_gen_page%2+1)+" OF 2";
             if(s.ui.gen8_mode==3){m.count=s.project.gen8.assign?4:1;
                 for(unsigned i=0;i<m.count;i++){m.rows[i]={s.project.gen8.assign?"T"+juce::String(i*4+1)+" - T"+juce::String(i*4+4):juce::String("RETURN TO GEN"),s.project.gen8.assign?"KIT T"+juce::String(i*4+1):juce::String(),false,false,false};}m.title=s.project.gen8.assign?"T"+juce::String(gen_song_first(s.project.gen8)+1)+" KIT / T"+juce::String(gen_song_first(s.project.gen8)+2)+"-"+juce::String(gen_song_first(s.project.gen8)+4):"MIDI: FROM - TO";}
         } else m.count = unsigned(Variation::Count);
         m.current = s.ui.sheet_row % m.count;
         m.detail = {};
-        wide_sheet(p, m, s.ui.gen8_mode==4?"ACID GEN":s.ui.gen8_mode==3?"GEN SETUP":s.ui.gen8_mode==1?"VARY":s.ui.gen8_mode==2?"BREAK":"GEN", c); // two columns: the cards (K1 the amount) stay in view
+        if(s.ui.gen8_mode==5)m.detail=chord_gen_param_text(s.track().chord_gen,13,s.project.root,s.project.scale)+" "+chord_gen_param_text(s.track().chord_gen,14,s.project.root,s.project.scale);
+        wide_sheet(p, m, s.ui.gen8_mode==5?"CHORD GEN":s.ui.gen8_mode==4?"ACID GEN":s.ui.gen8_mode==3?"GEN SETUP":s.ui.gen8_mode==1?"VARY":s.ui.gen8_mode==2?"BREAK":"GEN", c); // two columns: the cards (K1 the amount) stay in view
         return;
     }
 
@@ -200,8 +204,9 @@ void gen_push(Context& c) { // VARY: Push opens it on the row last used; there P
         if(mode==0&&row>=4) {
             bool br=c.track().engine==EngineKind::Sampler&&c.track().break_bars;
             bool acid=c.track().engine==EngineKind::Plugin&&c.track().plugin<max_plugins&&std::string(c.project.plugins[c.track().plugin].name)=="Acid Engine";
-            c.ui.gen8_mode=row==5?3:br?2:acid?4:1;c.ui.sheet_row=c.ui.gen8_mode==3&&c.project.gen8.assign?c.project.gen8.group:0;if(c.ui.gen8_mode==4)c.ui.acid_gen_page=0;if(c.ui.gen8_mode==2){bool ready=true;for(unsigned i=0;i<16;++i)ready&=c.track().pads[(c.track().bank%sampler_banks)*16+i].used();if(!ready)c.ui.sheet_row=5;}return;
+            c.ui.gen8_mode=row==5?3:br?2:acid?4:chord_gen_available(c.project,c.ui.track)?5:1;if(c.ui.gen8_mode==5)c.ui.chord_gen_page=0;c.ui.sheet_row=c.ui.gen8_mode==3&&c.project.gen8.assign?c.project.gen8.group:0;if(c.ui.gen8_mode==4)c.ui.acid_gen_page=0;if(c.ui.gen8_mode==2){bool ready=true;for(unsigned i=0;i<16;++i)ready&=c.track().pads[(c.track().bank%sampler_banks)*16+i].used();if(!ready)c.ui.sheet_row=5;}return;
         }
+        if(mode==5){if(row<2)c.chord_gen_action(row==1);else c.ui.sheet_row=0;return;}
         if(mode==4){
             // An obsolete replay-row cursor must not execute a different action.
             if(row>=2){c.ui.sheet_row=0;return;}
@@ -230,7 +235,7 @@ void push(Context& c) {
 void wheel(Context& c, int delta) {
     auto& ui = c.ui;
     if(c.ui.sheet_open && c.ui.gen8_mode==2 && c.ui.break_pending>=0 && c.ui.break_job_track==c.ui.track)return;
-    if (c.ui.sheet_open) { int count=c.ui.gen8_mode==3?(c.project.gen8.assign?4:1):c.ui.gen8_mode==4?2:c.ui.gen8_mode==2?7:6; c.ui.sheet_row = uint8_t(std::clamp<int>(c.ui.sheet_row + delta, 0, count - 1)); return; }
+    if (c.ui.sheet_open) { int count=c.ui.gen8_mode==3?(c.project.gen8.assign?4:1):(c.ui.gen8_mode==4||c.ui.gen8_mode==5)?2:c.ui.gen8_mode==2?7:6; c.ui.sheet_row = uint8_t(std::clamp<int>(c.ui.sheet_row + delta, 0, count - 1)); return; }
     if (ui.shift) { ui.shift_used = true; c.locate(delta); return; } // Shift: the playhead by Q (stopped: where Shift + Play carries on)
     c.select_track(unsigned(std::clamp<int>(int(ui.track) + delta, 0, int(track_count) - 1)));
 }
@@ -245,6 +250,7 @@ void soft(Context& c, int key) {
     if (c.ui.sheet_open) { // BACK, -, DO IT
         if(key==0){c.back();return;}
         if(c.ui.gen8_mode==2 && c.ui.break_pending>=0 && c.ui.break_job_track==c.ui.track){c.notice("Loading BREAK sample");return;}
+        if(key==1&&c.ui.gen8_mode==5){c.ui.chord_gen_page=uint8_t((c.ui.chord_gen_page+1)%5);return;}
         if(key==1&&c.ui.gen8_mode==4){c.ui.acid_gen_page=uint8_t((c.ui.acid_gen_page+1)%2);return;}
         if (key == 1) {c.ui.gen8_mode=c.ui.gen8_mode==0?1:c.ui.gen8_mode==1?3:0;c.ui.sheet_row=c.ui.gen8_mode==3&&c.project.gen8.assign?c.project.gen8.group:0;}
         if (key == 2) gen_push(c);

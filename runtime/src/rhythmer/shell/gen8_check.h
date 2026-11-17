@@ -10,6 +10,8 @@
 #include <cstring>
 #include <cstdlib>
 #include <thread>
+#include <set>
+#include "rhythmer/model/chord_gen_access.h"
 #include "rhythmer/plugin/plugin_rack.h"
 #include "rhythmer/pages/pages.h"
 #include "rhythmer/shell/step_edit.h"
@@ -233,7 +235,7 @@ inline int gen8_shell_check() {
     {EngineHost h;Shell s(h);auto& x=s.context();x.load_sound(0,EngineKind::Sampler,0);
      auto press=[&](SurfaceButton b,bool down){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(b);e.input.pressed=down;s.surface(e,2000);};
      auto unchanged=x.patterns.at[0];auto seed=x.project.gen8.seed;
-     for(unsigned mode:{1u,2u,3u,4u}){
+     for(unsigned mode:{1u,2u,3u,4u,5u}){
        x.ui.page=PageId::Patterns;x.ui.sheet_open=true;x.ui.gen8_mode=uint8_t(mode);x.ui.sheet_row=1;
        press(SurfaceButton::Shift,true);press(SurfaceButton::WheelPush,true);press(SurfaceButton::WheelPush,false);press(SurfaceButton::Shift,false);
        if(x.ui.page!=PageId::Patterns||!x.ui.sheet_open||x.ui.gen8_mode||x.ui.sheet_row)return gen_failure(230,__LINE__);
@@ -322,6 +324,7 @@ inline int gen8_shell_check() {
         for(int i=0;i<8;++i){h.render(out.data(),128,1);for(auto v:out)if(v)return gen_failure(48,__LINE__);}
         h.send({Command::Type::NoteOn,0,0,60,100});h.render(out.data(),128,1);heard=false;for(auto v:out)heard|=v!=0;if(!heard)return gen_failure(49,__LINE__);
     }
+    #include "rhythmer/shell/chord_gen_check.inc"
     #include "rhythmer/shell/break_acid_check.inc"
     std::printf("RHYTHMER_GEN8_SHELL original_fm1_four_tracks range=1-16 engine_gen_back=ok undo_redo=ok break_bars=1-4 unmapped=preserved single=C4 kit=canonical\n");return 0;
 }

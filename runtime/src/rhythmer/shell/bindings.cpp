@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
+#include "rhythmer/model/chord_gen_access.h"
 #include "rhythmer/shell/bindings.h"
 #include "rhythmer/shell/levels_keys.h"
 #include "rhythmer/shell/features.h"
@@ -886,12 +887,18 @@ std::array<Binding, 3> base_bindings(const Project& project, const UiState& ui, 
     }
     case PageId::Patterns: { // the pattern's cards; SCENE: the scene in view's tempo; FOLLOW: the pattern's follow action
         if (ui.sheet_open) {
+            if(ui.gen8_mode==5&&chord_gen_available(project,ui.track)){
+                std::array<Binding,3> out;for(unsigned k=0;k<3;k++){unsigned id=(ui.chord_gen_page%5)*3+k;auto bounds=chord_gen_bounds(id);
+                    out[k]=Binding{Kind::ChordGenParam,int(id),bounds[0],bounds[1],chord_gen_value(track.chord_gen,id,project.root,project.scale)};
+                    if(id==11&&track.chord_gen.play==0)out[k]=Binding{};
+                }return out;
+            }
             if(ui.gen8_mode==4){const auto& a=track.acid_gen;
                 if(ui.acid_gen_page%2==0)return {Binding{Kind::AcidGenParam,0,0,100,a.density},Binding{Kind::AcidGenParam,1,0,100,a.accent},Binding{Kind::AcidGenParam,2,0,100,a.slide}};
                 return {Binding{Kind::AcidGenParam,3,1,3,a.octaves},Binding{Kind::AcidGenParam,4,0,4,a.octave},Binding{Kind::AcidGenParam,5,0,16,a.auto_bars}};
             }
             if(ui.gen8_mode==3){
-                if(project.gen8.assign)return {Binding{Kind::GenGroup,0,0,3,project.gen8.group},Binding{},Binding{Kind::GenAssign,0,0,1,project.gen8.assign}};
+                if(project.gen8.assign)return {Binding{Kind::GenGroup,0,0,3,project.gen8.group},Binding{Kind::GenLength,0,0,16,project.gen8.length},Binding{Kind::GenAssign,0,0,1,project.gen8.assign}};
                 return {Binding{Kind::GenFirst,0,0,15,project.gen8.first},Binding{Kind::GenLast,0,0,15,project.gen8.last},Binding{Kind::GenAssign,0,0,1,project.gen8.assign}};
             }
             if(ui.gen8_mode==2)return {pattern_cards(project,pattern)[0],Binding{Kind::Gen8Genre,0,0,60,project.gen8.genre},Binding{Kind::Gen8Seed,0,0,9999,project.gen8.seed}};

@@ -304,6 +304,9 @@ void describe_card(const Snapshot& s, const Binding& b, ui::KnobCard& c) {
     case Kind::GenAssign:c.label="GEN MODE";c.value=b.value?"SOUND + MIDI":"MIDI ONLY";break;
     case Kind::BreakPreviewMode:c.label="AUDITION";c.value=b.value?"SYNC":"ORIGINAL";break;
     case Kind::GenBars:c.label="LOAD BARS";c.value=juce::String(b.value);break;
+    case Kind::TrackGenType:c.label="GEN TYPE";c.value=b.value?"CHORDS":"MELODY";break;
+    case Kind::ChordGenParam:c.label=chord_gen_param_name(b.id);c.value=chord_gen_param_text(s.track().chord_gen,b.id,s.project.root,s.project.scale);break;
+    case Kind::GenLength:c.label="GEN BARS";c.value=b.value?juce::String(b.value):juce::String("AUTO");break;
     case Kind::Gen8Amount: c.label="ENERGY"; c.value=juce::String(b.value); c.unit="%"; break;
     case Kind::Gen8Genre: c.label="GENRE"; c.value=gen_menu_name(unsigned(b.value)); break;
     case Kind::Gen8Seed: c.label="SEED"; c.value=juce::String(b.value); break;

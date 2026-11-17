@@ -255,7 +255,8 @@ Full exposes Motion/Mod/Macro; B3 cycles them and SHIFT + B3 ADD adds a supporte
 | --- | --- | --- |
 | GENERATE SONG | Generate the selected 4-track group | SOUND + MIDI assigns a kit to its first track and instruments to the next three |
 | MUTATE SONG | Vary that group's current patterns | Existing instruments stay |
-| GENERATE Tn / MUTATE Tn | Work on the selected track only | Its instrument stays |
+| GENERATE Tn / MUTATE Tn | Existing engine-adapted generation on the selected track | Its instrument stays; Rhythmer Kit receives drum patterns |
+| CHORD GEN | Explicit chord progressions, Block / Arp / Strum, on the selected instrument track | Its instrument stays; separate from GENERATE Tn |
 | GENERATE MIDI / MUTATE MIDI | Work on the range in GEN SETUP | MIDI ONLY keeps the instruments |
 | ACID GEN / BREAK GEN | Open engine-specific generation | Shown only for the matching track |
 
@@ -264,6 +265,43 @@ For four-track generation, open **GEN SETUP**, set **K3 GEN MODE = SOUND + MIDI*
 For one track or a range without instrument replacement, choose **MIDI ONLY** in GEN SETUP and set **MIDI FROM / TO**. Identical start/end track numbers target one track. A GENERATE Tn command is also a direct one-track action.
 
 Back returns **sub-generator → GEN main → PATTERNS**. Applying generation remains in the generator so you can compare another result. **SHIFT + −** undoes a supported generation operation. General GEN exposes Seed; Acid GEN does not.
+
+### Track GEN and Chord GEN are separate
+
+![GEN: GENERATE Tn and CHORD GEN are separate entries](../assets/manual/020-chord-gen-entry.png)
+
+**GENERATE Tn / MUTATE Tn** retain the original engine-adapted track workflow and its genre/energy/seed controls. They do not switch to Chord GEN after you have used it. A melodic part can include chords when its original genre/role calls for them. Rhythmer Kit receives the selected genre's drum part; Acid and Break retain their specialized routes.
+
+**CHORD GEN** explicitly controls a harmonic progression and how its notes are played. Only NEW CHORDS / MUTATE CHORDS inside that screen use its settings. It changes the selected track's current pattern, keeps the instrument and other tracks, and leaves project BPM/key/scale unchanged.
+
+### Generate chords on one track
+
+1. Select the instrument track and open GEN.
+2. Select **CHORD GEN** and push the encoder. The sound remains loaded. **GENERATE Tn / MUTATE Tn** remain separate, engine-adapted single-track generation commands.
+3. **B2 PAGE** cycles five pages; the header shows the page count and current key/scale.
+4. Set **CHORDS** (1–8 chord changes across the phrase) and **BARS** (1–16). **PATTERN** changes rhythmic density; **CHORD COLOR** changes harmonic complexity.
+5. Set **ENERGY** for accents/dynamics, **PLAY STYLE** for block chords, arpeggios or strum, and **GATE** for note length. **PLAY RATE** is arp subdivision or strum spacing; it is inactive for block chords.
+6. Use **VOICING / REGISTER** to set spacing and pitch range. Mono instruments play successive chord tones.
+7. **KEY SOURCE = PROJECT** follows the project. Changing KEY or SCALE selects **LOCAL**, affecting only generated notes. Advanced, borrowed and chromatic progressions may contain intentional non-scale tones.
+8. Choose **NEW CHORDS** and push. **MUTATE CHORDS** retains the harmonic progression and varies articulation. Undo restores the notes and generation state. Back returns to GEN.
+
+![Chord GEN page 1: genre, progression family and number of chord changes](../assets/manual/020-chord-gen-1.png)
+
+![Chord GEN page 2: phrase bars, rhythmic density and chord complexity](../assets/manual/020-chord-gen-2.png)
+
+![Chord GEN page 3: energy, Block or Arp or Strum, and gate](../assets/manual/020-chord-gen-3.png)
+
+![Chord GEN page 4: voicing, register, arp subdivision or strum spacing](../assets/manual/020-chord-gen-4.png)
+
+![Chord GEN page 5: follow project key and scale or select a local override](../assets/manual/020-chord-gen-5.png)
+
+CHORDS means harmonic changes across the whole phrase: 4 chords over 4 bars gives one chord per bar; 4 chords over 8 bars gives two bars per chord. PATTERN controls repeated hits within each chord rather than adding more chord changes. Start with PATTERN 0% to compare Block, Arp and Strum clearly.
+
+CHORD COLOR selects triads, sevenths, ninths or advanced extensions. Jazz/neo-soul profiles use genre-aware progressions and voice leading. Borrowed/chromatic progressions and advanced dominants can intentionally contain non-scale notes. AUTO voicing may omit a root or fifth; choose CLOSE if you want a more explicit chord stack.
+
+PLAY RATE sets arp quarter/eighth/sixteenth/thirty-second notes, or strum TIGHT/NATURAL/LOOSE/WIDE spacing. It is inactive for BLOCK. ENERGY controls accents/dynamics; GATE controls note duration. Mono engines play successive chord tones instead of a simultaneous block/strum.
+
+Acid Engine, Break and Rhythmer Kit use their dedicated generators. Chord generation does not change project BPM, swing, time signature, key or scale. New SOUND + MIDI Song generation keeps its existing global tempo/key/scale behavior; GEN SETUP LENGTH chooses AUTO or a target-pattern length of 1–16 bars. For Rhythmer Kit, select GENERATE Tn and choose the desired genre. If that genre has no drum vocabulary (for example Neo Classic), no drum part is shown and the existing rhythm stays intact.
 
 ## 11. Use Acid GEN
 

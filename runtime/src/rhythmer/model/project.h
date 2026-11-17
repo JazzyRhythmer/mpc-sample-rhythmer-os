@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
 #pragma once
+#include "rhythmer/model/chord_gen.h"
 #include "rhythmer/model/tempo_lane.h"
 #include "rhythmer/model/chop_slices.h"
 #include "rhythmer/model/compressor.h"
@@ -264,6 +265,7 @@ struct FaderLearned {
 
 struct Track {
     AcidGenSettings acid_gen;
+    ChordGenSettings chord_gen;
     std::array<uint16_t,10> break_perf{{0,0,0,64,0,0,38,100,4,1}};uint8_t break_source=0;
     uint8_t break_bars=0;
     EngineKind engine = EngineKind::None;

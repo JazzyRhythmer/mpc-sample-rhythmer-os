@@ -293,7 +293,7 @@ Choose one of 36 complete kits, replace only the pads you want to change, then s
 
 ## From a sound to a groove
 
-GEN can assign a kit and three complementary melodic roles to a chosen four-track group, or write MIDI for a range or a single track while keeping its instruments. Acid and Break have dedicated generators and performance workflows. The Melodee foundation supplies patterns, sequences, song arrangement, Freeze, mixing, effects, MIDI and USB features.
+GEN can assign a kit and three complementary melodic roles to a chosen four-track group, or write MIDI for a range or a single track while keeping its instruments. A separate Chord GEN adds genre-based progressions, voicings and Block, Arp or Strum playing, following the project key/scale or a local override. Existing single-track generation remains available; Acid and Break retain their dedicated generators and performance workflows. The Melodee foundation supplies patterns, sequences, song arrangement, Freeze, mixing, effects, MIDI and USB features.
 
 **Save sounds for reuse. Save projects for the music.** User Sound and User Kit presets keep instrument/kit settings; project saving preserves the surrounding tracks, patterns and arrangement. [Save/load instructions](https://jazzyrhythmer.github.io/mpc-sample/manual/#6-edit-the-sound-then-save-a-reusable-preset) · [First pattern](https://jazzyrhythmer.github.io/mpc-sample/manual/quickstart.html).
 

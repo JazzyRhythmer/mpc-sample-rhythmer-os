@@ -7,7 +7,7 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCES = ["src/rhythmer/engine/engine_info.cpp", "src/rhythmer/engine/engine_host.cpp", "src/rhythmer/engine/looper.cpp",
+SOURCES = ["src/rhythmer/model/chord_gen.cpp", "src/rhythmer/engine/engine_info.cpp", "src/rhythmer/engine/engine_host.cpp", "src/rhythmer/engine/looper.cpp",
            "src/rhythmer/shell/bindings.cpp", "src/rhythmer/shell/loop_sheet.cpp", "src/rhythmer/engine/effects.cpp", "src/rhythmer/engine/effects_extra.cpp", "src/rhythmer/engine/master_comp.cpp", "src/rhythmer/engine/effect_info.cpp", "src/rhythmer/engine/macros.cpp",
            "src/rhythmer/engine/sampler.cpp", "src/rhythmer/engine/break_manipulator.cpp", "src/rhythmer/engine/sample_data.cpp", "src/rhythmer/engine/onsets.cpp", "src/rhythmer/engine/sfz.cpp", "src/rhythmer/engine/keygroup.cpp", "src/rhythmer/engine/exs.cpp", "src/rhythmer/engine/sf2.cpp", "src/rhythmer/engine/dspreset.cpp", "src/rhythmer/engine/stream_pager.cpp", "src/rhythmer/engine/render_pool.cpp", "src/rhythmer/shell/sample_cache.cpp",
            "src/rhythmer/model/project_file.cpp", "src/rhythmer/model/pattern.cpp", "src/rhythmer/model/note_edits.cpp", "src/rhythmer/model/smf.cpp", "src/rhythmer/model/generators.cpp", "src/rhythmer/engine/punch.cpp", "src/rhythmer/engine/print_render.cpp", "src/rhythmer/engine/print_player.cpp", "src/rhythmer/engine/audio_player.cpp", "src/rhythmer/model/print.cpp", "src/rhythmer/engine/punch_mpc.cpp", "src/rhythmer/engine/pad_fx_info.cpp", "src/rhythmer/model/sound_file.cpp",

@@ -108,6 +108,31 @@ RHYTHMER OS **0.2.0** · **4 bars · 140 BPM · C minor**. Build a drum, bass an
 
 **Check:** the displayed preset name is **A11 Brass**. Release each chord before the next hit.
 
+### Optional: generate the chord part instead of recording it
+
+![GEN: keep single-track generation and Chord GEN separate](../images/rhythmer/020-chord-gen-entry.png)
+
+![Chord GEN: choose the chord progression and number of changes](../images/rhythmer/020-chord-gen-1.png)
+
+1. Keep **FM-106 on track 3**, then open **SEQ → B1 PATTERNS → SHIFT + B3 GEN**.
+2. Select **CHORD GEN** and push the encoder. This is a separate entry from **GENERATE T3 / MUTATE T3**.
+3. Page 1: choose **JAZZY CHORDS** or **NEO SOUL**, **PROGRESSION AUTO**, **CHORDS 4**.
+4. Press **B2 PAGE**. Page 2: **BARS 4 / PATTERN 0% / CHORD COLOR 7THS**. After the first comparison, try 9THS or ADVANCED.
+5. Page 3: **ENERGY 65% / PLAY STYLE BLOCK / GATE 80%**. Page 4: **VOICING AUTO / REGISTER OCT 4**. PLAY RATE has no job in BLOCK.
+6. Page 5: leave **KEY SOURCE PROJECT**. The key/scale cards should show this guide's **C / Minor**. Do not change the project tempo or scale for this exercise.
+7. Select **NEW CHORDS** and push / APPLY. It replaces only track 3's current pattern; track 1 drums and track 2 bass stay. Use **SHIFT + −** to restore the recorded version if preferred.
+8. Press PLAY to hear it with drums and bass. For another harmonic progression, use NEW CHORDS again. MUTATE CHORDS keeps the progression and varies articulation.
+9. To compare playing styles, set **PLAY STYLE ARP UP** and **PLAY RATE 1/8**, then **MUTATE CHORDS**. Compare **STRUM / NATURAL** the same way. Notes will be successive on a mono engine; FM-106 can play chord stacks.
+10. **B1 BACK or SHIFT + encoder click** returns to GEN; another Back returns to PATTERNS.
+
+![Chord GEN: compare Block, Arp and Strum](../images/rhythmer/020-chord-gen-3.png)
+
+![Chord GEN: use the current project's key and scale](../images/rhythmer/020-chord-gen-5.png)
+
+**Which command should I use?** GENERATE T3 / MUTATE T3 keep the original engine-adapted track generator, with genre, energy and seed. CHORD GEN gives explicit control over progression, chord changes, phrase length and playing style. Using CHORD GEN never changes the meaning of GENERATE T3. GENERATE SONG can replace the whole selected four-track group and change global tempo/key/scale; do not use it for this single chord-part exercise.
+
+**Generate drums instead:** select track 1 with Rhythmer Kit → open GEN → choose the genre and **GENERATE T1**. Existing sounds stay loaded. A genre without a drum vocabulary, such as Neo Classic, shows no drum part and keeps the existing pattern.
+
 ## 7. Balance the tracks
 
 ![TRACKS: select a track and balance LEVEL, PAN and SEND A](../images/rhythmer/020-tracks.png)

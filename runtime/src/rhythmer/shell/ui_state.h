@@ -185,6 +185,7 @@ struct UiState {
     bool break_browse=false;int break_pending=-1;uint8_t break_track=0,break_bank=0,break_bars=2;
     std::array<unsigned,track_count> break_feedback_seen{};
     uint8_t acid_gen_page=0,break_perf_page=0;bool break_load_b=false,break_pending_b=false;
+    uint8_t chord_gen_page = 0;
     uint8_t gen8_mode = 0; // 0 GEN8, 1 original VARY, 2 BREAK                 // Steps' VARY sheet (Push): how far thinner, busier, humanised go, percent
     // The fader (shell/fader.cpp): where it sits (-1 until it moves)
     // and whether it has met the value it drives (takeover), when it last moved (its card shows a moment).

@@ -2,6 +2,7 @@
 // Native integration by jazzy rhythmer; musical sources in third_party/jiant-gen.
 #include "rhythmer/shell/context.h"
 #include "rhythmer/model/gen8.h"
+#include "rhythmer/model/chord_gen_access.h"
 #include "rhythmer/model/gen8_tables.h"
 #include "rhythmer/model/gen_menu_order.h"
 #include "rhythmer/model/native_gen_profiles.h"
@@ -62,6 +63,7 @@ Gen8Voice voice_for(Context& c,unsigned at) {
     return v;
 }
 }
+Gen8Voice gen_track_voice(Context& c,unsigned at){return voice_for(c,at);}
 void Context::gen8_action(unsigned action) {
     if(action==10&&track().engine==EngineKind::Sampler&&track().break_bars){ui.sheet_open=false;open(PageId::Edit);ui.edit_page[ui.track]=0;ui.break_perf_page=0;return;}
     if(host_recording()) {notice("Stop recording before GEN");return;}
@@ -211,18 +213,43 @@ void Context::gen8_action(unsigned action) {
                 auto active=[&](unsigned track){for(unsigned n=0;n<fm1->count;n++)if(fm1->events[n].track==track)return true;return false;};
                 if(!active(source))for(unsigned candidate=1;candidate<4;candidate++)if(active(candidate)){source=candidate;break;}
             }
-            const unsigned phrase=std::max(1u,fm1->track_ticks[source]);made.length=settings.assign&&action==0?phrase:p.length;made.feel=Feel{};
+            const unsigned original_phrase=std::max(1u,fm1->track_ticks[source]),bar_ticks=project.bar_ticks();
+            const unsigned phrase=bar_ticks==384?original_phrase:((original_phrase+383)/384)*bar_ticks;
+            made.length=settings.length?settings.length*bar_ticks:settings.assign&&action==0?phrase:p.length;
+            if(settings.assign&&action==0)made.feel=Feel{};
+            auto place=[&](unsigned raw,bool ending){unsigned bar=raw/384,pos=raw%384;if(bar_ticks==384)return raw;
+                if(pos>=bar_ticks){return ending?(bar+1)*bar_ticks:UINT32_MAX;}
+                return bar*bar_ticks+pos;};
             for(unsigned d=0;d<unsigned(Division::Count);d++)if(division_ticks(Division(d))==fm1->grid[source]){made.division=Division(d);break;}
-            for(unsigned offset=0;offset<made.length;offset+=phrase)for(unsigned n=0;n<fm1->count;n++){const auto& original=fm1->events[n];if(original.track!=source||offset+original.tick>=made.length)continue;
-                Event event;event.tick=offset+original.tick;
-                event.key=v.drums?v.drum_keys[original.key%8]:uint8_t(std::clamp<int>(original.key,0,127));if(event.key==255)continue;
-                event.velocity=std::max<uint8_t>(1,original.velocity);event.length=uint16_t(std::min<unsigned>(original.ticks,made.length-event.tick));event.ratchet=original.ratchet;event.chance=original.chance;
+            for(unsigned offset=0;offset<made.length;offset+=phrase)for(unsigned n=0;n<fm1->count;n++){const auto& original=fm1->events[n];if(original.track!=source)continue;
+                unsigned raw=original.tick;
+                // The FM-1 bridge has already baked its genre swing into ticks.
+                // With an explicit project swing, import its straight step plus
+                // human microtiming; the native shared clock supplies swing once.
+                if(project.swing>50){int64_t straight=int64_t(original.step)*fm1->grid[source]+int64_t(original.micro)*fm1->grid[source]/64;raw=unsigned(std::max<int64_t>(0,straight));}
+                unsigned at=place(raw,false);if(at==UINT32_MAX||offset+at>=made.length)continue;
+                Event event;event.tick=offset+at;
+                event.key=v.drums?v.drum_keys[original.key%8]:uint8_t(settings.assign&&action==0?std::clamp<int>(original.key,0,127):gen_follow_note(original.key,fm1->root,fm1->scale,project.root,scales()[project.scale%scales().size()].mask,v));if(event.key==255)continue;
+                event.velocity=std::max<uint8_t>(1,original.velocity);unsigned finish=place(raw+original.ticks,true);unsigned duration=finish>at?finish-at:1;
+                event.length=uint16_t(std::max(1u,std::min<unsigned>(duration,made.length-event.tick)));event.ratchet=original.ratchet;event.chance=original.chance;
                 if(original.flags&1)event.flags|=step_accent;
                 if(original.flags&2)event.flags|=step_slide;
                 made.add(event);
             }made.sort();
+            if(v.drums&&action==2&&made.events.empty()){
+                // Some original song arrangements deliberately omit drums. A
+                // dedicated kit-track request uses the same genre's native drum
+                // vocabulary instead of erasing an existing rhythm with silence.
+                Pattern source_pattern=made;
+                for(unsigned lane=4;lane<8;lane++){
+                    auto part=generate8(source_pattern,Gen8Role(lane),musical_settings,v,project.root,project.scale);
+                    for(const auto& event:part.events)made.add(event);
+                }
+                made.sort();
+                if(made.events.empty()){notice(std::string(gen_menu_name(settings.genre))+" / no drum part");return;}
+            }
         }
-        if(made.events==p.events)continue;
+        if(made==p)continue;
         edit.patterns_before.push_back({uint8_t(t),tr.pattern,p});
         edit.patterns_after.push_back({uint8_t(t),tr.pattern,std::move(made)});
     }

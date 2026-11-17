@@ -15,7 +15,7 @@ RHYTHMER OS 0.2.0 brings two new instruments, an updated FMini-1, refined Rhythm
 
 TRACK SETUP brings instrument replacement, track types, MPC kit loading and track deletion into one visible menu. Change an instrument or track type while keeping your patterns; delete a track through its separate confirmation.
 
-Press the encoder on a completely empty track or empty Sample Kit to choose its type. If other pads already contain samples, pressing it on an empty pad opens sample loading for that pad instead. On-screen hints show the next step.
+Press the encoder on an engine-less track to choose its type. On a Sample Kit, pressing it on an empty pad opens sample loading for that pad, including when the whole kit is empty. On-screen hints show the next step.
 
 Change instruments directly from the preset list. Switch tracks while browsing and the screen follows the selected track. Preset browsing wraps from the last sound back to the first, in both directions.
 
@@ -39,6 +39,14 @@ Parameter names and ordering are refined across oscillator, filter, envelope, LF
 
 Open SAVE SOUND or PAD SOURCE from EDIT, save to one of 64 User Sound or User Kit slots, and reload your sounds from the preset list—even in another project. Save the project separately to keep its patterns and arrangement.
 
+### Build a chord progression
+
+CHORD GEN is a separate instrument-track generator alongside the existing GENERATE Tn / MUTATE Tn workflow. Choose a genre, progression family, 1–8 chord changes and 1–16 bars; adjust rhythmic density, chord complexity, energy, voicing and register, then play the result as Block chords, an arpeggio or a strum.
+
+It follows the project's key and scale by default. Local overrides affect only the generated part. Jazz and neo-soul profiles add extended harmony and voice leading. NEW CHORDS chooses another progression; MUTATE CHORDS keeps the progression while varying articulation. Generation keeps the instrument and other tracks, with Undo/Redo.
+
+Rhythmer Kit retains genre-based drum generation; Acid and Break keep their dedicated generators. The illustrated manual and First Groove guide explain which command to use and how to return from each page.
+
 ### Acid, ready to play
 
 Acid GEN keeps its NEW/MUTATE generation behavior while presenting its musical settings across two pages, without exposed seed controls.
@@ -58,7 +66,7 @@ A steadier external MIDI BPM display keeps whole-number tempos clean while retai
 
 ### Make your first groove
 
-The manual and **Your first groove with RHYTHMER OS.** guide cover the current navigation, track types, sound saving and Break workflow, with visual controls and step-by-step instructions.
+The manual and **Your first groove with RHYTHMER OS.** guide cover the current navigation, track types, sound saving, independent Chord GEN and the Break workflow, with visual controls and step-by-step instructions.
 
 [Download & Installation](https://jazzyrhythmer.github.io/mpc-sample/installer/) · [Manual](https://jazzyrhythmer.github.io/mpc-sample/manual/) · [Your first groove](https://jazzyrhythmer.github.io/mpc-sample/manual/quickstart.html)
 

@@ -201,6 +201,7 @@ public:
     void set_speed(unsigned track, int speed);
     void vary(Variation v);
     void gen8_action(unsigned action);
+    void chord_gen_action(bool mutate);
     void gen_break_load(const std::string&,const std::string&);
     void gen_break_tick();
     void gen_break_begin();
