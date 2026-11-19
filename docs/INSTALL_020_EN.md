@@ -18,7 +18,7 @@ If you already use **Boot Thingy**, keep its launcher and follow its app install
 
 Open **Documentation/index.html** on your computer for the full manual. **Documentation/quickstart.html** is Your first groove; essentials.html and structure.html explain controls and track/pattern selection. Korean pages are linked from the manual. The same guides are available from the device's USB web page and the project website.
 
-A new project normally starts with a factory kit on track 1. Project → NEW → EMPTY starts an empty kit. SAMPLE plays sounds; PATTERNS selects patterns. Back/cancel is SHIFT + encoder **push**, not turn.
+A normal NEW project starts with Rhythmer Kit / K-WASUB / 909 on track 1. Saved projects keep their instruments. Project → NEW → EMPTY starts an empty kit. SAMPLE plays sounds; PATTERNS selects patterns. Back/cancel is SHIFT + encoder **push**, not turn.
 
 ## Return to the stock app
 

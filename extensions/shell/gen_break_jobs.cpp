@@ -87,7 +87,7 @@ void Context::gen_break_tick(){
         if(changed_bars || !replacing || i!=0) sound.layers={};
         sound.loop_lock=true;sound.loop_start=0;
         sound.sample=uint16_t(slot);sound.start=uint32_t(uint64_t(sample.frames)*i/16);sound.end=uint32_t(uint64_t(sample.frames)*(i+1)/16);
-        sound.own_tempo=uint16_t(std::lround(bpm*10));if(!replacing){sound.group=16;sound.mono=true;}
+        sound.own_tempo=uint16_t(std::lround(bpm*10));if(!replacing){sound.play=PadPlay::OneShot;sound.group=16;sound.mono=true;}
         t.pads[t.bank*16+i]=sound;
     }
     auto& pat=next->patterns[t.pattern];

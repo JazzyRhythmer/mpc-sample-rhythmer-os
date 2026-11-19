@@ -1,0 +1,5 @@
+# Break One Shot defaults — 2026-11-18
+
+New Break assignments explicitly use One Shot, mute group 16 and mono. Source replacement retains existing pad settings. The dedicated Break route now forwards each chop's PadPlay setting; One Shot ignores note-off and retires at the natural source end. A new chop replaces the prior chop gate, and an old pad-up cannot release the new one. Gate remains an explicit alternative. Performance command notes retain their held behavior. No sample data, presets or project format changed.
+
+Host ASan/UBSan regression: PASS for released One Shot, explicit Gate, last-chop priority, natural end and STOP/release, plus all 16 live/recorded performance holds and overlaps. SamplerEngine C++ syntax check: PASS. Five targeted integration-patch sections replay exactly against renamed upstream; vendor and the shared generated runtime were not modified. Leak detection is unavailable in macOS ASan. No device installation, listening check or public release was performed.

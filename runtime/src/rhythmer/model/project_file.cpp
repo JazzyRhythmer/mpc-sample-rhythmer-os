@@ -234,7 +234,8 @@ std::vector<uint8_t> save_project(const Project& project, const PatternBank& pat
                                   const PrintTable* prints) {
     Writer w;
     w.out.insert(w.out.end(), magic, magic + 8);
-    auto at = w.begin("PROJ");
+    auto at = w.begin("RID1"); w.text(project.recovery_id); w.end(at);
+    at = w.begin("PROJ");
     w.text(project.name); w.u16(project.tempo); w.u8(project.swing); w.u8(project.root); w.u8(project.scale);
     w.end(at);
     at = w.begin("PVER"); // which engine parameters TRAK's values cover
@@ -819,7 +820,8 @@ std::string load_project(const std::vector<uint8_t>& data, Project& target, Patt
         char tag[5];
         Reader r = file.section(tag);
         std::string name = tag;
-        if (name == "PROJ") {
+        if (name == "RID1") { r.text(project->recovery_id, sizeof(project->recovery_id));
+        } else if (name == "PROJ") {
             r.text(project->name, sizeof(project->name));
             project->tempo = uint16_t(std::clamp<unsigned>(r.u16(), 300, 3000));
             project->swing = uint8_t(std::clamp<unsigned>(r.u8(), 50, 75));

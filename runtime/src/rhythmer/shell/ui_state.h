@@ -343,6 +343,7 @@ struct UiState {
     uint8_t rendering = 0;               // 0 none, 1 Resample, 2 the song's mixdown, 3 the song onto a pad (roadmap P3)
     bool render_resume = false;          // Resample stopped what was playing: Play it again afterwards
     bool song_export = false;            // Song, B1: Cancel, Audio mixdown, New pattern
+    bool project_save_picker = false, project_save_as = false;
     bool project_list = false;    // Project: the list behind OPEN (else SAVE, OPEN and NEW as tiles)
     bool sends_pads = false;      // MIX hub SENDS on a kit: the kit's pads and their own sends (B2 again), not the tracks
     uint8_t sends_bus = 0;        // the bus in view on Sends and Bus (round 2: a track sends into all four; K2 on Sends picks)
@@ -417,7 +418,7 @@ struct UiState {
     // A question over the page that B1 (Cancel) or B3 (Do it) answers, as the
     // MPC asks before erasing: Erase + pad on Step Edit (`ask_target` the
     // key), Erase + pot on Motion (the lane, bindings.h). shell/ask.cpp.
-    enum class Ask : uint8_t { None, EraseKeyEvents, EraseLane, ResetSettings, NewProject, TakeCardBack, ClearLoop, LooperOff, ClearPattern, ErasePunches, ClearTrack, InstallUpdate, Unfreeze, BreakLength, DeleteFile, ReplacePlugin, CaptureScene }; // CaptureScene (shell/scene_jobs.cpp): CAPTURE onto a column with notes; target the column // ReplacePlugin (shell/plugin_jobs.cpp): a picked plug-in over one in use; target the picker's row, `ask_name` the old plug-in's name // DeleteFile (shell/delete_jobs.h): Erase in a browser; target what it is (DeleteWhat), `ask_name` its name // Unfreeze (freeze plan F2c): an edit of a frozen track; target the track // InstallUpdate: newer release on the card (shell/update.h); ClearLoop: target the loop; ClearPattern (Seq held + Erase + pad): target the pattern; ClearTrack (Pad Bank held + Erase + pad): target the track // NewProject (phase 10): target 0 nothing unsaved, 1 saved first, 2 lost; TakeCardBack (10b): the computer still holds the card
+    enum class Ask : uint8_t { None, ProjectChanges, OverwriteProject, RecoverProject, EraseKeyEvents, EraseLane, ResetSettings, NewProject, TakeCardBack, ClearLoop, LooperOff, ClearPattern, ErasePunches, ClearTrack, InstallUpdate, Unfreeze, BreakLength, DeleteFile, ReplacePlugin, CaptureScene }; // CaptureScene (shell/scene_jobs.cpp): CAPTURE onto a column with notes; target the column // ReplacePlugin (shell/plugin_jobs.cpp): a picked plug-in over one in use; target the picker's row, `ask_name` the old plug-in's name // DeleteFile (shell/delete_jobs.h): Erase in a browser; target what it is (DeleteWhat), `ask_name` its name // Unfreeze (freeze plan F2c): an edit of a frozen track; target the track // InstallUpdate: newer release on the card (shell/update.h); ClearLoop: target the loop; ClearPattern (Seq held + Erase + pad): target the pattern; ClearTrack (Pad Bank held + Erase + pad): target the track // NewProject (phase 10): target 0 nothing unsaved, 1 saved first, 2 lost; TakeCardBack (10b): the computer still holds the card
     Ask ask = Ask::None;
     int32_t ask_target = 0;
     std::array<char, 48> ask_name {}; // DeleteFile: the file's or the folder's name

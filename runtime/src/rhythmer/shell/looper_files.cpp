@@ -172,7 +172,7 @@ void SampleLibrary::loop_service() {
         }
         if (!wanted) { fs::remove(file, error); ++loop_at; continue; }
         if (!looper.hold(n)) {
-            if (++loop_passes > hold_passes) { looper.release(n); finish("L" + std::to_string(n + 1) + ": not saved, busy"); ++loop_at; loop_passes = 0; }
+            if (++loop_passes > hold_passes) { looper.release(n); ++loop_save_failures; finish("L" + std::to_string(n + 1) + ": not saved, busy"); ++loop_at; loop_passes = 0; }
             return;
         }
         auto v = looper.view(n);
@@ -184,7 +184,7 @@ void SampleLibrary::loop_service() {
         fs::create_directories(loop_job.dir, error);
         auto failed = write_wav(file + ".new", data); // at the loop's own rate
         if (failed.empty()) fs::rename(file + ".new", file, error);
-        if (!failed.empty() || error) finish("L" + std::to_string(n + 1) + ": not saved");
+        if (!failed.empty() || error) {++loop_save_failures;finish("L" + std::to_string(n + 1) + ": not saved");}
         ++loop_at; loop_passes = 0;
         return;
     }

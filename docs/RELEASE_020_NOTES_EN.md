@@ -39,6 +39,12 @@ Parameter names and ordering are refined across oscillator, filter, envelope, LF
 
 Open SAVE SOUND or PAD SOURCE from EDIT, save to one of 64 User Sound or User Kit slots, and reload your sounds from the preset list—even in another project. Save the project separately to keep its patterns and arrangement.
 
+### Save where you choose
+
+First SAVE and SAVE AS let you choose a folder and name. Further SAVE presses update that file. Opening another project or starting NEW offers SAVE, DISCARD or CANCEL instead of automatically overwriting your manual save.
+
+Idle autosave updates one separate recovery entry per project under Rhythmer/Autosave. On the Project home screen, SHIFT + B3 RECOVERY opens the list; load a recovered copy and SAVE it deliberately.
+
 ### Build a chord progression
 
 CHORD GEN is a separate instrument-track generator alongside the existing GENERATE Tn / MUTATE Tn workflow. Choose a genre, progression family, 1–8 chord changes and 1–16 bars; adjust rhythmic density, chord complexity, energy, voicing and register, then play the result as Block chords, an arpeggio or a strum.

@@ -103279,2074 +103279,4024 @@
   ],
   "kits": [
     {
-      "name": "DRUM-X",
+      "name": "K-WASUB / 909",
       "routes": [
         {
-          "engine": 1,
-          "sound": 0
+          "engine": 8,
+          "sound": 8,
+          "mix_values": {
+            "2": 0.8267716765403748
+          },
+          "mix_role": "kick"
         },
         {
-          "engine": 1,
-          "sound": 1
+          "engine": 8,
+          "sound": 9,
+          "mix_values": {
+            "6": 0.748031497001648
+          },
+          "mix_role": "snare"
         },
         {
-          "engine": 1,
-          "sound": 2
+          "engine": 8,
+          "sound": 10,
+          "mix_values": {
+            "10": 0.7086614370346069
+          },
+          "mix_role": "clap"
         },
         {
-          "engine": 1,
-          "sound": 3
+          "engine": 8,
+          "sound": 11,
+          "mix_values": {
+            "14": 0.6299212574958801
+          },
+          "mix_role": "closed_hat"
         },
         {
-          "engine": 1,
-          "sound": 4
+          "engine": 8,
+          "sound": 12,
+          "mix_values": {
+            "18": 0.6141732335090637
+          },
+          "mix_role": "open_hat"
         },
         {
-          "engine": 1,
-          "sound": 5
-        },
-        {
-          "engine": 1,
-          "sound": 6
-        },
-        {
-          "engine": 1,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
+          "engine": 8,
+          "sound": 13,
+          "mix_values": {
+            "22": 0.748031497001648
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 11
+          "sound": 11,
+          "mix_values": {
+            "33": 1.0
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 8,
+          "sound": 14,
+          "mix_values": {
+            "30": 0.5511810779571533
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 8,
+          "sound": 15,
+          "mix_values": {
+            "26": 0.6692913174629211
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 18,
-          "sound": 12
+          "sound": 7,
+          "mix_values": {
+            "113": 1.0
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 13
+          "sound": 8,
+          "mix_values": {
+            "153": 1.0
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 1.0
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 1.0
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 1.0
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 1.0
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 1.0
+          },
+          "mix_role": "cymbal"
         }
-      ]
-    },
-    {
-      "name": "DRUM-X / 909 CLUB",
-      "routes": [
-        {
-          "engine": 1,
-          "sound": 8
-        },
-        {
-          "engine": 1,
-          "sound": 9
-        },
-        {
-          "engine": 1,
-          "sound": 10
-        },
-        {
-          "engine": 1,
-          "sound": 11
-        },
-        {
-          "engine": 1,
-          "sound": 12
-        },
-        {
-          "engine": 1,
-          "sound": 13
-        },
-        {
-          "engine": 1,
-          "sound": 14
-        },
-        {
-          "engine": 1,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "DRUM-X / 808 BOOM",
-      "routes": [
-        {
-          "engine": 1,
-          "sound": 16
-        },
-        {
-          "engine": 1,
-          "sound": 17
-        },
-        {
-          "engine": 1,
-          "sound": 18
-        },
-        {
-          "engine": 1,
-          "sound": 19
-        },
-        {
-          "engine": 1,
-          "sound": 20
-        },
-        {
-          "engine": 1,
-          "sound": 21
-        },
-        {
-          "engine": 1,
-          "sound": 22
-        },
-        {
-          "engine": 1,
-          "sound": 23
-        },
-        {
-          "engine": 18,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "DRUM-X / LOFI DUST",
-      "routes": [
-        {
-          "engine": 1,
-          "sound": 24
-        },
-        {
-          "engine": 1,
-          "sound": 25
-        },
-        {
-          "engine": 1,
-          "sound": 26
-        },
-        {
-          "engine": 1,
-          "sound": 27
-        },
-        {
-          "engine": 1,
-          "sound": 28
-        },
-        {
-          "engine": 1,
-          "sound": 29
-        },
-        {
-          "engine": 1,
-          "sound": 30
-        },
-        {
-          "engine": 1,
-          "sound": 31
-        },
-        {
-          "engine": 18,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "DRUM-X / INDUSTRIAL",
-      "routes": [
-        {
-          "engine": 1,
-          "sound": 32
-        },
-        {
-          "engine": 1,
-          "sound": 33
-        },
-        {
-          "engine": 1,
-          "sound": 34
-        },
-        {
-          "engine": 1,
-          "sound": 35
-        },
-        {
-          "engine": 1,
-          "sound": 36
-        },
-        {
-          "engine": 1,
-          "sound": 37
-        },
-        {
-          "engine": 1,
-          "sound": 38
-        },
-        {
-          "engine": 1,
-          "sound": 39
-        },
-        {
-          "engine": 18,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "DRUM-X / ACOUSTIC",
-      "routes": [
-        {
-          "engine": 1,
-          "sound": 40
-        },
-        {
-          "engine": 1,
-          "sound": 41
-        },
-        {
-          "engine": 1,
-          "sound": 42
-        },
-        {
-          "engine": 1,
-          "sound": 43
-        },
-        {
-          "engine": 1,
-          "sound": 44
-        },
-        {
-          "engine": 1,
-          "sound": 45
-        },
-        {
-          "engine": 1,
-          "sound": 46
-        },
-        {
-          "engine": 1,
-          "sound": 47
-        },
-        {
-          "engine": 18,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "DRUM-X / DUB ROOTS",
-      "routes": [
-        {
-          "engine": 1,
-          "sound": 48
-        },
-        {
-          "engine": 1,
-          "sound": 49
-        },
-        {
-          "engine": 1,
-          "sound": 50
-        },
-        {
-          "engine": 1,
-          "sound": 51
-        },
-        {
-          "engine": 1,
-          "sound": 52
-        },
-        {
-          "engine": 1,
-          "sound": 53
-        },
-        {
-          "engine": 1,
-          "sound": 54
-        },
-        {
-          "engine": 1,
-          "sound": 55
-        },
-        {
-          "engine": 18,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "DRUM-X / TECHNO RAW",
-      "routes": [
-        {
-          "engine": 1,
-          "sound": 56
-        },
-        {
-          "engine": 1,
-          "sound": 57
-        },
-        {
-          "engine": 1,
-          "sound": 58
-        },
-        {
-          "engine": 1,
-          "sound": 59
-        },
-        {
-          "engine": 1,
-          "sound": 60
-        },
-        {
-          "engine": 1,
-          "sound": 61
-        },
-        {
-          "engine": 1,
-          "sound": 62
-        },
-        {
-          "engine": 1,
-          "sound": 63
-        },
-        {
-          "engine": 18,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "DRUM-X / BREAKS",
-      "routes": [
-        {
-          "engine": 1,
-          "sound": 64
-        },
-        {
-          "engine": 1,
-          "sound": 65
-        },
-        {
-          "engine": 1,
-          "sound": 66
-        },
-        {
-          "engine": 1,
-          "sound": 67
-        },
-        {
-          "engine": 1,
-          "sound": 68
-        },
-        {
-          "engine": 1,
-          "sound": 69
-        },
-        {
-          "engine": 1,
-          "sound": 70
-        },
-        {
-          "engine": 1,
-          "sound": 71
-        },
-        {
-          "engine": 18,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "Elixir / Initkit",
-      "routes": [
-        {
-          "engine": 2,
-          "sound": 0
-        },
-        {
-          "engine": 2,
-          "sound": 1
-        },
-        {
-          "engine": 18,
-          "sound": 3
-        },
-        {
-          "engine": 2,
-          "sound": 2
-        },
-        {
-          "engine": 2,
-          "sound": 3
-        },
-        {
-          "engine": 2,
-          "sound": 4
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 2,
-          "sound": 5
-        },
-        {
-          "engine": 2,
-          "sound": 6
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "Elixir / Dry Circuit",
-      "routes": [
-        {
-          "engine": 2,
-          "sound": 7
-        },
-        {
-          "engine": 2,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 3
-        },
-        {
-          "engine": 2,
-          "sound": 9
-        },
-        {
-          "engine": 2,
-          "sound": 10
-        },
-        {
-          "engine": 2,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 2,
-          "sound": 12
-        },
-        {
-          "engine": 2,
-          "sound": 13
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "Elixir / Warm Machine",
-      "routes": [
-        {
-          "engine": 2,
-          "sound": 14
-        },
-        {
-          "engine": 2,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 3
-        },
-        {
-          "engine": 2,
-          "sound": 16
-        },
-        {
-          "engine": 2,
-          "sound": 17
-        },
-        {
-          "engine": 2,
-          "sound": 18
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 2,
-          "sound": 19
-        },
-        {
-          "engine": 2,
-          "sound": 20
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "Elixir / Bright Logic",
-      "routes": [
-        {
-          "engine": 2,
-          "sound": 21
-        },
-        {
-          "engine": 2,
-          "sound": 22
-        },
-        {
-          "engine": 18,
-          "sound": 3
-        },
-        {
-          "engine": 2,
-          "sound": 23
-        },
-        {
-          "engine": 2,
-          "sound": 24
-        },
-        {
-          "engine": 2,
-          "sound": 25
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 2,
-          "sound": 26
-        },
-        {
-          "engine": 2,
-          "sound": 27
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "Elixir / Soft Pulse",
-      "routes": [
-        {
-          "engine": 2,
-          "sound": 28
-        },
-        {
-          "engine": 2,
-          "sound": 29
-        },
-        {
-          "engine": 18,
-          "sound": 3
-        },
-        {
-          "engine": 2,
-          "sound": 30
-        },
-        {
-          "engine": 2,
-          "sound": 31
-        },
-        {
-          "engine": 2,
-          "sound": 32
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 2,
-          "sound": 33
-        },
-        {
-          "engine": 2,
-          "sound": 34
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "Hortator / TRX Classic",
-      "routes": [
-        {
-          "engine": 6,
-          "sound": 0
-        },
-        {
-          "engine": 6,
-          "sound": 1
-        },
-        {
-          "engine": 6,
-          "sound": 8
-        },
-        {
-          "engine": 6,
-          "sound": 14
-        },
-        {
-          "engine": 6,
-          "sound": 18
-        },
-        {
-          "engine": 6,
-          "sound": 3
-        },
-        {
-          "engine": 6,
-          "sound": 10
-        },
-        {
-          "engine": 6,
-          "sound": 22
-        },
-        {
-          "engine": 18,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "Hortator / 808",
-      "routes": [
-        {
-          "engine": 6,
-          "sound": 91
-        },
-        {
-          "engine": 6,
-          "sound": 99
-        },
-        {
-          "engine": 6,
-          "sound": 107
-        },
-        {
-          "engine": 6,
-          "sound": 115
-        },
-        {
-          "engine": 6,
-          "sound": 119
-        },
-        {
-          "engine": 6,
-          "sound": 131
-        },
-        {
-          "engine": 6,
-          "sound": 139
-        },
-        {
-          "engine": 6,
-          "sound": 123
-        },
-        {
-          "engine": 18,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "Hortator / 909",
-      "routes": [
-        {
-          "engine": 6,
-          "sound": 95
-        },
-        {
-          "engine": 6,
-          "sound": 103
-        },
-        {
-          "engine": 6,
-          "sound": 111
-        },
-        {
-          "engine": 6,
-          "sound": 115
-        },
-        {
-          "engine": 6,
-          "sound": 119
-        },
-        {
-          "engine": 6,
-          "sound": 131
-        },
-        {
-          "engine": 6,
-          "sound": 139
-        },
-        {
-          "engine": 6,
-          "sound": 123
-        },
-        {
-          "engine": 18,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "Hortator / Plaits",
-      "routes": [
-        {
-          "engine": 6,
-          "sound": 55
-        },
-        {
-          "engine": 6,
-          "sound": 63
-        },
-        {
-          "engine": 6,
-          "sound": 111
-        },
-        {
-          "engine": 6,
-          "sound": 71
-        },
-        {
-          "engine": 18,
-          "sound": 6
-        },
-        {
-          "engine": 6,
-          "sound": 79
-        },
-        {
-          "engine": 6,
-          "sound": 143
-        },
-        {
-          "engine": 6,
-          "sound": 123
-        },
-        {
-          "engine": 18,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "Hortator / FM",
-      "routes": [
-        {
-          "engine": 6,
-          "sound": 30
-        },
-        {
-          "engine": 6,
-          "sound": 34
-        },
-        {
-          "engine": 6,
-          "sound": 39
-        },
-        {
-          "engine": 6,
-          "sound": 47
-        },
-        {
-          "engine": 6,
-          "sound": 18
-        },
-        {
-          "engine": 6,
-          "sound": 35
-        },
-        {
-          "engine": 6,
-          "sound": 43
-        },
-        {
-          "engine": 6,
-          "sound": 51
-        },
-        {
-          "engine": 18,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
-    },
-    {
-      "name": "Hortator / Industrial",
-      "routes": [
-        {
-          "engine": 6,
-          "sound": 59
-        },
-        {
-          "engine": 6,
-          "sound": 67
-        },
-        {
-          "engine": 6,
-          "sound": 8
-        },
-        {
-          "engine": 6,
-          "sound": 71
-        },
-        {
-          "engine": 18,
-          "sound": 6
-        },
-        {
-          "engine": 6,
-          "sound": 35
-        },
-        {
-          "engine": 6,
-          "sound": 45
-        },
-        {
-          "engine": 6,
-          "sound": 51
-        },
-        {
-          "engine": 18,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
+      ],
+      "mix_gain": 1
     },
     {
       "name": "K-WASUB / 808",
       "routes": [
         {
           "engine": 8,
-          "sound": 0
+          "sound": 0,
+          "mix_values": {
+            "2": 0.5826771855354309
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 8,
-          "sound": 1
+          "sound": 1,
+          "mix_values": {
+            "6": 0.5433070659637451
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 8,
-          "sound": 2
+          "sound": 2,
+          "mix_values": {
+            "10": 0.6377952694892883
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 8,
-          "sound": 3
+          "sound": 3,
+          "mix_values": {
+            "14": 0.4251968562602997
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 8,
-          "sound": 4
+          "sound": 4,
+          "mix_values": {
+            "18": 0.4803149700164795
+          },
+          "mix_role": "open_hat"
         },
         {
           "engine": 8,
-          "sound": 5
+          "sound": 5,
+          "mix_values": {
+            "22": 0.5039370059967041
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 11
+          "sound": 11,
+          "mix_values": {
+            "33": 0.20508000254631042
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 8,
-          "sound": 6
+          "sound": 6,
+          "mix_values": {
+            "30": 0.3937007784843445
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 8,
-          "sound": 7
+          "sound": 7,
+          "mix_values": {
+            "26": 0.36220473051071167
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 18,
-          "sound": 7
+          "sound": 7,
+          "mix_values": {
+            "113": 0.767579972743988
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 8
+          "sound": 8,
+          "mix_values": {
+            "153": 0.7246099710464478
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 9
+          "sound": 9,
+          "mix_values": {
+            "193": 0.7773399949073792
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 10
+          "sound": 10,
+          "mix_values": {
+            "293": 0.7421900033950806
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 11
+          "sound": 11,
+          "mix_values": {
+            "33": 0.20508000254631042
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 18,
-          "sound": 12
+          "sound": 12,
+          "mix_values": {
+            "273": 0.10741999745368958
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 18,
-          "sound": 13
+          "sound": 13,
+          "mix_values": {
+            "313": 0.1269499957561493
+          },
+          "mix_role": "cymbal"
         }
-      ]
-    },
-    {
-      "name": "K-WASUB / 909",
-      "routes": [
-        {
-          "engine": 8,
-          "sound": 8
-        },
-        {
-          "engine": 8,
-          "sound": 9
-        },
-        {
-          "engine": 8,
-          "sound": 10
-        },
-        {
-          "engine": 8,
-          "sound": 11
-        },
-        {
-          "engine": 8,
-          "sound": 12
-        },
-        {
-          "engine": 8,
-          "sound": 13
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 8,
-          "sound": 14
-        },
-        {
-          "engine": 8,
-          "sound": 15
-        },
-        {
-          "engine": 18,
-          "sound": 7
-        },
-        {
-          "engine": 18,
-          "sound": 8
-        },
-        {
-          "engine": 18,
-          "sound": 9
-        },
-        {
-          "engine": 18,
-          "sound": 10
-        },
-        {
-          "engine": 18,
-          "sound": 11
-        },
-        {
-          "engine": 18,
-          "sound": 12
-        },
-        {
-          "engine": 18,
-          "sound": 13
-        }
-      ]
+      ],
+      "mix_gain": 2.2072260616374955
     },
     {
       "name": "K-WASUB / Dub Techno",
       "routes": [
         {
           "engine": 8,
-          "sound": 16
+          "sound": 16,
+          "mix_values": {
+            "2": 0.5590550899505615
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 8,
-          "sound": 17
+          "sound": 17,
+          "mix_values": {
+            "6": 0.5433070659637451
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 8,
-          "sound": 18
+          "sound": 18,
+          "mix_values": {
+            "10": 0.4803149700164795
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 8,
-          "sound": 19
+          "sound": 19,
+          "mix_values": {
+            "14": 0.4330708682537079
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 8,
-          "sound": 20
+          "sound": 20,
+          "mix_values": {
+            "18": 0.4015747904777527
+          },
+          "mix_role": "open_hat"
         },
         {
           "engine": 8,
-          "sound": 21
+          "sound": 21,
+          "mix_values": {
+            "22": 0.4803149700164795
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 11
+          "sound": 11,
+          "mix_values": {
+            "33": 0.20508000254631042
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 8,
-          "sound": 22
+          "sound": 22,
+          "mix_values": {
+            "30": 0.3700787425041199
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 8,
-          "sound": 23
+          "sound": 23,
+          "mix_values": {
+            "26": 0.29133859276771545
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 18,
-          "sound": 7
+          "sound": 7,
+          "mix_values": {
+            "113": 0.767579972743988
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 8
+          "sound": 8,
+          "mix_values": {
+            "153": 0.7246099710464478
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 9
+          "sound": 9,
+          "mix_values": {
+            "193": 0.7773399949073792
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 10
+          "sound": 10,
+          "mix_values": {
+            "293": 0.7421900033950806
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 11
+          "sound": 11,
+          "mix_values": {
+            "33": 0.20508000254631042
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 18,
-          "sound": 12
+          "sound": 12,
+          "mix_values": {
+            "273": 0.10741999745368958
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 18,
-          "sound": 13
+          "sound": 13,
+          "mix_values": {
+            "313": 0.1269499957561493
+          },
+          "mix_role": "cymbal"
         }
-      ]
+      ],
+      "mix_gain": 2.425754330687253
     },
     {
       "name": "K-WASUB / Acoustic",
       "routes": [
         {
           "engine": 8,
-          "sound": 24
+          "sound": 24,
+          "mix_values": {
+            "2": 0.5826771855354309
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 8,
-          "sound": 25
+          "sound": 25,
+          "mix_values": {
+            "6": 0.5433070659637451
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 8,
-          "sound": 26
+          "sound": 26,
+          "mix_values": {
+            "10": 0.5748031735420227
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 8,
-          "sound": 27
+          "sound": 27,
+          "mix_values": {
+            "14": 0.4330708682537079
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 8,
-          "sound": 28
+          "sound": 28,
+          "mix_values": {
+            "18": 0.4881889820098877
+          },
+          "mix_role": "open_hat"
         },
         {
           "engine": 8,
-          "sound": 29
+          "sound": 29,
+          "mix_values": {
+            "22": 0.5354330539703369
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 11
+          "sound": 11,
+          "mix_values": {
+            "33": 0.20508000254631042
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 8,
-          "sound": 30
+          "sound": 30,
+          "mix_values": {
+            "30": 0.4094488322734833
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 8,
-          "sound": 31
+          "sound": 31,
+          "mix_values": {
+            "26": 0.25196850299835205
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 18,
-          "sound": 7
+          "sound": 7,
+          "mix_values": {
+            "113": 0.767579972743988
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 8
+          "sound": 8,
+          "mix_values": {
+            "153": 0.7246099710464478
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 9
+          "sound": 9,
+          "mix_values": {
+            "193": 0.7773399949073792
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 10
+          "sound": 10,
+          "mix_values": {
+            "293": 0.7421900033950806
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 11
+          "sound": 11,
+          "mix_values": {
+            "33": 0.20508000254631042
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 18,
-          "sound": 12
+          "sound": 12,
+          "mix_values": {
+            "273": 0.10741999745368958
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 18,
-          "sound": 13
+          "sound": 13,
+          "mix_values": {
+            "313": 0.1269499957561493
+          },
+          "mix_role": "cymbal"
         }
-      ]
+      ],
+      "mix_gain": 2.0130140931222504
+    },
+    {
+      "name": "DRUM-X",
+      "routes": [
+        {
+          "engine": 1,
+          "sound": 0,
+          "mix_values": {
+            "20": 0.7952755689620972
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 1,
+          "sound": 1,
+          "mix_values": {
+            "39": 0.8661417365074158
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 1,
+          "sound": 2,
+          "mix_values": {
+            "58": 0.9448819160461426
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 1,
+          "sound": 3,
+          "mix_values": {
+            "77": 0.4488188922405243
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 4,
+          "mix_values": {
+            "96": 0.5196850299835205
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 5,
+          "mix_values": {
+            "115": 0.4803149700164795
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 1,
+          "sound": 6,
+          "mix_values": {
+            "134": 0.25196850299835205
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 1,
+          "sound": 7,
+          "mix_values": {
+            "153": 0.3385826647281647
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 15,
+          "mix_values": {
+            "253": 0.12304999679327011
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.13866999745368958
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.13086000084877014
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.13280999660491943
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.1152300015091896
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.07030999660491943
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.044920001178979874
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.044920001178979874
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 5.249451879620014
+    },
+    {
+      "name": "DRUM-X / 909 CLUB",
+      "routes": [
+        {
+          "engine": 1,
+          "sound": 8,
+          "mix_values": {
+            "20": 0.748031497001648
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 1,
+          "sound": 9,
+          "mix_values": {
+            "39": 0.9448819160461426
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 1,
+          "sound": 10,
+          "mix_values": {
+            "58": 0.8425197005271912
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 1,
+          "sound": 11,
+          "mix_values": {
+            "77": 0.5196850299835205
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 12,
+          "mix_values": {
+            "96": 0.5669291615486145
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 13,
+          "mix_values": {
+            "115": 0.5354330539703369
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 1,
+          "sound": 14,
+          "mix_values": {
+            "134": 0.32283464074134827
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 1,
+          "sound": 15,
+          "mix_values": {
+            "153": 0.36220473051071167
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 15,
+          "mix_values": {
+            "253": 0.1543000042438507
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.17383000254631042
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.16405999660491943
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.16797000169754028
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.14452999830245972
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.0839800015091896
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.052730001509189606
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.05468999966979027
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 3.7046215131794136
+    },
+    {
+      "name": "DRUM-X / 808 BOOM",
+      "routes": [
+        {
+          "engine": 1,
+          "sound": 16,
+          "mix_values": {
+            "20": 0.5196850299835205
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 1,
+          "sound": 17,
+          "mix_values": {
+            "39": 0.9448819160461426
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 1,
+          "sound": 18,
+          "mix_values": {
+            "58": 0.8267716765403748
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 1,
+          "sound": 19,
+          "mix_values": {
+            "77": 0.24409449100494385
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 20,
+          "mix_values": {
+            "96": 0.26771652698516846
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 21,
+          "mix_values": {
+            "115": 0.26771652698516846
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 1,
+          "sound": 22,
+          "mix_values": {
+            "134": 0.18897637724876404
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 1,
+          "sound": 23,
+          "mix_values": {
+            "153": 0.18110236525535583
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 15,
+          "mix_values": {
+            "253": 0.08594000339508057
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.09765999764204025
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.09179999679327011
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.09375
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.08008000254631042
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.05468999966979027
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.03516000136733055
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.03516000136733055
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 3.6871496874513445
+    },
+    {
+      "name": "DRUM-X / LOFI DUST",
+      "routes": [
+        {
+          "engine": 1,
+          "sound": 24,
+          "mix_values": {
+            "20": 0.25984251499176025
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 1,
+          "sound": 25,
+          "mix_values": {
+            "39": 0.9448819160461426
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 1,
+          "sound": 26,
+          "mix_values": {
+            "58": 0.7086614370346069
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 1,
+          "sound": 27,
+          "mix_values": {
+            "77": 0.22834645211696625
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 28,
+          "mix_values": {
+            "96": 0.18110236525535583
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 29,
+          "mix_values": {
+            "115": 0.15748031437397003
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 1,
+          "sound": 30,
+          "mix_values": {
+            "134": 0.08661417663097382
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 1,
+          "sound": 31,
+          "mix_values": {
+            "153": 0.10236220806837082
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 15,
+          "mix_values": {
+            "253": 0.019530000165104866
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.021479999646544456
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.019530000165104866
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.019530000165104866
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.017580000683665276
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.013670000247657299
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.007809999864548445
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.007809999864548445
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 55.81201451754358
+    },
+    {
+      "name": "DRUM-X / INDUSTRIAL",
+      "routes": [
+        {
+          "engine": 1,
+          "sound": 32,
+          "mix_values": {
+            "20": 0.7007874250411987
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 1,
+          "sound": 33,
+          "mix_values": {
+            "39": 0.9448819160461426
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 1,
+          "sound": 34,
+          "mix_values": {
+            "58": 0.7795275449752808
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 1,
+          "sound": 35,
+          "mix_values": {
+            "77": 0.4251968562602997
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 36,
+          "mix_values": {
+            "96": 0.5196850299835205
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 37,
+          "mix_values": {
+            "115": 0.27559053897857666
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 1,
+          "sound": 38,
+          "mix_values": {
+            "134": 0.4094488322734833
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 1,
+          "sound": 39,
+          "mix_values": {
+            "153": 0.3700787425041199
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 15,
+          "mix_values": {
+            "253": 0.13086000084877014
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.14844000339508057
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.13866999745368958
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.14061999320983887
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.12304999679327011
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.07616999745368958
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.046879999339580536
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.046879999339580536
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 2.4770643233645364
+    },
+    {
+      "name": "DRUM-X / ACOUSTIC",
+      "routes": [
+        {
+          "engine": 1,
+          "sound": 40,
+          "mix_values": {
+            "20": 0.5669291615486145
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 1,
+          "sound": 41,
+          "mix_values": {
+            "39": 0.7244094610214233
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 1,
+          "sound": 42,
+          "mix_values": {
+            "58": 0.9448819160461426
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 1,
+          "sound": 43,
+          "mix_values": {
+            "77": 0.19685038924217224
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 44,
+          "mix_values": {
+            "96": 0.23622047901153564
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 45,
+          "mix_values": {
+            "115": 0.28346458077430725
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 1,
+          "sound": 46,
+          "mix_values": {
+            "134": 0.14960630238056183
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 1,
+          "sound": 47,
+          "mix_values": {
+            "153": 0.18110236525535583
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 15,
+          "mix_values": {
+            "253": 0.05663999915122986
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.06445000320672989
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.06055000051856041
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.0625
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.052730001509189606
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.03711000084877014
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.02538999915122986
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.023439999669790268
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 13.662011542158133
+    },
+    {
+      "name": "DRUM-X / DUB ROOTS",
+      "routes": [
+        {
+          "engine": 1,
+          "sound": 48,
+          "mix_values": {
+            "20": 0.6220472455024719
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 1,
+          "sound": 49,
+          "mix_values": {
+            "39": 0.8818897604942322
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 1,
+          "sound": 50,
+          "mix_values": {
+            "58": 0.9448819160461426
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 1,
+          "sound": 51,
+          "mix_values": {
+            "77": 0.25196850299835205
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 52,
+          "mix_values": {
+            "96": 0.32283464074134827
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 53,
+          "mix_values": {
+            "115": 0.31496062874794006
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 1,
+          "sound": 54,
+          "mix_values": {
+            "134": 0.19685038924217224
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 1,
+          "sound": 55,
+          "mix_values": {
+            "153": 0.25196850299835205
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 15,
+          "mix_values": {
+            "253": 0.08594000339508057
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.09765999764204025
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.09179999679327011
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.09375
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.08008000254631042
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.05468999966979027
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.03516000136733055
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.03516000136733055
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 3.8767870283359813
+    },
+    {
+      "name": "DRUM-X / TECHNO RAW",
+      "routes": [
+        {
+          "engine": 1,
+          "sound": 56,
+          "mix_values": {
+            "20": 0.5748031735420227
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 1,
+          "sound": 57,
+          "mix_values": {
+            "39": 0.9448819160461426
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 1,
+          "sound": 58,
+          "mix_values": {
+            "58": 0.748031497001648
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 1,
+          "sound": 59,
+          "mix_values": {
+            "77": 0.4251968562602997
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 60,
+          "mix_values": {
+            "96": 0.4566929042339325
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 61,
+          "mix_values": {
+            "115": 0.4173228442668915
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 1,
+          "sound": 62,
+          "mix_values": {
+            "134": 0.23622047901153564
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 1,
+          "sound": 63,
+          "mix_values": {
+            "153": 0.28346458077430725
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 15,
+          "mix_values": {
+            "253": 0.10155999660491943
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.1152300015091896
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.10741999745368958
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.10937999933958054
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.09375
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.06055000051856041
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.03906000033020973
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.03906000033020973
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 3.7032998575106117
+    },
+    {
+      "name": "DRUM-X / BREAKS",
+      "routes": [
+        {
+          "engine": 1,
+          "sound": 64,
+          "mix_values": {
+            "20": 0.8110235929489136
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 1,
+          "sound": 65,
+          "mix_values": {
+            "39": 0.9448819160461426
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 1,
+          "sound": 66,
+          "mix_values": {
+            "58": 0.7637795209884644
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 1,
+          "sound": 67,
+          "mix_values": {
+            "77": 0.3937007784843445
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 68,
+          "mix_values": {
+            "96": 0.4173228442668915
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 1,
+          "sound": 69,
+          "mix_values": {
+            "115": 0.5039370059967041
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 1,
+          "sound": 70,
+          "mix_values": {
+            "134": 0.27559053897857666
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 1,
+          "sound": 71,
+          "mix_values": {
+            "153": 0.32283464074134827
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 15,
+          "mix_values": {
+            "253": 0.11133000254631042
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.1269499957561493
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.11913999915122986
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.12109000235795975
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.1035199984908104
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.06445000320672989
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.04297000169754028
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.04297000169754028
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 6.803279791870704
+    },
+    {
+      "name": "Elixir / Initkit",
+      "routes": [
+        {
+          "engine": 2,
+          "sound": 0,
+          "mix_values": {
+            "89": 0.9448819160461426
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 2,
+          "sound": 1,
+          "mix_values": {
+            "92": 0.29133859276771545
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 18,
+          "sound": 3,
+          "mix_values": {
+            "73": 0.11719000339508057
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 2,
+          "sound": 2,
+          "mix_values": {
+            "94": 0.5039370059967041
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 2,
+          "sound": 3,
+          "mix_values": {
+            "94": 0.6141732335090637
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 2,
+          "sound": 4,
+          "mix_values": {
+            "90": 0.5433070659637451
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.0839800015091896
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 2,
+          "sound": 5,
+          "mix_values": {
+            "93": 0.5511810779571533
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 2,
+          "sound": 6,
+          "mix_values": {
+            "91": 0.27559053897857666
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.17383000254631042
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.16211000084877014
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.166020005941391
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.14452999830245972
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.0839800015091896
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.052730001509189606
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.05468999966979027
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 5.152773538217993
+    },
+    {
+      "name": "Elixir / Dry Circuit",
+      "routes": [
+        {
+          "engine": 2,
+          "sound": 7,
+          "mix_values": {
+            "89": 0.4566929042339325
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 2,
+          "sound": 8,
+          "mix_values": {
+            "92": 0.4173228442668915
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 18,
+          "sound": 3,
+          "mix_values": {
+            "73": 0.03516000136733055
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 2,
+          "sound": 9,
+          "mix_values": {
+            "94": 0.8267716765403748
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 2,
+          "sound": 10,
+          "mix_values": {
+            "94": 0.9448819160461426
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 2,
+          "sound": 11,
+          "mix_values": {
+            "90": 0.3700787425041199
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.027340000495314598
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 2,
+          "sound": 12,
+          "mix_values": {
+            "93": 0.21259842813014984
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 2,
+          "sound": 13,
+          "mix_values": {
+            "91": 0.18897637724876404
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.044920001178979874
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.04297000169754028
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.04297000169754028
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.03711000084877014
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.027340000495314598
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.017580000683665276
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.017580000683665276
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 10.632961594148636
+    },
+    {
+      "name": "Elixir / Warm Machine",
+      "routes": [
+        {
+          "engine": 2,
+          "sound": 14,
+          "mix_values": {
+            "89": 0.7086614370346069
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 2,
+          "sound": 15,
+          "mix_values": {
+            "92": 0.6929134130477905
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 18,
+          "sound": 3,
+          "mix_values": {
+            "73": 0.0625
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 2,
+          "sound": 16,
+          "mix_values": {
+            "94": 0.5433070659637451
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 2,
+          "sound": 17,
+          "mix_values": {
+            "94": 0.9448819160461426
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 2,
+          "sound": 18,
+          "mix_values": {
+            "90": 0.5984252095222473
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.046879999339580536
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 2,
+          "sound": 19,
+          "mix_values": {
+            "93": 0.4330708682537079
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 2,
+          "sound": 20,
+          "mix_values": {
+            "91": 0.30708661675453186
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.08594000339508057
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.08008000254631042
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.08008000254631042
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.07030999660491943
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.046879999339580536
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.03125
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.03125
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 9.064788715781475
+    },
+    {
+      "name": "Elixir / Bright Logic",
+      "routes": [
+        {
+          "engine": 2,
+          "sound": 21,
+          "mix_values": {
+            "89": 0.4488188922405243
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 2,
+          "sound": 22,
+          "mix_values": {
+            "92": 0.4251968562602997
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 18,
+          "sound": 3,
+          "mix_values": {
+            "73": 0.03711000084877014
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 2,
+          "sound": 23,
+          "mix_values": {
+            "94": 0.9448819160461426
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 2,
+          "sound": 24,
+          "mix_values": {
+            "94": 0.913385808467865
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 2,
+          "sound": 25,
+          "mix_values": {
+            "90": 0.3937007784843445
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.02930000051856041
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 2,
+          "sound": 26,
+          "mix_values": {
+            "93": 0.20472441613674164
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 2,
+          "sound": 27,
+          "mix_values": {
+            "91": 0.19685038924217224
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.048829998821020126
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.046879999339580536
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.046879999339580536
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.03906000033020973
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.02930000051856041
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.019530000165104866
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.017580000683665276
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 9.192751395237536
+    },
+    {
+      "name": "Elixir / Soft Pulse",
+      "routes": [
+        {
+          "engine": 2,
+          "sound": 28,
+          "mix_values": {
+            "89": 0.6614173054695129
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 2,
+          "sound": 29,
+          "mix_values": {
+            "92": 0.8188976645469666
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 18,
+          "sound": 3,
+          "mix_values": {
+            "73": 0.05468999966979027
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 2,
+          "sound": 30,
+          "mix_values": {
+            "94": 0.5590550899505615
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 2,
+          "sound": 31,
+          "mix_values": {
+            "94": 0.9448819160461426
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 2,
+          "sound": 32,
+          "mix_values": {
+            "90": 0.5275590419769287
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.041019998490810394
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 2,
+          "sound": 33,
+          "mix_values": {
+            "93": 0.33070865273475647
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 2,
+          "sound": 34,
+          "mix_values": {
+            "91": 0.27559053897857666
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.0722699984908104
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.06640999764204025
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.06836000084877014
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.05858999863266945
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.041019998490810394
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.027340000495314598
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.02538999915122986
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 9.57044558637097
+    },
+    {
+      "name": "Hortator / TRX Classic",
+      "routes": [
+        {
+          "engine": 6,
+          "sound": 0,
+          "mix_values": {
+            "10": 0.13385826349258423
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 6,
+          "sound": 1,
+          "mix_values": {
+            "21": 0.25196850299835205
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 6,
+          "sound": 8,
+          "mix_values": {
+            "32": 0.22834645211696625
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 6,
+          "sound": 14,
+          "mix_values": {
+            "43": 0.7795275449752808
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 6,
+          "sound": 18,
+          "mix_values": {
+            "54": 0.9448819160461426
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 6,
+          "sound": 3,
+          "mix_values": {
+            "65": 0.33070865273475647
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 6,
+          "sound": 10,
+          "mix_values": {
+            "76": 0.14173229038715363
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 6,
+          "sound": 22,
+          "mix_values": {
+            "87": 0.31496062874794006
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 15,
+          "mix_values": {
+            "253": 0.03319999948143959
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.03906000033020973
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.03711000084877014
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.03711000084877014
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.03125
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.021479999646544456
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.01561999972909689
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.013670000247657299
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 30.57310396809552
+    },
+    {
+      "name": "Hortator / 808",
+      "routes": [
+        {
+          "engine": 6,
+          "sound": 91,
+          "mix_values": {
+            "10": 0.4251968562602997
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 6,
+          "sound": 99,
+          "mix_values": {
+            "21": 0.24409449100494385
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 6,
+          "sound": 107,
+          "mix_values": {
+            "32": 0.6535432934761047
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 6,
+          "sound": 115,
+          "mix_values": {
+            "43": 0.7244094610214233
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 6,
+          "sound": 119,
+          "mix_values": {
+            "54": 0.9448819160461426
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 6,
+          "sound": 131,
+          "mix_values": {
+            "65": 0.22834645211696625
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 6,
+          "sound": 139,
+          "mix_values": {
+            "76": 0.09448818862438202
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 6,
+          "sound": 123,
+          "mix_values": {
+            "87": 0.29133859276771545
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 15,
+          "mix_values": {
+            "253": 0.08008000254631042
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.08984000235795975
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.0839800015091896
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.08594000339508057
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.07422000169754028
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.048829998821020126
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.03319999948143959
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.03125
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 7.4246892487174225
+    },
+    {
+      "name": "Hortator / 909",
+      "routes": [
+        {
+          "engine": 6,
+          "sound": 95,
+          "mix_values": {
+            "10": 0.4251968562602997
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 6,
+          "sound": 103,
+          "mix_values": {
+            "21": 0.3700787425041199
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 6,
+          "sound": 111,
+          "mix_values": {
+            "32": 0.5039370059967041
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 6,
+          "sound": 115,
+          "mix_values": {
+            "43": 0.7244094610214233
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 6,
+          "sound": 119,
+          "mix_values": {
+            "54": 0.9448819160461426
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 6,
+          "sound": 131,
+          "mix_values": {
+            "65": 0.22834645211696625
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 6,
+          "sound": 139,
+          "mix_values": {
+            "76": 0.09448818862438202
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 6,
+          "sound": 123,
+          "mix_values": {
+            "87": 0.29133859276771545
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 15,
+          "mix_values": {
+            "253": 0.08008000254631042
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.08984000235795975
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.0839800015091896
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.08594000339508057
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.07422000169754028
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.048829998821020126
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.03319999948143959
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.03125
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 16.67931771930769
+    },
+    {
+      "name": "Hortator / Plaits",
+      "routes": [
+        {
+          "engine": 6,
+          "sound": 55,
+          "mix_values": {
+            "10": 0.9448819160461426
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 6,
+          "sound": 63,
+          "mix_values": {
+            "21": 0.3937007784843445
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 6,
+          "sound": 111,
+          "mix_values": {
+            "32": 0.6850393414497375
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 6,
+          "sound": 71,
+          "mix_values": {
+            "43": 0.26771652698516846
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 18,
+          "sound": 6,
+          "mix_values": {
+            "213": 0.08202999830245972
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 6,
+          "sound": 79,
+          "mix_values": {
+            "65": 0.24409449100494385
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 6,
+          "sound": 143,
+          "mix_values": {
+            "76": 0.14173229038715363
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 6,
+          "sound": 123,
+          "mix_values": {
+            "87": 0.4015747904777527
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 15,
+          "mix_values": {
+            "253": 0.12891000509262085
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.146479994058609
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.13672000169754028
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.13866999745368958
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.12109000235795975
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.07422000169754028
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.046879999339580536
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.046879999339580536
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 7.823166337166592
+    },
+    {
+      "name": "Hortator / FM",
+      "routes": [
+        {
+          "engine": 6,
+          "sound": 30,
+          "mix_values": {
+            "10": 0.07086614519357681
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 6,
+          "sound": 34,
+          "mix_values": {
+            "21": 0.9448819160461426
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 6,
+          "sound": 39,
+          "mix_values": {
+            "32": 0.28346458077430725
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 6,
+          "sound": 47,
+          "mix_values": {
+            "43": 0.18110236525535583
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 6,
+          "sound": 18,
+          "mix_values": {
+            "54": 0.33070865273475647
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 6,
+          "sound": 35,
+          "mix_values": {
+            "65": 0.007874015718698502
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 6,
+          "sound": 43,
+          "mix_values": {
+            "76": 0.07874015718698502
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 6,
+          "sound": 51,
+          "mix_values": {
+            "87": 0.11811023950576782
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 15,
+          "mix_values": {
+            "253": 0.009770000353455544
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.011719999834895134
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.011719999834895134
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.011719999834895134
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.009770000353455544
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.005859999917447567
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.003909999970346689
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.003909999970346689
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 68.53755367039031
+    },
+    {
+      "name": "Hortator / Industrial",
+      "routes": [
+        {
+          "engine": 6,
+          "sound": 59,
+          "mix_values": {
+            "10": 0.7322834730148315
+          },
+          "mix_role": "kick"
+        },
+        {
+          "engine": 6,
+          "sound": 67,
+          "mix_values": {
+            "21": 0.5748031735420227
+          },
+          "mix_role": "snare"
+        },
+        {
+          "engine": 6,
+          "sound": 8,
+          "mix_values": {
+            "32": 0.6299212574958801
+          },
+          "mix_role": "clap"
+        },
+        {
+          "engine": 6,
+          "sound": 71,
+          "mix_values": {
+            "43": 0.28346458077430725
+          },
+          "mix_role": "closed_hat"
+        },
+        {
+          "engine": 18,
+          "sound": 6,
+          "mix_values": {
+            "213": 0.08594000339508057
+          },
+          "mix_role": "open_hat"
+        },
+        {
+          "engine": 6,
+          "sound": 35,
+          "mix_values": {
+            "65": 0.11811023950576782
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 6,
+          "sound": 45,
+          "mix_values": {
+            "76": 0.25984251499176025
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 6,
+          "sound": 51,
+          "mix_values": {
+            "87": 0.9448819160461426
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 15,
+          "mix_values": {
+            "253": 0.13672000169754028
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 7,
+          "mix_values": {
+            "113": 0.1543000042438507
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 8,
+          "mix_values": {
+            "153": 0.14452999830245972
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 9,
+          "mix_values": {
+            "193": 0.14844000339508057
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 10,
+          "mix_values": {
+            "293": 0.12891000509262085
+          },
+          "mix_role": "tom"
+        },
+        {
+          "engine": 18,
+          "sound": 11,
+          "mix_values": {
+            "33": 0.07812000066041946
+          },
+          "mix_role": "percussion"
+        },
+        {
+          "engine": 18,
+          "sound": 12,
+          "mix_values": {
+            "273": 0.048829998821020126
+          },
+          "mix_role": "cymbal"
+        },
+        {
+          "engine": 18,
+          "sound": 13,
+          "mix_values": {
+            "313": 0.048829998821020126
+          },
+          "mix_role": "cymbal"
+        }
+      ],
+      "mix_gain": 8.090595293474406
     },
     {
       "name": "Sophie",
       "routes": [
         {
           "engine": 18,
-          "sound": 0
+          "sound": 0,
+          "mix_values": {
+            "13": 0.7382799983024597
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 18,
-          "sound": 1
+          "sound": 1,
+          "mix_values": {
+            "53": 0.271479994058609
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 18,
-          "sound": 3
+          "sound": 3,
+          "mix_values": {
+            "73": 0.11133000254631042
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 18,
-          "sound": 4
+          "sound": 4,
+          "mix_values": {
+            "133": 0.07616999745368958
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 18,
-          "sound": 6
+          "sound": 6,
+          "mix_values": {
+            "213": 0.08788999915122986
+          },
+          "mix_role": "open_hat"
         },
         {
           "engine": 18,
-          "sound": 7
+          "sound": 7,
+          "mix_values": {
+            "113": 0.16016000509262085
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 11
+          "sound": 11,
+          "mix_values": {
+            "33": 0.07812000066041946
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 18,
-          "sound": 12
+          "sound": 12,
+          "mix_values": {
+            "273": 0.05077999830245972
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 18,
-          "sound": 2
+          "sound": 2,
+          "mix_values": {
+            "93": 0.21483999490737915
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 18,
-          "sound": 5
+          "sound": 5,
+          "mix_values": {
+            "173": 0.05663999915122986
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 18,
-          "sound": 8
+          "sound": 8,
+          "mix_values": {
+            "153": 0.15038999915122986
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 9
+          "sound": 9,
+          "mix_values": {
+            "193": 0.1543000042438507
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 10
+          "sound": 10,
+          "mix_values": {
+            "293": 0.13280999660491943
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 13
+          "sound": 13,
+          "mix_values": {
+            "313": 0.05077999830245972
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 18,
-          "sound": 14
+          "sound": 14,
+          "mix_values": {
+            "233": 0.146479994058609
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 15
+          "sound": 15,
+          "mix_values": {
+            "253": 0.14258000254631042
+          },
+          "mix_role": "tom"
         }
-      ]
+      ],
+      "mix_gain": 5.589224414200885
     },
     {
       "name": "6W6",
       "routes": [
         {
           "engine": 19,
-          "sound": 0
+          "sound": 0,
+          "mix_values": {
+            "5": 0.35433071851730347
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 19,
-          "sound": 1
+          "sound": 1,
+          "mix_values": {
+            "11": 0.34645670652389526
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 19,
-          "sound": 2
+          "sound": 2,
+          "mix_values": {
+            "43": 0.35433071851730347
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 19,
-          "sound": 3
+          "sound": 3,
+          "mix_values": {
+            "26": 0.17322835326194763
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 19,
-          "sound": 4
+          "sound": 4,
+          "mix_values": {
+            "32": 0.25984251499176025
+          },
+          "mix_role": "open_hat"
         },
         {
           "engine": 19,
-          "sound": 5
+          "sound": 5,
+          "mix_values": {
+            "16": 0.32283464074134827
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 11
+          "sound": 11,
+          "mix_values": {
+            "33": 0.20508000254631042
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 19,
-          "sound": 7
+          "sound": 7,
+          "mix_values": {
+            "37": 0.19685038924217224
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 19,
-          "sound": 6
+          "sound": 6,
+          "mix_values": {
+            "21": 0.32283464074134827
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 7
+          "sound": 7,
+          "mix_values": {
+            "113": 0.767579972743988
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 8
+          "sound": 8,
+          "mix_values": {
+            "153": 0.7246099710464478
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 9
+          "sound": 9,
+          "mix_values": {
+            "193": 0.7773399949073792
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 10
+          "sound": 10,
+          "mix_values": {
+            "293": 0.7421900033950806
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 11
+          "sound": 11,
+          "mix_values": {
+            "33": 0.20508000254631042
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 18,
-          "sound": 12
+          "sound": 12,
+          "mix_values": {
+            "273": 0.10741999745368958
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 18,
-          "sound": 13
+          "sound": 13,
+          "mix_values": {
+            "313": 0.1269499957561493
+          },
+          "mix_role": "cymbal"
         }
-      ]
+      ],
+      "mix_gain": 4.28890883913684
     },
     {
       "name": "8W8",
       "routes": [
         {
           "engine": 20,
-          "sound": 0
+          "sound": 0,
+          "mix_values": {
+            "6": 0.8188976645469666
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 20,
-          "sound": 1
+          "sound": 1,
+          "mix_values": {
+            "12": 0.4015747904777527
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 20,
-          "sound": 2
+          "sound": 2,
+          "mix_values": {
+            "63": 0.30708661675453186
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 20,
-          "sound": 3
+          "sound": 3,
+          "mix_values": {
+            "73": 0.19685038924217224
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 20,
-          "sound": 4
+          "sound": 4,
+          "mix_values": {
+            "79": 0.23622047901153564
+          },
+          "mix_role": "open_hat"
         },
         {
           "engine": 20,
-          "sound": 5
+          "sound": 5,
+          "mix_values": {
+            "17": 0.6771653294563293
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 20,
-          "sound": 11
+          "sound": 11,
+          "mix_values": {
+            "47": 0.11811023950576782
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 20,
-          "sound": 12
+          "sound": 12,
+          "mix_values": {
+            "68": 0.07086614519357681
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 20,
-          "sound": 6
+          "sound": 6,
+          "mix_values": {
+            "22": 0.6062992215156555
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 20,
-          "sound": 7
+          "sound": 7,
+          "mix_values": {
+            "27": 0.6377952694892883
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 20,
-          "sound": 8
+          "sound": 8,
+          "mix_values": {
+            "32": 0.25984251499176025
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 20,
-          "sound": 9
+          "sound": 9,
+          "mix_values": {
+            "37": 0.33070865273475647
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 20,
-          "sound": 10
+          "sound": 10,
+          "mix_values": {
+            "42": 0.34645670652389526
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 20,
-          "sound": 13
+          "sound": 13,
+          "mix_values": {
+            "84": 0.23622047901153564
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 20,
-          "sound": 14
+          "sound": 14,
+          "mix_values": {
+            "52": 0.26771652698516846
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 20,
-          "sound": 15
+          "sound": 15,
+          "mix_values": {
+            "58": 0.30708661675453186
+          },
+          "mix_role": "percussion"
         }
-      ]
+      ],
+      "mix_gain": 2.1245961722963806
     },
     {
       "name": "9W9",
       "routes": [
         {
           "engine": 21,
-          "sound": 0
+          "sound": 0,
+          "mix_values": {
+            "8": 0.3937007784843445
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 21,
-          "sound": 1
+          "sound": 1,
+          "mix_values": {
+            "14": 0.16535432636737823
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 21,
-          "sound": 2
+          "sound": 2,
+          "mix_values": {
+            "51": 0.4960629940032959
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 21,
-          "sound": 3
+          "sound": 3,
+          "mix_values": {
+            "58": 0.20472441613674164
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 21,
-          "sound": 4
+          "sound": 4,
+          "mix_values": {
+            "65": 0.16535432636737823
+          },
+          "mix_role": "open_hat"
         },
         {
           "engine": 21,
-          "sound": 5
+          "sound": 5,
+          "mix_values": {
+            "22": 0.19685038924217224
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 21,
-          "sound": 8
+          "sound": 8,
+          "mix_values": {
+            "44": 0.13385826349258423
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 21,
-          "sound": 9
+          "sound": 9,
+          "mix_values": {
+            "79": 0.08661417663097382
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 21,
-          "sound": 6
+          "sound": 6,
+          "mix_values": {
+            "30": 0.19685038924217224
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 21,
-          "sound": 7
+          "sound": 7,
+          "mix_values": {
+            "38": 0.20472441613674164
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 21,
-          "sound": 10
+          "sound": 10,
+          "mix_values": {
+            "72": 0.09448818862438202
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 18,
-          "sound": 9
+          "sound": 9,
+          "mix_values": {
+            "193": 0.7773399949073792
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 10
+          "sound": 10,
+          "mix_values": {
+            "293": 0.7421900033950806
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 18,
-          "sound": 11
+          "sound": 11,
+          "mix_values": {
+            "33": 0.20508000254631042
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 18,
-          "sound": 12
+          "sound": 12,
+          "mix_values": {
+            "273": 0.10741999745368958
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 18,
-          "sound": 13
+          "sound": 13,
+          "mix_values": {
+            "313": 0.1269499957561493
+          },
+          "mix_role": "cymbal"
         }
-      ]
+      ],
+      "mix_gain": 2.810909189995622
     },
     {
       "name": "CW-78",
       "routes": [
         {
           "engine": 22,
-          "sound": 0
+          "sound": 0,
+          "mix_values": {
+            "4": 0.7795275449752808
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 22,
-          "sound": 1
+          "sound": 1,
+          "mix_values": {
+            "10": 0.5590550899505615
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 18,
-          "sound": 3
+          "sound": 3,
+          "mix_values": {
+            "73": 0.8769500255584717
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 22,
-          "sound": 2
+          "sound": 2,
+          "mix_values": {
+            "20": 0.33070865273475647
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 18,
-          "sound": 6
+          "sound": 6,
+          "mix_values": {
+            "213": 0.43358999490737915
+          },
+          "mix_role": "open_hat"
         },
         {
           "engine": 22,
-          "sound": 3
+          "sound": 3,
+          "mix_values": {
+            "50": 0.18897637724876404
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 22,
-          "sound": 4
+          "sound": 4,
+          "mix_values": {
+            "15": 0.36220473051071167
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 22,
-          "sound": 5
+          "sound": 5,
+          "mix_values": {
+            "25": 0.3779527544975281
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 22,
-          "sound": 6
+          "sound": 6,
+          "mix_values": {
+            "55": 0.36220473051071167
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 22,
-          "sound": 7
+          "sound": 7,
+          "mix_values": {
+            "30": 0.6929134130477905
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 22,
-          "sound": 8
+          "sound": 8,
+          "mix_values": {
+            "35": 0.4566929042339325
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 22,
-          "sound": 9
+          "sound": 9,
+          "mix_values": {
+            "40": 0.32283464074134827
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 22,
-          "sound": 10
+          "sound": 10,
+          "mix_values": {
+            "45": 0.32283464074134827
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 22,
-          "sound": 11
+          "sound": 11,
+          "mix_values": {
+            "60": 0.4251968562602997
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 22,
-          "sound": 12
+          "sound": 12,
+          "mix_values": {
+            "66": 0.36220473051071167
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 22,
-          "sound": 13
+          "sound": 13,
+          "mix_values": {
+            "71": 0.36220473051071167
+          },
+          "mix_role": "percussion"
         }
-      ]
+      ],
+      "mix_gain": 3.8974623069333334
     },
     {
       "name": "TR-MPC",
       "routes": [
         {
           "engine": 23,
-          "sound": 0
+          "sound": 0,
+          "mix_values": {
+            "2": 0.8897637724876404
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 23,
-          "sound": 1
+          "sound": 1,
+          "mix_values": {
+            "21": 0.12598425149917603
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 23,
-          "sound": 2
+          "sound": 2,
+          "mix_values": {
+            "40": 0.7086614370346069
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 23,
-          "sound": 3
+          "sound": 3,
+          "mix_values": {
+            "59": 0.34645670652389526
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 23,
-          "sound": 4
+          "sound": 4,
+          "mix_values": {
+            "78": 0.05511811003088951
+          },
+          "mix_role": "open_hat"
         },
         {
           "engine": 23,
-          "sound": 5
+          "sound": 5,
+          "mix_values": {
+            "97": 0.3700787425041199
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 23,
-          "sound": 6
+          "sound": 6,
+          "mix_values": {
+            "116": 0.12598425149917603
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 23,
-          "sound": 7
+          "sound": 7,
+          "mix_values": {
+            "135": 0.36220473051071167
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 23,
-          "sound": 8
+          "sound": 8,
+          "mix_values": {
+            "154": 0.16535432636737823
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 23,
-          "sound": 9
+          "sound": 9,
+          "mix_values": {
+            "173": 0.22834645211696625
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 23,
-          "sound": 10
+          "sound": 10,
+          "mix_values": {
+            "192": 0.04724409431219101
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 23,
-          "sound": 11
+          "sound": 11,
+          "mix_values": {
+            "211": 0.33070865273475647
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 23,
-          "sound": 12
+          "sound": 12,
+          "mix_values": {
+            "230": 0.07086614519357681
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 23,
-          "sound": 13
+          "sound": 13,
+          "mix_values": {
+            "249": 0.25984251499176025
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 23,
-          "sound": 14
+          "sound": 14,
+          "mix_values": {
+            "268": 0.07086614519357681
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 23,
-          "sound": 15
+          "sound": 15,
+          "mix_values": {
+            "287": 0.3700787425041199
+          },
+          "mix_role": "percussion"
         }
-      ]
+      ],
+      "mix_gain": 2.088301321347586
     },
     {
       "name": "Hortator / MD TRX Deep",
@@ -105354,69 +107304,134 @@
       "routes": [
         {
           "engine": 6,
-          "sound": 0
+          "sound": 0,
+          "mix_values": {
+            "10": 0.13385826349258423
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 6,
-          "sound": 1
+          "sound": 1,
+          "mix_values": {
+            "21": 0.25196850299835205
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 6,
-          "sound": 8
+          "sound": 8,
+          "mix_values": {
+            "32": 0.22834645211696625
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 6,
-          "sound": 14
+          "sound": 14,
+          "mix_values": {
+            "43": 0.7795275449752808
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 6,
-          "sound": 19
+          "sound": 19,
+          "mix_values": {
+            "54": 0.7952755689620972
+          },
+          "mix_role": "open_hat"
         },
         {
           "engine": 6,
-          "sound": 3
+          "sound": 3,
+          "mix_values": {
+            "65": 0.33070865273475647
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 6,
-          "sound": 10
+          "sound": 10,
+          "mix_values": {
+            "76": 0.14173229038715363
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 6,
-          "sound": 22
+          "sound": 22,
+          "mix_values": {
+            "87": 0.31496062874794006
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 6,
-          "sound": 26
+          "sound": 26,
+          "mix_values": {
+            "10": 0.15748031437397003
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 6,
-          "sound": 2
+          "sound": 2,
+          "mix_values": {
+            "21": 0.29133859276771545
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 6,
-          "sound": 9
+          "sound": 9,
+          "mix_values": {
+            "32": 0.31496062874794006
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 6,
-          "sound": 15
+          "sound": 15,
+          "mix_values": {
+            "43": 0.4173228442668915
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 6,
-          "sound": 18
+          "sound": 18,
+          "mix_values": {
+            "54": 0.9448819160461426
+          },
+          "mix_role": "open_hat"
         },
         {
           "engine": 6,
-          "sound": 7
+          "sound": 7,
+          "mix_values": {
+            "65": 0.26771652698516846
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 6,
-          "sound": 12
+          "sound": 12,
+          "mix_values": {
+            "76": 0.18110236525535583
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 6,
-          "sound": 25
+          "sound": 25,
+          "mix_values": {
+            "87": 0.09448818862438202
+          },
+          "mix_role": "cymbal"
         }
-      ]
+      ],
+      "mix_gain": 34.14597619253991
     },
     {
       "name": "Hortator / MD TRX Tight",
@@ -105424,69 +107439,134 @@
       "routes": [
         {
           "engine": 6,
-          "sound": 28
+          "sound": 28,
+          "mix_values": {
+            "10": 0.10236220806837082
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 6,
-          "sound": 2
+          "sound": 2,
+          "mix_values": {
+            "21": 0.29133859276771545
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 6,
-          "sound": 9
+          "sound": 9,
+          "mix_values": {
+            "32": 0.32283464074134827
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 6,
-          "sound": 16
+          "sound": 16,
+          "mix_values": {
+            "43": 0.6929134130477905
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 6,
-          "sound": 21
+          "sound": 21,
+          "mix_values": {
+            "54": 0.9212598204612732
+          },
+          "mix_role": "open_hat"
         },
         {
           "engine": 6,
-          "sound": 5
+          "sound": 5,
+          "mix_values": {
+            "65": 0.26771652698516846
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 6,
-          "sound": 11
+          "sound": 11,
+          "mix_values": {
+            "76": 0.13385826349258423
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 6,
-          "sound": 24
+          "sound": 24,
+          "mix_values": {
+            "87": 0.4645669162273407
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 6,
-          "sound": 27
+          "sound": 27,
+          "mix_values": {
+            "10": 0.19685038924217224
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 6,
-          "sound": 1
+          "sound": 1,
+          "mix_values": {
+            "21": 0.25984251499176025
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 6,
-          "sound": 8
+          "sound": 8,
+          "mix_values": {
+            "32": 0.22834645211696625
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 6,
-          "sound": 17
+          "sound": 17,
+          "mix_values": {
+            "43": 0.9448819160461426
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 6,
-          "sound": 20
+          "sound": 20,
+          "mix_values": {
+            "54": 0.7716535329818726
+          },
+          "mix_role": "open_hat"
         },
         {
           "engine": 6,
-          "sound": 4
+          "sound": 4,
+          "mix_values": {
+            "65": 0.3937007784843445
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 6,
-          "sound": 13
+          "sound": 13,
+          "mix_values": {
+            "76": 0.05511811003088951
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 6,
-          "sound": 23
+          "sound": 23,
+          "mix_values": {
+            "87": 0.08661417663097382
+          },
+          "mix_role": "percussion"
         }
-      ]
+      ],
+      "mix_gain": 22.962892982597282
     },
     {
       "name": "Hortator / MD EFM Metal",
@@ -105494,69 +107574,134 @@
       "routes": [
         {
           "engine": 6,
-          "sound": 32
+          "sound": 32,
+          "mix_values": {
+            "10": 0.05511811003088951
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 6,
-          "sound": 34
+          "sound": 34,
+          "mix_values": {
+            "21": 0.9448819160461426
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 6,
-          "sound": 39
+          "sound": 39,
+          "mix_values": {
+            "32": 0.28346458077430725
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 6,
-          "sound": 47
+          "sound": 47,
+          "mix_values": {
+            "43": 0.18110236525535583
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 6,
-          "sound": 48
+          "sound": 48,
+          "mix_values": {
+            "43": 0.03937007859349251
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 6,
-          "sound": 35
+          "sound": 35,
+          "mix_values": {
+            "65": 0.007874015718698502
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 6,
-          "sound": 45
+          "sound": 45,
+          "mix_values": {
+            "76": 0.031496062874794006
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 6,
-          "sound": 51
+          "sound": 51,
+          "mix_values": {
+            "87": 0.11811023950576782
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 6,
-          "sound": 31
+          "sound": 31,
+          "mix_values": {
+            "10": 0.05511811003088951
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 6,
-          "sound": 44
+          "sound": 44,
+          "mix_values": {
+            "76": 0.13385826349258423
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 6,
-          "sound": 42
+          "sound": 42,
+          "mix_values": {
+            "32": 0.36220473051071167
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 6,
-          "sound": 49
+          "sound": 49,
+          "mix_values": {
+            "43": 0.19685038924217224
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 6,
-          "sound": 50
+          "sound": 50,
+          "mix_values": {
+            "43": 0.11811023950576782
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 6,
-          "sound": 38
+          "sound": 38,
+          "mix_values": {
+            "65": 0.015748031437397003
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 6,
-          "sound": 46
+          "sound": 46,
+          "mix_values": {
+            "76": 0.023622047156095505
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 6,
-          "sound": 54
+          "sound": 54,
+          "mix_values": {
+            "87": 0.14960630238056183
+          },
+          "mix_role": "cymbal"
         }
-      ]
+      ],
+      "mix_gain": 66.82340462312982
     },
     {
       "name": "Hortator / MD EFM Pulse",
@@ -105564,69 +107709,134 @@
       "routes": [
         {
           "engine": 6,
-          "sound": 30
+          "sound": 30,
+          "mix_values": {
+            "10": 0.07086614519357681
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 6,
-          "sound": 34
+          "sound": 34,
+          "mix_values": {
+            "21": 0.9448819160461426
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 6,
-          "sound": 41
+          "sound": 41,
+          "mix_values": {
+            "32": 0.18110236525535583
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 6,
-          "sound": 50
+          "sound": 50,
+          "mix_values": {
+            "43": 0.11811023950576782
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 6,
-          "sound": 49
+          "sound": 49,
+          "mix_values": {
+            "43": 0.19685038924217224
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 6,
-          "sound": 36
+          "sound": 36,
+          "mix_values": {
+            "65": 0.015748031437397003
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 6,
-          "sound": 43
+          "sound": 43,
+          "mix_values": {
+            "76": 0.07874015718698502
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 6,
-          "sound": 52
+          "sound": 52,
+          "mix_values": {
+            "87": 0.36220473051071167
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 6,
-          "sound": 33
+          "sound": 33,
+          "mix_values": {
+            "10": 0.06299212574958801
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 6,
-          "sound": 44
+          "sound": 44,
+          "mix_values": {
+            "76": 0.13385826349258423
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 6,
-          "sound": 40
+          "sound": 40,
+          "mix_values": {
+            "32": 0.3937007784843445
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 6,
-          "sound": 47
+          "sound": 47,
+          "mix_values": {
+            "43": 0.18110236525535583
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 6,
-          "sound": 48
+          "sound": 48,
+          "mix_values": {
+            "43": 0.03937007859349251
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 6,
-          "sound": 37
+          "sound": 37,
+          "mix_values": {
+            "65": 0.023622047156095505
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 6,
-          "sound": 45
+          "sound": 45,
+          "mix_values": {
+            "76": 0.031496062874794006
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 6,
-          "sound": 53
+          "sound": 53,
+          "mix_values": {
+            "87": 0.15748031437397003
+          },
+          "mix_role": "cymbal"
         }
-      ]
+      ],
+      "mix_gain": 89.00790908125839
     },
     {
       "name": "Hortator / MD Hybrid",
@@ -105634,69 +107844,134 @@
       "routes": [
         {
           "engine": 6,
-          "sound": 29
+          "sound": 29,
+          "mix_values": {
+            "10": 0.06299212574958801
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 6,
-          "sound": 34
+          "sound": 34,
+          "mix_values": {
+            "21": 0.9448819160461426
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 6,
-          "sound": 9
+          "sound": 9,
+          "mix_values": {
+            "32": 0.11023622006177902
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 6,
-          "sound": 15
+          "sound": 15,
+          "mix_values": {
+            "43": 0.14173229038715363
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 6,
-          "sound": 18
+          "sound": 18,
+          "mix_values": {
+            "54": 0.33070865273475647
+          },
+          "mix_role": "open_hat"
         },
         {
           "engine": 6,
-          "sound": 38
+          "sound": 38,
+          "mix_values": {
+            "65": 0.015748031437397003
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 6,
-          "sound": 43
+          "sound": 43,
+          "mix_values": {
+            "76": 0.07874015718698502
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 6,
-          "sound": 51
+          "sound": 51,
+          "mix_values": {
+            "87": 0.11811023950576782
+          },
+          "mix_role": "cymbal"
         },
         {
           "engine": 6,
-          "sound": 32
+          "sound": 32,
+          "mix_values": {
+            "10": 0.05511811003088951
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 6,
-          "sound": 1
+          "sound": 1,
+          "mix_values": {
+            "21": 0.08661417663097382
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 6,
-          "sound": 42
+          "sound": 42,
+          "mix_values": {
+            "32": 0.36220473051071167
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 6,
-          "sound": 50
+          "sound": 50,
+          "mix_values": {
+            "43": 0.11811023950576782
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 6,
-          "sound": 20
+          "sound": 20,
+          "mix_values": {
+            "54": 0.26771652698516846
+          },
+          "mix_role": "open_hat"
         },
         {
           "engine": 6,
-          "sound": 6
+          "sound": 6,
+          "mix_values": {
+            "65": 0.13385826349258423
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 6,
-          "sound": 12
+          "sound": 12,
+          "mix_values": {
+            "76": 0.06299212574958801
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 6,
-          "sound": 52
+          "sound": 52,
+          "mix_values": {
+            "87": 0.36220473051071167
+          },
+          "mix_role": "percussion"
         }
-      ]
+      ],
+      "mix_gain": 73.18609902922188
     },
     {
       "name": "Hortator / MD Percussion",
@@ -105704,69 +107979,172 @@
       "routes": [
         {
           "engine": 6,
-          "sound": 27
+          "sound": 27,
+          "mix_values": {
+            "10": 0.15748031437397003
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 6,
-          "sound": 2
+          "sound": 2,
+          "mix_values": {
+            "21": 0.24409449100494385
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 6,
-          "sound": 40
+          "sound": 40,
+          "mix_values": {
+            "32": 0.9448819160461426
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 6,
-          "sound": 17
+          "sound": 17,
+          "mix_values": {
+            "43": 0.7795275449752808
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 6,
-          "sound": 21
+          "sound": 21,
+          "mix_values": {
+            "54": 0.7637795209884644
+          },
+          "mix_role": "open_hat"
         },
         {
           "engine": 6,
-          "sound": 7
+          "sound": 7,
+          "mix_values": {
+            "65": 0.22047244012355804
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 6,
-          "sound": 45
+          "sound": 45,
+          "mix_values": {
+            "76": 0.07874015718698502
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 6,
-          "sound": 23
+          "sound": 23,
+          "mix_values": {
+            "87": 0.07086614519357681
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 6,
-          "sound": 31
+          "sound": 31,
+          "mix_values": {
+            "10": 0.14173229038715363
+          },
+          "mix_role": "kick"
         },
         {
           "engine": 6,
-          "sound": 44
+          "sound": 44,
+          "mix_values": {
+            "76": 0.32283464074134827
+          },
+          "mix_role": "snare"
         },
         {
           "engine": 6,
-          "sound": 42
+          "sound": 42,
+          "mix_values": {
+            "32": 0.874015748500824
+          },
+          "mix_role": "clap"
         },
         {
           "engine": 6,
-          "sound": 49
+          "sound": 49,
+          "mix_values": {
+            "43": 0.4724409580230713
+          },
+          "mix_role": "closed_hat"
         },
         {
           "engine": 6,
-          "sound": 19
+          "sound": 19,
+          "mix_values": {
+            "54": 0.6692913174629211
+          },
+          "mix_role": "open_hat"
         },
         {
           "engine": 6,
-          "sound": 37
+          "sound": 37,
+          "mix_values": {
+            "65": 0.05511811003088951
+          },
+          "mix_role": "tom"
         },
         {
           "engine": 6,
-          "sound": 13
+          "sound": 13,
+          "mix_values": {
+            "76": 0.04724409431219101
+          },
+          "mix_role": "percussion"
         },
         {
           "engine": 6,
-          "sound": 53
+          "sound": 53,
+          "mix_values": {
+            "87": 0.3779527544975281
+          },
+          "mix_role": "cymbal"
         }
-      ]
+      ],
+      "mix_gain": 25.379355759525314
     }
+  ],
+  "kit_order_legacy": [
+    "DRUM-X",
+    "DRUM-X / 909 CLUB",
+    "DRUM-X / 808 BOOM",
+    "DRUM-X / LOFI DUST",
+    "DRUM-X / INDUSTRIAL",
+    "DRUM-X / ACOUSTIC",
+    "DRUM-X / DUB ROOTS",
+    "DRUM-X / TECHNO RAW",
+    "DRUM-X / BREAKS",
+    "Elixir / Initkit",
+    "Elixir / Dry Circuit",
+    "Elixir / Warm Machine",
+    "Elixir / Bright Logic",
+    "Elixir / Soft Pulse",
+    "Hortator / TRX Classic",
+    "Hortator / 808",
+    "Hortator / 909",
+    "Hortator / Plaits",
+    "Hortator / FM",
+    "Hortator / Industrial",
+    "K-WASUB / 808",
+    "K-WASUB / 909",
+    "K-WASUB / Dub Techno",
+    "K-WASUB / Acoustic",
+    "Sophie",
+    "6W6",
+    "8W8",
+    "9W9",
+    "CW-78",
+    "TR-MPC",
+    "Hortator / MD TRX Deep",
+    "Hortator / MD TRX Tight",
+    "Hortator / MD EFM Metal",
+    "Hortator / MD EFM Pulse",
+    "Hortator / MD Hybrid",
+    "Hortator / MD Percussion"
   ]
 }

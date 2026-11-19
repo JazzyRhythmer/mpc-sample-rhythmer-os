@@ -4,6 +4,7 @@
 #include "rhythmer/shell/gen8_check.h"
 #include "rhythmer/shell/break_p1_check.h"
 #include "rhythmer/shell/track_workflow_check.h"
+#include "rhythmer/shell/project_save_check.h"
 #include "rhythmer/shell/navigation_check.h"
 #include "rhythmer/shell/menu.h"
 #include "rhythmer/shell/stage_map.h"
@@ -3242,6 +3243,10 @@ static int mpc3_export(const char* path, const char* folder, const char* name, i
 }
 
 std::optional<int> run_tool(int argc, char** argv) {
+    if(argc==3&&!std::strcmp(argv[1],"--rhythmer-project-save-check"))return ProjectSavingChecks::run(argv[2],[&](Shell& shell,const std::string& name){
+        auto snapshot=std::make_unique<Snapshot>();shell.snapshot(*snapshot,100000);snapshot->ui.project_rows=uint16_t(project_rows(snapshot->projects.entries.size()));snapshot->ui.loading=false;snapshot->ui.notice[0]=0;
+        for(int scale:{1,2}){juce::Image image(juce::Image::ARGB,screen_width*scale,screen_height*scale,true);juce::Graphics g(image);g.addTransform(juce::AffineTransform::scale(float(scale)));draw(g,*snapshot);save_png(image,std::string(argv[2])+"/"+name+(scale==2?"@2x":"")+".png");}
+    });
     if(argc==4&&!std::strcmp(argv[1],"--rhythmer-edit-preview"))return edit_preview(argv[2],argv[3]);
     if(argc==2&&!std::strcmp(argv[1],"--rhythmer-track-check"))return track_workflow_check();
     if(argc==2&&!std::strcmp(argv[1],"--rhythmer-navigation-check"))return navigation_check();

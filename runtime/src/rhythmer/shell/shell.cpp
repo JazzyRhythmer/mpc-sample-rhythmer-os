@@ -405,7 +405,11 @@ void Shell::press(Button b, bool pressed) {
             // The project goes to the card first (a new file if it has none); then away.
             ProjectStore::View v;
             if (store_) store_->view(v);
-            if (!v.root.empty()) { leave_after_save = int(store_->saves()) + 1; context_.save_project(); }
+            if (!v.root.empty()) {
+                const bool accepted = context_.autosave();
+                if(!accepted){ui.exit_off=false;off_after_save=false;context_.notice("Could not save recovery; try again");return;}
+                leave_after_save = int(store_->saves()) + (context_.save_pending ? 1 : 0);
+            }
             else if (off_after_save) { ui.exit_saved = true; off_saved_at = context_.now; } // nothing to save: the second, then off
             else leave.store(true);
         }
@@ -599,7 +603,7 @@ void Shell::pot(unsigned n, int position, bool syncing) {
 void Shell::wheel(int delta) {
     if (ui_.erase) ui_.erase_used = true; // Erase + the wheel: its release erases nothing
     if (ui_.exit_open) { if (!ui_.exit_off) ui_.exit_pick = key_pick_turn(ui_.exit_pick, delta); return; } // STAY, POWER OFF, MPC APP
-    if (ui_.ask != UiState::Ask::None) { ui_.ask_pick = key_pick_turn(ui_.ask_pick, delta, 0b101); return; } // CANCEL or the verb
+    if (ui_.ask != UiState::Ask::None) { ui_.ask_pick = key_pick_turn(ui_.ask_pick, delta, ui_.ask == UiState::Ask::ProjectChanges || ui_.ask == UiState::Ask::NewProject ? 0b111 : 0b101); return; } // CANCEL or the verb
     if (ui_.name.open()) { // Shift: the character under the cursor; else the cursor
         if (ui_.shift) { ui_.shift_used = true; ui_.name.step_char(delta); } else ui_.name.move(delta);
         return;
@@ -821,6 +825,7 @@ void Shell::snapshot(Snapshot& out, uint32_t now) {
     }
     for (unsigned n = 0; n < 16; ++n) out.held_keys[n] = context_.pad_keys[n][0];
     out.project_path = context_.project_path; out.project_folder = context_.project_folder; out.dirty = context_.dirty;
+    out.saving = context_.save_pending; out.recovery_status = context_.recovery_status;
     if (store_ && (ui_.page == PageId::Project || ui_.exit_open)) store_->view(out.projects);
     if (context_.plugins && ui_.page == PageId::Plugins) out.plugins = context_.plugins->view();
     if (context_.plugins && ui_.page == PageId::PluginPresets) out.presets = context_.plugins->programs(ui_.presets_entry);

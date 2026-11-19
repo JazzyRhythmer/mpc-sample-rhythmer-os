@@ -1,25 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
-// PROJECT (Shift + Pad 16): the open project's three jobs as tiles under
-// the keys: B1 SAVE AS (the Name sheet, then a file of its own; the project
-// saves itself in the background, shell/autosave.h), B2 OPEN (the list), B3
-// NEW (asks first, as the MPC does). The wheel moves the highlight across
-// the three, Push presses it (SAVE AS first). Settings and About are Shift + Pad 8's.
-// The list behind OPEN: projects are files on the SD card, as many as it
-// holds, in folders; SD card access at the top lends the card to a computer
-// (pages/card_access_page.cpp). Each row a glyph first and its facts last.
-// The wheel moves; Push or B3 opens: a folder goes in (B1 or Shift + Push
-// comes back out; at the top up into the card's own folders, read only, and
-// at the card's top back to the tiles), a project's sheet opens
-// its jobs as cards, the likely one first and lit (Save on the open one, Load
-// on another; the wheel moves, Push does it, B1 back): on the open one Save, Save as new, Rename, Duplicate,
-// Move to folder, New folder here, Open at start, Delete; on another Load,
-// Load kit (its pads and samples onto the selected track, no patterns) and
-// the same. Delete asks once more. Save as new and Rename open the Name
-// sheet; Move to folder opens a picker of every folder (the wheel picks,
-// Push or B3 moves, B1 backs out). K1 jumps, K2 sorts. B2 picks the drive:
-// the card, or the internal one (the stock app's projects, its Autosave and
-// the factory Demos and Kits, read only: Load and Load kit).
+// PROJECT (Shift + Pad 16): SAVE, OPEN and NEW using native tiles and browser.
+// SHIFT + B1 chooses SAVE AS; SHIFT + B3 opens per-project RECOVERY entries.
+// Save destinations reuse the native folder list with explicit USE FOLDER and name confirmation.
+// OPEN/NEW protect unsaved work; recovery never overwrites manual files.
 #include "rhythmer/pages/common.h"
 #include "rhythmer/pages/pages.h"
 #include "rhythmer/shell/key_pick.h"
@@ -29,6 +13,9 @@
 #include <cstring>
 #include <filesystem>
 #include <vector>
+#include <chrono>
+#include <ctime>
+#include "rhythmer/shell/recovery_file.h"
 
 namespace rhythmer {
 namespace {
@@ -88,19 +75,28 @@ juce::String count_text(unsigned n, const char* one, const char* many) { return 
 void draw_tiles(Paint& p, const Snapshot& s, const ProjectStore::View& v) {
     Header h = header_of(s);
     if (v.root.empty()) h.left.push_back(pill(Icon::Card, "NO CARD", amber));
+    else if(s.saving) h.left.push_back(pill(Icon::Save, "SAVING", colour::text));
     else if (s.dirty) h.left.push_back(pill(Icon::Rec, "UNSAVED", amber)); // until the background save a moment later (shell/autosave.h)
     else if (!s.project_path.empty()) h.left.push_back(pill(Icon::Check, "SAVED", colour::play));
     h.right.push_back(label(s.project.name));
     unsigned pick = s.ui.project_pick % 3; // the wheel's tile, raised; Push presses its key
-    SoftKeys keys {{"SAVE AS", "OPEN", "NEW"}, int(pick), colour::text}; // the project saves itself: B1 saves it under a new name
+    SoftKeys keys {{s.ui.shift ? "SAVE AS" : "SAVE", "OPEN", s.ui.shift ? "RECOVERY" : "NEW"}, int(pick), colour::text}; // the project saves itself: B1 saves it under a new name
     keys.glyphs = {Icon::Save, Icon::Folder, Icon::Plus};
     frame(p, s, keys, h);
-    unsigned projects = 0;
-    for (const auto& e : v.entries) projects += e.kind == ProjectEntry::Kind::Project;
-    juce::String fresh = !s.dirty ? juce::String() : s.project_path.empty() ? juce::String("CHANGES LOST") : juce::String("SAVES FIRST");
-    key_tiles(p, {word_sub_tile(Icon::Save, "SAVE AS", "NEW NAME", pick == 0),
-                  word_sub_tile(Icon::Folder, "OPEN", v.root.empty() ? juce::String("NO CARD") : count_text(projects, "PROJECT", "PROJECTS"), pick == 1),
-                  word_sub_tile(Icon::Plus, "NEW", fresh, pick == 2)});
+    juce::String fresh = s.dirty ? juce::String("ASKS FIRST") : juce::String();
+    key_tiles(p, {word_sub_tile(Icon::Save, s.ui.shift ? "SAVE AS" : "SAVE", s.ui.shift || s.project_path.empty() ? "PICK FOLDER" : "CURRENT FILE", pick == 0),
+                  word_sub_tile(Icon::Folder, "OPEN", v.root.empty() ? juce::String("NO CARD") : juce::String("BROWSE"), pick == 1),
+                  word_sub_tile(Icon::Plus, s.ui.shift ? "RECOVERY" : "NEW", s.ui.shift ? "LAST WORK" : fresh, pick == 2)});
+    p.text("SHIFT: SAVE AS / RECOVERY", zone::pad, zone::knobs_y, zone::width-2*zone::pad, 12, caps_text(colour::mid));
+    if(!s.recovery_status.empty())p.text(s.recovery_status,zone::pad,zone::knobs_y+16,zone::width-2*zone::pad,14,plain(colour::mid,type::small,Weight::Regular));
+    if(!s.project_path.empty()) {
+        const auto card=card_dir(v); const auto parent=std::filesystem::path(s.project_path).parent_path();
+        juce::String location = recovery_file::under(parent,std::filesystem::path(v.root).parent_path()/"Autosave") ? juce::String("RECOVERED COPY / SAVE TO KEEP")
+            : parent.string().rfind(card+"/",0)==0 ? "SD / "+juce::String(parent.string().substr(card.size()+1)).replace("/"," / ") : juce::String(parent.string());
+        auto style=plain(colour::mid,type::small,Weight::Regular);
+        while(location.length()>5 && p.width(location,style)>zone::width-2*zone::pad)location="..."+location.substring(4);
+        p.text(location,zone::pad,zone::knobs_y+32,zone::width-2*zone::pad,14,style);
+    }
 }
 
 // One row of the list: a glyph, the name, its facts at the right edge.
@@ -110,6 +106,11 @@ void draw_row(Paint& p, const Snapshot& s, const ProjectStore::View& v, unsigned
     auto glyph_c = current ? colour::text : colour::mid;
     auto facts = plain(colour::mid, type::small, Weight::SemiBold);
     float tx = x + 28;
+    if (s.ui.project_save_picker && on_card(n)) {
+        icon(p, Icon::Save, x + 10, cy - 6, 12, glyph_c, 1.4f);
+        p.text("SAVE IN THIS FOLDER", tx, y, right - tx, list_row_h, plain(colour::text, type::list, Weight::Medium));
+        return;
+    }
     if (on_card(n)) { // the card, to a computer over USB-C
         icon(p, Icon::Card, x + 10, cy - 6, 12, glyph_c, 1.4f);
         float fw = p.width("USB-C", caps_text(colour::mid));
@@ -141,6 +142,11 @@ void draw_row(Paint& p, const Snapshot& s, const ProjectStore::View& v, unsigned
         } else {
             juce::String meta = e->mpc() ? juce::String("MPC")
                               : count_text(e->tracks, "track", "tracks") + juce::String::fromUTF8(" \xc2\xb7 ") + juce::String(e->tempo / 10) + " BPM";
+            if(s.project_folder==":recovery") {
+                const auto stamp=std::filesystem::file_time_type(std::filesystem::file_time_type::duration(e->modified));
+                const auto time=std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()+std::chrono::duration_cast<std::chrono::system_clock::duration>(stamp-std::filesystem::file_time_type::clock::now()));
+                std::tm local{};localtime_r(&time,&local);char date[24];std::strftime(date,sizeof date,"%m/%d %H:%M",&local);meta=date;
+            }
             float mw = p.width(meta, facts);
             p.text(meta, right - mw, y, mw + 1, list_row_h, facts);
             right -= mw + 8;
@@ -156,7 +162,7 @@ void draw(Paint& p, const Snapshot& s) {
     if (!s.ui.project_list) { draw_tiles(p, s, v); return; }
     Header h = header_of(s);
     const bool inside = on_internal(s.project_folder);
-    juce::String where = inside ? "INTERNAL" + juce::String(s.project_folder.substr(std::strlen(internal_folder))).replace("/", " / ")
+    juce::String where = s.project_folder == ":recovery" ? juce::String("RECOVERY") : inside ? "INTERNAL" + juce::String(s.project_folder.substr(std::strlen(internal_folder))).replace("/", " / ")
                        : v.root.empty() ? juce::String("NO CARD")
                        : on_card_top(s.project_folder) ? "SD" + juce::String(s.project_folder.substr(std::strlen(card_folder))).replace("/", " / ")
                        : s.project_folder.rfind("MPC Sample", 0) == 0 ? "SD / MPC PROJECTS" + juce::String(s.project_folder.substr(10)).replace("/", " / ")
@@ -167,8 +173,9 @@ void draw(Paint& p, const Snapshot& s) {
     bool sheet = s.ui.sheet_open;
     unsigned count = project_rows(v.entries.size()), cursor = std::min<unsigned>(s.ui.project_cursor, std::max(count, 1u) - 1);
     const auto* in_hand = entry_at(v, cursor);
-    bool open_one = in_hand && in_hand->path == s.project_path, mpc = in_hand && in_hand->mpc();
-    if (s.ui.move_open) frame(p, s, {{"BACK", "", "MOVE"}, 2, colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::Check}}, h);
+    bool open_one = in_hand && in_hand->path == s.project_path, mpc = in_hand && (in_hand->mpc() || s.project_folder == ":recovery");
+    if (s.ui.project_save_picker) frame(p, s, {{"CANCEL", "NEW FOLDER", "USE FOLDER"}, 2, colour::text}, h);
+    else if (s.ui.move_open) frame(p, s, {{"BACK", "", "MOVE"}, 2, colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::Check}}, h);
     else if (sheet) frame(p, s, {{"BACK", "", ""}, -1, colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::None}}, h); // the cards
     else frame(p, s, {{"BACK", inside ? "CARD" : "INTERNAL", s.ui.project_kit_only ? "LOAD KIT" : "OPEN"}, 2, colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::Check}}, h); // B2: the other drive
 
@@ -250,6 +257,7 @@ ProjectStore::View view_of(Context& c) {
 void close_sheet(Context& c) { c.ui.sheet_open = false; c.ui.delete_armed = false; }
 
 void act(Context& c, Action action) {
+    if(c.save_pending){c.notice("Wait for saving to finish");return;}
     auto v = view_of(c);
     const auto* e = entry_at(v, c.ui.project_cursor);
     if (!e || e->kind != ProjectEntry::Kind::Project || !c.store) return;
@@ -258,11 +266,11 @@ void act(Context& c, Action action) {
     switch (action) {
     case Load:
         if (e->mpc()) c.notice("Opening " + e->name);
-        c.store->load(e->path);
+        c.request_project_open(e->path);
         break;
     case LoadKit: close_sheet(c); c.load_kit_file(e->path, e->name); return;
-    case Save: c.save_project_to(e->path); break;
-    case SaveAsNew: close_sheet(c); c.name_project(true); return;
+    case Save: close_sheet(c);c.save_project(); return;
+    case SaveAsNew: close_sheet(c); c.open_project_save(true); return;
     case Duplicate: c.store->duplicate(e->path); break;
     case NewFolder: c.store->new_folder(); break;
     case OpenAtStart: c.store->open_at_start(e->path); break;
@@ -286,7 +294,7 @@ void act(Context& c) {
     if (!e) return;
     bool open = e->path == c.project_path;
     std::array<Action, 8> list {};
-    unsigned n = actions(open, list, e->mpc());
+    unsigned n = actions(open, list, e->mpc() || c.project_folder == ":recovery");
     act(c, list[c.ui.sheet_row % n]);
 }
 
@@ -329,7 +337,7 @@ void wheel(Context& c, int delta) {
         auto v = view_of(c);
         const auto* e = entry_at(v, c.ui.project_cursor);
         std::array<Action, 8> list {};
-        unsigned n = actions(e && e->path == c.project_path, list, e && e->mpc());
+        unsigned n = actions(e && e->path == c.project_path, list, e && (e->mpc() || c.project_folder == ":recovery"));
         c.ui.sheet_row = uint8_t(std::clamp<int>(c.ui.sheet_row + delta, 0, int(n) - 1));
         c.ui.delete_armed = false;
         return;
@@ -340,7 +348,7 @@ void wheel(Context& c, int delta) {
 
 void open_row(Context& c) {
     auto v = view_of(c);
-    if (on_card(c.ui.project_cursor)) { c.card_access(); return; }
+    if (on_card(c.ui.project_cursor)) { if(c.ui.project_save_picker)c.project_save_choose_folder();else c.card_access(); return; }
     const auto* e = entry_at(v, c.ui.project_cursor);
     if (!e) return;
     if (e->kind == ProjectEntry::Kind::Folder) {
@@ -351,6 +359,7 @@ void open_row(Context& c) {
         if (c.store) c.store->list(c.project_folder);
         return;
     }
+    if(c.ui.project_save_picker){c.notice("Choose a folder, then B3 USE FOLDER");return;}
     if(c.ui.project_kit_only) {c.load_kit_file(e->path,e->name);return;}
     c.ui.sheet_open = true; c.ui.sheet_row = 0; c.ui.delete_armed = false; // the likely job (Save or Load) is the first card
 }
@@ -366,9 +375,15 @@ void push(Context& c) {
 
 void soft(Context& c, int key) {
     if (!c.ui.project_list) { // SAVE, OPEN, NEW
-        if (key == 0) c.name_project(true); // SAVE AS: the Name sheet, then a file of its own (the project saves itself otherwise)
+        if (key == 0) {if(c.ui.shift)c.open_project_save(true);else c.save_project();} // SAVE AS: the Name sheet, then a file of its own (the project saves itself otherwise)
         if (key == 1) open_list(c);
-        if (key == 2) c.ask_new_project(); // asks first, as the MPC does; the open one is saved first if it has a file
+        if (key == 2) {if(c.ui.shift){c.project_folder=":recovery";c.ui.project_list=true;c.ui.project_cursor=1;if(c.store)c.store->list(c.project_folder);}else c.ask_new_project();} // asks first, as the MPC does; the open one is saved first if it has a file
+        return;
+    }
+    if (c.ui.project_save_picker) {
+        if(key==0)c.cancel_project_save();
+        else if(key==1){ if(c.store&&!c.store->save_directory(c.project_folder).empty())c.store->new_folder_at(c.project_folder); else c.notice("Choose a writable SD folder"); }
+        else if(key==2)c.project_save_choose_folder();
         return;
     }
     if (c.ui.move_open) {
@@ -400,6 +415,7 @@ void soft(Context& c, int key) {
 
 bool project_folder_up(Context& c) {
     auto& f = c.project_folder;
+    if (f == ":recovery") {f.clear();c.ui.project_list=false;if(c.store)c.store->list(f);return true;}
     if (f == internal_folder || f == card_folder) return false;
     auto v = view_of(c);
     if (v.root.empty() && !on_internal(f)) return false;
@@ -436,7 +452,7 @@ void project_listed(Context& c) {
 // Erase tapped on the list (shell/erase_copy.h): the project under the cursor's sheet open on DELETE, armed; tapped
 // again, deleted (as Push on DELETE twice). False on a folder, SD card access or the MPC's own file.
 bool project_erase(Context& c) {
-    if (!c.ui.project_list || c.ui.move_open) return false;
+    if (!c.ui.project_list || c.ui.move_open || c.ui.project_save_picker || c.project_folder == ":recovery") return false;
     auto v = view_of(c);
     const auto* e = entry_at(v, c.ui.project_cursor);
     if (!e || e->kind != ProjectEntry::Kind::Project || e->mpc()) return false;
@@ -451,7 +467,8 @@ bool project_erase(Context& c) {
 
 // Shift + Erase on the list: the project under the cursor duplicated (DUPLICATE). False where there is none.
 bool project_copy(Context& c) {
-    if (!c.ui.project_list || c.ui.move_open) return false;
+    if(c.save_pending){c.notice("Wait for saving to finish");return true;}
+    if (!c.ui.project_list || c.ui.move_open || c.ui.project_save_picker || c.project_folder == ":recovery") return false;
     auto v = view_of(c);
     const auto* e = entry_at(v, c.ui.project_cursor);
     if (!e || e->kind != ProjectEntry::Kind::Project || e->mpc()) return false;

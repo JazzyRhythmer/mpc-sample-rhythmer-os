@@ -37,5 +37,20 @@ int main(){
  {BreakManipulator m;setup(m);m.live_note(2,110);render(m,100);m.live_note(0,100);render(m,100);m.live_off(0);render(m,100);check(m.activity()&4,"fallback to still-held STRETCH");m.live_off(2);m.release();render(m);check(!(m.activity()&6),"no stuck overlap");}
  // Repeated downs are idempotent; one physical up is sufficient.
  {BreakManipulator m;setup(m);for(unsigned n=0;n<300;n++)m.live_note(2,100);m.live_off(2);m.release();render(m);check(!(m.activity()&6),"duplicate down has no unbalanced gate");}
+ // One Shot follows the pad setting: releasing the pad leaves the chop audible.
+ {BreakManipulator shot,held,gate;
+  for(auto* m:{&shot,&held,&gate}){m->configure(2,0);m->sources(&loop,&loop);}
+  shot.note(36,100,rhythmer::PadPlay::OneShot);held.note(36,100,rhythmer::PadPlay::OneShot);gate.note(36,100,rhythmer::PadPlay::Gate);
+  render(shot,4);render(held,4);render(gate,4);shot.off(36);gate.off(36);
+  double shot_energy=render(shot,20),held_energy=render(held,20),gate_energy=render(gate,20);
+  check(shot_energy>.0001 && std::fabs(shot_energy-held_energy)<.000001,"one shot ignores pad release");
+  check(gate_energy<shot_energy*.5,"explicit Gate still releases");
+  render(shot,2000);check(!shot.sounding() && !(shot.activity()&2),"one shot ends naturally, no stuck gate");
+ }
+ // Last chop wins; releasing the preceding pad does not cut the new one.
+ {BreakManipulator a,b;for(auto* m:{&a,&b}){m->configure(2,0);m->sources(&loop,&loop);m->note(36,100,rhythmer::PadPlay::OneShot);render(*m,4);m->note(37,100,rhythmer::PadPlay::OneShot);render(*m,4);}
+  a.off(36);a.off(37);check(std::fabs(render(a,20)-render(b,20))<.000001,"old and new pad-up preserve latest one shot");
+  a.release();render(a,20);check(!a.sounding(),"STOP/release clears one-shot playback");
+ }
  std::puts("BREAK_HOLD_PASS effects=16 command_pressure=level_neutral live_vs_sequence=isolated chops_do_not_cancel=ok overlap=ok duplicate_down=ok release=ok");
 }

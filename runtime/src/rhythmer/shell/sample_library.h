@@ -224,7 +224,8 @@ public:
     bool commit_loop(const LoopCommit& job) { return commits.push(job); }
     struct LoopFiles { bool save = true; std::string dir; uint8_t mask = 0; std::array<LoopTrack, loop_tracks> loops {}; };
     void loop_files(LoopFiles job);
-    bool loops_busy() const; // loop files still being written (leaving waits)
+    bool loops_busy() const;
+    unsigned loop_save_errors() const {return loop_save_failures.load();} // loop files still being written (leaving waits)
 
     // Any thread but audio: a copy of what is known of the browser. The loaded samples are read a slot at a time
     // (slot(), measure()): each is several kilobytes with its waveform and hits.
@@ -436,6 +437,7 @@ private:
     bool loop_job_on = false;
     unsigned loop_at = 0, loop_passes = 0;
     std::atomic<bool> loop_busy {false};
+    std::atomic<unsigned> loop_save_failures {0};
     void loop_service(); // a step of the commit and the file jobs, never waiting
     std::unique_ptr<SampleData> render_data;
     WavStream render_file;

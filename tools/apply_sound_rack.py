@@ -12,6 +12,7 @@ def replace(path,old,new):
 def apply(root):
     target=root/'src/rhythmer/plugin'
     for p in (ROOT/'extensions/plugin').glob('sound_rack.*'):shutil.copy2(p,target/p.name)
+    shutil.copy2(ROOT/'extensions/plugin/kit_output_stage.h',target/'kit_output_stage.h')
     p=target/'vst2_instance.h'
     replace(p,'    // Opcodes the plug-in sent', '    bool nativeSet(const juce::String& key,const juce::String& value);\n\n    // Opcodes the plug-in sent')
     p=target/'vst2_instance.cpp'

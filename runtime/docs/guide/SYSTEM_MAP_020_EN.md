@@ -6,7 +6,7 @@
 
 | Item | Meaning | How to select it |
 | --- | --- | --- |
-| Project | The complete session: tracks, patterns, mix and arrangement | SHIFT + Pad 16 → OPEN / NEW; SAVE AS makes a named copy |
+| Project | The complete session: tracks, patterns, mix and arrangement | SHIFT + Pad 16 → SAVE / OPEN / NEW; SHIFT + B1 SAVE AS chooses another folder/name |
 | Track | One part of the session; its instrument/audio, patterns and mix | PAD BANK + pad 1–16, or TRACKS |
 | Pattern | Notes and supported motion for one track; up to 128 per track | SEQ → B1 PATTERNS → pattern pad |
 | Sequence | A pattern number launched across tracks | SEQ → B1 SEQUENCES → sequence pad |
@@ -37,7 +37,7 @@ A first install starts in Basic. Settings → FEATURES = FULL shows MIDI/Audio a
 
 ## Save the right thing
 
-- **Project:** the session, including notes, arrangement and instrument state. Autosaves while idle; SAVE AS makes a copy.
+- **Project:** the session, including notes, arrangement and instrument state. SAVE keeps the named project; idle autosave updates a separate recovery copy. SAVE AS makes a separate project.
 - **User Sound:** a reusable instrument sound, without the song's notes.
 - **User Kit:** a reusable kit and its edited pad sounds, without the song's notes.
 - **SD backup:** keeps source samples and all project/preset files. Saving a preset is not a source-audio backup.

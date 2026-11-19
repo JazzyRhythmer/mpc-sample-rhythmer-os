@@ -390,6 +390,7 @@ static_assert(sample_slots >= track_count * sampler_pads * pad_layers, "a sample
 struct Project {
     Gen8Settings gen8;
     char name[32] = "Untitled";
+    char recovery_id[33] {}; // persistent project identity; Save As makes a new one
     uint16_t tempo = 1200;  // tenths of a BPM; the global tempo
     // BPM per pattern (B2 on Patterns): with seq_tempo on, launching pattern n
     // (any track, or the column) plays at pattern_tempo[n]; 0 is not set yet,

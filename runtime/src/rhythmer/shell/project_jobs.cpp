@@ -20,14 +20,29 @@
 namespace rhythmer {
 
 void Context::ask_new_project() {
-    ask(*this, UiState::Ask::NewProject, !dirty ? 0 : project_path.empty() ? 2 : 1);
+    if (save_pending) { notice("Wait for saving to finish"); return; }
+    if (dirty) { after_project_save = 2; ask(*this, UiState::Ask::ProjectChanges,0); }
+    else ask(*this, UiState::Ask::NewProject, 0);
 }
 
 void Context::start_new_project(bool kit) {
-    if (dirty && !project_path.empty()) save_project();
+    if (store) store->dismiss_recovery();
     new_project();
     open(PageId::Stage);
     notice("New project");
+    // The normal NEW path starts with the curated Rhythmer drum instrument.
+    // EMPTY and project-open paths deliberately do not pass through this branch.
+    if(kit&&plugins){
+        const auto folder=std::filesystem::path(plugins->source_folder())/"RHYTHMER - Rhythmer Kit";
+        std::error_code kit_error;
+        if(std::filesystem::is_regular_file(folder/"rhythmer-kit.json",kit_error)){
+            auto file=describe_plugin(folder.string());
+            if(file.loadable()&&file.name=="Rhythmer Kit"){
+                ui.track=0;ui.plugin_target=UiState::PluginTarget::Instrument;ui.plugin_back=PageId::Stage;
+                choose_plugin(file);edits.clear();dirty=false;notice("New project: K-WASUB / 909");return;
+            }
+        }
+    }
     // The pads play at once: the MPC's factory kit on track 1 (shell/lesson.h). Not there (another firmware): the
     // track stays an empty kit, as EMPTY leaves it.
     if (kit && store && std::filesystem::exists(factory_kit_path)) load_kit_file(factory_kit_path, factory_kit_name);

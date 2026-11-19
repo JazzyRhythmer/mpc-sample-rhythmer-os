@@ -6,34 +6,25 @@ Previous: [MIDI and sync](midi-and-sync.md) · [Contents](../GUIDE.md) · Next: 
 
 Press **SHIFT** + **Pad 16**.
 
-![Project](../images/screens/project.png)
+![Project](../images/rhythmer/020-project.png)
 
-- **B1** (**SAVE AS**): save the project under a new name. The old file
-  stays as it was.
-- **B2** (**OPEN**): the list of projects.
-- **B3** (**NEW**): start a new project (asks first). On the question,
-  **B3** (**NEW**) starts it with one of the MPC's factory kits on track 1, so
-  the pads play at once. **B2** (**EMPTY**) starts it with an empty kit.
+- **B1 SAVE** keeps the current project. Its first save opens folder selection, then name entry; subsequent saves update the existing file.
+- **SHIFT + B1 SAVE AS** chooses another folder/name for a separate project.
+- **B2 OPEN** browses projects.
+- **B3 NEW** offers a normal project or an EMPTY project. Unsaved changes first require SAVE, DISCARD or CANCEL.
+- **SHIFT + B3 RECOVERY** browses the separate autosave checkpoints.
 
-Or turn the encoder to pick one and push it.
+### Saving and recovery
 
-### Saving
+First SAVE: choose a writable SD folder with the encoder, push to enter it, and press **B3 USE FOLDER**. Enter a name and press **B3 SAVE**. An existing name asks before REPLACE. **B2 NEW FOLDER** creates a folder in the displayed writable location. SHIFT + encoder push goes up a folder; B1 CANCEL exits saving. INTERNAL and stock/system folders are read only.
 
-Rhythmer saves the project in the background, as the stock app does. Three
-seconds after you last used a control it writes the project to its file, as
-long as nothing plays, records or prints. A new project gets a file of its
-own the first time: **Project 1**, **Project 2** and so on, or its own name
-when it came from an MPC project.
+Autosave waits for about three seconds of idle time while playback, recording, printing and loading are stopped. It updates one recovery entry per project in `Rhythmer/Autosave`; it never writes numbered projects into your normal project folder or overwrites the last manual SAVE. New unsaved sessions also have one recovery entry. The first manual SAVE retains that identity; SAVE AS creates a new project identity.
 
-- The Project page shows **SAVED**, or **UNSAVED** until the next save.
-- While the sequencer plays, nothing is saved. Stop, and the save follows.
-- The Exit screen saves before it powers off or leaves.
-- Undo and redo are not saved with the project.
-- To keep an earlier state, press **B1** (**SAVE AS**) before you go on.
+**UNSAVED** refers to your manual save. **Recovery saved HH:MM** is a separate checkpoint confirmation. After a crash or restart, RECOVER opens the available last-work checkpoint as an unsaved copy. You can also open it from RECOVERY; use SAVE to keep it in a chosen folder. Declining/discarding does not delete existing recovery entries, but discarded work is not automatically offered on startup.
 
-The header shows **UNSAVED** in amber while the project has changes.
+The Exit screen checkpoints changed work to recovery before leaving or powering off. It does not create a manual Project N file. Source samples remain referenced, and Undo/Redo history is not saved. Keep separate backups of original samples and your SD card.
 
-![The project list](../images/screens/projectlist.png)
+![The project list](../images/rhythmer/020-projectlist.png)
 
 In the list:
 
@@ -67,7 +58,7 @@ out and back in.
 The Name sheet opens when you save or rename a project, sample, bank or
 marker.
 
-![The Name sheet](../images/screens/nameproject.png)
+![The Name sheet](../images/rhythmer/020-nameproject.png)
 
 - The pads type like phone keys. Each pad shows the letter it types next.
   Pad 14 types a space, pad 15 switches to digits, pad 16 deletes.

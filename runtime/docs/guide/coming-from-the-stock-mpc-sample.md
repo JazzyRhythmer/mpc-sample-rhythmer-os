@@ -43,8 +43,7 @@ plug-ins, the mixer and Song. **Full** shows every page (see
   turn, it opens the Tempo page.
 - Push the encoder to move to the next knob card. Rhythmer adds one thing to
   the encoder: hold it to open the Menu (see [The Menu](basics.md#the-menu)).
-- The project saves in the background. **SHIFT** + **Pad 16**, **B1**
-  (**SAVE AS**) saves it under a new name.
+- Autosave updates a separate recovery copy. **SHIFT + Pad 16 → B1 SAVE** keeps the project; the first save chooses its folder/name. On the Project page, **SHIFT + B1 SAVE AS** makes another project, and **SHIFT + B3 RECOVERY** opens recovery copies.
 - Knob FX, Pad FX, Flex Beat and the master compressor work as on the stock
   app, with the stock effects in the stock order.
 

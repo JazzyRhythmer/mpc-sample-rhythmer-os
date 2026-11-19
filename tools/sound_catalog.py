@@ -331,6 +331,8 @@ def generate():
         design_metadata.original_panel_order(entry)
         kit_mix_metadata.enrich(entry)
         semantic_parameter_ux.enrich(entry)
+    import kit_level_matching
+    kit_level_matching.apply(result)
     target=ROOT/'config/sound-catalog.json'
     target.write_text(json.dumps(result,indent=2)+'\n')
     print(len(registry),'engines;',len(presets),'kit presets')

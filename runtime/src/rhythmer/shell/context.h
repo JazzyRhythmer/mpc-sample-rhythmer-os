@@ -131,7 +131,7 @@ public:
     // The Name sheet: what is named, its first text and how long it may be.
     void open_name(NameTarget target, const std::string& initial, unsigned limit, bool capitals);
     void finish_name();                                     // Done: the name goes where it was asked for
-    void cancel_name() { ui.name.target = NameTarget::None; }
+    void cancel_name();
     void name_project(bool as_new);                         // Save (no file yet) or Save as new: a name first
     void rename_project(const std::string& path, const std::string& name); // Rename on the file sheet
     void name_marker(unsigned bar);                         // Shift + Push on a marker
@@ -468,6 +468,28 @@ public:
     std::string delete_path;          // Erase in a browser (shell/delete_jobs.h): what the question on screen would delete
     unsigned removals_seen = 0;       // the library's deletions the plug-in picker has listed again for
     bool project_list_opened = false; // the list has been opened since start
+    std::string recovery_status, save_media;
+    unsigned save_loop_errors = 0;
+    std::string recovery_offer, recovery_origin, last_save_folder;
+    std::string save_picker_from, save_name, save_target, save_from, save_id, save_old_folder;
+    std::vector<uint8_t> save_bytes;
+    uint64_t save_ticket = 0, save_before_hash = 0, recovery_hash = 0;
+    bool last_save_failed = false;
+    bool save_pending = false, save_queued = false, save_is_recovery = false, recovered_project = false;
+    bool recovery_offer_shown = false;
+    int after_project_save = 0; // 1 OPEN, 2 NEW, 3 EMPTY
+    std::string after_project_path;
+    void open_project_save(bool as_new);
+    void cancel_project_save();
+    void project_save_choose_folder();
+    void project_save_named(const std::string& name);
+    void commit_project_save();
+    void project_save_tick();
+    void request_project_open(const std::string& path);
+    void project_changes_answer(bool save);
+    void project_continue();
+    uint64_t project_save_hash();
+    bool queue_project_save(const std::string& path, bool recovery, bool new_identity = false);
     bool dirty = false;               // changed since it was saved or loaded
     bool import_unsaved = false;      // an MPC project just opened, with no file of its own: saved by hand (SAVE AS), never in the background
     void save_project_to(const std::string& path);

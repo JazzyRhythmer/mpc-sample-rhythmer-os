@@ -48,7 +48,7 @@ void draw_update_sheet(Paint& p, const Snapshot& s) {
         soft_keys(p, keys);
         return;
     }
-    static const char* const steps[] = {"SAVING PROJECT", "CHECKING FILE", "COPYING TO CARD", "RESTARTING"};
+    static const char* const steps[] = {"SAVING RECOVERY", "CHECKING FILE", "COPYING TO CARD", "RESTARTING"};
     unsigned step = unsigned(std::clamp(int(phase) - int(UpdatePhase::Saving), 0, 3));
     gauge(p, x, zone::picture_y + 78, w, float(step + 1) / 4.0f, colour::amber, 4);
     icon(p, Icon::Card, x, zone::picture_y + 92, 14, colour::mid);
@@ -276,7 +276,7 @@ void draw_exit_sheet(Paint& p, const Snapshot& s) {
     if (!card) h.left.push_back(pill(Icon::Card, "NO CARD", colour::amber));
     else if (s.ui.exit_off && !s.ui.exit_saved) h.left.push_back(pill(Icon::Rec, "SAVING", colour::amber));
     else if (!s.ui.exit_off && s.dirty) h.left.push_back(pill(Icon::Rec, "UNSAVED", colour::amber)); // as Project says it: OFF and MPC APP save it first
-    else h.left.push_back(pill(Icon::Check, s.project_path.empty() ? "SAVED AS NEW" : "SAVED", colour::play));
+    else h.left.push_back(pill(Icon::Check, s.dirty ? "RECOVERY SAVED" : s.project_path.empty() ? "NO CHANGES" : "SAVED", colour::play));
     h.right.push_back(label(s.project.name));
     header(p, h);
     if (s.ui.exit_off) { // POWER OFF chosen: the save on its way, then the MPC goes dark

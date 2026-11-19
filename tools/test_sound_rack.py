@@ -12,7 +12,7 @@ parser.add_argument('--runtime',type=Path,help='Reviewed candidate runtime; defa
 parser.add_argument('--output-dir',type=Path,help='Registered SSD QA output directory')
 parser.add_argument('--plugins',type=Path,help='Candidate plugin tree; defaults to the staged SD card')
 parser.add_argument('--catalog',type=Path,help='Candidate catalog; defaults to this source snapshot')
-parser.add_argument('mode',choices=('websitepreview','acidaliases','singles','kits','audit','inspect','playback','demo','transport','authored','audition','musical','labels','userdefaults','presetcontrols','controlroundtrip','signalquality','kitownership','plaitscontrols','qualityreview','kitmodels','kitfilter','enginefilter'))
+parser.add_argument('mode',choices=('kitmix','websitepreview','acidaliases','singles','kits','audit','inspect','playback','demo','transport','authored','audition','musical','labels','userdefaults','presetcontrols','controlroundtrip','signalquality','kitownership','plaitscontrols','qualityreview','kitmodels','kitfilter','enginefilter'))
 parser.add_argument('engine',nargs='?')
 args=parser.parse_args()
 WORK=Path('/Volumes/SSD/Development/BuildCache/rhythmer-os')

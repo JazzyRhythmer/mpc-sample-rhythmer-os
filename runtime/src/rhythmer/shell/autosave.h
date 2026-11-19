@@ -3,23 +3,21 @@
 #pragma once
 #include <cstdint>
 
-// Background save, as on the stock app. The project is saved to its file autosave_idle_ms after the last control
-// was used, while nothing plays, records, prints or loads and no sheet is open. A project with no file yet gets
-// one on the card. It never runs while the sequencer plays: a save reads each plug-in's state on the MIDI thread.
-// Pure, for the shell and the tests.
+// Idle checkpoint timing for a separate per-project recovery file. Manual files and their dirty status stay
+// unchanged. Plug-in state is captured only while transport/record/print/load work is stopped.
+// Pure timing policy, shared by the shell and regression tests.
 namespace rhythmer {
 
 constexpr uint32_t autosave_idle_ms = 3000;   // this long after the last control or note
 constexpr uint32_t autosave_retry_ms = 10000; // after a save that found no card: not before this
 
 struct AutosaveFacts {
-    bool dirty = false;     // changed since it was saved or loaded
+    bool dirty = false;     // changed since manual save or load
     bool playing = false;   // the sequencer, the song or a loop take runs
     bool recording = false; // a pattern take, a sample take, a print, an auto sample or an export runs
     bool sheet = false;     // a question, the Name sheet, the Exit sheet, SD card access or an update has the controls
     bool loading = false;   // the project's samples are still being read
-    bool editing = false;   // Chop or Record is open (their work is not in the project yet), or an MPC project was
-                            // opened and has no file of its own (opening one writes nothing; SAVE AS gives it a file)
+    bool editing = false;   // Chop/Record, a save destination browser, or a lesson owns unfinished work
     bool failed = false;    // the last save found no card
     uint32_t now = 0, last_input = 0, last_try = 0;
 };
@@ -27,7 +25,7 @@ struct AutosaveFacts {
 inline bool autosave_due(const AutosaveFacts& f) {
     if (!f.dirty || f.playing || f.recording || f.sheet || f.loading || f.editing) return false;
     if (f.now - f.last_input < autosave_idle_ms) return false;
-    return !f.failed || f.now - f.last_try >= autosave_retry_ms;
+    return f.now - f.last_try >= (f.failed ? autosave_retry_ms : autosave_idle_ms);
 }
 
 } // namespace rhythmer

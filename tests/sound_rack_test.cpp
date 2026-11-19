@@ -45,6 +45,7 @@ static void design_view(var& view,AudioPluginInstance* synth,bool state_check=fa
 #include "kit_filter_check.inc"
 #include "engine_filter_check.inc"
 #include "acid_aliases.inc"
+#include "kit_mix_check.inc"
 int main(int argc,char** argv){try{
     if(argc>3&&String(argv[3])=="transport")return transport_check();
     require(argc>=3,"catalogue and Plugins required");ScopedJuceInitialiser_GUI init;
@@ -68,6 +69,7 @@ int main(int argc,char** argv){try{
     }
     require(hidden==7,"Unexpected kit-only source count");
     String error;
+    if(argc>3&&String(argv[3])=="kitmix")return kit_mix_check(catalog,loader);
     if(argc>3&&String(argv[3])=="acidaliases")return acid_aliases(catalog,loader);
     if(argc>3&&String(argv[3])=="qualityreview")return quality_review(catalog,loader,argv[1]);
     if(argc>3&&String(argv[3])=="plaitscontrols")return plaits_controls(catalog,loader,argv[1]);
@@ -285,7 +287,7 @@ int main(int argc,char** argv){try{
             for(int pad=0;pad<16;++pad){auto route=catalog["kits"][k]["routes"][pad];int e=int(route["engine"]),s=int(route["sound"]);if(engines[e]["name"].toString()!="Hortator")continue;
                 auto original=rhythmer::make_sound_rack(catalog,e,loader,44100,128,error);require(bool(original),error.toRawUTF8());original->setCurrentProgram(s);MemoryBlock source;original->getStateInformation(source);auto expected=JSON::parse(source.toString())["children"][0]["values"];
                 auto actual=kit_json["children"][int(kit_json["routes"][pad]["child"])]["values"];int note=int(engines[e]["sounds"][s]["note"]),lane=-1;const int native_notes[]{36,38,39,42,46,45,37,49};for(int n=0;n<8;++n)if(native_notes[n]==note)lane=n;require(lane>=0,"Invalid Hortator source lane");
-                for(int n=1+lane*11;n<1+(lane+1)*11;++n)require(std::abs(float(expected[n])-float(actual[n]))<1e-6f,("Kit replaced original factory data: "+kit->getProgramName(k)+" pad="+String(pad+1)).toRawUTF8());
+                for(int n=1+lane*11;n<1+(lane+1)*11;++n){auto mix=route["mix_values"].getProperty(Identifier(String(n)),{});float wanted=float(expected[n]);if(!mix.isVoid()){bool level=false;for(const auto&parameter:*engines[e]["parameters"].getArray())if(int(parameter["index"])==n)level=parameter["kit_mix_role"].toString()=="volume";require(level,"Calibration rewrote a non-volume source parameter");wanted=float(mix);}require(std::abs(wanted-float(actual[n]))<1e-6f,("Kit differs from source plus measured level: "+kit->getProgramName(k)+" pad="+String(pad+1)).toRawUTF8());}
             }
             for(int pad=0;pad<16;++pad){
                 kit->getParameters()[0]->setValue(pad/63.0f);std::set<String> seen;

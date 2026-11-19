@@ -209,9 +209,9 @@ BREAK GEN의 Straight / Genre / Random / Mutate / Tail Fill은 패턴의 슬라�
 
 ## 13. 프로젝트와 User Sound/Kit 저장
 
-프로젝트는 재생·녹음·프린트가 멈춘 상태에서 마지막 조작 약 3초 뒤 자동 저장됩니다. **SAVED / UNSAVED**를 확인하고 저장이 끝난 뒤 전원을 끄거나 카드를 분리합니다.
+재생·녹음·프린트가 멈춘 유휴 상태에서는 약 3초 뒤 별도 복구본이 갱신됩니다. **SAVED / UNSAVED**는 수동 저장 기준이며, **Recovery saved HH:MM**은 복구 저장 기준입니다. 수동 SAVE가 끝난 뒤 전원을 끄거나 카드를 분리합니다.
 
-새 이름으로 보관: **SHIFT + Pad 16 → B1 SAVE AS → 이름 입력 → B3 SAVE**. 가져온 MPC 프로젝트는 먼저 SAVE AS를 실행합니다. 다시 열기: Project → B2 OPEN → 프로젝트 선택 → 인코더 클릭.
+수동 저장: **SHIFT + Pad 16 → B1 SAVE**. 첫 저장은 폴더 선택 → B3 USE FOLDER → 이름 → B3 SAVE이며 이후에는 같은 파일을 갱신합니다. 다른 이름·폴더의 독립 프로젝트는 프로젝트 화면의 **SHIFT + B1 SAVE AS**를 사용합니다. 자동저장은 Rhythmer/Autosave의 프로젝트별 복구본 하나만 갱신하며 원래 수동 저장 파일은 보존합니다. 복구는 프로젝트 화면의 **SHIFT + B3 RECOVERY**입니다. 다시 열기: Project → B2 OPEN → 프로젝트 선택 → LOAD. 미저장 변경이 있으면 SAVE·DISCARD·CANCEL을 선택합니다.
 
 | 저장 종류 | 저장 내용 | 별도로 보관할 것 |
 | --- | --- | --- |

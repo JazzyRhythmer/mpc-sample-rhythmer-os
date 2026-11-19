@@ -672,7 +672,9 @@ void SamplerEngine::note_on(int key, int velocity) {
         unsigned first=manipulator.first_pad();
         const auto* a=samples&&pads[first].sample<sample_slots?(*samples)[pads[first].sample]:nullptr;
         const auto* b=samples&&pads[first].layers[0].sample<sample_slots?(*samples)[pads[first].layers[0].sample]:nullptr;
-        manipulator.sources(a,b);manipulator.note(key,velocity);return;}
+        int slice=key-int(sampler_first_note+first);
+        auto play=slice>=0&&slice<16?pads[first+unsigned(slice)].play:PadPlay::Gate;
+        manipulator.sources(a,b);manipulator.note(key,velocity,play);return;}
     if (keyed) key = keyed_note(key);
     if (pedal) { // pressed again under the pedal: its earlier off is not owed any more
         unsigned kept = 0;

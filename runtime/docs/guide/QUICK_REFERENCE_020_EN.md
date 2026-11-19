@@ -16,7 +16,9 @@
 | Open Step Edit | SHIFT + SEQ | Step editor for the selected track/pattern |
 | Record | SAMPLE → SEQ RECORD → PLAY | Wait for count-in, play notes; SEQ RECORD again leaves recording |
 | Generate | PATTERNS → SHIFT + B3 GEN | Check target and NEW SOUNDS / KEEP SOUND(S) before APPLY |
-| Save a project copy | SHIFT + Pad 16 → B1 SAVE AS → B3 SAVE | Name saved; wait for SAVED |
+| Save a project | SHIFT + Pad 16, release SHIFT → B1 SAVE | First save: folder → B3 USE FOLDER → name → B3 SAVE; later saves update that file |
+| Save another copy | Project → SHIFT + B1 SAVE AS | Choose a folder and name; original project stays |
+| Recover work | Project → SHIFT + B3 RECOVERY | One recovery entry per project; use SAVE after loading it |
 | Undo / redo | SHIFT + − / + | Supported project edit is restored/reapplied |
 | Cut current audio | STOP twice within 400 ms | Current notes/tails stop; a new note or PLAY resumes |
 | Open settings | SHIFT + Pad 8 | Main Settings; K1 FEATURES selects Basic/Full |

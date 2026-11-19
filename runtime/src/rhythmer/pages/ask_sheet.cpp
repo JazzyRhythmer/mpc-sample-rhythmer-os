@@ -103,13 +103,25 @@ void draw_ask_sheet(Paint& p, const Snapshot& s) {
         sheet.lines = {"Settings go back to factory.", "Projects stay."};
         verb = "RESET"; verb_glyph = Icon::Check;
         break;
+    case Ask::ProjectChanges:
+        sheet.title = "Save your changes?";
+        sheet.lines = {"SAVE keeps your changes.", "DISCARD keeps the last manual save."};
+        sheet.name = s.project.name; sheet.icon = Icon::Save;
+        middle = "DISCARD"; verb = "SAVE"; verb_glyph = Icon::Save; break;
+    case Ask::OverwriteProject:
+        sheet.title = "Replace this project?";
+        sheet.name = s.ui.ask_name.data();
+        sheet.lines = {"A project with this name already exists.", "REPLACE overwrites that file."};
+        sheet.icon = Icon::Save; verb = "REPLACE"; verb_glyph = Icon::Save; break;
+    case Ask::RecoverProject:
+        sheet.title = "Recover your last work?";
+        sheet.lines = {"A separate recovery copy is available.", "Your manually saved project stays unchanged."};
+        sheet.icon = Icon::Save; verb = "RECOVER"; cancel = "LATER"; verb_glyph = Icon::Save; break;
     case Ask::NewProject: {
         sheet.icon = Icon::Plus;
         sheet.title = "Start a new project?";
-        juce::String name = s.project.name[0] ? juce::String::fromUTF8(s.project.name) : juce::String("This project");
-        if (s.ui.ask_target == 1) sheet.lines = {name + " is saved first.", ""};
-        else if (s.ui.ask_target == 2) sheet.lines = {"This project was never saved.", "Its changes are lost."};
-        else sheet.lines = {name + " has nothing unsaved.", ""};
+        sheet.name = s.project.name;
+        sheet.lines = {"The current project will close.", "NEW loads a kit. EMPTY starts blank."};
         verb = "NEW"; verb_glyph = Icon::Check;
         middle = "EMPTY"; // B3: with the MPC's factory kit on track 1; B2: an empty kit
         break;
@@ -209,11 +221,11 @@ void draw_ask_sheet(Paint& p, const Snapshot& s) {
 
     p.fill(0, zone::soft_y, zone::width, zone::soft_h, colour::bg);
     { // the key the wheel is on, on a raised chip (Push presses it)
-        float column = zone::width / 3.0f, x = (s.ui.ask_pick == 2 ? 2 : 0) * column;
+        float column = zone::width / 3.0f, x = (s.ui.ask_pick == 1 && !middle.isEmpty() ? 1 : s.ui.ask_pick == 2 ? 2 : 0) * column;
         p.fill(x + 8, zone::soft_y + 2, column - 16, zone::soft_h - 4, colour::raised, 4);
     }
     bool on_verb = s.ui.ask_pick == 2; // the wheel's key, barred; Push presses it
-    SoftKeys keys {{cancel, middle, verb}, on_verb ? 2 : 0, on_verb ? accent : colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::None}};
+    SoftKeys keys {{cancel, middle, verb}, s.ui.ask_pick == 1 && !middle.isEmpty() ? 1 : on_verb ? 2 : 0, on_verb ? accent : colour::text, {KeyIcon::Back, KeyIcon::None, KeyIcon::None}};
     keys.glyphs[2] = verb_glyph;
     keys.tints[2] = accent;
     soft_keys(p, keys);

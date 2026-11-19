@@ -38,6 +38,8 @@
 #include "rhythmer/shell/pad_colour.h"
 #include "rhythmer/shell/mpc_wav_slices.h"
 #include <filesystem>
+#include "rhythmer/shell/recovery_file.h"
+#include "rhythmer/pages/pages.h"
 #include <chrono>
 #include <cstdio>
 #include <cstring>
@@ -67,23 +69,7 @@ void Context::send(const Command& command) {
     }
 }
 
-void Context::save_project_to(const std::string& path) {
-    if (!store || path.empty()) return;
-    auto name = std::filesystem::path(path).stem().string();
-    std::snprintf(project.name, sizeof(project.name), "%s", name.c_str());
-    save_loop_files(*this, path); // the loops' lengths into the project, their audio beside it (docs/LOOPER.md)
-    keep_chop();                  // Chop's slices into their WAV files (and older projects' chops)
-    free_unused_samples();        // and no slot nothing uses (roadmap P3)
-    PluginStates states;
-    if (plugins) states = plugins->states(); // each plug-in's state as it is now, beside the project
-    // Save As: its prints copied (F2d); an imported project's first save: its takes copied in (F3)
-    const std::string from = project_path.empty() ? audio_staging_from : project_path;
-    store->save(path, rhythmer::save_project(project, patterns, &states, &prints), from);
-    if (project_path.empty() && !audio_staging_from.empty()) audio_sent_path = path; // its takes play on from where they are
-    project_path = path;
-    dirty = false;
-    import_unsaved = false;
-}
+void Context::save_project_to(const std::string& path) { queue_project_save(path, false); }
 
 // Roadmap P3: a sample slot no pad's layer plays, no undo or redo could bring back onto one, no file being made
 // holds and Chop is not on is freed as the project is saved, its chop with it, and let go of by the library: the file
@@ -103,20 +89,28 @@ unsigned Context::free_unused_samples() {
     return freed;
 }
 
-void Context::save_project() { save_project_to(project_path.empty() && store ? store->free_path("") : project_path); }
-
-// Background save (shell/autosave.h): into its own file; with none yet, a new one named after the project
-// (an imported project keeps its name), else Project N. False when there is no card to save to.
-bool Context::autosave() {
-    if (!store) return false;
-    std::string path = project_path;
-    if (path.empty()) {
-        const std::string name = project.name;
-        path = name.empty() || name == "Untitled" ? store->free_path("") : store->named_path(name);
+void Context::save_project() {
+    if (project_path.empty() || recovered_project) open_project_save(false);
+    else {
+        ProjectStore::View v;if(store)store->view(v);
+        const auto card=std::filesystem::path(v.root).parent_path().parent_path();
+        if(!recovery_file::under(std::filesystem::path(project_path),card)||recovery_file::protected_folder(std::filesystem::path(project_path).parent_path(),v.root))open_project_save(false);
+        else queue_project_save(project_path,false);
     }
-    if (path.empty()) return false;
-    save_project_to(path);
-    return true;
+}
+bool Context::autosave() {
+    if (!dirty) {last_save_failed=false;return true;}
+    if (!store || save_pending || ui.project_save_picker) return false;
+    if(!recovery_offer_shown){ProjectStore::View view;store->view(view);if(!view.recovery_offer.empty()){notice("Choose RECOVER or LATER first");return false;}}
+    auto dir = store->recovery_directory();
+    if (dir.empty()) return false;
+    if (!recovery_file::valid_id(project.recovery_id)) {
+        const auto id = project_path.empty() ? recovery_file::new_id() : recovery_file::legacy_id(project_path);
+        std::snprintf(project.recovery_id, sizeof(project.recovery_id), "%s", id.c_str());
+    }
+    if(host.playing()||host.song_playing()) {save_pending=true;save_queued=false;save_is_recovery=true;save_bytes.clear();last_save_failed=false;return true;}
+    if (project_save_hash() == recovery_hash) {last_save_failed=false;return true;}
+    return queue_project_save(dir + "/" + project.recovery_id + ".mldp", true);
 }
 
 void Context::new_project() {
@@ -178,6 +172,8 @@ void Context::switch_to(const Project& next, const PatternBank& bank, const std:
     send_click(); // the metronome is Rhythmer's, and no take is running now
     send_repeat_velocity();
     project_path = path;
+    recovered_project = false; recovery_origin.clear(); recovery_status.clear(); recovery_hash = 0; recovery_offer_shown = false;
+    ui.project_save_picker = false;
     if (store) store->opened(path); // a file of its own: the one the next start resumes
     dirty = false;
     samples_to_load = 0; // every sample slot again, a few each tick
@@ -273,6 +269,7 @@ void Context::reload_tick() {
 }
 
 void Context::open(PageId page) {
+    if(ui.project_save_picker&&page!=PageId::Project)cancel_project_save();
     if(ui.page==PageId::Edit && page!=PageId::Edit && track().break_bars)
         for(unsigned n=0;n<16;++n)if(pad_track[n]==ui.track && pad_keys[n][0]>=0 && pad_keys[n][0]<19)release_pad(n);
     if(page==PageId::Edit&&track().engine==EngineKind::Plugin&&ui.page!=PageId::PluginPresets){
@@ -327,6 +324,7 @@ void Context::back() {
     if(ui.ask!=UiState::Ask::None){ask_button(*this,SurfaceButton::TopLeft);return;}
     if(ui.menu){menu_button(*this,SurfaceButton::TopLeft);return;}
     if(ui.name.open()){cancel_name();return;}
+    if(ui.project_save_picker){ if(!project_folder_up(*this))cancel_project_save(); return; }
     if(ui.page==PageId::Stage&&!track().used()){if(ui.new_sources)new_track_types(*this);else cancel_new_track(*this);return;}
     if(ui.page==PageId::Patterns && ui.sheet_open && ui.gen8_mode==2 && ui.break_pending>=0 && ui.break_job_track==ui.track){
         // Decoder may finish in the cache, but a cancelled load must never commit.
@@ -1137,9 +1135,7 @@ void Context::open_name(NameTarget target, const std::string& initial, unsigned 
 }
 
 void Context::name_project(bool as_new) {
-    if (!store) return;
-    std::string suggestion = as_new ? std::string(project.name) : std::filesystem::path(store->free_path("")).stem().string();
-    open_name(as_new ? NameTarget::ProjectSaveAs : NameTarget::ProjectSave, suggestion, sizeof(project.name) - 1, false);
+    open_project_save(as_new);
 }
 
 void Context::rename_project(const std::string& path, const std::string& name) {
@@ -1201,18 +1197,10 @@ void Context::finish_name() {
     if (text.empty()) return; // an empty name changes nothing
     switch (target) {
     case NameTarget::ProjectSave: case NameTarget::ProjectSaveAs:
-        if (store) { save_project_to(store->named_path(text)); store->list(project_folder); }
+        project_save_named(text);
         break;
     case NameTarget::ProjectRename:
-        if (name_path.empty() || name_path == project_path) std::snprintf(project.name, sizeof(project.name), "%s", text.c_str());
-        if (!name_path.empty() && store) {
-            store->rename(name_path, text);
-            if (name_path == project_path) {
-                auto p = std::filesystem::path(name_path);
-                project_path = (p.parent_path() / (text + p.extension().string())).string();
-            }
-            store->list(project_folder);
-        }
+        if (!name_path.empty() && store) {store->rename(name_path,text);store->list(project_folder);notice("Renaming project...");}
         break;
     case NameTarget::Marker: {
         int at = project.song.marker_at(name_bar);

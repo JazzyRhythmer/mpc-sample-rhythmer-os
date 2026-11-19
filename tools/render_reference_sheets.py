@@ -45,7 +45,7 @@ def controls(path):
         ('SELECT A TRACK',['PAD BANK','+','PAD 1–16'],'Hold PAD BANK, tap the track pad, then release. Check the track number in the header.'),
         ('OPEN THE SOUND',['SAMPLE'],'Stage is the selected track’s sound home. Return here from PATTERNS to play its instrument.'),
         ('OPEN PATTERNS',['SEQ','→','B1 PATTERNS'],'SEQ opens SEQUENCES for all tracks. B1 PATTERNS opens the selected track’s patterns.'),
-        ('SAVE A PROJECT COPY',['SHIFT','+','PAD 16','→','B1 SAVE AS'],'Projects autosave when idle. SAVE AS makes a named copy. Imported MPC projects need SAVE AS first.'),
+        ('SAVE YOUR PROJECT',['SHIFT','+','PAD 16','→','B1 SAVE'],'First SAVE chooses a folder/name. On Project, SHIFT + B1 is SAVE AS; SHIFT + B3 opens RECOVERY.'),
         ('FINE-EDIT A VALUE',['SHIFT','+','ENCODER TURN'],'On Stage EDIT, touch the target K1–K3 knob first. Shift + encoder turn fine-adjusts that control.'),
         ('GENERATE AN IDEA',['SHIFT','+','B3 GEN'],'From SEQ → B1 PATTERNS. Check the target tracks and SOUND + MIDI / MIDI ONLY before applying.'),
     ]
@@ -90,7 +90,7 @@ def structure(path):
     for x,title,body in [(32,'PRESETS → EDIT','Choose the sound, then shape it. PERFORM holds separate track effects. GEN makes ideas; Acid / Break have their own workflows.'),(436,'TRACKS → MIX','Balance levels, sends A–D and effects. Engine effects, track inserts and bus effects remain separate stages.')]:
         s.text(title,x,1102,19,FG,True);s.paragraph(body,x,1131,370,12)
     s.box(32,1222,796,112,FG,FG)
-    s.text('PROJECT SAVE',48,1250,12,BG,True);s.paragraph('Tracks, patterns and arrangement. Idle autosave; B1 SAVE AS makes a named copy.',48,1275,355,12,BG)
+    s.text('PROJECT SAVE',48,1250,12,BG,True);s.paragraph('B1 SAVE keeps your named file. SHIFT + B1: SAVE AS. Idle autosave updates a separate recovery copy.',48,1275,355,12,BG)
     s.text('USER SOUND / USER KIT',438,1250,12,BG,True);s.paragraph('A reusable instrument or kit preset. Keep the original sample audio too.',438,1275,365,12,BG)
     s.paragraph('SAMPLE opens a track’s sound. SEQ opens SEQUENCES; B1 opens PATTERNS. TRACK SETUP changes its role; DELETE TRACK is a separate confirmed action.',32,1370,790,12)
     s.save(path)

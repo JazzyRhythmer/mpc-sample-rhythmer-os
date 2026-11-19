@@ -48,7 +48,7 @@ void BreakManipulator::live_off(int key){
     else{state->jungle_roll_off();state->six_seq_release=1;}
     state->jungle_play(transport_playing||state->six_seq_gates||live_count);
 }
-void BreakManipulator::note(int key,int velocity){
+void BreakManipulator::note(int key,int velocity,PadPlay play){
     if(!enabled())return;
     if(key==16||key==17){unsigned which=unsigned(key-16);if(!loops[which])return;
         if(source_!=which){source_=which;auto* s=loops[which];
@@ -58,15 +58,18 @@ void BreakManipulator::note(int key,int velocity){
     if(key==18){param(1,0);param(2,0);state->jungle_straight();return;}
     if(key>=0&&key<16){state->jungle_play(1);state->jungle_sequence_note(unsigned(key+16));return;}
     int slice=key-int(sampler_first_note+bank_*16);if(slice<0||slice>=16)return;
+    // Chops share one playback lane. An old pad-up must not stop the new chop.
+    state->six_seq_gates&=0xffff0000u;
+    one_shots_=play==PadPlay::OneShot?uint16_t(1u<<slice):0;
     gain=std::clamp(velocity,1,127)/127.f;state->jungle_play(1);state->jungle_sequence_note(unsigned(slice));
 }
 void BreakManipulator::off(int key){
     if(key>=0&&key<16)state->jungle_sequence_off(unsigned(key+16));
-    else{int slice=key-int(sampler_first_note+bank_*16);if(slice>=0&&slice<16)state->jungle_sequence_off(unsigned(slice));}
+    else{int slice=key-int(sampler_first_note+bank_*16);if(slice>=0&&slice<16){if(one_shots_&(1u<<slice))return;state->jungle_sequence_off(unsigned(slice));}}
     if(!transport_playing&&!state->six_seq_gates&&!live_count)state->jungle_play(0);
 }
-void BreakManipulator::release(){live_count=0;live_velocity.fill(0);activity_=0;transport_playing=false;state->jungle_roll_off();state->jungle_sequence_off(32);state->jungle_play(0);}
-void BreakManipulator::stop(){live_count=0;live_velocity.fill(0);activity_=0;transport_playing=false;state->jungle_init();state->jungle_sequence_off(32);state->view_playing=state->view_ext=0;filter_age=filter_q_age=0;filter_q=8;state->jungle_filter_resonance(8);state->jungle_sequence_mode(1);for(unsigned i=0;i<10;i++)param(i,controls[i]);tick_phase=phase=0;read=32;previous=next=0;std::fill(std::begin(output),std::end(output),0);}
+void BreakManipulator::release(){one_shots_=0;live_count=0;live_velocity.fill(0);activity_=0;transport_playing=false;state->jungle_roll_off();state->jungle_sequence_off(32);state->jungle_play(0);}
+void BreakManipulator::stop(){one_shots_=0;live_count=0;live_velocity.fill(0);activity_=0;transport_playing=false;state->jungle_init();state->jungle_sequence_off(32);state->view_playing=state->view_ext=0;filter_age=filter_q_age=0;filter_q=8;state->jungle_filter_resonance(8);state->jungle_sequence_mode(1);for(unsigned i=0;i<10;i++)param(i,controls[i]);tick_phase=phase=0;read=32;previous=next=0;std::fill(std::begin(output),std::end(output),0);}
 void BreakManipulator::param(unsigned id,int value){if(id>=10)return;
     if(id==3&&controls[3]!=value){filter_age=filter_q_age=0;filter_q=14;state->jungle_filter_resonance(14);}
     controls[id]=value;
@@ -85,6 +88,11 @@ void BreakManipulator::render(float* l,float* r,unsigned frames,float rate){
     const double step=44100.0/std::max(8000.f,rate);
     for(unsigned i=0;i<frames;i++){phase+=step;while(phase>=1){previous=next;next=frame();phase-=1;}
         l[i]=r[i]=playing_gain*(previous+float(phase)*(next-previous));}
+    // Retire the one-shot gate at the natural end, without a held-note release.
+    if(one_shots_ && state->six_seq_hit<0 && !state->voices[0].active && !state->voices[1].active && !live_count && !state->six_seq_roll){
+        state->six_seq_gates&=0xffff0000u;one_shots_=0;
+        state->jungle_play(transport_playing||state->six_seq_gates);
+    }
     activity_.store((transport_playing?1u:0u)|((state->six_seq_gates||live_count)?2u:0u)|((state->six_seq_roll==3||state->roll_now==3)?4u:0u),std::memory_order_relaxed);
 }
 bool BreakManipulator::sounding()const{return enabled()&&(state->jungle_playing()||state->voices[0].active||state->voices[1].active);}

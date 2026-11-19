@@ -20,7 +20,7 @@ RHYTHMER OS **0.2.0** for MPC Sample. Choose a chapter from the contents, or fol
 | Open GEN | PATTERNS → SHIFT + B3 | Open pattern generation. Check the target before applying. |
 | Fine-adjust a value | Touch its K1–K3 knob, then SHIFT + encoder turn | Fine adjustment; this is **not** Back. |
 | Undo / Redo | SHIFT + − / + | Undo/redo supported project edits. Not every plug-in knob has project Undo. |
-| Save under a new name | SHIFT + Pad 16 → B1 SAVE AS | Name a project copy; B3 SAVE confirms its name. |
+| Save / Save As | SHIFT + Pad 16 → B1 SAVE; hold SHIFT + B1 for SAVE AS | First SAVE and SAVE AS choose a folder and name. |
 | Stop all current audio | Press STOP twice within 400 ms | Cut notes and effect tails. A new note or PLAY resumes sound. |
 
 A single PAD BANK tap changes the pad bank. Holding it while selecting a track does not. If NOTE REPEAT or ARP is active, rate choices can temporarily replace soft-key menus. Turn the repeat/arp off before following a menu instruction.
@@ -33,7 +33,7 @@ A single PAD BANK tap changes the pad bank. Holding it while selecting a track d
 
 | Item | Meaning | How to select it |
 | --- | --- | --- |
-| Project | The complete session: tracks, patterns, mix and arrangement | SHIFT + Pad 16 → OPEN / NEW; SAVE AS makes a named copy |
+| Project | The complete session: tracks, patterns, mix and arrangement | SHIFT + Pad 16 → SAVE / OPEN / NEW; SHIFT + B1 SAVE AS chooses a folder/name |
 | Track | One part of the session; its instrument/audio, patterns and mix | PAD BANK + pad 1–16, or TRACKS |
 | Pattern | Notes and supported motion for one track; up to 128 per track | SEQ → B1 PATTERNS → pattern pad |
 | Sequence | A pattern number launched across tracks | SEQ → B1 SEQUENCES → sequence pad |
@@ -64,7 +64,7 @@ A first install starts in Basic. Settings → FEATURES = FULL shows MIDI/Audio a
 
 ### Save the right thing
 
-- **Project:** the session, including notes, arrangement and instrument state. Autosaves while idle; SAVE AS makes a copy.
+- **Project:** the session, including notes, arrangement and instrument state. SAVE keeps the project; idle autosave updates a separate recovery copy. SAVE AS makes a separate project.
 - **User Sound:** a reusable instrument sound, without the song's notes.
 - **User Kit:** a reusable kit and its edited pad sounds, without the song's notes.
 - **SD backup:** keeps source samples and all project/preset files. Saving a preset is not a source-audio backup.
@@ -91,7 +91,7 @@ If a pad changes a pattern number instead of playing a sound, you are on PATTERN
 
 ![Track type cards: choose the role of the selected empty track](../assets/manual/020-tracktypes.png)
 
-A new project normally loads one of the MPC's factory kits on track 1. To start with an empty kit instead: **SHIFT + Pad 16 → B3 NEW → B2 EMPTY** on the confirmation. Do this only when you intend to start a new project.
+A normal NEW project loads **Rhythmer Kit / K-WASUB / 909** on track 1. Opening a saved project keeps its saved instruments. To start with an empty kit instead: **SHIFT + Pad 16 → B3 NEW → B2 EMPTY** on the confirmation. Do this only when you intend to start a new project.
 
 To add a plug-in on a different track:
 
@@ -381,15 +381,44 @@ Load A and Load B are different actions. On source B changes, the bar structure 
 
 TRACKS uses **K1 LEVEL / K2 PAN / K3 SEND A**. The default black-and-white screen keeps colour names/metadata for kits without requiring colour to identify the selected track or pad.
 
-## 14. Save, reopen and back up
+## 14. Save, reopen and recover
 
-![Project: NEW, OPEN and SAVE AS](../assets/manual/020-project.png)
+![Project: SAVE, OPEN and NEW](../assets/manual/020-project.png)
 
-![SAVE AS: name the project, then confirm SAVE](../assets/manual/020-nameproject.png)
+**SAVE keeps your project. Autosave keeps a separate recovery copy.** Autosave never overwrites your manually saved project and never creates numbered projects in your normal project folder.
 
-The project autosaves about three seconds after the last control while playback, recording and printing are stopped. The Project page shows SAVED / UNSAVED. Stop and let saving finish before power-off or card removal.
+### First SAVE: choose a folder and name
 
-To keep a named copy: **SHIFT + Pad 16 → B1 SAVE AS → enter name → B3 SAVE**. An imported MPC project needs SAVE AS before it is written in RHYTHMER's own project format. To reopen: Project → **B2 OPEN** → choose the project → push.
+1. Stop playback and finish recording or printing.
+2. Press **SHIFT + Pad 16**, release SHIFT, then press **B1 SAVE**. A folder browser opens.
+3. Turn the encoder to choose a folder; push to enter it. **SHIFT + encoder push** goes up a folder. The header shows the current location.
+4. Press **B3 USE FOLDER** to choose the displayed folder. **B2 NEW FOLDER** creates a folder there; enter that folder if you want to use it.
+5. Enter the project name and press **B3 SAVE**. If that name already exists, **REPLACE** asks before overwriting it.
+6. Wait for **SAVED**. A failed write leaves your previous project path and unsaved changes intact.
+
+![SAVE: choose the destination folder](../assets/manual/020-save-folder.png)
+
+![SAVE: enter the file name](../assets/manual/020-nameproject.png)
+
+On a project with its own saved file, **B1 SAVE updates that same file** without asking for a folder each time. To choose a different folder or make a separate project, hold SHIFT and press **B1 SAVE AS** on the Project page. SAVE AS gives the new project its own recovery identity.
+
+Save destinations are writable SD folders. INTERNAL, stock MPC project folders, system folders and Rhythmer's recovery/cache folders are not manual-save destinations. Selecting one does not silently save somewhere else. Back from the name sheet returns to folder selection; **B1 CANCEL** in the folder browser cancels the save.
+
+### OPEN and NEW
+
+Project → **B2 OPEN** → choose the project → push → LOAD. If the current project has changes, choose **SAVE**, **DISCARD** or **CANCEL**. SAVE must finish successfully before switching. DISCARD leaves the manually saved file unchanged; CANCEL keeps the current project open. NEW uses the same protection before offering a normal or empty new project.
+
+### One recovery copy per project
+
+After about three seconds without control input, while playback, recording, printing and loading are stopped, changed work is checkpointed under **Rhythmer/Autosave**. The same project updates the same recovery entry. Names do not determine identity, so two projects called Session can have separate recovery entries. A never-saved session also has one recovery entry; its first manual SAVE keeps that identity.
+
+**UNSAVED** means changes have not been kept by your own SAVE. **Recovery saved HH:MM** only confirms a recovery checkpoint. These are different states.
+
+On startup, an available last-work checkpoint offers **RECOVER** or **LATER**. To find it later: open the Project home tiles (**SAVE / OPEN / NEW**), then hold SHIFT and press **B3 RECOVERY**. Select the project recovery entry and LOAD. A recovered copy is unsaved; use SAVE, select a folder and name, and confirm any replacement before keeping it. Recovering does not overwrite your manual file. Discarded work is not automatically offered at the next startup, but its existing recovery entry remains available in RECOVERY.
+
+![RECOVERY: one entry per project](../assets/manual/020-recovery.png)
+
+Recovery writing uses a temporary manifest and bounded staging for its loop/take/print data. Wait for work to finish before removing the card. Recovery is not a replacement for a separate SD backup.
 
 | Save | Contains | Does not replace |
 | --- | --- | --- |
@@ -397,7 +426,7 @@ To keep a named copy: **SHIFT + Pad 16 → B1 SAVE AS → enter name → B3 SAVE
 | User Sound | The edited instrument sound | Project notes/arrangement |
 | User Kit | Kit-wide and pad sound settings | Source sample backup or the project |
 
-Back up **Rhythmer**, **Samples** and other original sample folders, plus the rest of your card when practical. Do not delete source files just because a project or User Kit has been saved.
+Back up **Rhythmer**, every manually chosen project folder, **Samples** and other original sample folders. Source samples remain referenced; saving a project does not collect every external sample into its destination. Existing numbered projects are left untouched.
 
 ## 15. Further tasks
 

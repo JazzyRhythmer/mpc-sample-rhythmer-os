@@ -10,7 +10,7 @@ namespace rhythmer {
 // the web page's file list still shows them, so crash reports can be downloaded.
 inline bool rhythmer_own_folder(const std::filesystem::path& dir) {
     const auto name = dir.filename().string();
-    return dir.parent_path().filename() == "Rhythmer" && (name == "Cache" || name == "Crashes");
+    return dir.parent_path().filename() == "Rhythmer" && (name == "Cache" || name == "Crashes" || name == "Autosave");
 }
 
 } // namespace rhythmer

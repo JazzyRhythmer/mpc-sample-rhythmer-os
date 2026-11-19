@@ -25,7 +25,8 @@ void begin_update(Context& c) {
     u.after_save = 0;
     ProjectStore::View v;
     if (c.store) c.store->view(v);
-    if (c.dirty && !v.root.empty()) { u.after_save = int(c.store->saves()) + 1; c.save_project(); }
+    if (c.dirty && !v.root.empty()) { if(!c.autosave()){u.phase=0;c.notice("Could not save recovery; update cancelled");return;}
+        u.after_save = int(c.store->saves()) + (c.save_pending ? 1 : 0); }
 }
 } // namespace
 
@@ -44,9 +45,21 @@ bool ask_button(Context& c, SurfaceButton button) {
     // Reuse B1's cancellation path, including update deferral.
     if (button == B::WheelPush) {
         if (ui.shift) { ui.shift_used = true; button = B::TopLeft; }
-        else button = ui.ask_pick == 2 ? B::TopRight : B::TopLeft;
+        else button = ui.ask_pick == 2 ? B::TopRight : ui.ask_pick == 1 && (ui.ask == UiState::Ask::ProjectChanges || ui.ask == UiState::Ask::NewProject) ? B::TopMiddle : B::TopLeft;
+    }
+    if (ui.ask == UiState::Ask::ProjectChanges && (button == B::TopMiddle || button == B::TopRight)) {
+        ui.ask = UiState::Ask::None; c.project_changes_answer(button == B::TopRight); return true;
+    }
+    if (ui.ask == UiState::Ask::OverwriteProject && button == B::TopRight) {
+        ui.ask = UiState::Ask::None; c.commit_project_save(); return true;
+    }
+    if (ui.ask == UiState::Ask::RecoverProject && button == B::TopRight) {
+        ui.ask = UiState::Ask::None; c.request_project_open(c.recovery_offer); return true;
     }
     if (button == B::TopLeft) { // Cancel (LATER on the update question: asked again when the card is returned)
+        if (ui.ask == UiState::Ask::ProjectChanges) { c.after_project_save = 0; c.after_project_path.clear(); }
+        if (ui.ask == UiState::Ask::OverwriteProject) { ui.ask = UiState::Ask::None; c.cancel_project_save(); return true; }
+        if (ui.ask == UiState::Ask::RecoverProject && c.store) c.store->dismiss_recovery();
         if (ui.ask == UiState::Ask::InstallUpdate && c.updates) c.updates->decline();
         if(ui.ask==UiState::Ask::BreakLength){ui.break_pending=-1;ui.break_job_track=-1;}
         ui.ask = UiState::Ask::None;
@@ -96,6 +109,9 @@ std::string ask_title(const Project& project, const UiState& ui) {
     case UiState::Ask::EraseKeyEvents: return "Erase " + key_label(t, int(ui.ask_target)) + " events?";
     case UiState::Ask::EraseLane: return "Erase " + lane_name(t, int(ui.ask_target), &project) + " motion?";
     case UiState::Ask::ResetSettings: return "Reset factory settings?";
+    case UiState::Ask::ProjectChanges: return "Save your changes?";
+    case UiState::Ask::OverwriteProject: return "Replace this project?";
+    case UiState::Ask::RecoverProject: return "Recover your last work?";
     case UiState::Ask::NewProject: return "New project?";
     case UiState::Ask::TakeCardBack: return "Eject anyway?";
     case UiState::Ask::ClearLoop: return "Clear L" + std::to_string(ui.ask_target + 1) + "?";
@@ -140,8 +156,10 @@ std::string ask_detail(const Project& project, const UiState& ui, const Pattern&
     if (ui.ask == UiState::Ask::Unfreeze) return "Its sound plays live again; prints stay until what made them changes.";
     if (ui.ask == UiState::Ask::DeleteFile) return "It goes from the card. Undo can't bring it back.";
     if (ui.ask == UiState::Ask::ReplacePlugin) return ui.plugin_target == UiState::PluginTarget::Instrument ? "Patterns stay. Undo restores the previous sound." : "Its sound and settings go. Undo can't bring them back.";
-    if (ui.ask == UiState::Ask::NewProject)
-        return ui.ask_target == 1 ? "Changes are saved first." : ui.ask_target == 2 ? "Unsaved changes are lost." : "The open project closes.";
+    if (ui.ask == UiState::Ask::ProjectChanges) return "SAVE keeps changes. DISCARD keeps the last manual save.";
+    if (ui.ask == UiState::Ask::OverwriteProject) return "Replace the existing named file only after confirmation.";
+    if (ui.ask == UiState::Ask::RecoverProject) return "A separate checkpoint is available; your manual file stays.";
+    if (ui.ask == UiState::Ask::NewProject) return "The open project closes after SAVE or DISCARD.";
     return {};
 }
 

@@ -96,11 +96,13 @@ Use these written instructions for the current controls. The earlier First Groov
 
 ## 8. Save and reopen
 
-1. Press STOP and allow about three seconds without adjusting controls. The project can autosave while idle.
-2. Press **SHIFT + Pad 16 → B1 SAVE AS**.
-3. Enter a name, for example **FIRST GROOVE 020**, and press **B3 SAVE**.
-4. Wait for **SAVED**. Keep the original samples and plug-in folders on the card.
-5. To reopen later: Project → **B2 OPEN** → choose the project → push.
+1. Press STOP and finish recording or printing.
+2. Press **SHIFT + Pad 16**, release SHIFT, then press **B1 SAVE**. For this first save, choose a folder with the encoder: push enters it, SHIFT + encoder push goes up.
+3. Press **B3 USE FOLDER**, enter **FIRST GROOVE 020**, then press **B3 SAVE**.
+4. Wait for **SAVED**. Keep the original samples and plug-in folders on the card. Future B1 SAVE presses update this file; Project → **SHIFT + B1 SAVE AS** chooses another folder/name for a separate project.
+5. To reopen: Project → **B2 OPEN** → choose the project → push → LOAD. With unsaved changes, choose SAVE, DISCARD or CANCEL.
+
+Automatic recovery is separate: it updates one entry for this project under Rhythmer/Autosave, without overwriting your manual save. From the Project home tiles (SAVE / OPEN / NEW), **SHIFT + B3 RECOVERY** opens the recovery list. Use SAVE after loading a recovered copy to keep it deliberately.
 
 **Check:** saving a project is different from saving a User Sound/Kit. The project is what preserves the drum, bass and chord patterns together.
 

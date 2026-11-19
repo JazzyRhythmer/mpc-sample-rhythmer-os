@@ -52,6 +52,8 @@ struct LoadedProject {
     // Freeze plan F3: an import's audio takes, copied beside the projects as "<audio_from without .mldp> Audio" (a
     // hidden folder) until the project is first saved: Save copies them in as a Save As would ("" none).
     std::string audio_from;
+    bool recovery = false;
+    std::string origin = {}, media = {};
 };
 
 class ProjectStore {
@@ -62,7 +64,12 @@ public:
     // MIDI thread.
     void list(const std::string& folder);   // relative to the root; "" is the root
     // `from`: the file it was saved as before (Save As, freeze plan F2d): its Prints folder copied beside the new one.
-    void save(const std::string& path, std::vector<uint8_t> bytes, const std::string& from = "");
+    bool save(const std::string& path, std::vector<uint8_t> bytes, const std::string& from = "", bool recovery = false, uint64_t ticket = 0, const std::string& media = "");
+    struct SaveResult { uint64_t ticket; std::string path, error; bool recovery; std::string moved_from = {}; };
+    std::unique_ptr<SaveResult> take_save_result();
+    std::string save_directory(const std::string& folder) const;
+    std::string recovery_directory() const;
+    void dismiss_recovery();
     void load(const std::string& path);
     // Any thread: how many loads have been asked for. The app reads the card's folders ahead before it serves each
     // (shell/card_warm.h), so a project's plug-ins and samples never meet folders that have gone from memory.
@@ -70,6 +77,7 @@ public:
     void duplicate(const std::string& path);
     void remove(const std::string& path);
     void new_folder();
+    void new_folder_at(const std::string& folder);
     void open_at_start(const std::string& path);
     void opened(const std::string& path);   // the project now open, from its file: the one to resume at the next start
     void save_settings(const std::string& text); // Rhythmer's settings (shell/settings.h), kept with the start project
@@ -92,7 +100,7 @@ public:
     // Any thread, before the threads start too: where projects live, $RHYTHMER_PROJECTS or Rhythmer/Projects on
     // the first card among `storage`'s mounts (empty with none), and the settings file beside them,
     // Rhythmer/settings: its start= and last= lines, and the rest, which Settings::read() takes.
-    struct SettingsFile { std::string start, last, settings; };
+    struct SettingsFile { std::string start, last, settings, recovery; };
     static std::string projects_root(const std::vector<StorageSpace>& storage);
     static SettingsFile read_settings_file(const std::string& root);
 
@@ -103,6 +111,7 @@ public:
 
     // Any thread but audio.
     struct View {
+        std::string recovery_offer;
         std::string root, folder, start; // folder relative to root; start: the project opened at start
         std::vector<ProjectEntry> entries;
         uint64_t free_bytes = 0;
@@ -119,24 +128,31 @@ public:
     unsigned saves() const { return saved.load(std::memory_order_acquire); }
 
 private:
+    friend struct ProjectSavingChecks; // deterministic service-queue regression harness
     struct Request {
-        enum class Kind : uint8_t { List, Save, Load, Duplicate, Remove, NewFolder, OpenAtStart, Opened, Settings, Rename, SaveSound, Move, ExportMpc3 } kind;
+        enum class Kind : uint8_t { List, Save, Load, Duplicate, Remove, NewFolder, OpenAtStart, Opened, Settings, Rename, SaveSound, Move, ExportMpc3, DismissRecovery } kind;
         std::string path;
         std::vector<uint8_t> bytes;
-        std::string from = {}; // Save: the project's file before (Save As), whose prints come along; ExportMpc3: its file
+        std::string from = {};
+        bool recovery = false;
+        uint64_t ticket = 0;
+        std::string media = {}; // Save: the project's file before (Save As), whose prints come along; ExportMpc3: its file
     };
     void push(Request* request);
     void run(Request& request);
     void scan();
+    void mount_projects(const std::string& found);
     void publish_message(const std::string& message);
 
     MidiQueue<32, Request*> requests;           // MIDI thread produces
+    MidiQueue<32, SaveResult*> save_results;
     MidiQueue<4, LoadedProject*> loaded;        // service thread produces
     MidiQueue<4, std::string*> notes;           // the export thread produces
     std::thread exporter;                       // service thread starts and joins it
     std::atomic<bool> export_busy {false};
     void start_export(Request& request);        // service thread
     std::string root, folder, start, settings;  // service thread
+    std::string active_recovery;
     std::string last;                           // service thread: the project last opened or saved
     void remember(const std::string& path);     // service thread: `last`, written to the card when it changes
     void write_settings(std::error_code& error);

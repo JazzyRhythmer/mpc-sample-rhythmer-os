@@ -281,7 +281,7 @@
       "Schwung-API-MIT-LICENSE.txt": "52af9df37f1a2a3dadbc0785f8753b8cea7606a236a5dbc82c9abfc92c9844d8",
       "VENDORED.md": "96f280a916ae3ce2566a7e3770d7b50d8177377b3bb8d94d8f8f3ce381078f16",
       "drum-map.json": "43060fe7db13178a25b4e2e8af1291a162adbc995facc9c5189668f1e24d0568",
-      "module/dsp.so": "3f35d923ef92559f36b5e6e32ad7cc52d8333f18d9c7034d22622c419d0169b2",
+      "module/dsp.so": "227082766d5bfab10916d29e566bf0b8221a7e203ca4016b8ef566b2cc98e457",
       "plugin-meta.xml": "9505dd78c6c64ca946fa9abc7f67ab67e4161a483b2c0b4376dff79dd032ad52",
       "rhythmer-fm1-elixir.so": "e45e196d4b42c50146193cf59d03a2bb383828771d0320e7a794e45a4a19f250",
       "third_party/LICENSE": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
@@ -303,7 +303,8 @@
       "third_party/original/assets/kits/README.md": "c60d464ecc341425c2b0d3cd6fba1c2da15fc802044bd4c428cafdad83e07a8a"
     },
     "host_validated": true,
-    "hardware_validated": false
+    "hardware_validated": false,
+    "host_validation_scope": "Real native host parameter/pad/state/project round trip; quiet voice volume smoothing initialization checked in kit mix QA."
   },
   {
     "id": "fm1-fm106",

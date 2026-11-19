@@ -8,6 +8,12 @@ A rejected or undecodable source returns to the same browser for retry or cancel
 
 To reopen: select the Break track → **SEQ / PATTERNS → SHIFT + B3 GEN → BREAK GEN → BRK PERF**. B1 GEN in BRK PERF returns to the generator. BACK or SHIFT + Push returns from BREAK GEN to main GEN; repeat to close it. Switching tracks or leaving the menu during loading does not pull the screen back on completion.
 
+## Default chop playback
+
+New Break tracks use **One Shot** on all sixteen chops with **mute group 16** and mono retrigger. Tap a chop to play it to its natural end; releasing the pad does not cut it. Triggering another chop replaces the previous one. STOP/all-notes-off still clears playback. The pad's explicit Gate setting remains available for held-note playback. ROLLS and STRETCH performance commands remain held controls.
+
+Replacing source A retains the existing pad playback settings, including custom Gate/mute-group choices. Existing saved projects are not rewritten.
+
 ## Six pages
 
 Turn or press the encoder to change pages. Hardware pads are numbered bottom-left to top-right.

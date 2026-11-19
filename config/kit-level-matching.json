@@ -1,0 +1,4840 @@
+{
+  "schema": 1,
+  "legacy_order": [
+    "DRUM-X",
+    "DRUM-X / 909 CLUB",
+    "DRUM-X / 808 BOOM",
+    "DRUM-X / LOFI DUST",
+    "DRUM-X / INDUSTRIAL",
+    "DRUM-X / ACOUSTIC",
+    "DRUM-X / DUB ROOTS",
+    "DRUM-X / TECHNO RAW",
+    "DRUM-X / BREAKS",
+    "Elixir / Initkit",
+    "Elixir / Dry Circuit",
+    "Elixir / Warm Machine",
+    "Elixir / Bright Logic",
+    "Elixir / Soft Pulse",
+    "Hortator / TRX Classic",
+    "Hortator / 808",
+    "Hortator / 909",
+    "Hortator / Plaits",
+    "Hortator / FM",
+    "Hortator / Industrial",
+    "K-WASUB / 808",
+    "K-WASUB / 909",
+    "K-WASUB / Dub Techno",
+    "K-WASUB / Acoustic",
+    "Sophie",
+    "6W6",
+    "8W8",
+    "9W9",
+    "CW-78",
+    "TR-MPC",
+    "Hortator / MD TRX Deep",
+    "Hortator / MD TRX Tight",
+    "Hortator / MD EFM Metal",
+    "Hortator / MD EFM Pulse",
+    "Hortator / MD Hybrid",
+    "Hortator / MD Percussion"
+  ],
+  "reference": {
+    "name": "K-WASUB / 909",
+    "sample_rate": 44100,
+    "velocity": 127,
+    "phrase_bars": 4,
+    "peak_ceiling": 0.92,
+    "lufs": -10.68,
+    "preserved_source_levels": true
+  },
+  "kits": {
+    "DRUM-X": {
+      "gain": 5.249451879620014,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "DRUM-X / Kick",
+          "role": "kick",
+          "values": {
+            "20": 0.7952755689620972
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "DRUM-X / Snare",
+          "role": "snare",
+          "values": {
+            "39": 0.8661417365074158
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "DRUM-X / Clap",
+          "role": "clap",
+          "values": {
+            "58": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "DRUM-X / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "77": 0.4488188922405243
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "DRUM-X / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "96": 0.5196850299835205
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "DRUM-X / Tom",
+          "role": "tom",
+          "values": {
+            "115": 0.4803149700164795
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "DRUM-X / Rim",
+          "role": "percussion",
+          "values": {
+            "134": 0.25196850299835205
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "DRUM-X / Bell",
+          "role": "percussion",
+          "values": {
+            "153": 0.3385826647281647
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Mid",
+          "role": "tom",
+          "values": {
+            "253": 0.12304999679327011
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.13866999745368958
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.13086000084877014
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.13280999660491943
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.1152300015091896
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.07030999660491943
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.044920001178979874
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.044920001178979874
+          }
+        }
+      ]
+    },
+    "DRUM-X / 909 CLUB": {
+      "gain": 3.7046215131794136,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "909 CLUB / Kick",
+          "role": "kick",
+          "values": {
+            "20": 0.748031497001648
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "909 CLUB / Snare",
+          "role": "snare",
+          "values": {
+            "39": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "909 CLUB / Clap",
+          "role": "clap",
+          "values": {
+            "58": 0.8425197005271912
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "909 CLUB / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "77": 0.5196850299835205
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "909 CLUB / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "96": 0.5669291615486145
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "909 CLUB / Tom",
+          "role": "tom",
+          "values": {
+            "115": 0.5354330539703369
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "909 CLUB / Rim",
+          "role": "percussion",
+          "values": {
+            "134": 0.32283464074134827
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "909 CLUB / Bell",
+          "role": "percussion",
+          "values": {
+            "153": 0.36220473051071167
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Mid",
+          "role": "tom",
+          "values": {
+            "253": 0.1543000042438507
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.17383000254631042
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.16405999660491943
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.16797000169754028
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.14452999830245972
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.0839800015091896
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.052730001509189606
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.05468999966979027
+          }
+        }
+      ]
+    },
+    "DRUM-X / 808 BOOM": {
+      "gain": 3.6871496874513445,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "808 BOOM / Kick",
+          "role": "kick",
+          "values": {
+            "20": 0.5196850299835205
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "808 BOOM / Snare",
+          "role": "snare",
+          "values": {
+            "39": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "808 BOOM / Clap",
+          "role": "clap",
+          "values": {
+            "58": 0.8267716765403748
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "808 BOOM / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "77": 0.24409449100494385
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "808 BOOM / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "96": 0.26771652698516846
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "808 BOOM / Tom",
+          "role": "tom",
+          "values": {
+            "115": 0.26771652698516846
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "808 BOOM / Rim",
+          "role": "percussion",
+          "values": {
+            "134": 0.18897637724876404
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "808 BOOM / Bell",
+          "role": "percussion",
+          "values": {
+            "153": 0.18110236525535583
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Mid",
+          "role": "tom",
+          "values": {
+            "253": 0.08594000339508057
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.09765999764204025
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.09179999679327011
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.09375
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.08008000254631042
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.05468999966979027
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.03516000136733055
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.03516000136733055
+          }
+        }
+      ]
+    },
+    "DRUM-X / LOFI DUST": {
+      "gain": 55.81201451754358,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "LOFI DUST / Kick",
+          "role": "kick",
+          "values": {
+            "20": 0.25984251499176025
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "LOFI DUST / Snare",
+          "role": "snare",
+          "values": {
+            "39": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "LOFI DUST / Clap",
+          "role": "clap",
+          "values": {
+            "58": 0.7086614370346069
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "LOFI DUST / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "77": 0.22834645211696625
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "LOFI DUST / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "96": 0.18110236525535583
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "LOFI DUST / Tom",
+          "role": "tom",
+          "values": {
+            "115": 0.15748031437397003
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "LOFI DUST / Rim",
+          "role": "percussion",
+          "values": {
+            "134": 0.08661417663097382
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "LOFI DUST / Bell",
+          "role": "percussion",
+          "values": {
+            "153": 0.10236220806837082
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Mid",
+          "role": "tom",
+          "values": {
+            "253": 0.019530000165104866
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.021479999646544456
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.019530000165104866
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.019530000165104866
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.017580000683665276
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.013670000247657299
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.007809999864548445
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.007809999864548445
+          }
+        }
+      ]
+    },
+    "DRUM-X / INDUSTRIAL": {
+      "gain": 2.4770643233645364,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "INDUSTRIAL / Kick",
+          "role": "kick",
+          "values": {
+            "20": 0.7007874250411987
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "INDUSTRIAL / Snare",
+          "role": "snare",
+          "values": {
+            "39": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "INDUSTRIAL / Clap",
+          "role": "clap",
+          "values": {
+            "58": 0.7795275449752808
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "INDUSTRIAL / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "77": 0.4251968562602997
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "INDUSTRIAL / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "96": 0.5196850299835205
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "INDUSTRIAL / Tom",
+          "role": "tom",
+          "values": {
+            "115": 0.27559053897857666
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "INDUSTRIAL / Rim",
+          "role": "percussion",
+          "values": {
+            "134": 0.4094488322734833
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "INDUSTRIAL / Bell",
+          "role": "percussion",
+          "values": {
+            "153": 0.3700787425041199
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Mid",
+          "role": "tom",
+          "values": {
+            "253": 0.13086000084877014
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.14844000339508057
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.13866999745368958
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.14061999320983887
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.12304999679327011
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.07616999745368958
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.046879999339580536
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.046879999339580536
+          }
+        }
+      ]
+    },
+    "DRUM-X / ACOUSTIC": {
+      "gain": 13.662011542158133,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "ACOUSTIC / Kick",
+          "role": "kick",
+          "values": {
+            "20": 0.5669291615486145
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "ACOUSTIC / Snare",
+          "role": "snare",
+          "values": {
+            "39": 0.7244094610214233
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "ACOUSTIC / Clap",
+          "role": "clap",
+          "values": {
+            "58": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "ACOUSTIC / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "77": 0.19685038924217224
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "ACOUSTIC / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "96": 0.23622047901153564
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "ACOUSTIC / Tom",
+          "role": "tom",
+          "values": {
+            "115": 0.28346458077430725
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "ACOUSTIC / Rim",
+          "role": "percussion",
+          "values": {
+            "134": 0.14960630238056183
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "ACOUSTIC / Bell",
+          "role": "percussion",
+          "values": {
+            "153": 0.18110236525535583
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Mid",
+          "role": "tom",
+          "values": {
+            "253": 0.05663999915122986
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.06445000320672989
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.06055000051856041
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.0625
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.052730001509189606
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.03711000084877014
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.02538999915122986
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.023439999669790268
+          }
+        }
+      ]
+    },
+    "DRUM-X / DUB ROOTS": {
+      "gain": 3.8767870283359813,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "DUB ROOTS / Kick",
+          "role": "kick",
+          "values": {
+            "20": 0.6220472455024719
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "DUB ROOTS / Snare",
+          "role": "snare",
+          "values": {
+            "39": 0.8818897604942322
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "DUB ROOTS / Clap",
+          "role": "clap",
+          "values": {
+            "58": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "DUB ROOTS / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "77": 0.25196850299835205
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "DUB ROOTS / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "96": 0.32283464074134827
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "DUB ROOTS / Tom",
+          "role": "tom",
+          "values": {
+            "115": 0.31496062874794006
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "DUB ROOTS / Rim",
+          "role": "percussion",
+          "values": {
+            "134": 0.19685038924217224
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "DUB ROOTS / Bell",
+          "role": "percussion",
+          "values": {
+            "153": 0.25196850299835205
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Mid",
+          "role": "tom",
+          "values": {
+            "253": 0.08594000339508057
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.09765999764204025
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.09179999679327011
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.09375
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.08008000254631042
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.05468999966979027
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.03516000136733055
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.03516000136733055
+          }
+        }
+      ]
+    },
+    "DRUM-X / TECHNO RAW": {
+      "gain": 3.7032998575106117,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "TECHNO RAW / Kick",
+          "role": "kick",
+          "values": {
+            "20": 0.5748031735420227
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "TECHNO RAW / Snare",
+          "role": "snare",
+          "values": {
+            "39": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "TECHNO RAW / Clap",
+          "role": "clap",
+          "values": {
+            "58": 0.748031497001648
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "TECHNO RAW / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "77": 0.4251968562602997
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "TECHNO RAW / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "96": 0.4566929042339325
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "TECHNO RAW / Tom",
+          "role": "tom",
+          "values": {
+            "115": 0.4173228442668915
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "TECHNO RAW / Rim",
+          "role": "percussion",
+          "values": {
+            "134": 0.23622047901153564
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "TECHNO RAW / Bell",
+          "role": "percussion",
+          "values": {
+            "153": 0.28346458077430725
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Mid",
+          "role": "tom",
+          "values": {
+            "253": 0.10155999660491943
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.1152300015091896
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.10741999745368958
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.10937999933958054
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.09375
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.06055000051856041
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.03906000033020973
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.03906000033020973
+          }
+        }
+      ]
+    },
+    "DRUM-X / BREAKS": {
+      "gain": 6.803279791870704,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "BREAKS / Kick",
+          "role": "kick",
+          "values": {
+            "20": 0.8110235929489136
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "BREAKS / Snare",
+          "role": "snare",
+          "values": {
+            "39": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "BREAKS / Clap",
+          "role": "clap",
+          "values": {
+            "58": 0.7637795209884644
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "BREAKS / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "77": 0.3937007784843445
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "BREAKS / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "96": 0.4173228442668915
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "BREAKS / Tom",
+          "role": "tom",
+          "values": {
+            "115": 0.5039370059967041
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "BREAKS / Rim",
+          "role": "percussion",
+          "values": {
+            "134": 0.27559053897857666
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - drumx - DRUM-X",
+          "sound": "BREAKS / Bell",
+          "role": "percussion",
+          "values": {
+            "153": 0.32283464074134827
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Mid",
+          "role": "tom",
+          "values": {
+            "253": 0.11133000254631042
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.1269499957561493
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.11913999915122986
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.12109000235795975
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.1035199984908104
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.06445000320672989
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.04297000169754028
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.04297000169754028
+          }
+        }
+      ]
+    },
+    "Elixir / Initkit": {
+      "gain": 5.152773538217993,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Initkit / Kick",
+          "role": "kick",
+          "values": {
+            "89": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Initkit / Snare",
+          "role": "snare",
+          "values": {
+            "92": 0.29133859276771545
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Clap",
+          "role": "clap",
+          "values": {
+            "73": 0.11719000339508057
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Initkit / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "94": 0.5039370059967041
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Initkit / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "94": 0.6141732335090637
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Initkit / Low Tom",
+          "role": "tom",
+          "values": {
+            "90": 0.5433070659637451
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.0839800015091896
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Initkit / Cymbal",
+          "role": "cymbal",
+          "values": {
+            "93": 0.5511810779571533
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Initkit / Percussion",
+          "role": "percussion",
+          "values": {
+            "91": 0.27559053897857666
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.17383000254631042
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.16211000084877014
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.166020005941391
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.14452999830245972
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.0839800015091896
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.052730001509189606
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.05468999966979027
+          }
+        }
+      ]
+    },
+    "Elixir / Dry Circuit": {
+      "gain": 10.632961594148636,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Dry Circuit / Kick",
+          "role": "kick",
+          "values": {
+            "89": 0.4566929042339325
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Dry Circuit / Snare",
+          "role": "snare",
+          "values": {
+            "92": 0.4173228442668915
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Clap",
+          "role": "clap",
+          "values": {
+            "73": 0.03516000136733055
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Dry Circuit / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "94": 0.8267716765403748
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Dry Circuit / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "94": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Dry Circuit / Low Tom",
+          "role": "tom",
+          "values": {
+            "90": 0.3700787425041199
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.027340000495314598
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Dry Circuit / Cymbal",
+          "role": "cymbal",
+          "values": {
+            "93": 0.21259842813014984
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Dry Circuit / Percussion",
+          "role": "percussion",
+          "values": {
+            "91": 0.18897637724876404
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.044920001178979874
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.04297000169754028
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.04297000169754028
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.03711000084877014
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.027340000495314598
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.017580000683665276
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.017580000683665276
+          }
+        }
+      ]
+    },
+    "Elixir / Warm Machine": {
+      "gain": 9.064788715781475,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Warm Machine / Kick",
+          "role": "kick",
+          "values": {
+            "89": 0.7086614370346069
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Warm Machine / Snare",
+          "role": "snare",
+          "values": {
+            "92": 0.6929134130477905
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Clap",
+          "role": "clap",
+          "values": {
+            "73": 0.0625
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Warm Machine / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "94": 0.5433070659637451
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Warm Machine / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "94": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Warm Machine / Low Tom",
+          "role": "tom",
+          "values": {
+            "90": 0.5984252095222473
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.046879999339580536
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Warm Machine / Cymbal",
+          "role": "cymbal",
+          "values": {
+            "93": 0.4330708682537079
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Warm Machine / Percussion",
+          "role": "percussion",
+          "values": {
+            "91": 0.30708661675453186
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.08594000339508057
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.08008000254631042
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.08008000254631042
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.07030999660491943
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.046879999339580536
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.03125
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.03125
+          }
+        }
+      ]
+    },
+    "Elixir / Bright Logic": {
+      "gain": 9.192751395237536,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Bright Logic / Kick",
+          "role": "kick",
+          "values": {
+            "89": 0.4488188922405243
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Bright Logic / Snare",
+          "role": "snare",
+          "values": {
+            "92": 0.4251968562602997
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Clap",
+          "role": "clap",
+          "values": {
+            "73": 0.03711000084877014
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Bright Logic / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "94": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Bright Logic / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "94": 0.913385808467865
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Bright Logic / Low Tom",
+          "role": "tom",
+          "values": {
+            "90": 0.3937007784843445
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.02930000051856041
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Bright Logic / Cymbal",
+          "role": "cymbal",
+          "values": {
+            "93": 0.20472441613674164
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Bright Logic / Percussion",
+          "role": "percussion",
+          "values": {
+            "91": 0.19685038924217224
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.048829998821020126
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.046879999339580536
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.046879999339580536
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.03906000033020973
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.02930000051856041
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.019530000165104866
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.017580000683665276
+          }
+        }
+      ]
+    },
+    "Elixir / Soft Pulse": {
+      "gain": 9.57044558637097,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Soft Pulse / Kick",
+          "role": "kick",
+          "values": {
+            "89": 0.6614173054695129
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Soft Pulse / Snare",
+          "role": "snare",
+          "values": {
+            "92": 0.8188976645469666
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Clap",
+          "role": "clap",
+          "values": {
+            "73": 0.05468999966979027
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Soft Pulse / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "94": 0.5590550899505615
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Soft Pulse / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "94": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Soft Pulse / Low Tom",
+          "role": "tom",
+          "values": {
+            "90": 0.5275590419769287
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.041019998490810394
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Soft Pulse / Cymbal",
+          "role": "cymbal",
+          "values": {
+            "93": 0.33070865273475647
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - elixir - Elixir Kit",
+          "sound": "Soft Pulse / Percussion",
+          "role": "percussion",
+          "values": {
+            "91": 0.27559053897857666
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.0722699984908104
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.06640999764204025
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.06836000084877014
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.05858999863266945
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.041019998490810394
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.027340000495314598
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.02538999915122986
+          }
+        }
+      ]
+    },
+    "Hortator / TRX Classic": {
+      "gain": 30.57310396809552,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SUBTHUMP",
+          "role": "kick",
+          "values": {
+            "10": 0.13385826349258423
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "HARDSNAP",
+          "role": "snare",
+          "values": {
+            "21": 0.25196850299835205
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "ROOMCLAP",
+          "role": "clap",
+          "values": {
+            "32": 0.22834645211696625
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "NOISEHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.7795275449752808
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "AIROPEN",
+          "role": "open_hat",
+          "values": {
+            "54": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SWOOPTOM",
+          "role": "tom",
+          "values": {
+            "65": 0.33070865273475647
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "KNOCK",
+          "role": "percussion",
+          "values": {
+            "76": 0.14173229038715363
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "WASHCYM",
+          "role": "cymbal",
+          "values": {
+            "87": 0.31496062874794006
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Mid",
+          "role": "tom",
+          "values": {
+            "253": 0.03319999948143959
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.03906000033020973
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.03711000084877014
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.03711000084877014
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.03125
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.021479999646544456
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.01561999972909689
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.013670000247657299
+          }
+        }
+      ]
+    },
+    "Hortator / 808": {
+      "gain": 7.4246892487174225,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "ROUNDBD",
+          "role": "kick",
+          "values": {
+            "10": 0.4251968562602997
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "WARMSN",
+          "role": "snare",
+          "values": {
+            "21": 0.24409449100494385
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "HANDCLAP",
+          "role": "clap",
+          "values": {
+            "32": 0.6535432934761047
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "CLOSEDHH",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.7244094610214233
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "OPENHAT",
+          "role": "open_hat",
+          "values": {
+            "54": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "MIDTOM",
+          "role": "tom",
+          "values": {
+            "65": 0.22834645211696625
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "RIMSHOT",
+          "role": "percussion",
+          "values": {
+            "76": 0.09448818862438202
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "CRASH",
+          "role": "cymbal",
+          "values": {
+            "87": 0.29133859276771545
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Mid",
+          "role": "tom",
+          "values": {
+            "253": 0.08008000254631042
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.08984000235795975
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.0839800015091896
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.08594000339508057
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.07422000169754028
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.048829998821020126
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.03319999948143959
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.03125
+          }
+        }
+      ]
+    },
+    "Hortator / 909": {
+      "gain": 16.67931771930769,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "HOUSEBD",
+          "role": "kick",
+          "values": {
+            "10": 0.4251968562602997
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "CRISPSN",
+          "role": "snare",
+          "values": {
+            "21": 0.3700787425041199
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SNAPCLAP",
+          "role": "clap",
+          "values": {
+            "32": 0.5039370059967041
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "CLOSEDHH",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.7244094610214233
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "OPENHAT",
+          "role": "open_hat",
+          "values": {
+            "54": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "MIDTOM",
+          "role": "tom",
+          "values": {
+            "65": 0.22834645211696625
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "RIMSHOT",
+          "role": "percussion",
+          "values": {
+            "76": 0.09448818862438202
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "CRASH",
+          "role": "cymbal",
+          "values": {
+            "87": 0.29133859276771545
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Mid",
+          "role": "tom",
+          "values": {
+            "253": 0.08008000254631042
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.08984000235795975
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.0839800015091896
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.08594000339508057
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.07422000169754028
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.048829998821020126
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.03319999948143959
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.03125
+          }
+        }
+      ]
+    },
+    "Hortator / Plaits": {
+      "gain": 7.823166337166592,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "BOOMBD",
+          "role": "kick",
+          "values": {
+            "10": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SHELLSN",
+          "role": "snare",
+          "values": {
+            "21": 0.3937007784843445
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SNAPCLAP",
+          "role": "clap",
+          "values": {
+            "32": 0.6850393414497375
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SHINYHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.26771652698516846
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Open Hat",
+          "role": "open_hat",
+          "values": {
+            "213": 0.08202999830245972
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "HEADTOM",
+          "role": "tom",
+          "values": {
+            "65": 0.24409449100494385
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "CLAVE",
+          "role": "percussion",
+          "values": {
+            "76": 0.14173229038715363
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "CRASH",
+          "role": "cymbal",
+          "values": {
+            "87": 0.4015747904777527
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Mid",
+          "role": "tom",
+          "values": {
+            "253": 0.12891000509262085
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.146479994058609
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.13672000169754028
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.13866999745368958
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.12109000235795975
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.07422000169754028
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.046879999339580536
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.046879999339580536
+          }
+        }
+      ]
+    },
+    "Hortator / FM": {
+      "gain": 68.53755367039031,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMSUB",
+          "role": "kick",
+          "values": {
+            "10": 0.07086614519357681
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "TONESNR",
+          "role": "snare",
+          "values": {
+            "21": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "BUZZCLAP",
+          "role": "clap",
+          "values": {
+            "32": 0.28346458077430725
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.18110236525535583
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "AIROPEN",
+          "role": "open_hat",
+          "values": {
+            "54": 0.33070865273475647
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "LONGTOM",
+          "role": "tom",
+          "values": {
+            "65": 0.007874015718698502
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMRIM",
+          "role": "percussion",
+          "values": {
+            "76": 0.07874015718698502
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMCRASH",
+          "role": "cymbal",
+          "values": {
+            "87": 0.11811023950576782
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Mid",
+          "role": "tom",
+          "values": {
+            "253": 0.009770000353455544
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.011719999834895134
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.011719999834895134
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.011719999834895134
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.009770000353455544
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.005859999917447567
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.003909999970346689
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.003909999970346689
+          }
+        }
+      ]
+    },
+    "Hortator / Industrial": {
+      "gain": 8.090595293474406,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SYNTHBD",
+          "role": "kick",
+          "values": {
+            "10": 0.7322834730148315
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "CRACKSN",
+          "role": "snare",
+          "values": {
+            "21": 0.5748031735420227
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "ROOMCLAP",
+          "role": "clap",
+          "values": {
+            "32": 0.6299212574958801
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SHINYHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.28346458077430725
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Open Hat",
+          "role": "open_hat",
+          "values": {
+            "213": 0.08594000339508057
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "LONGTOM",
+          "role": "tom",
+          "values": {
+            "65": 0.11811023950576782
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "CLANK",
+          "role": "percussion",
+          "values": {
+            "76": 0.25984251499176025
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMCRASH",
+          "role": "cymbal",
+          "values": {
+            "87": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Mid",
+          "role": "tom",
+          "values": {
+            "253": 0.13672000169754028
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.1543000042438507
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.14452999830245972
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.14844000339508057
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.12891000509262085
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.07812000066041946
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.048829998821020126
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.048829998821020126
+          }
+        }
+      ]
+    },
+    "K-WASUB / 808": {
+      "gain": 2.2072260616374955,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "808 / Kick",
+          "role": "kick",
+          "values": {
+            "2": 0.5826771855354309
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "808 / Snare",
+          "role": "snare",
+          "values": {
+            "6": 0.5433070659637451
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "808 / Clap",
+          "role": "clap",
+          "values": {
+            "10": 0.6377952694892883
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "808 / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "14": 0.4251968562602997
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "808 / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "18": 0.4803149700164795
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "808 / Tom",
+          "role": "tom",
+          "values": {
+            "22": 0.5039370059967041
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.20508000254631042
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "808 / Cymbal",
+          "role": "cymbal",
+          "values": {
+            "30": 0.3937007784843445
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "808 / Percussion",
+          "role": "percussion",
+          "values": {
+            "26": 0.36220473051071167
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.767579972743988
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.7246099710464478
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.7773399949073792
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.7421900033950806
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.20508000254631042
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.10741999745368958
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.1269499957561493
+          }
+        }
+      ]
+    },
+    "K-WASUB / 909": {
+      "gain": 1,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "909 / Kick",
+          "role": "kick",
+          "values": {
+            "2": 0.8267716765403748
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "909 / Snare",
+          "role": "snare",
+          "values": {
+            "6": 0.748031497001648
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "909 / Clap",
+          "role": "clap",
+          "values": {
+            "10": 0.7086614370346069
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "909 / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "14": 0.6299212574958801
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "909 / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "18": 0.6141732335090637
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "909 / Tom",
+          "role": "tom",
+          "values": {
+            "22": 0.748031497001648
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 1.0
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "909 / Cymbal",
+          "role": "cymbal",
+          "values": {
+            "30": 0.5511810779571533
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "909 / Percussion",
+          "role": "percussion",
+          "values": {
+            "26": 0.6692913174629211
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 1.0
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 1.0
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 1.0
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 1.0
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 1.0
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 1.0
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 1.0
+          }
+        }
+      ]
+    },
+    "K-WASUB / Dub Techno": {
+      "gain": 2.425754330687253,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "Dub Techno / Kick",
+          "role": "kick",
+          "values": {
+            "2": 0.5590550899505615
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "Dub Techno / Snare",
+          "role": "snare",
+          "values": {
+            "6": 0.5433070659637451
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "Dub Techno / Clap",
+          "role": "clap",
+          "values": {
+            "10": 0.4803149700164795
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "Dub Techno / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "14": 0.4330708682537079
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "Dub Techno / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "18": 0.4015747904777527
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "Dub Techno / Tom",
+          "role": "tom",
+          "values": {
+            "22": 0.4803149700164795
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.20508000254631042
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "Dub Techno / Cymbal",
+          "role": "cymbal",
+          "values": {
+            "30": 0.3700787425041199
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "Dub Techno / Percussion",
+          "role": "percussion",
+          "values": {
+            "26": 0.29133859276771545
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.767579972743988
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.7246099710464478
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.7773399949073792
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.7421900033950806
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.20508000254631042
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.10741999745368958
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.1269499957561493
+          }
+        }
+      ]
+    },
+    "K-WASUB / Acoustic": {
+      "gain": 2.0130140931222504,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "Acoustic / Kick",
+          "role": "kick",
+          "values": {
+            "2": 0.5826771855354309
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "Acoustic / Snare",
+          "role": "snare",
+          "values": {
+            "6": 0.5433070659637451
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "Acoustic / Clap",
+          "role": "clap",
+          "values": {
+            "10": 0.5748031735420227
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "Acoustic / Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "14": 0.4330708682537079
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "Acoustic / Open Hat",
+          "role": "open_hat",
+          "values": {
+            "18": 0.4881889820098877
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "Acoustic / Tom",
+          "role": "tom",
+          "values": {
+            "22": 0.5354330539703369
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.20508000254631042
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "Acoustic / Cymbal",
+          "role": "cymbal",
+          "values": {
+            "30": 0.4094488322734833
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - kwasub-kit - K-WASUB Kit",
+          "sound": "Acoustic / Percussion",
+          "role": "percussion",
+          "values": {
+            "26": 0.25196850299835205
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.767579972743988
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.7246099710464478
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.7773399949073792
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.7421900033950806
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.20508000254631042
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.10741999745368958
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.1269499957561493
+          }
+        }
+      ]
+    },
+    "Sophie": {
+      "gain": 5.589224414200885,
+      "pads": [
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Kick",
+          "role": "kick",
+          "values": {
+            "13": 0.7382799983024597
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Snare",
+          "role": "snare",
+          "values": {
+            "53": 0.271479994058609
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Clap",
+          "role": "clap",
+          "values": {
+            "73": 0.11133000254631042
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "133": 0.07616999745368958
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Open Hat",
+          "role": "open_hat",
+          "values": {
+            "213": 0.08788999915122986
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.16016000509262085
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.07812000066041946
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.05077999830245972
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Snare 2",
+          "role": "snare",
+          "values": {
+            "93": 0.21483999490737915
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Pedal Hat",
+          "role": "closed_hat",
+          "values": {
+            "173": 0.05663999915122986
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.15038999915122986
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.1543000042438507
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.13280999660491943
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.05077999830245972
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Mid",
+          "role": "tom",
+          "values": {
+            "233": 0.146479994058609
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Mid",
+          "role": "tom",
+          "values": {
+            "253": 0.14258000254631042
+          }
+        }
+      ]
+    },
+    "6W6": {
+      "gain": 4.28890883913684,
+      "pads": [
+        {
+          "source_folder": "athousanddetails - VST - 6W6",
+          "sound": "Kick",
+          "role": "kick",
+          "values": {
+            "5": 0.35433071851730347
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 6W6",
+          "sound": "Snare",
+          "role": "snare",
+          "values": {
+            "11": 0.34645670652389526
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 6W6",
+          "sound": "Clap",
+          "role": "clap",
+          "values": {
+            "43": 0.35433071851730347
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 6W6",
+          "sound": "Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "26": 0.17322835326194763
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 6W6",
+          "sound": "Open Hat",
+          "role": "open_hat",
+          "values": {
+            "32": 0.25984251499176025
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 6W6",
+          "sound": "Tom",
+          "role": "tom",
+          "values": {
+            "16": 0.32283464074134827
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.20508000254631042
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 6W6",
+          "sound": "Cymbal",
+          "role": "cymbal",
+          "values": {
+            "37": 0.19685038924217224
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 6W6",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "21": 0.32283464074134827
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Low Tom",
+          "role": "tom",
+          "values": {
+            "113": 0.767579972743988
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Floor Tom",
+          "role": "tom",
+          "values": {
+            "153": 0.7246099710464478
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.7773399949073792
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.7421900033950806
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.20508000254631042
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.10741999745368958
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.1269499957561493
+          }
+        }
+      ]
+    },
+    "8W8": {
+      "gain": 2.1245961722963806,
+      "pads": [
+        {
+          "source_folder": "athousanddetails - VST - 8W8",
+          "sound": "Kick",
+          "role": "kick",
+          "values": {
+            "6": 0.8188976645469666
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 8W8",
+          "sound": "Snare",
+          "role": "snare",
+          "values": {
+            "12": 0.4015747904777527
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 8W8",
+          "sound": "Clap",
+          "role": "clap",
+          "values": {
+            "63": 0.30708661675453186
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 8W8",
+          "sound": "Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "73": 0.19685038924217224
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 8W8",
+          "sound": "Open Hat",
+          "role": "open_hat",
+          "values": {
+            "79": 0.23622047901153564
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 8W8",
+          "sound": "Tom",
+          "role": "tom",
+          "values": {
+            "17": 0.6771653294563293
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 8W8",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "47": 0.11811023950576782
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 8W8",
+          "sound": "Cowbell",
+          "role": "percussion",
+          "values": {
+            "68": 0.07086614519357681
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 8W8",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "22": 0.6062992215156555
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 8W8",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "27": 0.6377952694892883
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 8W8",
+          "sound": "Low Conga",
+          "role": "percussion",
+          "values": {
+            "32": 0.25984251499176025
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 8W8",
+          "sound": "Mid Conga",
+          "role": "percussion",
+          "values": {
+            "37": 0.33070865273475647
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 8W8",
+          "sound": "High Conga",
+          "role": "percussion",
+          "values": {
+            "42": 0.34645670652389526
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 8W8",
+          "sound": "Cymbal",
+          "role": "cymbal",
+          "values": {
+            "84": 0.23622047901153564
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 8W8",
+          "sound": "Claves",
+          "role": "percussion",
+          "values": {
+            "52": 0.26771652698516846
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 8W8",
+          "sound": "Maracas",
+          "role": "percussion",
+          "values": {
+            "58": 0.30708661675453186
+          }
+        }
+      ]
+    },
+    "9W9": {
+      "gain": 2.810909189995622,
+      "pads": [
+        {
+          "source_folder": "athousanddetails - VST - 9W9",
+          "sound": "Kick",
+          "role": "kick",
+          "values": {
+            "8": 0.3937007784843445
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 9W9",
+          "sound": "Snare",
+          "role": "snare",
+          "values": {
+            "14": 0.16535432636737823
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 9W9",
+          "sound": "Clap",
+          "role": "clap",
+          "values": {
+            "51": 0.4960629940032959
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 9W9",
+          "sound": "Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "58": 0.20472441613674164
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 9W9",
+          "sound": "Open Hat",
+          "role": "open_hat",
+          "values": {
+            "65": 0.16535432636737823
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 9W9",
+          "sound": "Tom",
+          "role": "tom",
+          "values": {
+            "22": 0.19685038924217224
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 9W9",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "44": 0.13385826349258423
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 9W9",
+          "sound": "Cymbal",
+          "role": "cymbal",
+          "values": {
+            "79": 0.08661417663097382
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 9W9",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "30": 0.19685038924217224
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 9W9",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "38": 0.20472441613674164
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - 9W9",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "72": 0.09448818862438202
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Mid Tom",
+          "role": "tom",
+          "values": {
+            "193": 0.7773399949073792
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "High Tom",
+          "role": "tom",
+          "values": {
+            "293": 0.7421900033950806
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "33": 0.20508000254631042
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Crash",
+          "role": "cymbal",
+          "values": {
+            "273": 0.10741999745368958
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Ride",
+          "role": "cymbal",
+          "values": {
+            "313": 0.1269499957561493
+          }
+        }
+      ]
+    },
+    "CW-78": {
+      "gain": 3.8974623069333334,
+      "pads": [
+        {
+          "source_folder": "athousanddetails - VST - CW-78",
+          "sound": "Kick",
+          "role": "kick",
+          "values": {
+            "4": 0.7795275449752808
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - CW-78",
+          "sound": "Snare",
+          "role": "snare",
+          "values": {
+            "10": 0.5590550899505615
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Clap",
+          "role": "clap",
+          "values": {
+            "73": 0.8769500255584717
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - CW-78",
+          "sound": "Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "20": 0.33070865273475647
+          }
+        },
+        {
+          "source_folder": "Matt Estela - VST - Sophie",
+          "sound": "Open Hat",
+          "role": "open_hat",
+          "values": {
+            "213": 0.43358999490737915
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - CW-78",
+          "sound": "Low Conga",
+          "role": "percussion",
+          "values": {
+            "50": 0.18897637724876404
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - CW-78",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "15": 0.36220473051071167
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - CW-78",
+          "sound": "Cymbal",
+          "role": "cymbal",
+          "values": {
+            "25": 0.3779527544975281
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - CW-78",
+          "sound": "Cowbell",
+          "role": "percussion",
+          "values": {
+            "55": 0.36220473051071167
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - CW-78",
+          "sound": "Maracas",
+          "role": "percussion",
+          "values": {
+            "30": 0.6929134130477905
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - CW-78",
+          "sound": "Claves",
+          "role": "percussion",
+          "values": {
+            "35": 0.4566929042339325
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - CW-78",
+          "sound": "High Bongo",
+          "role": "percussion",
+          "values": {
+            "40": 0.32283464074134827
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - CW-78",
+          "sound": "Low Bongo",
+          "role": "percussion",
+          "values": {
+            "45": 0.32283464074134827
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - CW-78",
+          "sound": "Tambourine",
+          "role": "percussion",
+          "values": {
+            "60": 0.4251968562602997
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - CW-78",
+          "sound": "Guiro",
+          "role": "percussion",
+          "values": {
+            "66": 0.36220473051071167
+          }
+        },
+        {
+          "source_folder": "athousanddetails - VST - CW-78",
+          "sound": "Metal Beat",
+          "role": "percussion",
+          "values": {
+            "71": 0.36220473051071167
+          }
+        }
+      ]
+    },
+    "TR-MPC": {
+      "gain": 2.088301321347586,
+      "pads": [
+        {
+          "source_folder": "sd88me - VST - TR-MPC",
+          "sound": "Kick",
+          "role": "kick",
+          "values": {
+            "2": 0.8897637724876404
+          }
+        },
+        {
+          "source_folder": "sd88me - VST - TR-MPC",
+          "sound": "Snare",
+          "role": "snare",
+          "values": {
+            "21": 0.12598425149917603
+          }
+        },
+        {
+          "source_folder": "sd88me - VST - TR-MPC",
+          "sound": "Clap",
+          "role": "clap",
+          "values": {
+            "40": 0.7086614370346069
+          }
+        },
+        {
+          "source_folder": "sd88me - VST - TR-MPC",
+          "sound": "Closed Hat",
+          "role": "closed_hat",
+          "values": {
+            "59": 0.34645670652389526
+          }
+        },
+        {
+          "source_folder": "sd88me - VST - TR-MPC",
+          "sound": "Open Hat",
+          "role": "open_hat",
+          "values": {
+            "78": 0.05511811003088951
+          }
+        },
+        {
+          "source_folder": "sd88me - VST - TR-MPC",
+          "sound": "Tom",
+          "role": "tom",
+          "values": {
+            "97": 0.3700787425041199
+          }
+        },
+        {
+          "source_folder": "sd88me - VST - TR-MPC",
+          "sound": "Rim",
+          "role": "percussion",
+          "values": {
+            "116": 0.12598425149917603
+          }
+        },
+        {
+          "source_folder": "sd88me - VST - TR-MPC",
+          "sound": "Cymbal",
+          "role": "cymbal",
+          "values": {
+            "135": 0.36220473051071167
+          }
+        },
+        {
+          "source_folder": "sd88me - VST - TR-MPC",
+          "sound": "Slot 09",
+          "role": "percussion",
+          "values": {
+            "154": 0.16535432636737823
+          }
+        },
+        {
+          "source_folder": "sd88me - VST - TR-MPC",
+          "sound": "Slot 10",
+          "role": "percussion",
+          "values": {
+            "173": 0.22834645211696625
+          }
+        },
+        {
+          "source_folder": "sd88me - VST - TR-MPC",
+          "sound": "Slot 11",
+          "role": "percussion",
+          "values": {
+            "192": 0.04724409431219101
+          }
+        },
+        {
+          "source_folder": "sd88me - VST - TR-MPC",
+          "sound": "Slot 12",
+          "role": "percussion",
+          "values": {
+            "211": 0.33070865273475647
+          }
+        },
+        {
+          "source_folder": "sd88me - VST - TR-MPC",
+          "sound": "Slot 13",
+          "role": "percussion",
+          "values": {
+            "230": 0.07086614519357681
+          }
+        },
+        {
+          "source_folder": "sd88me - VST - TR-MPC",
+          "sound": "Slot 14",
+          "role": "percussion",
+          "values": {
+            "249": 0.25984251499176025
+          }
+        },
+        {
+          "source_folder": "sd88me - VST - TR-MPC",
+          "sound": "Slot 15",
+          "role": "percussion",
+          "values": {
+            "268": 0.07086614519357681
+          }
+        },
+        {
+          "source_folder": "sd88me - VST - TR-MPC",
+          "sound": "Slot 16",
+          "role": "percussion",
+          "values": {
+            "287": 0.3700787425041199
+          }
+        }
+      ]
+    },
+    "Hortator / MD TRX Deep": {
+      "gain": 34.14597619253991,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SUBTHUMP",
+          "role": "kick",
+          "values": {
+            "10": 0.13385826349258423
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "HARDSNAP",
+          "role": "snare",
+          "values": {
+            "21": 0.25196850299835205
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "ROOMCLAP",
+          "role": "clap",
+          "values": {
+            "32": 0.22834645211696625
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "NOISEHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.7795275449752808
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "DARKOPEN",
+          "role": "open_hat",
+          "values": {
+            "54": 0.7952755689620972
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SWOOPTOM",
+          "role": "tom",
+          "values": {
+            "65": 0.33070865273475647
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "KNOCK",
+          "role": "percussion",
+          "values": {
+            "76": 0.14173229038715363
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "WASHCYM",
+          "role": "cymbal",
+          "values": {
+            "87": 0.31496062874794006
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "BIGBOOM",
+          "role": "kick",
+          "values": {
+            "10": 0.15748031437397003
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "POPSNARE",
+          "role": "snare",
+          "values": {
+            "21": 0.29133859276771545
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "WIDECLAP",
+          "role": "clap",
+          "values": {
+            "32": 0.31496062874794006
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "METALHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.4173228442668915
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "AIROPEN",
+          "role": "open_hat",
+          "values": {
+            "54": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "GRITCONG",
+          "role": "tom",
+          "values": {
+            "65": 0.26771652698516846
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "PUREBELL",
+          "role": "percussion",
+          "values": {
+            "76": 0.18110236525535583
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "LONGRIDE",
+          "role": "cymbal",
+          "values": {
+            "87": 0.09448818862438202
+          }
+        }
+      ]
+    },
+    "Hortator / MD TRX Tight": {
+      "gain": 22.962892982597282,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "TICKKICK",
+          "role": "kick",
+          "values": {
+            "10": 0.10236220806837082
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "POPSNARE",
+          "role": "snare",
+          "values": {
+            "21": 0.29133859276771545
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "WIDECLAP",
+          "role": "clap",
+          "values": {
+            "32": 0.32283464074134827
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "THINHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.6929134130477905
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "HALFOPEN",
+          "role": "open_hat",
+          "values": {
+            "54": 0.9212598204612732
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SHORTTOM",
+          "role": "tom",
+          "values": {
+            "65": 0.26771652698516846
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "GRITRIM",
+          "role": "percussion",
+          "values": {
+            "76": 0.13385826349258423
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "THINCRSH",
+          "role": "cymbal",
+          "values": {
+            "87": 0.4645669162273407
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "ZAPKICK",
+          "role": "kick",
+          "values": {
+            "10": 0.19685038924217224
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "HARDSNAP",
+          "role": "snare",
+          "values": {
+            "21": 0.25984251499176025
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "ROOMCLAP",
+          "role": "clap",
+          "values": {
+            "32": 0.22834645211696625
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "TINHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SIZZLE",
+          "role": "open_hat",
+          "values": {
+            "54": 0.7716535329818726
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FUZZTOM",
+          "role": "tom",
+          "values": {
+            "65": 0.3937007784843445
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "LONGBELL",
+          "role": "percussion",
+          "values": {
+            "76": 0.05511811003088951
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "PINGBELL",
+          "role": "percussion",
+          "values": {
+            "87": 0.08661417663097382
+          }
+        }
+      ]
+    },
+    "Hortator / MD EFM Metal": {
+      "gain": 66.82340462312982,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMBOOM",
+          "role": "kick",
+          "values": {
+            "10": 0.05511811003088951
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "TONESNR",
+          "role": "snare",
+          "values": {
+            "21": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "BUZZCLAP",
+          "role": "clap",
+          "values": {
+            "32": 0.28346458077430725
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.18110236525535583
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "TRASHHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.03937007859349251
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "LONGTOM",
+          "role": "tom",
+          "values": {
+            "65": 0.007874015718698502
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "CLANK",
+          "role": "percussion",
+          "values": {
+            "76": 0.031496062874794006
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMCRASH",
+          "role": "cymbal",
+          "values": {
+            "87": 0.11811023950576782
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "NOISEZAP",
+          "role": "kick",
+          "values": {
+            "10": 0.05511811003088951
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "RIMSNARE",
+          "role": "snare",
+          "values": {
+            "76": 0.13385826349258423
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "RATTLE",
+          "role": "clap",
+          "values": {
+            "32": 0.36220473051071167
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "TREMHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.19685038924217224
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SPITHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.11811023950576782
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "GRITTOM",
+          "role": "tom",
+          "values": {
+            "65": 0.015748031437397003
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "GONG",
+          "role": "cymbal",
+          "values": {
+            "76": 0.023622047156095505
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SIZZRIDE",
+          "role": "cymbal",
+          "values": {
+            "87": 0.14960630238056183
+          }
+        }
+      ]
+    },
+    "Hortator / MD EFM Pulse": {
+      "gain": 89.00790908125839,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMSUB",
+          "role": "kick",
+          "values": {
+            "10": 0.07086614519357681
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "TONESNR",
+          "role": "snare",
+          "values": {
+            "21": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "DEEPBLIP",
+          "role": "clap",
+          "values": {
+            "32": 0.18110236525535583
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SPITHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.11811023950576782
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "TREMHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.19685038924217224
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "DROPTOM",
+          "role": "tom",
+          "values": {
+            "65": 0.015748031437397003
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMRIM",
+          "role": "percussion",
+          "values": {
+            "76": 0.07874015718698502
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "LOWCHIME",
+          "role": "percussion",
+          "values": {
+            "87": 0.36220473051071167
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "RISEKICK",
+          "role": "kick",
+          "values": {
+            "10": 0.06299212574958801
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "RIMSNARE",
+          "role": "snare",
+          "values": {
+            "76": 0.13385826349258423
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMZAP",
+          "role": "clap",
+          "values": {
+            "32": 0.3937007784843445
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.18110236525535583
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "TRASHHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.03937007859349251
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "RISETOM",
+          "role": "tom",
+          "values": {
+            "65": 0.023622047156095505
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "CLANK",
+          "role": "percussion",
+          "values": {
+            "76": 0.031496062874794006
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMSPLASH",
+          "role": "cymbal",
+          "values": {
+            "87": 0.15748031437397003
+          }
+        }
+      ]
+    },
+    "Hortator / MD Hybrid": {
+      "gain": 73.18609902922188,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SUBDIRT",
+          "role": "kick",
+          "values": {
+            "10": 0.06299212574958801
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "TONESNR",
+          "role": "snare",
+          "values": {
+            "21": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "WIDECLAP",
+          "role": "clap",
+          "values": {
+            "32": 0.11023622006177902
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "METALHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.14173229038715363
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "AIROPEN",
+          "role": "open_hat",
+          "values": {
+            "54": 0.33070865273475647
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "GRITTOM",
+          "role": "tom",
+          "values": {
+            "65": 0.015748031437397003
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMRIM",
+          "role": "percussion",
+          "values": {
+            "76": 0.07874015718698502
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMCRASH",
+          "role": "cymbal",
+          "values": {
+            "87": 0.11811023950576782
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMBOOM",
+          "role": "kick",
+          "values": {
+            "10": 0.05511811003088951
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "HARDSNAP",
+          "role": "snare",
+          "values": {
+            "21": 0.08661417663097382
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "RATTLE",
+          "role": "clap",
+          "values": {
+            "32": 0.36220473051071167
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SPITHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.11811023950576782
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "SIZZLE",
+          "role": "open_hat",
+          "values": {
+            "54": 0.26771652698516846
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "BUZZLOW",
+          "role": "tom",
+          "values": {
+            "65": 0.13385826349258423
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "PUREBELL",
+          "role": "percussion",
+          "values": {
+            "76": 0.06299212574958801
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "LOWCHIME",
+          "role": "percussion",
+          "values": {
+            "87": 0.36220473051071167
+          }
+        }
+      ]
+    },
+    "Hortator / MD Percussion": {
+      "gain": 25.379355759525314,
+      "pads": [
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "ZAPKICK",
+          "role": "kick",
+          "values": {
+            "10": 0.15748031437397003
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "POPSNARE",
+          "role": "snare",
+          "values": {
+            "21": 0.24409449100494385
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMZAP",
+          "role": "clap",
+          "values": {
+            "32": 0.9448819160461426
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "TINHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.7795275449752808
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "HALFOPEN",
+          "role": "open_hat",
+          "values": {
+            "54": 0.7637795209884644
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "GRITCONG",
+          "role": "tom",
+          "values": {
+            "65": 0.22047244012355804
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "CLANK",
+          "role": "percussion",
+          "values": {
+            "76": 0.07874015718698502
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "PINGBELL",
+          "role": "percussion",
+          "values": {
+            "87": 0.07086614519357681
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "NOISEZAP",
+          "role": "kick",
+          "values": {
+            "10": 0.14173229038715363
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "RIMSNARE",
+          "role": "snare",
+          "values": {
+            "76": 0.32283464074134827
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "RATTLE",
+          "role": "clap",
+          "values": {
+            "32": 0.874015748500824
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "TREMHAT",
+          "role": "closed_hat",
+          "values": {
+            "43": 0.4724409580230713
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "DARKOPEN",
+          "role": "open_hat",
+          "values": {
+            "54": 0.6692913174629211
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "RISETOM",
+          "role": "tom",
+          "values": {
+            "65": 0.05511811003088951
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "LONGBELL",
+          "role": "percussion",
+          "values": {
+            "76": 0.04724409431219101
+          }
+        },
+        {
+          "source_folder": "RHYTHMER - FM1 - hortator - Hortator Kit",
+          "sound": "FMSPLASH",
+          "role": "cymbal",
+          "values": {
+            "87": 0.3779527544975281
+          }
+        }
+      ]
+    }
+  }
+}

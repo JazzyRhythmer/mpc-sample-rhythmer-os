@@ -47,5 +47,12 @@ static int native_display(int i,char *out,int capacity){
     return snprintf(out,(size_t)capacity,"%s",value);
 }
 #define NATIVE_SYNC 1
-static void native_sync(void){snd_service();}
+static void native_sync(void){
+    snd_service();
+    /* A loaded/silent voice has no running ramp to preserve. Settle its
+       mixer reference before its first hit; otherwise volume zero leaks
+       the old Initkit level during the first few milliseconds. Live edits
+       retain the original per-sample volume smoothing. */
+    for(unsigned i=0;i<6;++i)if(vc[i].aeg.state==EG_STOPPED)vc[i].vol_s=vc[i].vol<<9;
+}
 #include "fm1_facade.h"

@@ -32,7 +32,7 @@ inline constexpr GenEngine gen_engines[]={
 {"RHYTHMER - Move - tenebrae - Tenebrae","Tenebrae",false,false,false,24,96,{1,53,0,0,0,0,0,32},{11,13,24,-1,-1,1,-1,53,-1,38,-1,68,146,53,-1,84,27,-1,9,83,9,-1,-1,39,-1,-1,83,1}},
 {"RHYTHMER - Rhythmer Kit","Rhythmer Kit",true,false,false,36,99,{0,0,0,0,0,0,0,0},{-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}},
 };
-inline constexpr int gen_kit_programs[]={14,1,2,0,4,5,6,8};
+inline constexpr int gen_kit_programs[]={18,5,6,0,8,9,10,12};
 }
 namespace rhythmer { struct GenSoundRole {const char* folder;const char* sound;unsigned lane;};
 inline constexpr GenSoundRole gen_sound_roles[]={

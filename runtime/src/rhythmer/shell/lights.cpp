@@ -51,15 +51,15 @@ void Shell::autosave_tick(uint32_t now) {
     if (ui.held_pads || ui.shift || ui.seq_held || ui.pad_bank || ui.sample_held || ui.erase || tap.down) last_input_ = now;
     const auto& host = context_.host;
     AutosaveFacts f;
-    f.dirty = context_.dirty;
+    f.dirty = context_.dirty && !context_.save_pending;
     f.playing = host.playing() || host.song_playing() || host.looper().recording() || host.looper().armed();
     f.recording = ui.recording || ui.rec_armed || host.recorder().state() != TakeRecorder::State::Idle
-               || (context_.printer && context_.printer->busy()) || ui.print_sheet.printing
+               || (context_.printer && (context_.printer->busy() || context_.freeze_waiting)) || ui.print_sheet.printing
                || ui.auto_sheet.sampling || ui.auto_sheet.checking || (store_ && store_->exporting());
     f.sheet = ui.ask != UiState::Ask::None || ui.name.open() || ui.exit_open || card_owns_controls(ui) || ui.update.phase != 0;
     f.loading = ui.loading || context_.samples_to_load < sample_slots;
-    f.editing = ui.page == PageId::Chop || ui.page == PageId::Record || context_.import_unsaved || ui.lesson; // a lesson's project is never saved
-    f.failed = autosave_failed_;
+    f.editing = ui.page == PageId::Chop || ui.page == PageId::Record || ui.project_save_picker || ui.lesson; // a lesson's project is never saved
+    f.failed = autosave_failed_ || context_.last_save_failed;
     f.now = now; f.last_input = last_input_; f.last_try = autosave_try_;
     if (!autosave_due(f)) return;
     autosave_failed_ = !context_.autosave();
@@ -79,6 +79,7 @@ void Shell::update_tick() {
         ui_.shift = false;
         ask(context_, UiState::Ask::InstallUpdate, 0);
     }
+    if(u.phase==uint8_t(UpdatePhase::Saving)&&!context_.save_pending&&context_.last_save_failed){u.phase=0;context_.notice("Recovery failed: update cancelled");return;}
     if (u.phase == uint8_t(UpdatePhase::Saving) && (!store_ || int(store_->saves()) >= u.after_save)
         && !(library_ && library_->loops_busy())) {
         u.phase = uint8_t(UpdatePhase::Checking);
@@ -214,13 +215,17 @@ void Shell::lights(SurfaceLights& lights, uint32_t now) {
         while (host.take_done_track(track_done)) delete track_done;
     }
     if (store_) {
+        context_.project_save_tick();
+        if(leave_after_save>=0&&!context_.save_pending&&context_.last_save_failed){leave_after_save=-1;ui_.exit_saved=false;ui_.exit_off=false;off_after_save=false;context_.notice("Recovery failed: retry or CANCEL");}
         if (auto loaded = store_->take_loaded()) {
             auto project = std::make_unique<Project>();
             auto bank = std::make_unique<PatternBank>();
             unsigned version = 0;
             PluginStates plugin_states;
             PrintTable prints;
-            if (loaded->error.empty() && load_project(loaded->bytes, *project, *bank, &version, &plugin_states, &prints).empty()) {
+            std::string project_read_error=loaded->error;
+            if(project_read_error.empty())project_read_error=load_project(loaded->bytes,*project,*bank,&version,&plugin_states,&prints);
+            if (project_read_error.empty()) {
                 for (auto& t : project->tracks) upgrade_params(t.engine, version, t.params); // older files: pad expression at its defaults
                 if (!context_.kit_from.empty() && context_.kit_from == loaded->path) // Load Kit: only its kit, onto the selected track
                     context_.load_kit(*project, std::filesystem::path(loaded->path).stem().string());
@@ -231,12 +236,18 @@ void Shell::lights(SurfaceLights& lights, uint32_t now) {
                     context_.import_unsaved = true; // opening one writes nothing: no background save until it has a file
                     context_.notice(loaded->note);
                 }
-                else context_.switch_to(*project, *bank, loaded->path, &plugin_states, &prints);
-            } else if (!loaded->note.empty()) context_.notice(loaded->note);
+                else {
+                    context_.switch_to(*project, *bank, loaded->recovery&&!loaded->media.empty()?loaded->media:loaded->path, &plugin_states, &prints);
+                    if (loaded->recovery) {
+                        context_.recovered_project = true; context_.recovery_origin = loaded->origin;
+                        context_.dirty = true; context_.notice("Recovered copy: use SAVE to keep it");
+                    }
+                }
+            } else context_.notice(loaded->note.empty()?project_read_error:loaded->note);
             if (context_.kit_from == loaded->path) context_.kit_from.clear();
         }
         if (auto note = store_->take_note()) context_.notice(*note); // an MPC 3 export's outcome
-        if (leave_after_save >= 0 && int(store_->saves()) >= leave_after_save && !(library_ && library_->loops_busy())) { // loop files too
+        if (leave_after_save >= 0 && int(store_->saves()) >= leave_after_save && !context_.save_pending && !(library_ && library_->loops_busy())) { // loop files too
             if (!off_after_save) leave.store(true);
             else if (!ui_.exit_saved) { ui_.exit_saved = true; off_saved_at = now; } // the sheet says it is saved, then off
         }
@@ -261,7 +272,7 @@ void Shell::lights(SurfaceLights& lights, uint32_t now) {
         ProjectStore::View v;
         store_->view(v);
         context_.user_sounds = std::move(v.sounds);
-        if (!v.moved_from.empty() && v.moved_from == context_.project_path) context_.project_path = v.moved_to; // the open project followed its file
+        // File-path acknowledgements are consumed once by Context, not replayed from cached views.
     }
     ui_.user_sound_count = uint16_t(context_.user_sound_count(project_->tracks[ui_.track].engine));
     // Rhythmer's settings, once the card's file has been read.
@@ -273,7 +284,7 @@ void Shell::lights(SurfaceLights& lights, uint32_t now) {
             ui_.settings.read(v.settings); settings_loaded = true; context_.send_click(); context_.send_repeat_velocity();
             // A first install (no settings file, so no project to resume): the first project starts with the MPC's
             // factory kit on track 1, as NEW gives (shell/lesson.h), so the pads play at once.
-            if (v.settings.empty() && context_.project_path.empty() && !context_.dirty && std::filesystem::exists(factory_kit_path))
+            if (v.settings.empty() && v.recovery_offer.empty() && context_.project_path.empty() && !context_.dirty && std::filesystem::exists(factory_kit_path))
                 context_.load_kit_file(factory_kit_path, factory_kit_name);
         }
     }

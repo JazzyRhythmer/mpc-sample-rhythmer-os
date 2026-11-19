@@ -19,6 +19,7 @@ void Context::print(const PrintAsk& ask) {
         else autosample(ask.track, ask.sampling, ask.probe_first);
         return;
     }
+    if(save_pending&&!save_is_recovery&&save_target!=project_path){notice("Wait for project save");if(printer)printer->note("Wait for project save");return;}
     if (!printer) return;
     if (project_path.empty()) { printer->note("save the project first: its prints go beside its file"); return; }
     const unsigned t = ask.track % track_count;
@@ -47,6 +48,7 @@ void Context::print(const PrintAsk& ask) {
 }
 
 void Context::freeze(const PrintAsk& ask) {
+    if(save_pending&&!save_is_recovery&&save_target!=project_path){notice("Wait for project save");if(printer)printer->note("Wait for project save");return;}
     if (!printer) return;
     const unsigned t = ask.track % track_count;
     const auto& tr = project.tracks[t];
@@ -163,7 +165,7 @@ void Context::print_tick() {
     deep_now.store(deep_bits, std::memory_order_relaxed);
     thawing_now.store(thawing, std::memory_order_relaxed);
     thaw_took_now.store(thaw_took, std::memory_order_relaxed);
-    if (freeze_waiting && !printer->busy() && !project_path.empty()) {
+    if (freeze_waiting && !printer->busy() && !project_path.empty() && !(save_pending&&!save_is_recovery&&save_target!=project_path)) {
         unsigned t = 0;
         while (!((freeze_waiting >> t) & 1)) ++t;
         const auto& f = prints.freeze[t];

@@ -246,6 +246,12 @@ inline int track_workflow_check() {
         c.ui.track=0;c.ui.page=PageId::PluginPresets;c.ui.presets_back=PageId::Stage;c.select_track(6);offer_new_track(c);make_new_track(c,NewChoice::Plugin);c.ui.plugin_replace=true;c.choose_plugin(*first);
         TRACK_CHECK(c.ui.track==6 && c.ui.page==PageId::Stage && wait(),"preset A to empty B to plugin B");
         c.back();TRACK_CHECK(c.ui.page==PageId::Stage,"loaded B Back cannot return to A");
+        c.dirty=false;c.start_new_project(true);
+        TRACK_CHECK(c.ui.track==0&&c.track().engine==EngineKind::Plugin&&std::string(c.project.plugins[c.track().plugin].name)=="Rhythmer Kit","normal NEW assigns Rhythmer Kit to track 1");
+        TRACK_CHECK(wait(),"normal NEW default kit reaches Ready");auto defaults=rack.programs(c.track().plugin);
+        TRACK_CHECK(!defaults.list.empty()&&defaults.current==0&&defaults.list[0].name=="K-WASUB / 909","normal NEW loads K-WASUB / 909");
+        c.dirty=false;c.start_new_project(false);bool empty_refs=true;for(const auto&ref:c.project.plugins)empty_refs&=!ref.used();
+        TRACK_CHECK(empty_refs&&c.track().engine!=EngineKind::Plugin&&!c.track().pads[0].used(),"EMPTY project keeps empty sampler, no default plug-in");
         c.plugins=nullptr;
     }else {std::fprintf(stderr,"TRACK_WORKFLOW: missing real plugin card fixture\n");return 2;}
     // Empty tracks retain their carousel but can reach MIX, in either key order.

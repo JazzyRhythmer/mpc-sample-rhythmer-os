@@ -53,9 +53,6 @@ void Context::gen_break_tick(){
     };
     if(slot>=sample_slots||at>=track_count){fail_load("BREAK: invalid load target");return;}
     const auto& sample=project.samples[slot];if(!sample.frames){if(library){auto loaded=library->slot(slot);if(!loaded.error.empty()){fail_load("BREAK: sample load failed");}}return;}
-    if (sample.frames > 60u * 44100u) { fail_load("BREAK: use a loop under 60 s"); return; }
-    if (library && library->break_failed(slot)) { fail_load("BREAK: cannot read loop / retry"); return; }
-    if (library && sample.streamed && !library->break_ready(slot)) { library->hold(slot, {{0,sample.frames,false,true}}); return; }
     ui.break_pending=-1;ui.break_job_track=-1;
     if(frozen(at)){notice("BREAK load cancelled: frozen track");return;} // no late Unfreeze dialog on another screen
     unsigned bars=std::clamp<unsigned>(job_bars,1,4);
@@ -90,7 +87,7 @@ void Context::gen_break_tick(){
         if(changed_bars || !replacing || i!=0) sound.layers={};
         sound.loop_lock=true;sound.loop_start=0;
         sound.sample=uint16_t(slot);sound.start=uint32_t(uint64_t(sample.frames)*i/16);sound.end=uint32_t(uint64_t(sample.frames)*(i+1)/16);
-        sound.own_tempo=uint16_t(std::lround(bpm*10));if(!replacing){sound.group=16;sound.mono=true;}
+        sound.own_tempo=uint16_t(std::lround(bpm*10));if(!replacing){sound.play=PadPlay::OneShot;sound.group=16;sound.mono=true;}
         t.pads[t.bank*16+i]=sound;
     }
     auto& pat=next->patterns[t.pattern];

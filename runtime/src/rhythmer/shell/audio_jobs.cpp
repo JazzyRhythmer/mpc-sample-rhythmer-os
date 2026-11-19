@@ -129,6 +129,7 @@ void Context::add_peaks(TakePeaks&& more) {
 }
 
 bool Context::record_audio(unsigned track) {
+    if(save_pending&&!save_is_recovery&&save_target!=project_path){notice("Wait for project save");return false;}
     const unsigned t = track % track_count;
     if (!project.tracks[t].is_audio()) return false;
     if (!printer) { notice("Audio: no card"); return false; }

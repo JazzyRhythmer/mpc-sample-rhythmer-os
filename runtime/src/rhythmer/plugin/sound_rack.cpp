@@ -5,6 +5,7 @@
 #include "rhythmer/plugin/design_pages.h"
 #include "rhythmer/plugin/vst2_instance.h"
 #include "rhythmer/plugin/kit_filter.h"
+#include "rhythmer/plugin/kit_output_stage.h"
 #include <atomic>
 #include <array>
 #include <condition_variable>
@@ -46,6 +47,7 @@ struct Child {
 struct Graph {
     std::array<std::shared_ptr<Child>,pads> routes{};
     int kit=0;
+    float kit_mix_gain=1;
     std::array<int,pads> sounds{},notes{};
     std::array<std::vector<int>,pads> orders,ordinals;
     std::array<std::vector<String>,pads> names;
@@ -82,7 +84,7 @@ public:
     }
     const String getName() const override{return single<0?"Rhythmer Kit":text(engine(single),"name");}
     void fillInPluginDescription(PluginDescription& d) const override{d.name=d.descriptiveName=getName();d.manufacturerName="jazzy rhythmer";d.pluginFormatName="Rhythmer";d.isInstrument=true;d.numOutputChannels=2;d.uniqueId=single<0?0x47724b32:0x47725332;}
-    void prepareToPlay(double r,int b) override{setRateAndBufferSizeDetails(r,b);}
+    void prepareToPlay(double r,int b) override{setRateAndBufferSizeDetails(r,b);kit_output.prepare(float(r));}
     void releaseResources() override{}
     double getTailLengthSeconds() const override{return 30;}
     bool acceptsMidi() const override{return true;}
@@ -166,7 +168,7 @@ public:
     void write_state(MemoryBlock& result){
         std::lock_guard<std::mutex> guard(lock);
         auto* g=active.load();if(!g)return;
-        var root=object();put(root,"schema",2);put(root,"user_label",user_label);put(root,"user_slot",selected_user_slot);put(root,"single",single);put(root,"single_engine",single<0?String():text(engine(single),"folder"));put(root,"pad",focus);put(root,"kit",g->kit);
+        var root=object();put(root,"schema",2);put(root,"user_label",user_label);put(root,"user_slot",selected_user_slot);put(root,"single",single);put(root,"single_engine",single<0?String():text(engine(single),"folder"));put(root,"pad",focus);put(root,"kit",g->kit);put(root,"kit_name",text(at(get(catalog,"kits"),g->kit),"name"));put(root,"kit_mix_gain",g->kit_mix_gain);
         if(kit_filter){Array<var> values,defaults;for(int i=0;i<3;++i){values.add(int(g->kit_filter[size_t(i)]));defaults.add(int(g->kit_filter_defaults[size_t(i)]));}put(root,"kit_filter",values);put(root,"kit_filter_defaults",defaults);put(root,"kit_filter_edited",g->filter_edited);}
         Array<var> children,routes;std::vector<Child*> seen;
         for(const auto& c:g->routes){
@@ -410,6 +412,7 @@ private:
                 for(int i=0;i<n;++i){output.addSample(0,start+offset+i,left[size_t(i)]);if(output.getNumChannels()>1)output.addSample(1,start+offset+i,right[size_t(i)]);}
              });
             if(kit_filter){if(output.getNumChannels()>1)kit_filter->process(g.kit_filter,g.filter_epoch,output.getWritePointer(0,start+offset),output.getWritePointer(1,start+offset),unsigned(n));else{std::array<float,128> right{};std::copy_n(output.getReadPointer(0,start+offset),n,right.data());kit_filter->process(g.kit_filter,g.filter_epoch,output.getWritePointer(0,start+offset),right.data(),unsigned(n));}}
+            if(single<0){if(g.kit_mix_gain!=1)output.applyGain(start+offset,n,g.kit_mix_gain);if(output.getNumChannels()>1)kit_output.process(output.getWritePointer(0,start+offset),output.getWritePointer(1,start+offset),unsigned(n),g.filter_epoch);else{std::array<float,128> right{};std::copy_n(output.getReadPointer(0,start+offset),n,right.data());kit_output.process(output.getWritePointer(0,start+offset),right.data(),unsigned(n),g.filter_epoch);}}
         }
     }
     void publish(std::unique_ptr<Graph> g){std::lock_guard<std::mutex> guard(lock);auto* raw=g.get();if(kit_filter&&raw->filter_epoch==0)raw->filter_epoch=++filter_sequence;auto* before=active.load();const size_t slot=size_t(single<0?focus:0);
@@ -418,7 +421,7 @@ private:
     void collect(){auto* playing=hazard.load(std::memory_order_seq_cst);auto* now=active.load();graphs.erase(std::remove_if(graphs.begin(),graphs.end(),[&](const auto& g){return g.get()!=now&&g.get()!=playing;}),graphs.end());}
     void load_kit(int index){
         auto kit=at(get(catalog,"kits"),index);if(kit.isVoid())throw std::runtime_error("Unknown kit");
-        auto g=std::make_unique<Graph>();g->kit=index;g->filter_epoch=++filter_sequence;
+        auto g=std::make_unique<Graph>();g->kit=index;if(!get(kit,"mix_gain").isVoid())g->kit_mix_gain=float(get(kit,"mix_gain"));if(!std::isfinite(g->kit_mix_gain)||g->kit_mix_gain<=0||g->kit_mix_gain>128)throw std::runtime_error("Invalid factory kit mix gain");g->filter_epoch=++filter_sequence;
         auto routes=get(kit,"routes");for(int i=0;i<std::min(pads,size(routes));++i){auto r=at(routes,i);int e=number(r,"engine",-1),s=number(r,"sound");
             // A factory kit uses one original instance, preserving its choke
             // groups and voice allocation. An edited pad forks only on demand.
@@ -440,6 +443,13 @@ private:
             int source=child->source_note,old_sound=child->sound;child->sound=s;child->source_note=g->notes[size_t(i)];order(*child);g->orders[size_t(i)]=child->parameter_order;g->ordinals[size_t(i)]=child->parameter_ordinals;g->names[size_t(i)]=child->parameter_names;child->source_note=source;child->sound=old_sound;
 
         }
+        // Calibrated factory mix uses the existing voice level controls.
+        // Apply after all shared factory lanes are loaded, preserving choke groups.
+        for(int i=0;i<std::min(pads,size(routes));++i)if(auto child=g->routes[size_t(i)])if(auto mix=get(at(routes,i),"mix_values").getDynamicObject()){
+            context(*child,g->notes[size_t(i)]);
+            for(const auto& value:mix->getProperties()){int at=value.name.toString().getIntValue();float v=float(value.value);if(at<0||at>=child->synth->getParameters().size()||!std::isfinite(v)||v<0||v>1)throw std::runtime_error("Invalid factory kit mix level");child->synth->getParameters()[at]->setValue(v);}
+        }
+        each(*g,[](Child& c){c.defaults.clear();for(auto* p:c.synth->getParameters())c.defaults.push_back(p->getValue());});
         publish(std::move(g));
     }
     void enqueue(Request r){std::lock_guard<std::mutex> guard(lock);if(stopping)return;
@@ -461,7 +471,12 @@ private:
             auto c=load(e,number(row,"sound"));MemoryBlock chunk;if(!chunk.fromBase64Encoding(text(row,"state")))throw std::runtime_error("Invalid engine state");c->synth->setStateInformation(chunk.getData(),int(chunk.getSize()));initial(*c);pitch_policy(*c);
             auto values=get(row,"values");if(size(values)!=c->synth->getParameters().size())throw std::runtime_error("Engine controls changed");for(int j=0;j<size(values);++j){float v=float(at(values,j));if(!std::isfinite(v))throw std::runtime_error("Invalid control value");bool selector=false;for(int n=0;n<size(get(engine(e),"preset_parameters"));++n)selector|=int(at(get(engine(e),"preset_parameters"),n))==j;auto* parameter=c->synth->getParameters()[j];if(!selector&&v>=0&&v<=1&&parameter->isAutomatable()&&std::abs(parameter->getValue()-v)>.000001f)parameter->setValue(v);}auto defaults=user_preset?values:get(row,"reset_defaults");if(defaults.isArray()){if(size(defaults)!=int(c->defaults.size()))throw std::runtime_error("Invalid reset defaults");for(int j=0;j<size(defaults);++j){float value=float(at(defaults,j));if(!std::isfinite(value))throw std::runtime_error("Invalid reset default");c->defaults[size_t(j)]=value;}}order(*c);loaded.push_back(c);
         }
-        auto g=std::make_unique<Graph>();g->kit=number(root,"kit");g->filter_epoch=++filter_sequence;
+        auto g=std::make_unique<Graph>();g->kit=number(root,"kit");
+        String saved_kit=text(root,"kit_name");if(saved_kit.isEmpty())saved_kit=at(get(catalog,"kit_order_legacy"),g->kit).toString();
+        if(saved_kit.isNotEmpty())for(int i=0;i<size(get(catalog,"kits"));++i)if(text(at(get(catalog,"kits"),i),"name")==saved_kit){g->kit=i;break;}
+        if(!get(root,"kit_mix_gain").isVoid()){g->kit_mix_gain=float(get(root,"kit_mix_gain"));}
+        if(!std::isfinite(g->kit_mix_gain)||g->kit_mix_gain<=0||g->kit_mix_gain>128){throw std::runtime_error("Invalid saved kit mix gain");}
+        g->filter_epoch=++filter_sequence;
         if(kit_filter){auto values=get(root,"kit_filter"),defaults=get(root,"kit_filter_defaults");if(!values.isVoid()){if(size(values)!=3)throw std::runtime_error("Invalid kit filter");for(int i=0;i<3;++i){int value=int(at(values,i));if(value<0||value>(i==2?2:100))throw std::runtime_error("Invalid kit filter value");g->kit_filter[size_t(i)]=int16_t(value);}}
             g->kit_filter_defaults=user_preset?g->kit_filter:KitFilterValues{{100,0,0}};if(!user_preset&&defaults.isArray()){if(size(defaults)!=3)throw std::runtime_error("Invalid kit filter reset baseline");for(int i=0;i<3;++i){int value=int(at(defaults,i));if(value<0||value>(i==2?2:100))throw std::runtime_error("Invalid kit filter default");g->kit_filter_defaults[size_t(i)]=int16_t(value);}}g->filter_edited=!user_preset&&bool(get(root,"kit_filter_edited"));}
         for(int i=0;i<pads;++i){auto route=at(routes,i);int id=route.isObject()?number(route,"child",-1):int(route);if(id<0)continue;if(id>=int(loaded.size()))throw std::runtime_error("Invalid pad route");g->routes[size_t(i)]=loaded[size_t(id)];g->sounds[size_t(i)]=number(route,"sound");g->notes[size_t(i)]=number(route,"note",60);g->edited[size_t(i)]=bool(get(route,"edited"));if(g->notes[size_t(i)]<0||g->notes[size_t(i)]>127||g->sounds[size_t(i)]<0||g->sounds[size_t(i)]>=sound_count(loaded[size_t(id)]->engine))throw std::runtime_error("Invalid saved sound route");auto& c=*loaded[size_t(id)];int source=c.source_note,old_sound=c.sound;c.sound=g->sounds[size_t(i)];c.source_note=g->notes[size_t(i)];order(c);g->orders[size_t(i)]=c.parameter_order;g->ordinals[size_t(i)]=c.parameter_ordinals;g->names[size_t(i)]=c.parameter_names;c.source_note=source;c.sound=old_sound;}
@@ -523,7 +538,7 @@ private:
     String user_label;File user_directory;std::vector<File> legacy_directories;std::vector<int> saved_slots;int save_slot=0,selected_user_slot=-1;
     uint32_t design_cache_revision=0;std::vector<PluginDesignPage> design_cache;
     var catalog;uint32_t layout_revision=1;int single,focus=0;const int base;SoundLoader loader;double rate;int block;
-    std::unique_ptr<KitFilterStage> kit_filter;uint64_t filter_sequence=0;
+    std::unique_ptr<KitFilterStage> kit_filter;KitOutputStage kit_output;uint64_t filter_sequence=0;
     std::atomic<Graph*> active{nullptr};std::atomic<Graph*> hazard{nullptr};std::vector<std::unique_ptr<Graph>> graphs;
     std::mutex lock;std::condition_variable wake,done;std::deque<Request> jobs;bool stopping=false,busy=false;std::thread worker;String last_error;
 };

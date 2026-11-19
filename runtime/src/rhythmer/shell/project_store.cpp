@@ -17,6 +17,7 @@
 #include <filesystem>
 #include <fstream>
 #include <functional>
+#include "rhythmer/shell/recovery_file.h"
 #include <iterator>
 
 namespace rhythmer {
@@ -44,6 +45,7 @@ bool skip_on_card(const fs::path& dir) {
 }
 // The directory a folder in view lists: on the card, in the stock app's card folder, or on the internal drive.
 std::string folder_dir(const std::string& root, const std::string& folder) {
+    if (folder == ":recovery") return root.empty() ? std::string() : (fs::path(root).parent_path() / "Autosave").string();
     if (on_card_top(folder)) return root.empty() ? std::string() : card_of(root) + folder.substr(std::strlen(card_folder));
     if (on_internal(folder)) {
         std::string rest = folder.substr(std::strlen(internal_folder)); // "" or "/<folder>..."
@@ -86,13 +88,34 @@ ProjectStore::~ProjectStore() {
     while (requests.pop(r)) delete r;
     LoadedProject* l;
     while (loaded.pop(l)) delete l;
+    SaveResult* result; while (save_results.pop(result)) delete result;
 }
 
 void ProjectStore::push(Request* request) { if (!requests.push(request)) delete request; }
 void ProjectStore::list(const std::string& f) { push(new Request {Request::Kind::List, f, {}}); }
-void ProjectStore::save(const std::string& path, std::vector<uint8_t> bytes, const std::string& from) {
-    push(new Request {Request::Kind::Save, path, std::move(bytes), from});
+bool ProjectStore::save(const std::string& path, std::vector<uint8_t> bytes, const std::string& from, bool recovery, uint64_t ticket, const std::string& media) {
+    auto* request = new Request {Request::Kind::Save, path, std::move(bytes), from, recovery, ticket, media};
+    if (requests.push(request)) return true;
+    delete request; return false;
 }
+std::unique_ptr<ProjectStore::SaveResult> ProjectStore::take_save_result() {
+    SaveResult* r = nullptr; return save_results.pop(r) ? std::unique_ptr<SaveResult>(r) : nullptr;
+}
+std::string ProjectStore::save_directory(const std::string& f) const {
+    std::lock_guard<std::mutex> guard(lock);
+    if (known.root.empty() || on_internal(f) || in_stock(f) || f == ":recovery") return {};
+    auto dir = fs::path(folder_dir(known.root, f)).lexically_normal();
+    const auto card = fs::path(card_of(known.root)).lexically_normal();
+    // Never silently redirect a read-only location, nor traverse outside this card.
+    if (!recovery_file::under(dir, card) || recovery_file::protected_folder(dir, known.root)) return {};
+    return dir.string();
+}
+std::string ProjectStore::recovery_directory() const {
+    std::lock_guard<std::mutex> guard(lock);
+    return known.root.empty() ? std::string() : (fs::path(known.root).parent_path()/"Autosave").string();
+}
+void ProjectStore::dismiss_recovery() { push(new Request {Request::Kind::DismissRecovery, {}, {}}); }
+
 void ProjectStore::load(const std::string& path) {
     load_count.fetch_add(1, std::memory_order_release); // before the request: the app sees it no later than service() does
     push(new Request {Request::Kind::Load, path, {}});
@@ -142,6 +165,10 @@ void ProjectStore::start_export(Request& r) {
 }
 void ProjectStore::duplicate(const std::string& path) { push(new Request {Request::Kind::Duplicate, path, {}}); }
 void ProjectStore::remove(const std::string& path) { push(new Request {Request::Kind::Remove, path, {}}); }
+void ProjectStore::new_folder_at(const std::string& folder) {
+    auto dir = save_directory(folder);
+    if(!dir.empty())push(new Request {Request::Kind::NewFolder, dir, {}});
+}
 void ProjectStore::new_folder() { push(new Request {Request::Kind::NewFolder, {}, {}}); }
 void ProjectStore::open_at_start(const std::string& path) { push(new Request {Request::Kind::OpenAtStart, path, {}}); }
 void ProjectStore::opened(const std::string& path) { if (!path.empty()) push(new Request {Request::Kind::Opened, path, {}}); }
@@ -234,9 +261,37 @@ ProjectStore::SettingsFile ProjectStore::read_settings_file(const std::string& r
     while (std::getline(file, line)) {
         if (line.rfind("start=", 0) == 0) out.start = line.substr(6);
         else if (line.rfind("last=", 0) == 0) out.last = line.substr(5);
+        else if (line.rfind("recovery=", 0) == 0) out.recovery = line.substr(9);
         else if (!line.empty()) out.settings += line + '\n';
     }
     return out;
+}
+
+void ProjectStore::mount_projects(const std::string& found) {
+    root = found;
+    std::error_code error;
+    crash_log::set_folder(root.empty() ? root : fs::path(root).parent_path().string() + "/Crashes"); // rhythmer/crash_log.h
+    folder.clear();
+    // Nothing is created on the card until something is saved there.
+    // What to open at start lives next to the projects: the one set to, else the last one open.
+    auto file = read_settings_file(root);
+    start = std::move(file.start);
+    last = std::move(file.last);
+    active_recovery = std::move(file.recovery);
+    settings = std::move(file.settings);
+    {
+        std::lock_guard<std::mutex> guard(lock);
+        known.settings = settings; known.settings_read = !root.empty();
+        known.recovery_offer = !started && fs::is_regular_file(active_recovery, error) ? active_recovery : std::string();
+    }
+    scan_sounds();
+    scan();
+    const auto& resume = !start.empty() && fs::exists(start, error) ? start : last;
+    if (!started && !resume.empty() && fs::exists(resume, error)) {
+        auto* l = new LoadedProject {resume, {}, read_file(resume), false, {}, {}};
+        if (l->bytes.empty() || !loaded.push(l)) delete l;
+    }
+    started = true;
 }
 
 void ProjectStore::service(Hardware& hardware) {
@@ -246,38 +301,23 @@ void ProjectStore::service(Hardware& hardware) {
         std::string found = projects_root(storage);
         const StorageSpace* card = first_card(storage);
         uint64_t free_bytes = card ? card->free_bytes : 0;
-        if (found != root) {
-            root = found;
-            crash_log::set_folder(root.empty() ? root : fs::path(root).parent_path().string() + "/Crashes"); // rhythmer/crash_log.h
-            folder.clear();
-            std::error_code error;
-            // Nothing is created on the card until something is saved there.
-            // What to open at start lives next to the projects: the one set to, else the last one open.
-            auto file = read_settings_file(root);
-            start = std::move(file.start);
-            last = std::move(file.last);
-            settings = std::move(file.settings);
-            {
-                std::lock_guard<std::mutex> guard(lock);
-                known.settings = settings; known.settings_read = !root.empty();
-            }
-            scan_sounds();
-            scan();
-            const auto& resume = !start.empty() && fs::exists(start, error) ? start : last;
-            if (!started && !resume.empty() && fs::exists(resume, error)) {
-                auto* l = new LoadedProject {resume, {}, read_file(resume), false, {}, {}};
-                if (l->bytes.empty() || !loaded.push(l)) delete l;
-            }
-            started = true;
-        }
+        if (found != root) mount_projects(found);
         std::lock_guard<std::mutex> guard(lock);
         if (known.free_bytes != free_bytes) { known.free_bytes = free_bytes; changes.fetch_add(1, std::memory_order_release); }
     }
     Request* request = nullptr;
     if (requests.pop(request)) {
+        const auto live_root = projects_root(hardware.platform.storage());
+        if (live_root != root) root.clear(); // never write through a stale removed-card path
         std::unique_ptr<Request> owned(request);
         if (!root.empty()) run(*owned);
-        else publish_message("No card for projects");
+        else {
+            publish_message("No card for projects");
+            if (owned->kind == Request::Kind::Save) {
+                auto* result = new SaveResult{owned->ticket, owned->path, "No card for projects", owned->recovery};
+                if (!save_results.push(result)) delete result;
+            }
+        }
     }
 }
 
@@ -363,22 +403,6 @@ void carry_loops(const fs::path& from, const fs::path& to, bool copy) {
         else fs::rename(source, target, error);
     }
 }
-// Freeze plan F2d: Save As takes the prints along, so a frozen track plays them under the new name without printing
-// again, and (F3) the audio tracks' takes, which cannot be made again (a file still being written, a .part, stays behind).
-void copy_prints(const fs::path& from, const fs::path& to) {
-    for (const char* tail : {" Prints", " Audio"}) {
-        std::error_code error;
-        auto source = folder_of(from, tail);
-        if (!fs::is_directory(source, error)) continue;
-        auto target = folder_of(to, tail);
-        fs::create_directories(target, error);
-        for (const auto& entry : fs::directory_iterator(source, error)) {
-            std::error_code e;
-            if (!entry.is_regular_file(e) || entry.path().extension() == ".part") continue;
-            fs::copy_file(entry.path(), target / entry.path().filename(), fs::copy_options::overwrite_existing, e);
-        }
-    }
-}
 } // namespace
 
 void ProjectStore::run(Request& r) {
@@ -388,19 +412,38 @@ void ProjectStore::run(Request& r) {
         folder = r.path;
         break;
     case Request::Kind::Save: {
-        // Write beside it, then put it in place, so a pulled card never leaves half a project.
-        fs::create_directories(fs::path(r.path).parent_path(), error);
-        auto temporary = r.path + ".new";
-        {
-            std::ofstream file(temporary, std::ios::binary | std::ios::trunc);
-            file.write(reinterpret_cast<const char*>(r.bytes.data()), std::streamsize(r.bytes.size()));
-            if (!file) { publish_message("Could not save"); fs::remove(temporary, error); return; }
-        }
-        fs::rename(temporary, r.path, error);
-        if (error) { publish_message("Could not save"); return; }
-        if (!r.from.empty() && r.from != r.path) copy_prints(r.from, r.path); // Save As (freeze plan F2d)
-        remember(r.path); // only the open project is saved, and before the count moves, so a leave after it keeps it
-        saved.fetch_add(1, std::memory_order_release);
+        std::string failure;
+        const auto destination = fs::path(r.path).lexically_normal();
+        if(r.recovery) {
+            const auto autos = fs::path(root).parent_path()/"Autosave";
+            std::error_code resolved_error;
+            if(destination.parent_path()!=autos || !recovery_file::valid_id(destination.stem().string()) ||
+               fs::weakly_canonical(autos,resolved_error)!=autos || resolved_error) failure="Invalid recovery destination";
+        } else if(!recovery_file::under(destination,fs::path(card_of(root))) || recovery_file::protected_folder(destination.parent_path(),root)) failure="Project folder is read only";
+        // Copy dependent takes/prints before publishing the new project manifest.
+        if (failure.empty() && !r.from.empty() && r.from != (r.media.empty()?r.path:r.media))
+            failure = recovery_file::copy_media(r.from, r.media.empty()?r.path:r.media);
+        if (failure.empty()) failure = recovery_file::atomic_write(r.path, r.bytes);
+        if (failure.empty()) {
+            {std::lock_guard<std::mutex> guard(lock);known.message.clear();}
+            if (r.recovery) {
+                active_recovery = r.path;
+                write_settings(error);
+            } else {
+                active_recovery.clear();
+                {std::lock_guard<std::mutex> guard(lock);known.recovery_offer.clear();}
+                remember(r.path);
+                write_settings(error);
+            }
+            saved.fetch_add(1, std::memory_order_release);
+        } else publish_message(failure);
+        auto* result = new SaveResult{r.ticket, r.path, failure, r.recovery};
+        if (!save_results.push(result)) delete result;
+        break;
+    }
+    case Request::Kind::DismissRecovery: {
+        active_recovery.clear(); write_settings(error);
+        std::lock_guard<std::mutex> guard(lock); known.recovery_offer.clear();
         break;
     }
     case Request::Kind::ExportMpc3:
@@ -408,15 +451,25 @@ void ProjectStore::run(Request& r) {
         return;
     case Request::Kind::Load: {
         auto* l = new LoadedProject {r.path, {}, read_file(r.path), false, {}, {}};
+        l->origin = recovery_file::origin(l->bytes);
+        l->media = recovery_file::media_path(r.path,l->bytes);
+        l->recovery = fs::path(r.path).parent_path() == fs::path(root).parent_path()/"Autosave";
         if (l->bytes.empty()) l->error = "Could not read";
         else if (is_mpc_project(r.path) || is_drum_program(r.path)) import_mpc(*l, root);
         if (!loaded.push(l)) delete l;
         return;
     }
     case Request::Kind::Duplicate: {
-        auto base = fs::path(r.path).stem().string();
-        auto target = free_path(base);
-        if (!target.empty()) { fs::copy_file(r.path, target, error); carry_loops(r.path, target, true); }
+        const auto target=free_path(fs::path(r.path).stem().string());
+        auto p=std::make_unique<Project>();auto bank=std::make_unique<PatternBank>();
+        std::array<std::vector<uint8_t>,max_plugins> states;PrintTable prints;
+        if(!target.empty()&&load_project(read_file(r.path),*p,*bank,nullptr,&states,&prints).empty()) {
+            const auto id=recovery_file::new_id();std::snprintf(p->recovery_id,sizeof(p->recovery_id),"%s",id.c_str());
+            std::snprintf(p->name,sizeof(p->name),"%s",fs::path(target).stem().c_str());
+            auto failure=recovery_file::copy_media(r.path,target,true);
+            if(failure.empty())failure=recovery_file::atomic_write(target,save_project(*p,*bank,&states,&prints));
+            if(!failure.empty())publish_message(failure);
+        }
         break;
     }
     case Request::Kind::Remove:
@@ -424,7 +477,7 @@ void ProjectStore::run(Request& r) {
         for (const char* tail : project_folders) fs::remove_all(folder_of(r.path, tail), error);
         break;
     case Request::Kind::NewFolder: {
-        auto dir = write_dir(root, folder);
+        auto dir = r.path.empty() ? write_dir(root, folder) : r.path;
         fs::create_directories(dir, error);
         for (unsigned n = 1; n < 1000; ++n)
             if (!fs::exists(dir + "/Folder " + std::to_string(n), error)) { fs::create_directory(dir + "/Folder " + std::to_string(n), error); break; }
@@ -435,7 +488,7 @@ void ProjectStore::run(Request& r) {
         write_settings(error);
         break;
     case Request::Kind::Opened:
-        remember(r.path);
+        if (!recovery_file::under(fs::path(r.path),fs::path(root).parent_path()/"Autosave")) remember(r.path);
         break;
     case Request::Kind::Settings:
         settings = r.path;
@@ -445,11 +498,15 @@ void ProjectStore::run(Request& r) {
         std::string name(r.bytes.begin(), r.bytes.end());
         auto target = fs::path(r.path).parent_path() / (name + extension);
         if (fs::exists(target, error)) { publish_message("A project has that name"); return; }
+        if(const auto failed=recovery_file::pin_legacy_identity(r.path,target.stem().string());!failed.empty()){publish_message(failed);return;}
         fs::rename(r.path, target, error);
         if (error) { publish_message("Could not rename"); return; }
         carry_loops(r.path, target, false);
+        auto* changed=new SaveResult{0,target.string(),{},false,r.path};
+        if(!save_results.push(changed)){delete changed;publish_message("Project moved: reopen its new path");}
         if (start == r.path) { start = target.string(); write_settings(error); }
         if (last == r.path) remember(target.string());
+        {std::lock_guard<std::mutex> guard(lock);known.moved_from=r.path;known.moved_to=target.string();}
         break;
     }
     case Request::Kind::Move: {
@@ -461,9 +518,12 @@ void ProjectStore::run(Request& r) {
             target = dir / (stem + (n == 1 ? std::string() : " " + std::to_string(n)) + extension);
             if (!fs::exists(target, error)) break;
         }
+        if(const auto failed=recovery_file::pin_legacy_identity(r.path,target.stem().string());!failed.empty()){publish_message(failed);return;}
         fs::rename(r.path, target, error);
         if (error) { publish_message("Could not move"); return; }
         carry_loops(r.path, target, false);
+        auto* changed=new SaveResult{0,target.string(),{},false,r.path};
+        if(!save_results.push(changed)){delete changed;publish_message("Project moved: reopen its new path");}
         if (start == r.path) { start = target.string(); write_settings(error); }
         if (last == r.path) remember(target.string());
         std::lock_guard<std::mutex> guard(lock);
@@ -497,13 +557,15 @@ void ProjectStore::remember(const std::string& path) {
 }
 
 void ProjectStore::write_settings(std::error_code& error) {
-    fs::create_directories(fs::path(root).parent_path(), error);
-    std::ofstream file(fs::path(root).parent_path() / "settings", std::ios::trunc);
-    if (!start.empty()) file << "start=" << start << '\n';
-    if (!last.empty()) file << "last=" << last << '\n';
-    file << settings;
-    std::lock_guard<std::mutex> guard(lock);
-    known.settings = settings;
+    std::string text;
+    if(!start.empty())text+="start="+start+'\n';
+    if(!last.empty())text+="last="+last+'\n';
+    if(!active_recovery.empty())text+="recovery="+active_recovery+'\n';
+    text+=settings;
+    std::vector<uint8_t> bytes(text.begin(),text.end());
+    const auto failed=recovery_file::atomic_write((fs::path(root).parent_path()/"settings").string(),bytes);
+    if(!failed.empty()){error=std::make_error_code(std::errc::io_error);return;}
+    std::lock_guard<std::mutex> guard(lock);known.settings=settings;
 }
 
 // The folder in view: its folders first, then its projects, newest first.
@@ -528,7 +590,7 @@ void ProjectStore::scan() {
                 // Its size in tracks and its tempo, read from the file itself.
                 auto project = std::make_unique<Project>();
                 auto patterns = std::make_unique<PatternBank>();
-                if (load_project(read_file(e.path), *project, *patterns).empty()) { e.tracks = project->used_tracks(); e.tempo = project->tempo; }
+                if (load_project(read_file(e.path), *project, *patterns).empty()) { e.tracks = project->used_tracks(); e.tempo = project->tempo; if (folder == ":recovery") e.name = project->name; }
             } else if (is_mpc_project(e.path)) {
                 e.modified = int64_t(fs::last_write_time(item.path(), error).time_since_epoch().count()); // read only when opened: 10 MB of JSON
             } else {
