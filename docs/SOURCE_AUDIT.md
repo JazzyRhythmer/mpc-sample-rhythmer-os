@@ -18,3 +18,8 @@ Acid GEN seed visibility is an interface-only adaptation. Native TB-3PO generati
 ### Manual save and per-project recovery — 2026-11-19
 
 DECIDED: SAVE chooses a folder/name on first save and updates the current file thereafter. SAVE AS chooses another destination and creates an independent project identity. Idle autosave updates one separate recovery entry per project under Rhythmer/Autosave; it never writes manual Project N files or overwrites an explicit save. OPEN/NEW use SAVE, DISCARD and CANCEL. This is a deliberate fork policy over the pinned Melodee saving model. See [Project saving and recovery](PROJECT_SAVE_RECOVERY.md) for the native-browser adaptation, state/media transaction boundaries and validation.
+
+
+### BASIC SENDS doorway — 2026-11-20
+
+The pinned Melodee v0.3.0 mixer hides B2 SENDS outside Full. The fork keeps its caption visible and offers the existing confirmation sheet to enable the native FEATURES setting. Full access, bus routing and source DSP are unchanged; other Basic gates remain. `tests/test_sends_access.py` exercises the actual surface dispatcher, cancel/back priority, shifted/repeat controls, native setting roundtrip and project-byte preservation.

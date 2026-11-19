@@ -4,6 +4,7 @@
 #include "rhythmer/shell/levels_keys.h"
 #include "rhythmer/shell/mix_hub.h"
 #include "rhythmer/shell/features.h"
+#include "rhythmer/shell/ask.h"
 #include "rhythmer/shell/pad_bank.h"
 #include "rhythmer/shell/pad_job.h"
 #include "rhythmer/pages/common.h"
@@ -936,12 +937,16 @@ ui::SoftKeys mix_keys(const Snapshot& s) {
     keys.dots[2] = uint8_t(count);
     keys.dot_at[2] = uint8_t(here == MixSection::Fx ? mix_fx_at(s.ui.page, kit) : 0);
     if (kit) { keys.dots[1] = 2; keys.dot_at[1] = uint8_t(mix_sends_pads(s.ui, kit)); } // SENDS: the tracks, then the kit's pads
-    if (!sends_shown(s.ui) && here != MixSection::Sends) { keys.labels[1] = ""; keys.dots[1] = 0; } // Basic: Tracks has send A
+    if (!sends_shown(s.ui) && here != MixSection::Sends) keys.dots[1] = 0; // Basic keeps SENDS visible as a Full-mode doorway
     return keys;
 }
 void mix_soft(Context& c, int key) {
     bool kit = c.track().engine == EngineKind::Sampler;
-    if (key == 1 && !sends_shown(c.ui) && c.ui.page != PageId::Sends) return; // Basic: no SENDS key
+    if (key == 1 && !sends_shown(c.ui) && c.ui.page != PageId::Sends) {
+        if (c.ui.lesson) c.notice("Finish lesson to use Sends");
+        else ask(c, UiState::Ask::EnableFullSends, int(c.ui.page));
+        return;
+    }
     if (key == 1) mix_sends_key(c.ui, kit); // B2 again on a kit's Sends: its pads (or back to the tracks)
     PageId next = mix_next(c.ui.page, unsigned(key), kit);
     if (next == PageId::Rack) c.ui.fx_loop = -1; // the track's own chain, not a loop's

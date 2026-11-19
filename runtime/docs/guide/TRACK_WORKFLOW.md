@@ -71,3 +71,8 @@ On a normal sampler track's **SOUND / TRIM** face:
 - Recording and frozen-track guards apply before the new shortcut opens. Track changes from SAMPLES follow the newly selected track and dismiss the old browser, as elsewhere.
 
 A never-assigned track or an intentional EMPTY retains Melodee's native type carousel. TRACK SETUP itself remains a B1 action on TRACKS.
+
+
+### BASIC mixer SENDS entry
+
+B2 SENDS stays visible on TRACKS and the shared FX pages. In BASIC it opens a native confirmation: CANCEL keeps the current mode/page; ENABLE FULL uses the existing FEATURES setting, persists it and opens track SENDS. The question explicitly covers all advanced pages. SHIFT+encoder push cancels, and a stale question cannot act on a different page. FULL retains direct entry, A–D bus selection and native sample-pad sends. NOTE REPEAT/arp, shifted MOVE/COPY, pending dialogs and lessons keep their existing input priority.

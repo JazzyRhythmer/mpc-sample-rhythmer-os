@@ -2,6 +2,7 @@
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
 #include "rhythmer/shell/ask.h"
 #include "rhythmer/shell/bindings.h"
+#include "rhythmer/shell/mix_hub.h"
 #include "rhythmer/shell/context.h"
 #include "rhythmer/shell/delete_jobs.h"
 #include "rhythmer/shell/looper_jobs.h"
@@ -56,6 +57,16 @@ bool ask_button(Context& c, SurfaceButton button) {
     if (ui.ask == UiState::Ask::RecoverProject && button == B::TopRight) {
         ui.ask = UiState::Ask::None; c.request_project_open(c.recovery_offer); return true;
     }
+    if (ui.ask == UiState::Ask::EnableFullSends && button == B::TopRight) {
+        const bool same_page = int(ui.page) == ui.ask_target && mix_section(ui.page) != MixSection::None;
+        ui.ask = UiState::Ask::None;
+        if (ui.lesson) { c.notice("Finish lesson to use Sends"); return true; }
+        if (!same_page) return true; // an old question cannot act on another page
+        c.apply(Binding {Binding::Kind::Features, 0, 0, 1, int(ui.settings.full_features)}, 1);
+        ui.sends_pads = false;
+        c.open(PageId::Sends);
+        return true;
+    }
     if (button == B::TopLeft) { // Cancel (LATER on the update question: asked again when the card is returned)
         if (ui.ask == UiState::Ask::ProjectChanges) { c.after_project_save = 0; c.after_project_path.clear(); }
         if (ui.ask == UiState::Ask::OverwriteProject) { ui.ask = UiState::Ask::None; c.cancel_project_save(); return true; }
@@ -108,6 +119,7 @@ std::string ask_title(const Project& project, const UiState& ui) {
     switch (ui.ask) {
     case UiState::Ask::EraseKeyEvents: return "Erase " + key_label(t, int(ui.ask_target)) + " events?";
     case UiState::Ask::EraseLane: return "Erase " + lane_name(t, int(ui.ask_target), &project) + " motion?";
+    case UiState::Ask::EnableFullSends: return "Switch to FULL?";
     case UiState::Ask::ResetSettings: return "Reset factory settings?";
     case UiState::Ask::ProjectChanges: return "Save your changes?";
     case UiState::Ask::OverwriteProject: return "Replace this project?";
@@ -145,6 +157,7 @@ std::string ask_detail(const Project& project, const UiState& ui, const Pattern&
         count = unsigned(pattern.punches.size());
         return std::to_string(count) + (count == 1 ? " punch" : " punches") + where + " go.";
     }
+    if (ui.ask == UiState::Ask::EnableFullSends) return "Shows Sends and other advanced pages. Tracks and notes stay.";
     if (ui.ask == UiState::Ask::ResetSettings) return "Every setting as Rhythmer comes; projects stay.";
     if (ui.ask == UiState::Ask::TakeCardBack) return "What the computer was writing may be lost.";
     if (ui.ask == UiState::Ask::ClearLoop) return "Its audio and its undo go.";

@@ -145,6 +145,8 @@ RHYTHMER OS **0.2.0** · **4 bars · 140 BPM · C minor**. Build a drum, bass an
 4. To adjust the whole drum kit's filter: select track 1 → SAMPLE → B1 PRESETS → **KIT CUTOFF / KIT RESONANCE**.
 5. To adjust only one drum's volume: track 1 → SAMPLE → B1 EDIT → hit that pad → first row **K1 Pxx Volume**. Check the P number before turning it.
 
+For buses B–D, press **B2 SENDS** on TRACKS. In BASIC, press **B3 ENABLE FULL** in the confirmation, or B1 CANCEL to stay in BASIC. In SENDS, K2 chooses bus A–D, K1 sets this track’s send and K3 adjusts that bus’s return. FULL also reveals the other advanced pages.
+
 **Check:** KIT CUTOFF affects all kit pads; Pxx Volume affects only the selected pad. ECHO/SPACE on PERFORM are separate track effects, not the main engine filter or sends A/B.
 
 ## 8. Save and reopen

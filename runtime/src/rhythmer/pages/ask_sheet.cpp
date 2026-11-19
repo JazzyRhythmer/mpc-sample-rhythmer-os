@@ -97,6 +97,13 @@ void draw_ask_sheet(Paint& p, const Snapshot& s) {
         verb = s.ui.page==PageId::TrackActions?"DELETE":"CLEAR";
         break;
     }
+    case Ask::EnableFullSends:
+        sheet.icon = Icon::Check;
+        sheet.title = "Switch to FULL?";
+        sheet.lines = {"Sends + other advanced pages.", "Keeps tracks and notes."};
+        sheet.chip = "BASIC > FULL"; sheet.chip_colour = colour::text;
+        verb = "ENABLE FULL"; verb_glyph = Icon::Check; accent = colour::text;
+        break;
     case Ask::ResetSettings:
         sheet.icon = Icon::Undo;
         sheet.title = "Reset the settings?";

@@ -578,7 +578,7 @@
 +브레이크 연주용 소스는 60초 이하의 오디오 루프를 사용한다. 스트리밍 파일은 오디오 스레드 밖에서 모노 연주 버퍼를 준비한다. 일반 샘플/Audio 트랙의 긴 파일 스트리밍 제한은 변경하지 않는다.
 --- /dev/null
 +++ b/docs/guide/FIRST_GROOVE_020_EN.md
-@@ -0,0 +1,213 @@
+@@ -0,0 +1,215 @@
 +# Your first groove with RHYTHMER OS.
 +
 +RHYTHMER OS **0.2.0** · **4 bars · 140 BPM · C minor**. Build a drum, bass and chord pattern, then save it. Acid and Break are optional additions at the end. No downloaded break recording is required for the main exercise.
@@ -725,6 +725,8 @@
 +3. Use **K1 LEVEL** to balance it, **K2 PAN** for left/right position and **K3 SEND A** only if you intend to use bus A.
 +4. To adjust the whole drum kit's filter: select track 1 → SAMPLE → B1 PRESETS → **KIT CUTOFF / KIT RESONANCE**.
 +5. To adjust only one drum's volume: track 1 → SAMPLE → B1 EDIT → hit that pad → first row **K1 Pxx Volume**. Check the P number before turning it.
++
++For buses B–D, press **B2 SENDS** on TRACKS. In BASIC, press **B3 ENABLE FULL** in the confirmation, or B1 CANCEL to stay in BASIC. In SENDS, K2 chooses bus A–D, K1 sets this track’s send and K3 adjusts that bus’s return. FULL also reveals the other advanced pages.
 +
 +**Check:** KIT CUTOFF affects all kit pads; Pxx Volume affects only the selected pad. ECHO/SPACE on PERFORM are separate track effects, not the main engine filter or sends A/B.
 +
@@ -1013,7 +1015,7 @@
 +[First Groove 따라 하기](FIRST_GROOVE_020_KO.md) · [전체 사용 설명서](USER_MANUAL_KO_DRAFT.md) · [English controls](QUICK_REFERENCE_020_EN.md)
 --- /dev/null
 +++ b/docs/guide/MANUAL_020_EN.md
-@@ -0,0 +1,465 @@
+@@ -0,0 +1,480 @@
 +# RHYTHMER OS — User manual
 +
 +RHYTHMER OS **0.2.0** for MPC Sample. Choose a chapter from the contents, or follow [Your first groove](FIRST_GROOVE_020_EN.md) to build and save a pattern from scratch.
@@ -1383,6 +1385,21 @@
 +
 +![Full mode: track sends to shared buses](../images/rhythmer/020-sends.png)
 +
++### Open SENDS and choose bus A–D
++
++1. Press **PAD FX + KNOB FX** together to open TRACKS, then **B2 SENDS**.
++2. In BASIC, **Switch to FULL?** appears. **B1 CANCEL** keeps BASIC and returns to the same mixer page. **B3 ENABLE FULL** enables FULL and opens SENDS. FULL also reveals the other advanced pages; it does not change your tracks, notes or sounds.
++3. Use **K2 BUS** to select A, B, C or D; **K1 SEND** adjusts the selected track’s send to that bus, and **K3 RETURN** adjusts the shared bus’s return level. Minus / Plus also select the bus.
++4. **B1 TRACKS** returns to the track mixer. FULL opens SENDS directly on subsequent B2 presses.
++
++![BASIC: confirm FULL mode before opening SENDS](../images/rhythmer/020-sends-enable-full.png)
++
++The encoder starts on CANCEL in the confirmation. **SHIFT + encoder push** cancels even if ENABLE FULL is selected. You can also choose BASIC or FULL at **SHIFT + Pad 8 → Settings → K1 FEATURES**. During a lesson, finish or leave the lesson before opening SENDS.
++
++On TRACKS, active **NOTE REPEAT / arp** still uses B1–B3 for repeat rates. Turn it off to restore TRACK SETUP / SENDS / FX. **SHIFT + B2 MOVE** and **SHIFT + B3 COPY** keep their track-selection actions.
++
++
++
 +| Control | Scope | Where |
 +| --- | --- | --- |
 +| Main engine CUTOFF / RESONANCE | The loaded instrument; whole kit for Rhythmer Kit | Plug-in PRESETS; linked to the corresponding EDIT controls |
@@ -1390,7 +1407,7 @@
 +| Native sample FILTER | One sample pad | Sample track B3 FILTER |
 +| Native sample KIT FILT / SOUND filter | All pads of that native sample kit | Its SOUND / KIT FILT pages |
 +| DJ FILTER / ECHO / SPACE | Separate OS performance processing on the track | Plug-in B2 PERFORM |
-+| SEND A–D | Sends to shared buses | TRACKS and Full SENDS / FX pages |
++| SEND A–D | Sends to shared buses | TRACKS → B2 SENDS; BASIC offers FULL first. B3 FX edits effect chains |
 +| Engine FX / track inserts / bus FX | Different processing stages | Engine EDIT or the appropriate FX chain |
 +
 +**ECHO is not simply SEND A and SPACE is not simply SEND B.** If effects sound excessive, reduce PERFORM ECHO/SPACE and track sends, then check the engine's own FX and inserts. Turning an effect input down does not erase an existing tail; double STOP cuts current audio.
@@ -1481,7 +1498,7 @@
 +RHYTHMER OS is developed by jazzy rhythmer and built on Melodee by Kerem Kiliç (Ellic Studio), sample-base and the credited engine projects. Original licences and notices accompany the installation. This is an early beta. 
 --- /dev/null
 +++ b/docs/guide/QUICK_REFERENCE_020_EN.md
-@@ -0,0 +1,28 @@
+@@ -0,0 +1,29 @@
 +# RHYTHMER OS 0.2.0 — Essential controls
 +
 +**PUSH = press the large encoder. TURN = rotate it.** B1–B3 are the three screen buttons; K1–K3 are the knobs below the screen. Use the currently displayed labels.
@@ -1494,6 +1511,7 @@
 +| Fine-adjust | Touch K1–K3, then SHIFT + encoder **turn** | The last touched knob's value changes. This is not Back. |
 +| Open TRACKS | PAD FX + KNOB FX together | Track grid / mix; B1 TRACK SETUP when repeat/arp is off |
 +| Select track 1–16 | Hold PAD BANK, tap its pad, release | Header's track number changes |
++| Mix sends A–D | TRACKS → B2 SENDS | BASIC: B1 CANCEL / B3 ENABLE FULL. In SENDS, K1 send, K2 bus, K3 return |
 +| Play notes / drums | SAMPLE | Pads play the selected instrument |
 +| Choose a pattern on one track | SEQ → B1 until PATTERNS | Pads choose that track's patterns |
 +| Launch across tracks | SEQ → B1 until SEQUENCES | Pads launch a sequence number across tracks |
@@ -1679,7 +1697,7 @@
 +[Full manual](MANUAL_020_EN.md) · [First Groove](FIRST_GROOVE_020_EN.md) · [Controls](QUICK_REFERENCE_020_EN.md)
 --- /dev/null
 +++ b/docs/guide/TRACK_WORKFLOW.md
-@@ -0,0 +1,73 @@
+@@ -0,0 +1,78 @@
 +# Track instruments, types and navigation
 +
 +Rhythmer OS uses the sampler, sequencing, browser, mixer, Freeze and undo foundations of Melodee 0.2.0 by Kerem Kiliç (Ellic Studio). These changes add visible track actions and scope browser navigation to the selected track; they do not replace those foundations.
@@ -1753,6 +1771,11 @@
 +- Recording and frozen-track guards apply before the new shortcut opens. Track changes from SAMPLES follow the newly selected track and dismiss the old browser, as elsewhere.
 +
 +A never-assigned track or an intentional EMPTY retains Melodee's native type carousel. TRACK SETUP itself remains a B1 action on TRACKS.
++
++
++### BASIC mixer SENDS entry
++
++B2 SENDS stays visible on TRACKS and the shared FX pages. In BASIC it opens a native confirmation: CANCEL keeps the current mode/page; ENABLE FULL uses the existing FEATURES setting, persists it and opens track SENDS. The question explicitly covers all advanced pages. SHIFT+encoder push cancels, and a stale question cannot act on a different page. FULL retains direct entry, A–D bus selection and native sample-pad sends. NOTE REPEAT/arp, shifted MOVE/COPY, pending dialogs and lessons keep their existing input priority.
 --- /dev/null
 +++ b/docs/guide/USER_MANUAL_KO_DRAFT.md
 @@ -0,0 +1,253 @@
@@ -2310,6 +2333,24 @@
  **Files**, open a folder, then drop files on the list or press **Upload**.
  Press a sample to hear it in the browser, the arrow to download it, the bin
  to delete it. **Folder** makes a new folder.
+--- a/docs/guide/mixer-and-effects.md
++++ b/docs/guide/mixer-and-effects.md
+@@ -31,9 +31,12 @@
+ **K1** sets the selected track's send, **K2** selects the bus, **K3** sets
+ the bus return.
+ 
+-Sends and the **SENDS** pages on Stage are in Full. In Basic, Tracks keeps
+-each track's level, pan and send to bus A (see
+-[Basic and Full](settings.md#basic-and-full)).
++Sends and the **SENDS** pages on Stage use Full mode. In Basic, **B2 SENDS**
++on Tracks or an FX page offers **Switch to FULL?**: **B1 CANCEL** keeps Basic
++and the current page; **B3 ENABLE FULL** persists Full and opens Sends.
++Full also shows the other advanced pages; tracks and notes stay unchanged.
++Shift + encoder push cancels. Tracks retains level, pan and send A.
++See [Basic and Full](settings.md#basic-and-full).
+ 
+ On a kit track press **B2** (**SENDS**) again to see the kit's pads
+ instead of the tracks (the bank in view, as the pads sit), each with its
 --- a/docs/guide/overview.md
 +++ b/docs/guide/overview.md
 @@ -42,7 +42,7 @@
@@ -5064,7 +5105,7 @@
              if (t >= track_count) continue;
 --- a/src/rhythmer/pages/ask_sheet.cpp
 +++ b/src/rhythmer/pages/ask_sheet.cpp
-@@ -88,13 +88,13 @@
+@@ -88,28 +88,47 @@
          juce::String what = !target.used() ? juce::String("Its ") + count_of(filled, "pattern", "patterns")
                            : juce::String(target.engine == EngineKind::Sampler ? "Its kit" : "Its sound") + (filled ? " and " + count_of(filled, "pattern", "patterns") : "");
          bool one = target.used() ? !filled : filled == 1;
@@ -5076,11 +5117,21 @@
          sheet.name = "TRACK " + juce::String(which + 1);
          sheet.undo = true;
 -        verb = "CLEAR";
+-        break;
+-    }
 +        verb = s.ui.page==PageId::TrackActions?"DELETE":"CLEAR";
-         break;
-     }
++        break;
++    }
++    case Ask::EnableFullSends:
++        sheet.icon = Icon::Check;
++        sheet.title = "Switch to FULL?";
++        sheet.lines = {"Sends + other advanced pages.", "Keeps tracks and notes."};
++        sheet.chip = "BASIC > FULL"; sheet.chip_colour = colour::text;
++        verb = "ENABLE FULL"; verb_glyph = Icon::Check; accent = colour::text;
++        break;
      case Ask::ResetSettings:
-@@ -103,13 +103,25 @@
+         sheet.icon = Icon::Undo;
+         sheet.title = "Reset the settings?";
          sheet.lines = {"Settings go back to factory.", "Projects stay."};
          verb = "RESET"; verb_glyph = Icon::Check;
          break;
@@ -5110,7 +5161,7 @@
          verb = "NEW"; verb_glyph = Icon::Check;
          middle = "EMPTY"; // B3: with the MPC's factory kit on track 1; B2: an empty kit
          break;
-@@ -176,8 +188,8 @@
+@@ -176,8 +195,8 @@
      case Ask::ReplacePlugin: { // a picked plug-in over one in use (shell/plugin_jobs.cpp)
          sheet.icon = Icon::Plug;
          sheet.title = "Replace " + juce::String::fromUTF8(s.ui.ask_name.data()) + "?";
@@ -5120,7 +5171,7 @@
          sheet.chip = instrument ? "TRACK " + juce::String(track + 1) : juce::String("EFFECT");
          sheet.chip_colour = colour_of(s);
          verb = "REPLACE"; verb_glyph = Icon::Swap;
-@@ -198,16 +210,22 @@
+@@ -198,16 +217,22 @@
          verb = "UNFREEZE"; verb_glyph = Icon::Snow; accent = colour::ice;
          break;
      }
@@ -5209,7 +5260,15 @@
 +}
 --- a/src/rhythmer/pages/common.cpp
 +++ b/src/rhythmer/pages/common.cpp
-@@ -30,6 +30,9 @@
+@@ -4,6 +4,7 @@
+ #include "rhythmer/shell/levels_keys.h"
+ #include "rhythmer/shell/mix_hub.h"
+ #include "rhythmer/shell/features.h"
++#include "rhythmer/shell/ask.h"
+ #include "rhythmer/shell/pad_bank.h"
+ #include "rhythmer/shell/pad_job.h"
+ #include "rhythmer/pages/common.h"
+@@ -30,6 +31,9 @@
  #include "rhythmer/shell/stage_map.h"
  #include "rhythmer/shell/sample_mode.h"
  #include <algorithm>
@@ -5219,7 +5278,7 @@
  #include <cmath>
  #include <cstdio>
  
-@@ -37,17 +40,24 @@
+@@ -37,17 +41,24 @@
  
  juce::Colour colour_of(const Snapshot& s) { return ui::track_colour(s.ui.track); }
  juce::Colour load_colour(float load) { return load >= 0.85f ? ui::colour::rec : load >= 0.6f ? ui::colour::amber : ui::colour::play; }
@@ -5249,7 +5308,7 @@
      if (s.ui.lesson) { // a lesson's step has the header's first slot (shell/lesson.h): which step, and what to do in two or three words
          const Lesson& lesson = lesson_at(s.ui.lesson - 1u);
          const LessonStep* step = lesson_step(s.ui);
-@@ -89,6 +99,15 @@
+@@ -89,6 +100,15 @@
      return h;
  }
  
@@ -5265,7 +5324,7 @@
  ui::HeaderItem bank_pill(const Snapshot& s) {
      return ui::pill(ui::Icon::Pattern, juce::String("BANK ") + juce::String::charToString(juce::juce_wchar('A' + s.ui.pattern_bank % pattern_banks)),
                      ui::colour::text);
-@@ -104,7 +123,7 @@
+@@ -104,7 +124,7 @@
  ui::HeaderItem tag_of(const Snapshot& s, unsigned track) {
      const auto& t = s.project.tracks[track % track_count];
      const auto& info = engine_info(t.engine);
@@ -5274,7 +5333,7 @@
                           ui::track_colour(track));
  }
  
-@@ -198,6 +217,9 @@
+@@ -198,6 +218,9 @@
      const auto& track = s.track();
      char text[32];
      switch (b.kind) {
@@ -5284,7 +5343,7 @@
      case Kind::Param: {
          const auto& p = track_param_info(track.engine, track.params, unsigned(b.id));
          auto shown = show(p, b.value);
-@@ -211,7 +233,7 @@
+@@ -211,7 +234,7 @@
          if (track.engine == EngineKind::Sampler && b.id == sampler::Level) c.label = "KIT VOLUME";
          break;
      }
@@ -5293,7 +5352,7 @@
      case Kind::Pan:
          c.label = "PAN"; c.bipolar = true;
          c.value = b.value == 0 ? juce::String("C") : (b.value < 0 ? "L" : "R") + juce::String(std::abs(b.value));
-@@ -276,7 +298,19 @@
+@@ -276,7 +299,19 @@
      case Kind::EuclidHits: c.label = "HITS"; c.value = juce::String(b.value); c.unit = "of " + juce::String(b.max); break; // generators (roadmap P1)
      case Kind::EuclidSteps: c.label = "STEPS"; c.value = juce::String(b.value); break;
      case Kind::EuclidRotate: c.label = "ROTATE"; c.value = juce::String(b.value); break;
@@ -5314,7 +5373,7 @@
      case Kind::TrackSpeed: c.label = "SPEED"; c.value = juce::String::fromUTF8(speed_name(unsigned(b.value))); break; // roadmap P1
      case Kind::FollowAction: case Kind::FollowOther: { // roadmap P5: a follow action, the first or the second
          static const char* const names[] {"Off", "Next", "Previous", "Any", "Again", "Stop"};
-@@ -576,7 +610,7 @@
+@@ -576,7 +611,7 @@
          c.label = "JUMP"; c.value = juce::String(b.value + 1).paddedLeft('0', 2); c.unit = "/ " + juce::String(s.ui.files_count);
          break;
      case Kind::PluginJump:
@@ -5323,7 +5382,7 @@
          break;
      case Kind::ProjectJump:
          c.label = "JUMP"; c.value = juce::String(b.value + 1); c.unit = "/ " + juce::String(b.max + 1);
-@@ -598,7 +632,7 @@
+@@ -598,7 +633,7 @@
          break;
      }
      case Kind::PadSustain: c.label = "SUSTAIN"; c.value = juce::String(b.value); c.unit = "%"; break;
@@ -5332,7 +5391,7 @@
      case Kind::NameSuggest: {
          std::array<const char*, max_suggestions> names {};
          unsigned count = name_suggestions(s.ui.name, names);
-@@ -660,12 +694,20 @@
+@@ -660,12 +695,20 @@
          break;
      }
      case Kind::PluginParam: { // as the shell last read it from the plug-in (plugin/plugin_panel.h)
@@ -5356,6 +5415,25 @@
          c.value = juce::String::fromUTF8(card.text);
          c.fill = std::clamp(b.value / float(plugin_param_max), 0.0f, 1.0f);
          break;
+@@ -894,12 +937,16 @@
+     keys.dots[2] = uint8_t(count);
+     keys.dot_at[2] = uint8_t(here == MixSection::Fx ? mix_fx_at(s.ui.page, kit) : 0);
+     if (kit) { keys.dots[1] = 2; keys.dot_at[1] = uint8_t(mix_sends_pads(s.ui, kit)); } // SENDS: the tracks, then the kit's pads
+-    if (!sends_shown(s.ui) && here != MixSection::Sends) { keys.labels[1] = ""; keys.dots[1] = 0; } // Basic: Tracks has send A
++    if (!sends_shown(s.ui) && here != MixSection::Sends) keys.dots[1] = 0; // Basic keeps SENDS visible as a Full-mode doorway
+     return keys;
+ }
+ void mix_soft(Context& c, int key) {
+     bool kit = c.track().engine == EngineKind::Sampler;
+-    if (key == 1 && !sends_shown(c.ui) && c.ui.page != PageId::Sends) return; // Basic: no SENDS key
++    if (key == 1 && !sends_shown(c.ui) && c.ui.page != PageId::Sends) {
++        if (c.ui.lesson) c.notice("Finish lesson to use Sends");
++        else ask(c, UiState::Ask::EnableFullSends, int(c.ui.page));
++        return;
++    }
+     if (key == 1) mix_sends_key(c.ui, kit); // B2 again on a kit's Sends: its pads (or back to the tracks)
+     PageId next = mix_next(c.ui.page, unsigned(key), kit);
+     if (next == PageId::Rack) c.ui.fx_loop = -1; // the track's own chain, not a loop's
 --- a/src/rhythmer/pages/common.h
 +++ b/src/rhythmer/pages/common.h
 @@ -12,7 +12,10 @@
@@ -8169,7 +8247,15 @@
  
 --- a/src/rhythmer/shell/ask.cpp
 +++ b/src/rhythmer/shell/ask.cpp
-@@ -25,7 +25,8 @@
+@@ -2,6 +2,7 @@
+ // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
+ #include "rhythmer/shell/ask.h"
+ #include "rhythmer/shell/bindings.h"
++#include "rhythmer/shell/mix_hub.h"
+ #include "rhythmer/shell/context.h"
+ #include "rhythmer/shell/delete_jobs.h"
+ #include "rhythmer/shell/looper_jobs.h"
+@@ -25,7 +26,8 @@
      u.after_save = 0;
      ProjectStore::View v;
      if (c.store) c.store->view(v);
@@ -8179,7 +8265,7 @@
  }
  } // namespace
  
-@@ -40,9 +41,27 @@
+@@ -40,9 +42,37 @@
      auto& ui = c.ui;
      if (ui.ask == UiState::Ask::None) return false;
      if (button == B::Play || button == B::Stop) return false; // the transport still answers
@@ -8199,6 +8285,16 @@
 +    if (ui.ask == UiState::Ask::RecoverProject && button == B::TopRight) {
 +        ui.ask = UiState::Ask::None; c.request_project_open(c.recovery_offer); return true;
 +    }
++    if (ui.ask == UiState::Ask::EnableFullSends && button == B::TopRight) {
++        const bool same_page = int(ui.page) == ui.ask_target && mix_section(ui.page) != MixSection::None;
++        ui.ask = UiState::Ask::None;
++        if (ui.lesson) { c.notice("Finish lesson to use Sends"); return true; }
++        if (!same_page) return true; // an old question cannot act on another page
++        c.apply(Binding {Binding::Kind::Features, 0, 0, 1, int(ui.settings.full_features)}, 1);
++        ui.sends_pads = false;
++        c.open(PageId::Sends);
++        return true;
++    }
      if (button == B::TopLeft) { // Cancel (LATER on the update question: asked again when the card is returned)
 +        if (ui.ask == UiState::Ask::ProjectChanges) { c.after_project_save = 0; c.after_project_path.clear(); }
 +        if (ui.ask == UiState::Ask::OverwriteProject) { ui.ask = UiState::Ask::None; c.cancel_project_save(); return true; }
@@ -8208,7 +8304,7 @@
          ui.ask = UiState::Ask::None;
          return true;
      }
-@@ -74,6 +93,7 @@
+@@ -74,6 +104,7 @@
          ui.plugin_replace = false;
      }
      else if (kind == UiState::Ask::InstallUpdate) begin_update(c); // shell/update.h
@@ -8216,9 +8312,11 @@
      else if (kind == UiState::Ask::Unfreeze) { // freeze plan F2c: live again at once; its prints stay for the next freeze
          unsigned t = unsigned(ui.ask_target) % track_count;
          bool thaw = c.deep(t) && !((c.deep_hold >> t) & 1); // freeze plan F2d: its plug-ins load first
-@@ -89,14 +109,18 @@
+@@ -88,15 +119,20 @@
+     switch (ui.ask) {
      case UiState::Ask::EraseKeyEvents: return "Erase " + key_label(t, int(ui.ask_target)) + " events?";
      case UiState::Ask::EraseLane: return "Erase " + lane_name(t, int(ui.ask_target), &project) + " motion?";
++    case UiState::Ask::EnableFullSends: return "Switch to FULL?";
      case UiState::Ask::ResetSettings: return "Reset factory settings?";
 +    case UiState::Ask::ProjectChanges: return "Save your changes?";
 +    case UiState::Ask::OverwriteProject: return "Replace this project?";
@@ -8236,7 +8334,15 @@
      case UiState::Ask::Unfreeze: return "Unfreeze track " + std::to_string(ui.ask_target % track_count + 1) + "?";
      case UiState::Ask::DeleteFile: return std::string("Delete ") + ui.ask_name.data() + "?";
      case UiState::Ask::ReplacePlugin: return std::string("Replace ") + ui.ask_name.data() + "?";
-@@ -128,11 +152,14 @@
+@@ -121,6 +157,7 @@
+         count = unsigned(pattern.punches.size());
+         return std::to_string(count) + (count == 1 ? " punch" : " punches") + where + " go.";
+     }
++    if (ui.ask == UiState::Ask::EnableFullSends) return "Shows Sends and other advanced pages. Tracks and notes stay.";
+     if (ui.ask == UiState::Ask::ResetSettings) return "Every setting as Rhythmer comes; projects stay.";
+     if (ui.ask == UiState::Ask::TakeCardBack) return "What the computer was writing may be lost.";
+     if (ui.ask == UiState::Ask::ClearLoop) return "Its audio and its undo go.";
+@@ -128,11 +165,14 @@
      if (ui.ask == UiState::Ask::ClearPattern) return "Its notes and motion go; Shift + Minus brings them back.";
      if (ui.ask == UiState::Ask::ClearTrack) return "Its sound and patterns go; Shift + Minus brings them back.";
      if (ui.ask == UiState::Ask::InstallUpdate) return "The project is saved first, then Rhythmer restarts.";
@@ -9524,6 +9630,24 @@
      void knob_fx_load(unsigned entry);                    // Push on the list: the entry's effect at its initial values
 --- a/src/rhythmer/shell/features.h
 +++ b/src/rhythmer/shell/features.h
+@@ -10,7 +10,7 @@
+ //   the MENU's GO      MOTION, SENDS and LOOPER (the other tiles keep their pads)
+ //   the MENU's HERE    LOOPER, FREEZE and FOLLOW TO ALL
+ //   Seq's keys         B3 MOTION, unless the pattern in hand holds motion; MOD and MACRO after it
+-//   the mixer's keys   B2 SENDS (Tracks has level, pan and send A)
++//   the mixer          B2 SENDS offers Full mode; Tracks retains level, pan and send A
+ //   Stage              SENDS on any track; on a kit LAYERS, COLOUR, FOLLOW, CLOUD and KIT FILT too, so a kit pad has
+ //                      the stock app's seven pages (Trim, Tune, Amp Env, Play, Mix, Filter, Filt Env)
+ //   a new track        MIDI and AUDIO (shell/new_track.h: Drum, Keygroup and Plugin stay)
+@@ -31,7 +31,7 @@
+ }
+ // Seq's B3 MOTION: Full, or the pattern in hand holds motion.
+ inline bool motion_shown(const UiState& ui, const Pattern& pattern) { return full_features(ui) || !pattern.motion.empty(); }
+-// The mixer's B2 SENDS, the Looper (its page, Loop held's grid, Loop + 16 Levels), the follow actions' cards and
++// Full access to mixer SENDS (Basic offers a confirmation), the Looper (its page, Loop held's grid, Loop + 16 Levels), the follow actions' cards and
+ // keys, VARY, FREEZE in the MENU.
+ inline bool sends_shown(const UiState& ui) { return full_features(ui); }
+ inline bool looper_shown(const UiState& ui) { return full_features(ui) || ui.page == PageId::Looper; }
 @@ -49,7 +49,10 @@
                                         | stage_bit(StageKind::Follow) | stage_bit(StageKind::Cloud) | stage_bit(StageKind::KitFilter);
  // What Stage passes over for a track now: LAYERS on an instrument pad, and in Basic the pages above.
@@ -12506,6 +12630,73 @@
  }
  
  } // namespace rhythmer
+--- /dev/null
++++ b/src/rhythmer/shell/sends_access_check.h
+@@ -0,0 +1,64 @@
++// SPDX-License-Identifier: AGPL-3.0-only
++#pragma once
++#include "rhythmer/engine/engine_host.h"
++#include "rhythmer/shell/shell.h"
++#include "rhythmer/pages/common.h"
++#include "rhythmer/shell/ask.h"
++#include "rhythmer/shell/features.h"
++#include "rhythmer/shell/mix_hub.h"
++#include "rhythmer/shell/note_repeat.h"
++#include "rhythmer/model/project_file.h"
++#include <functional>
++#include <iostream>
++namespace rhythmer {
++inline int sends_access_check(const std::function<void(Shell&,const std::string&)>& capture = {}) {
++    auto host=std::make_unique<EngineHost>();auto so=std::make_unique<Shell>(*host);auto& shell=*so;auto& c=shell.context();
++    unsigned checks=0;uint32_t now=10000;
++#define SEND_CHECK(ok,msg) do{++checks;if(!(ok)){std::cerr<<"SENDS ACCESS FAIL "<<checks<<": "<<msg<<'\n';return 1;}}while(false)
++    auto button=[&](SurfaceButton b,bool down){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(b);e.input.pressed=down;shell.surface(e,++now);};
++    auto tap=[&](SurfaceButton b){button(b,true);button(b,false);};
++    auto back=[&]{button(SurfaceButton::Shift,true);tap(SurfaceButton::WheelPush);button(SurfaceButton::Shift,false);};
++    auto reset=[&](PageId page,EngineKind engine,bool full=false){c.ui=UiState{};c.ui.settings.full_features=full;c.project.tracks[0]=Track{};load_sound(c.project.tracks[0],engine,0);c.edits.clear();c.dirty=false;c.settings_save_at=0;c.open(page);};
++    auto save=[&](const std::string& n){if(capture)capture(shell,n);};
++    auto keys=[&]{auto s=std::make_unique<Snapshot>();shell.snapshot(*s,now);return mix_keys(*s);};
++    for(auto engine:{EngineKind::None,EngineKind::Sampler,EngineKind::Keygroup,EngineKind::Plugin,EngineKind::Midi,EngineKind::Audio}) {
++        for(auto page:{PageId::Tracks,PageId::Rack,PageId::Bus,PageId::Master,PageId::PadFx}) {
++            if(page==PageId::PadFx && engine!=EngineKind::Sampler)continue;
++            reset(page,engine);SEND_CHECK(keys().labels[1]=="SENDS","BASIC displays SENDS on every MIX page");
++            const auto original=save_project(shell.project(),shell.patterns());tap(SurfaceButton::TopMiddle);
++            SEND_CHECK(c.ui.ask==UiState::Ask::EnableFullSends && c.ui.ask_pick==0 && c.ui.page==page,"BASIC B2 opens confirmation with CANCEL selected");
++            SEND_CHECK(!c.ui.settings.full_features && !c.settings_save_at,"opening prompt does not enable or save settings");
++            tap(SurfaceButton::TopLeft);SEND_CHECK(c.ui.ask==UiState::Ask::None && c.ui.page==page && !c.ui.settings.full_features,"CANCEL preserves BASIC and caller");
++            tap(SurfaceButton::TopMiddle);tap(SurfaceButton::WheelPush);SEND_CHECK(c.ui.ask==UiState::Ask::None && !c.ui.settings.full_features,"encoder default cancels");
++            tap(SurfaceButton::TopMiddle);c.ui.ask_pick=2;back();SEND_CHECK(c.ui.ask==UiState::Ask::None&&!c.ui.settings.full_features&&c.ui.page==page,"SHIFT+push cancels even with ENABLE FULL selected");
++            tap(SurfaceButton::TopMiddle);
++            for(unsigned k=0;k<3;++k){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Control;e.input.index=uint8_t(unsigned(SurfaceControl::K1)+k);e.input.value=127;shell.surface(e,++now);}
++            SEND_CHECK(original==save_project(shell.project(),shell.patterns())&&!c.ui.settings.full_features,"pots wait while mode confirmation is open");
++            tap(SurfaceButton::TopLeft);
++            tap(SurfaceButton::TopMiddle);tap(SurfaceButton::TopMiddle);SEND_CHECK(c.ui.ask==UiState::Ask::EnableFullSends&&!c.ui.settings.full_features,"B2 cannot accidentally confirm");
++            tap(SurfaceButton::Play);tap(SurfaceButton::Stop);SEND_CHECK(c.ui.ask==UiState::Ask::EnableFullSends,"transport retains confirmation");
++            tap(SurfaceButton::TopRight);SEND_CHECK(c.ui.settings.full_features&&c.ui.ask==UiState::Ask::None&&c.ui.page==PageId::Sends&&!c.ui.sends_pads,"ENABLE FULL opens track Sends");
++            SEND_CHECK(c.settings_save_at>0&&!c.dirty,"native setting persistence is scheduled without dirtying project");
++            Settings restored;restored.read(c.ui.settings.text());SEND_CHECK(restored.full_features,"FULL survives native setting text roundtrip");
++            SEND_CHECK(original==save_project(shell.project(),shell.patterns()),"mode change preserves complete project and patterns");
++            for(unsigned bus=0;bus<bus_count;++bus){SEND_CHECK(c.ui.sends_bus==bus,"A-D bus selection unchanged");tap(SurfaceButton::Plus);}
++            SEND_CHECK(c.ui.sends_bus==0,"D wraps to A");
++            if(engine==EngineKind::Sampler){tap(SurfaceButton::TopMiddle);SEND_CHECK(c.ui.sends_pads,"native sampler pad sends cycle preserved");tap(SurfaceButton::TopMiddle);SEND_CHECK(!c.ui.sends_pads,"native sampler returns to track sends");}
++            c.open(page);tap(SurfaceButton::TopMiddle);SEND_CHECK(c.ui.page==PageId::Sends&&c.ui.ask==UiState::Ask::None,"FULL B2 opens directly without prompt");
++        }
++    }
++    reset(PageId::Tracks,EngineKind::Sampler);tap(SurfaceButton::TopLeft);SEND_CHECK(c.ui.page==PageId::TrackActions&&c.ui.ask==UiState::Ask::None,"B1 TRACK SETUP preserved");
++    reset(PageId::Tracks,EngineKind::Sampler);tap(SurfaceButton::TopRight);SEND_CHECK(c.ui.page==PageId::Rack&&c.ui.ask==UiState::Ask::None,"B3 FX preserved");
++    for(int key=1;key<=2;++key){reset(PageId::Tracks,EngineKind::Sampler);button(SurfaceButton::Shift,true);tap(key==1?SurfaceButton::TopMiddle:SurfaceButton::TopRight);button(SurfaceButton::Shift,false);SEND_CHECK(c.ui.copying==UiState::Copying::Tracks&&c.ui.moving==(key==1)&&c.ui.ask==UiState::Ask::None,"SHIFT MOVE/COPY preserve priority");}
++    for(int key=1;key<=2;++key){reset(PageId::Tracks,EngineKind::Sampler);button(SurfaceButton::PadBank,true);tap(key==1?SurfaceButton::TopMiddle:SurfaceButton::TopRight);button(SurfaceButton::PadBank,false);SEND_CHECK(c.ui.copying==UiState::Copying::Tracks&&c.ui.moving==(key==1)&&c.ui.ask==UiState::Ask::None,"PAD BANK MOVE/COPY preserve priority");}
++    reset(PageId::Sends,EngineKind::Sampler);tap(SurfaceButton::TopMiddle);SEND_CHECK(c.ui.sends_pads&&!c.ui.settings.full_features&&c.ui.ask==UiState::Ask::None,"already-open Sends keeps native Basic pad cycle");
++    reset(PageId::Tracks,EngineKind::Sampler);tap(SurfaceButton::NoteRepeat);SEND_CHECK(c.track().repeat,"Note Repeat starts");const auto rate=c.track().repeat_rate;tap(SurfaceButton::TopMiddle);SEND_CHECK(c.track().repeat_rate==repeat_next(rate,1,false)&&c.ui.ask==UiState::Ask::None&&c.ui.page==PageId::Tracks,"repeat rate B2 precedes Sends");tap(SurfaceButton::NoteRepeat);tap(SurfaceButton::TopMiddle);SEND_CHECK(c.ui.ask==UiState::Ask::EnableFullSends,"turning repeat off restores B2 prompt");
++    reset(PageId::Tracks,EngineKind::Sampler);c.ui.lesson=4;tap(SurfaceButton::TopMiddle);SEND_CHECK(c.ui.ask==UiState::Ask::None&&!c.ui.settings.full_features&&c.ui.page==PageId::Tracks,"lesson restriction never bypassed");
++    reset(PageId::Tracks,EngineKind::Sampler);tap(SurfaceButton::TopMiddle);c.ui.lesson=4;tap(SurfaceButton::TopRight);SEND_CHECK(!c.ui.settings.full_features&&c.ui.page==PageId::Tracks,"lesson starting during prompt blocks enable");
++    reset(PageId::Tracks,EngineKind::Sampler);tap(SurfaceButton::TopMiddle);c.ui.page=PageId::Stage;tap(SurfaceButton::TopRight);SEND_CHECK(!c.ui.settings.full_features&&c.ui.page==PageId::Stage,"stale prompt cannot change another page");
++    reset(PageId::Tracks,EngineKind::Sampler);save("01-basic-tracks");tap(SurfaceButton::TopMiddle);save("02-enable-full");tap(SurfaceButton::TopRight);save("03-sends-A");tap(SurfaceButton::Plus);save("04-sends-B");c.open(PageId::Tracks);save("05-full-tracks");
++    std::cout<<"SENDS_ACCESS_OK checks="<<checks<<" engines=6 cancel,back,repeat,shift,lessons,persistence,project,buses=ok\n";
++#undef SEND_CHECK
++    return 0;
++}
++} // namespace rhythmer
 --- a/src/rhythmer/shell/shell.cpp
 +++ b/src/rhythmer/shell/shell.cpp
 @@ -1,5 +1,6 @@
@@ -13346,7 +13537,7 @@
      // MPC asks before erasing: Erase + pad on Step Edit (`ask_target` the
      // key), Erase + pot on Motion (the lane, bindings.h). shell/ask.cpp.
 -    enum class Ask : uint8_t { None, EraseKeyEvents, EraseLane, ResetSettings, NewProject, TakeCardBack, ClearLoop, LooperOff, ClearPattern, ErasePunches, ClearTrack, InstallUpdate, Unfreeze, DeleteFile, ReplacePlugin, CaptureScene }; // CaptureScene (shell/scene_jobs.cpp): CAPTURE onto a column with notes; target the column // ReplacePlugin (shell/plugin_jobs.cpp): a picked plug-in over one in use; target the picker's row, `ask_name` the old plug-in's name // DeleteFile (shell/delete_jobs.h): Erase in a browser; target what it is (DeleteWhat), `ask_name` its name // Unfreeze (freeze plan F2c): an edit of a frozen track; target the track // InstallUpdate: newer release on the card (shell/update.h); ClearLoop: target the loop; ClearPattern (Seq held + Erase + pad): target the pattern; ClearTrack (Pad Bank held + Erase + pad): target the track // NewProject (phase 10): target 0 nothing unsaved, 1 saved first, 2 lost; TakeCardBack (10b): the computer still holds the card
-+    enum class Ask : uint8_t { None, ProjectChanges, OverwriteProject, RecoverProject, EraseKeyEvents, EraseLane, ResetSettings, NewProject, TakeCardBack, ClearLoop, LooperOff, ClearPattern, ErasePunches, ClearTrack, InstallUpdate, Unfreeze, BreakLength, DeleteFile, ReplacePlugin, CaptureScene }; // CaptureScene (shell/scene_jobs.cpp): CAPTURE onto a column with notes; target the column // ReplacePlugin (shell/plugin_jobs.cpp): a picked plug-in over one in use; target the picker's row, `ask_name` the old plug-in's name // DeleteFile (shell/delete_jobs.h): Erase in a browser; target what it is (DeleteWhat), `ask_name` its name // Unfreeze (freeze plan F2c): an edit of a frozen track; target the track // InstallUpdate: newer release on the card (shell/update.h); ClearLoop: target the loop; ClearPattern (Seq held + Erase + pad): target the pattern; ClearTrack (Pad Bank held + Erase + pad): target the track // NewProject (phase 10): target 0 nothing unsaved, 1 saved first, 2 lost; TakeCardBack (10b): the computer still holds the card
++    enum class Ask : uint8_t { None, ProjectChanges, OverwriteProject, RecoverProject, EraseKeyEvents, EraseLane, ResetSettings, NewProject, TakeCardBack, ClearLoop, LooperOff, ClearPattern, ErasePunches, ClearTrack, InstallUpdate, Unfreeze, BreakLength, DeleteFile, ReplacePlugin, CaptureScene, EnableFullSends }; // CaptureScene (shell/scene_jobs.cpp): CAPTURE onto a column with notes; target the column // ReplacePlugin (shell/plugin_jobs.cpp): a picked plug-in over one in use; target the picker's row, `ask_name` the old plug-in's name // DeleteFile (shell/delete_jobs.h): Erase in a browser; target what it is (DeleteWhat), `ask_name` its name // Unfreeze (freeze plan F2c): an edit of a frozen track; target the track // InstallUpdate: newer release on the card (shell/update.h); ClearLoop: target the loop; ClearPattern (Seq held + Erase + pad): target the pattern; ClearTrack (Pad Bank held + Erase + pad): target the track // NewProject (phase 10): target 0 nothing unsaved, 1 saved first, 2 lost; TakeCardBack (10b): the computer still holds the card
      Ask ask = Ask::None;
      int32_t ask_target = 0;
      std::array<char, 48> ask_name {}; // DeleteFile: the file's or the folder's name
@@ -13418,7 +13609,7 @@
 +    {"chord-gen-open",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.ui.gen8_mode=0;s.ui.sheet_row=4;s.project.tracks[s.ui.track].engine=EngineKind::Midi;s.project.tracks[s.ui.track].chord_gen.type=1;s.project.root=2;s.project.scale=1;}},
 --- a/src/rhythmer/tools.cpp
 +++ b/src/rhythmer/tools.cpp
-@@ -1,6 +1,11 @@
+@@ -1,6 +1,12 @@
  // SPDX-License-Identifier: AGPL-3.0-only
  // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
  #include "rhythmer/tools.h"
@@ -13426,11 +13617,12 @@
 +#include "rhythmer/shell/break_p1_check.h"
 +#include "rhythmer/shell/track_workflow_check.h"
 +#include "rhythmer/shell/project_save_check.h"
++#include "rhythmer/shell/sends_access_check.h"
 +#include "rhythmer/shell/navigation_check.h"
  #include "rhythmer/shell/menu.h"
  #include "rhythmer/shell/stage_map.h"
  #include "rhythmer/shell/expansion_install.h"
-@@ -825,7 +830,135 @@
+@@ -825,7 +831,135 @@
      void (*set)(Shell&, Snapshot&);
  };
  
@@ -13566,7 +13758,7 @@
      {"stage", [](Shell&, Snapshot& s) { s.ui.page = PageId::Stage; s.playing = true; }}, // track 1, a synth plug-in: B1 MIX
      // The place bar (shell/place_bar.h) on the kit's Pads, its pattern slot 8 made 4 bars long (no other preview
      // plays it): playing, at the top; recording, at the bottom; stopped, held where Shift + Play carries on.
-@@ -950,6 +1083,10 @@
+@@ -950,6 +1084,10 @@
      {"stageemptyslide", [](Shell&, Snapshot& s) { // the wheel just moved: Keygroup on its way to the middle
           on_stage(s, 12, 0, 0); s.ui.new_pick = uint8_t(NewType::Keygroup); s.ui.new_pick_from = 0; s.now = 1000; s.ui.new_pick_at = 960;
       }},
@@ -13577,7 +13769,7 @@
      {"tracks", [](Shell&, Snapshot& s) { // Pad Bank tapped twice; each track's share of a block (roadmap P2), one heavy
          s.ui.page = PageId::Tracks; s.ui.track = 2; s.playing = true;
          const float loads[] {0.04f, 0.11f, 0.07f, 0.02f, 0.66f, 0.09f, 0.03f, 0.05f};
-@@ -1288,6 +1425,7 @@
+@@ -1288,6 +1426,7 @@
      // plug-ins loading again (THAWING), and the question an edit of it asks.
      {"printdeep", [](Shell&, Snapshot& s) { print_scene(s); s.ui.shift = true; }},
      {"deepfreeze", [](Shell&, Snapshot& s) { deep_scene(s); on_stage(s, 2, 1, 0); }},
@@ -13585,7 +13777,7 @@
      {"thawing", [](Shell&, Snapshot& s) { deep_scene(s); on_stage(s, 2, 1, 0); s.thawing = 1u << 2; }},
      {"tracksdeep", [](Shell&, Snapshot& s) { // track 3 deep frozen, track 5 frozen
           deep_scene(s);
-@@ -2709,6 +2847,8 @@
+@@ -2709,6 +2848,8 @@
  
  // The boot animation at 30 frames a second, fading out over the starting
  // project's first page, as DIR/boot-NNN.png.
@@ -13594,7 +13786,7 @@
  int boot_frames(const std::string& folder) {
      EngineHost host;
      Shell shell(host);
-@@ -2721,17 +2861,20 @@
+@@ -2721,17 +2862,20 @@
      snapshot->pattern = shell.patterns().at[snapshot->ui.track][track.pattern];
      ui::BootAnimation boot;
      unsigned written = 0;
@@ -13624,10 +13816,17 @@
      }
      std::cout << "RHYTHMER_BOOT frames=" << written << '\n';
      return written > 1 ? 0 : 1;
-@@ -3100,6 +3243,15 @@
+@@ -3100,6 +3244,22 @@
  }
  
  std::optional<int> run_tool(int argc, char** argv) {
++    if(argc==3&&!std::strcmp(argv[1],"--rhythmer-sends-check")){std::filesystem::create_directories(argv[2]);return sends_access_check([&](Shell& shell,const std::string& name){
++        auto snapshot=std::make_unique<Snapshot>();shell.snapshot(*snapshot,100000);snapshot->now=100000;snapshot->ui.loading=false;snapshot->ui.notice[0]=0;
++        juce::Image image(juce::Image::ARGB,640,480,true);std::vector<ui::TextIssue> issues;ui::audit_text(&issues);
++        {juce::Graphics g(image);g.addTransform(juce::AffineTransform::scale(2.f));draw(g,*snapshot);}ui::audit_text(nullptr);
++        if(!issues.empty()){for(const auto& issue:issues)std::cerr<<"SENDS TEXT "<<name<<" "<<issue.text<<" needed="<<issue.needed<<" box="<<issue.box<<'\n';throw std::runtime_error("SENDS page text overflow");}
++        save_png(image,std::string(argv[2])+"/"+name+".png");
++    });}
 +    if(argc==3&&!std::strcmp(argv[1],"--rhythmer-project-save-check"))return ProjectSavingChecks::run(argv[2],[&](Shell& shell,const std::string& name){
 +        auto snapshot=std::make_unique<Snapshot>();shell.snapshot(*snapshot,100000);snapshot->ui.project_rows=uint16_t(project_rows(snapshot->projects.entries.size()));snapshot->ui.loading=false;snapshot->ui.notice[0]=0;
 +        for(int scale:{1,2}){juce::Image image(juce::Image::ARGB,screen_width*scale,screen_height*scale,true);juce::Graphics g(image);g.addTransform(juce::AffineTransform::scale(float(scale)));draw(g,*snapshot);save_png(image,std::string(argv[2])+"/"+name+(scale==2?"@2x":"")+".png");}
@@ -15462,6 +15661,26 @@
             "src/rhythmer/model/project_file.cpp", "src/rhythmer/model/pattern.cpp", "src/rhythmer/model/note_edits.cpp", "src/rhythmer/model/smf.cpp", "src/rhythmer/model/generators.cpp", "src/rhythmer/engine/punch.cpp", "src/rhythmer/engine/print_render.cpp", "src/rhythmer/engine/print_player.cpp", "src/rhythmer/engine/audio_player.cpp", "src/rhythmer/model/print.cpp", "src/rhythmer/engine/punch_mpc.cpp", "src/rhythmer/engine/pad_fx_info.cpp", "src/rhythmer/model/sound_file.cpp",
             "src/rhythmer/shell/page_stack.cpp", "src/rhythmer/shell/button_jobs.cpp", "src/rhythmer/shell/roll.cpp",
             "src/rhythmer/shell/shift_pad_jobs.cpp", "src/rhythmer/shell/fader_job.cpp", "src/rhythmer/shell/midi_route.cpp", "src/rhythmer/shell/mtc_in.cpp",
+--- /dev/null
++++ b/tests/test_sends_access.py
+@@ -0,0 +1,17 @@
++"""Native button-routing regression for the BASIC mixer SENDS doorway."""
++from pathlib import Path
++import subprocess
++import tempfile
++import unittest
++ROOT = Path(__file__).resolve().parents[1]
++class SendsAccessTests(unittest.TestCase):
++    def test_native_buttons_and_mode_change(self):
++        binary = ROOT / 'build/rhythmer'
++        if not binary.is_file():
++            self.skipTest('Build the runtime first')
++        with tempfile.TemporaryDirectory() as out:
++            p = subprocess.run([str(binary), '--rhythmer-sends-check', out], capture_output=True, text=True, timeout=120)
++            self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
++            self.assertIn('SENDS_ACCESS_OK', p.stdout)
++if __name__ == '__main__':
++    unittest.main()
 --- /dev/null
 +++ b/tests/test_tempo_display.py
 @@ -0,0 +1,15 @@

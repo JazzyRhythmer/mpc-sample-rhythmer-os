@@ -367,6 +367,21 @@ Load A and Load B are different actions. On source B changes, the bar structure 
 
 ![Full mode: track sends to shared buses](../assets/manual/020-sends.png)
 
+### Open SENDS and choose bus A–D
+
+1. Press **PAD FX + KNOB FX** together to open TRACKS, then **B2 SENDS**.
+2. In BASIC, **Switch to FULL?** appears. **B1 CANCEL** keeps BASIC and returns to the same mixer page. **B3 ENABLE FULL** enables FULL and opens SENDS. FULL also reveals the other advanced pages; it does not change your tracks, notes or sounds.
+3. Use **K2 BUS** to select A, B, C or D; **K1 SEND** adjusts the selected track’s send to that bus, and **K3 RETURN** adjusts the shared bus’s return level. Minus / Plus also select the bus.
+4. **B1 TRACKS** returns to the track mixer. FULL opens SENDS directly on subsequent B2 presses.
+
+![BASIC: confirm FULL mode before opening SENDS](../assets/manual/020-sends-enable-full.png)
+
+The encoder starts on CANCEL in the confirmation. **SHIFT + encoder push** cancels even if ENABLE FULL is selected. You can also choose BASIC or FULL at **SHIFT + Pad 8 → Settings → K1 FEATURES**. During a lesson, finish or leave the lesson before opening SENDS.
+
+On TRACKS, active **NOTE REPEAT / arp** still uses B1–B3 for repeat rates. Turn it off to restore TRACK SETUP / SENDS / FX. **SHIFT + B2 MOVE** and **SHIFT + B3 COPY** keep their track-selection actions.
+
+
+
 | Control | Scope | Where |
 | --- | --- | --- |
 | Main engine CUTOFF / RESONANCE | The loaded instrument; whole kit for Rhythmer Kit | Plug-in PRESETS; linked to the corresponding EDIT controls |
@@ -374,7 +389,7 @@ Load A and Load B are different actions. On source B changes, the bar structure 
 | Native sample FILTER | One sample pad | Sample track B3 FILTER |
 | Native sample KIT FILT / SOUND filter | All pads of that native sample kit | Its SOUND / KIT FILT pages |
 | DJ FILTER / ECHO / SPACE | Separate OS performance processing on the track | Plug-in B2 PERFORM |
-| SEND A–D | Sends to shared buses | TRACKS and Full SENDS / FX pages |
+| SEND A–D | Sends to shared buses | TRACKS → B2 SENDS; BASIC offers FULL first. B3 FX edits effect chains |
 | Engine FX / track inserts / bus FX | Different processing stages | Engine EDIT or the appropriate FX chain |
 
 **ECHO is not simply SEND A and SPACE is not simply SEND B.** If effects sound excessive, reduce PERFORM ECHO/SPACE and track sends, then check the engine's own FX and inserts. Turning an effect input down does not erase an existing tail; double STOP cuts current audio.

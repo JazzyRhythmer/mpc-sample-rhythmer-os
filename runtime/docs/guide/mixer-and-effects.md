@@ -31,9 +31,12 @@ each bus with its first effect and its return.
 **K1** sets the selected track's send, **K2** selects the bus, **K3** sets
 the bus return.
 
-Sends and the **SENDS** pages on Stage are in Full. In Basic, Tracks keeps
-each track's level, pan and send to bus A (see
-[Basic and Full](settings.md#basic-and-full)).
+Sends and the **SENDS** pages on Stage use Full mode. In Basic, **B2 SENDS**
+on Tracks or an FX page offers **Switch to FULL?**: **B1 CANCEL** keeps Basic
+and the current page; **B3 ENABLE FULL** persists Full and opens Sends.
+Full also shows the other advanced pages; tracks and notes stay unchanged.
+Shift + encoder push cancels. Tracks retains level, pan and send A.
+See [Basic and Full](settings.md#basic-and-full).
 
 On a kit track press **B2** (**SENDS**) again to see the kit's pads
 instead of the tracks (the bank in view, as the pads sit), each with its

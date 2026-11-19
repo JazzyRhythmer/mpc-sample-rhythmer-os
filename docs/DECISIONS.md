@@ -24,3 +24,8 @@ DECIDED: On SOUND/TRIM only, encoder Push on a completely empty Sample Kit opens
 ### Manual save and per-project recovery — 2026-11-19
 
 DECIDED: SAVE chooses a folder/name on first save and updates the current file thereafter. SAVE AS chooses another destination and creates an independent project identity. Idle autosave updates one separate recovery entry per project under Rhythmer/Autosave; it never writes manual Project N files or overwrites an explicit save. OPEN/NEW use SAVE, DISCARD and CANCEL. This is a deliberate fork policy over the pinned Melodee saving model. See [Project saving and recovery](PROJECT_SAVE_RECOVERY.md) for the native-browser adaptation, state/media transaction boundaries and validation.
+
+
+### Discoverable SENDS in BASIC — 2026-11-20
+
+DECIDED: Keep MIX B2 SENDS visible in BASIC. Use the native confirmation to offer FULL; CANCEL preserves the mode and caller, ENABLE FULL persists the native FEATURES setting and opens track SENDS. Do not override repeat, shifted track actions or lesson restrictions. Existing FULL routes and native sampler pad-send cycling remain.

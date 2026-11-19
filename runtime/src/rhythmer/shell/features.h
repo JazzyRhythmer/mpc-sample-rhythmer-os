@@ -10,7 +10,7 @@
 //   the MENU's GO      MOTION, SENDS and LOOPER (the other tiles keep their pads)
 //   the MENU's HERE    LOOPER, FREEZE and FOLLOW TO ALL
 //   Seq's keys         B3 MOTION, unless the pattern in hand holds motion; MOD and MACRO after it
-//   the mixer's keys   B2 SENDS (Tracks has level, pan and send A)
+//   the mixer          B2 SENDS offers Full mode; Tracks retains level, pan and send A
 //   Stage              SENDS on any track; on a kit LAYERS, COLOUR, FOLLOW, CLOUD and KIT FILT too, so a kit pad has
 //                      the stock app's seven pages (Trim, Tune, Amp Env, Play, Mix, Filter, Filt Env)
 //   a new track        MIDI and AUDIO (shell/new_track.h: Drum, Keygroup and Plugin stay)
@@ -31,7 +31,7 @@ inline bool menu_tile_shown(const UiState& ui, unsigned tile) {
 }
 // Seq's B3 MOTION: Full, or the pattern in hand holds motion.
 inline bool motion_shown(const UiState& ui, const Pattern& pattern) { return full_features(ui) || !pattern.motion.empty(); }
-// The mixer's B2 SENDS, the Looper (its page, Loop held's grid, Loop + 16 Levels), the follow actions' cards and
+// Full access to mixer SENDS (Basic offers a confirmation), the Looper (its page, Loop held's grid, Loop + 16 Levels), the follow actions' cards and
 // keys, VARY, FREEZE in the MENU.
 inline bool sends_shown(const UiState& ui) { return full_features(ui); }
 inline bool looper_shown(const UiState& ui) { return full_features(ui) || ui.page == PageId::Looper; }

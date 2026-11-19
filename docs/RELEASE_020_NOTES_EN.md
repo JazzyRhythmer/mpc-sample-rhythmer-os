@@ -19,6 +19,8 @@ Press the encoder on an engine-less track to choose its type. On a Sample Kit, p
 
 Change instruments directly from the preset list. Switch tracks while browsing and the screen follows the selected track. Preset browsing wraps from the last sound back to the first, in both directions.
 
+B2 SENDS stays visible in BASIC. Its confirmation can enable FULL and open SENDS directly, or cancel without changing modes. Existing repeat-rate, MOVE/COPY and back controls retain their priority.
+
 ### Find a break. Keep the groove.
 
 Browse loops with ORIGINAL or tempo-synchronised SYNC audition before loading them. Replacing a source preserves your existing patterns and performance settings, with clear confirmation when changing the source's bar count.

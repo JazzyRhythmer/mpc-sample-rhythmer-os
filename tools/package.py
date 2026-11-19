@@ -143,6 +143,7 @@ def assemble(stage_only=False):
         'mechanical_rename': {'source': 'src/rhythmer', 'namespace': 'rhythmer', 'class': 'RhythmerApp',
                               'binary': 'rhythmer', 'sd_runtime': 'autorun/rhythmer'},
         'features': {
+            'Sends_Access': 'MIX B2 SENDS stays visible in BASIC; CANCEL keeps the current mode/page, ENABLE FULL persists the native setting and opens track SENDS; repeat, shifted actions, Back and lesson restrictions retained',
             'Project_Save': 'First SAVE and SAVE AS choose a folder/name; SAVE updates the current manual file; OPEN/NEW use SAVE/DISCARD/CANCEL; one separate recovery entry per project under Rhythmer/Autosave; Project home SHIFT+B3 opens RECOVERY',
             'New_Engines': 'Frodhes original 57 programs; Tenebrae eight oscillator models and 164 programs; FMini-1 original 2.6.0 engine and 200 programs',
             'Pad_Mix': 'Selected pad native Volume first, related controls aligned by three; whole-kit filter next; native sound parameters and saved states retained',
