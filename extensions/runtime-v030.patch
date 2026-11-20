@@ -578,7 +578,7 @@
 +브레이크 연주용 소스는 60초 이하의 오디오 루프를 사용한다. 스트리밍 파일은 오디오 스레드 밖에서 모노 연주 버퍼를 준비한다. 일반 샘플/Audio 트랙의 긴 파일 스트리밍 제한은 변경하지 않는다.
 --- /dev/null
 +++ b/docs/guide/FIRST_GROOVE_020_EN.md
-@@ -0,0 +1,215 @@
+@@ -0,0 +1,224 @@
 +# Your first groove with RHYTHMER OS.
 +
 +RHYTHMER OS **0.2.0** · **4 bars · 140 BPM · C minor**. Build a drum, bass and chord pattern, then save it. Acid and Break are optional additions at the end. No downloaded break recording is required for the main exercise.
@@ -729,6 +729,15 @@
 +For buses B–D, press **B2 SENDS** on TRACKS. In BASIC, press **B3 ENABLE FULL** in the confirmation, or B1 CANCEL to stay in BASIC. In SENDS, K2 chooses bus A–D, K1 sets this track’s send and K3 adjusts that bus’s return. FULL also reveals the other advanced pages.
 +
 +**Check:** KIT CUTOFF affects all kit pads; Pxx Volume affects only the selected pad. ECHO/SPACE on PERFORM are separate track effects, not the main engine filter or sends A/B.
++
++### Try a drum-pad mute
++
++1. Keep the patterns playing with recording off. Select **track 1**, then press **SAMPLE**. Use Rhythmer Kit's **Drums** layout with **16 Levels off**.
++2. Tap **MUTE**, then hit **pad 4** to remove the closed hat from the groove. Its LED turns red; the other drums, bass and chords keep playing.
++3. Hit pad 4 again to restore it. Tap **MUTE** again to leave mute mode. You can also hold MUTE while hitting pads, then release it.
++4. While mute mode is active, **SHIFT + a drum pad** solos that pad inside the kit; repeat on that pad to restore the populated kit pads. **SHIFT + MUTE** clears all project pad mutes and track mute/solo states.
++
++**Check:** SAMPLE's Rhythmer Kit screen says **Mute: pads**. On TRACKS, MUTE + pad still mutes whole tracks. Muting blocks new notes; existing releases and effect tails decay naturally. The project save below keeps the pad-mute state. If the kit is frozen, accept UNFREEZE and repeat the action.
 +
 +## 8. Save and reopen
 +
@@ -1015,7 +1024,7 @@
 +[First Groove 따라 하기](FIRST_GROOVE_020_KO.md) · [전체 사용 설명서](USER_MANUAL_KO_DRAFT.md) · [English controls](QUICK_REFERENCE_020_EN.md)
 --- /dev/null
 +++ b/docs/guide/MANUAL_020_EN.md
-@@ -0,0 +1,480 @@
+@@ -0,0 +1,492 @@
 +# RHYTHMER OS — User manual
 +
 +RHYTHMER OS **0.2.0** for MPC Sample. Choose a chapter from the contents, or follow [Your first groove](FIRST_GROOVE_020_EN.md) to build and save a pattern from scratch.
@@ -1208,6 +1217,7 @@
 +| --- | --- | --- |
 +| Change the whole kit | PRESETS → choose another kit | Multiple pad sounds change |
 +| Change one pad's source | Sound screen EDIT → encoder push → PAD SOURCE; hit the pad, then K2 ENGINE / K3 SOUND | The selected P number and engine/sound name match the pad |
++| Mute / unmute one pad | SAMPLE → MUTE → hit the pad; hit it again to unmute | Only that pad stops starting new notes |
 +| Change one pad's volume | Return to the sound screen's EDIT; hit the pad; use the first row's K1 Pxx Volume | Only that pad's level changes |
 +| Shape the whole kit | PRESETS KIT CUTOFF / KIT RESONANCE | All pads pass through the same whole-kit filter |
 +| Save the whole kit | Tools → B3 SAVE → K1 slot → K2 SAVE KIT → STATUS READY | User Kit appears in KIT PRESETS |
@@ -1215,6 +1225,17 @@
 +The tool's **B3** cycles **PAD SOURCE → SAVE → EDIT**. Its **B2 KIT PRESETS** opens the preset list. **SHIFT + encoder push** returns to the original sound-editor position.
 +
 +**KIT …** means a whole-kit control. **P01 … / P11 …** means that selected pad's control. Hit a different pad to edit it. A pad's engine can also have its own filter. This is separate from the whole-kit filter. Do not expect the KIT CUTOFF value to change when selecting another pad.
++
++### Mute and solo kit pads
++
++1. Select the Rhythmer Kit track and press **SAMPLE**. Use its **Drums** pad layout and leave **16 Levels** off.
++2. Tap **MUTE** to latch mute mode, then hit a pad to mute/unmute it. Alternatively, hold MUTE while hitting pads and release MUTE afterwards.
++3. While mute mode is active, **SHIFT + pad** solos that populated pad across banks A–D. Repeat on the soloed pad to restore the populated pads.
++4. Tap **MUTE** again to leave latched mute mode. Pad mute settings remain active while patterns and live notes play.
++
++Muted pad LEDs are red; a soloed pad is white. The screen says **Mute: pads** and shows the affected pad number after a change. **SHIFT + MUTE** clears all pad mutes and track mute/solo states across the project. On **TRACKS**, MUTE + pad still operates on whole tracks. Hold PAD BANK to select a different track as usual.
++
++Pad mute blocks new notes from the pads, sequencer and incoming MIDI; existing release and effect tails decay naturally. It does not change pad volume, the sound design or the recorded pattern. Mutes belong to the project, survive project save/load and remain when changing the kit preset. User Kit presets do not store track mute settings. A frozen kit plays a stereo print: accept the existing UNFREEZE prompt, then repeat the mute action to edit its individual pads.
 +
 +## 8. Load samples or an MPC kit
 +
@@ -1498,7 +1519,7 @@
 +RHYTHMER OS is developed by jazzy rhythmer and built on Melodee by Kerem Kiliç (Ellic Studio), sample-base and the credited engine projects. Original licences and notices accompany the installation. This is an early beta. 
 --- /dev/null
 +++ b/docs/guide/QUICK_REFERENCE_020_EN.md
-@@ -0,0 +1,29 @@
+@@ -0,0 +1,30 @@
 +# RHYTHMER OS 0.2.0 — Essential controls
 +
 +**PUSH = press the large encoder. TURN = rotate it.** B1–B3 are the three screen buttons; K1–K3 are the knobs below the screen. Use the currently displayed labels.
@@ -1512,6 +1533,7 @@
 +| Open TRACKS | PAD FX + KNOB FX together | Track grid / mix; B1 TRACK SETUP when repeat/arp is off |
 +| Select track 1–16 | Hold PAD BANK, tap its pad, release | Header's track number changes |
 +| Mix sends A–D | TRACKS → B2 SENDS | BASIC: B1 CANCEL / B3 ENABLE FULL. In SENDS, K1 send, K2 bus, K3 return |
++| Rhythmer Kit pad mute | SAMPLE → MUTE → pad | Drums layout, 16 Levels off; tap MUTE again to leave mute mode. SHIFT + pad solos; SHIFT + MUTE clears all project mutes/solos |
 +| Play notes / drums | SAMPLE | Pads play the selected instrument |
 +| Choose a pattern on one track | SEQ → B1 until PATTERNS | Pads choose that track's patterns |
 +| Launch across tracks | SEQ → B1 until SEQUENCES | Pads launch a sequence number across tracks |
@@ -1778,7 +1800,7 @@
 +B2 SENDS stays visible on TRACKS and the shared FX pages. In BASIC it opens a native confirmation: CANCEL keeps the current mode/page; ENABLE FULL uses the existing FEATURES setting, persists it and opens track SENDS. The question explicitly covers all advanced pages. SHIFT+encoder push cancels, and a stale question cannot act on a different page. FULL retains direct entry, A–D bus selection and native sample-pad sends. NOTE REPEAT/arp, shifted MOVE/COPY, pending dialogs and lessons keep their existing input priority.
 --- /dev/null
 +++ b/docs/guide/USER_MANUAL_KO_DRAFT.md
-@@ -0,0 +1,253 @@
+@@ -0,0 +1,261 @@
 +# RHYTHMER OS 0.2.0 사용 설명서
 +
 +이 문서는 **RHYTHMER OS 0.2.0**의 화면과 조작을 설명합니다. 기반 프로젝트 버전인 Melodee Sample 0.3.0과 구분하세요. 이전 영상과 버튼명이 다르면 이 문서의 0.2.0 설명을 기준으로 합니다.
@@ -1885,6 +1907,14 @@
 +도구의 B3은 **PAD SOURCE → SAVE → EDIT**를 순환합니다. B2 KIT PRESETS는 킷 목록을 엽니다. SHIFT + 인코더 클릭으로 원래 악기 편집 위치에 돌아갑니다.
 +
 +**KIT …**은 전체 킷, **P11 …**은 선택한 11번 패드의 값입니다. 다른 패드를 눌러도 KIT 필터 값은 그대로입니다. 패드 엔진 자체 필터와 전체 킷 필터는 별개입니다.
++
++### 패드 뮤트·솔로
++
++Rhythmer Kit 트랙을 선택하고 **SAMPLE**에서 Drums 배열로 연주합니다(16 Levels 끄기). **MUTE를 짧게 누른 뒤 패드**를 누르면 그 패드만 뮤트·해제됩니다. MUTE를 누른 채 패드를 조작하는 방법도 가능합니다. 뮤트 모드에서 **SHIFT + 패드**는 그 패드를 솔로로 만들고, 같은 패드에 반복하면 사용 중인 패드를 모두 복원합니다. 짧게 켠 뮤트 모드는 MUTE를 다시 눌러 나갑니다.
++
++뮤트 패드 LED는 빨강, 솔로는 흰색입니다. 화면에 **Mute: pads**와 변경된 패드 번호가 표시됩니다. **TRACKS에서는 기존처럼 트랙 뮤트**입니다. **SHIFT + MUTE는 프로젝트 전체의 트랙 뮤트·솔로 및 패드 뮤트를 해제**합니다.
++
++새 발음만 차단하므로 이미 울린 릴리스·이펙트 잔향은 남습니다. 볼륨·음색·패턴은 바뀌지 않습니다. 패드 뮤트는 프로젝트 저장·복원에 포함되며 킷 프리셋 변경 시에도 유지됩니다. User Kit 프리셋 자체에는 저장하지 않습니다. Freeze 상태의 킷은 스테레오 프린트이므로 UNFREEZE 확인 후 패드 뮤트 조작을 다시 하세요.
 +
 +User Sound는 개별 엔진의 EDIT에서 인코더 클릭으로 저장 도구를 연 뒤, **K1 슬롯 → K2 SAVE SOUND → STATUS READY** 순으로 저장합니다. PRESETS의 User Sound 항목을 선택하고 클릭/LOAD로 복원하세요. 같은 슬롯은 덮어씁니다.
 +
@@ -2807,7 +2837,7 @@
      tempo_shown.store(tempo, std::memory_order_relaxed);
  }
  
-@@ -347,6 +351,9 @@
+@@ -347,8 +351,12 @@
      slot.base = track.params;
      if (slot.engine) for (unsigned r = 0; r < mod_routes; ++r) slot.engine->set_mod(r, track.mods[r]);
      for (unsigned pad = 0; pad < sampler_pads; ++pad) slot.sampler.set_pad(pad, track.pads[pad]);
@@ -2816,8 +2846,11 @@
 +    slot.sampler.manipulator.initial_source(track.break_source);
      slot.sampler.set_trims(track.zone_trims);
      slot.sampler.set_pad_mutes(track.pad_mutes);
++    static_assert(sampler_pads>=64);slot.plugin.set_pad_mutes(track.pad_mutes[0]);
      if (slot.engine) for (unsigned p = 0; p < info.param_count; ++p) slot.engine->set_param(int(p), track.params[p]);
-@@ -437,17 +444,27 @@
+     apply({Command::Type::Level, uint8_t(t), 0, 0, track.mix.level});
+     apply({Command::Type::Pan, uint8_t(t), 0, 0, track.mix.pan});
+@@ -437,17 +445,27 @@
          slot.plugin.attach(slot.kind == EngineKind::Plugin ? runner_of(slot.plugin_entry) : nullptr);
          break;
      case Type::NoteOn:
@@ -2847,7 +2880,16 @@
          midi_all_off(c.track, frame_now);
          for (unsigned t = 0; t < track_count; ++t)
              if ((c.track == 255 || t == c.track) && slots[t].engine) {
-@@ -747,6 +764,7 @@
+@@ -549,6 +567,8 @@
+         slot.sampler.set_trim(c.index, c.position, c.micros, int(c.pattern) - 128, c.value);
+         break;
+     case Type::PadMute:
++        if(c.index==0xffff)slot.plugin.set_pad_mutes(c.value?~uint64_t(0):0);
++        else slot.plugin.set_pad_mute(c.index,c.value!=0);
+         if (c.index == 0xffff) for (unsigned pad = 0; pad < sampler_pads; ++pad) slot.sampler.set_pad_mute(pad, c.value != 0);
+         else slot.sampler.set_pad_mute(c.index, c.value != 0);
+         break;
+@@ -747,6 +767,7 @@
          bounce_ticks = bounce_song ? 0 : std::max<uint32_t>(c.position, 1);
          break;
      case Type::PadNote:
@@ -2855,7 +2897,7 @@
          if (slot.freeze && slot.freeze->deep) break; // freeze plan F2d
          if (slot.freeze) wake(slot);
          if (slot.engine == &slot.sampler) {
-@@ -808,6 +826,13 @@
+@@ -808,6 +829,13 @@
          break;
      }
      case Type::Audition:
@@ -2869,7 +2911,7 @@
          if (slot.freeze && slot.freeze->deep) break; // freeze plan F2d
          if (slot.freeze) wake(slot);
          if (slot.engine == &slot.sampler) {
-@@ -911,6 +936,7 @@
+@@ -911,6 +939,7 @@
          else { global_tempo = uint16_t(std::clamp<int>(c.value, 300, 3000)); scene_tempo = 0; follow_tempo(); }
          break;
      case Type::Play:
@@ -2877,7 +2919,7 @@
          if (running) break;
          mtc_off(); // MTC in places it right after (MtcIn locate)
          running = true; until_tick = 0;
-@@ -1160,10 +1186,10 @@
+@@ -1160,10 +1189,10 @@
      switch (c.op) {
      case Op::NoteOn:
          if (c.flag) e->set_accent(c.x);
@@ -2890,7 +2932,7 @@
      case Op::Slide: e->set_accent(c.x); e->slide(c.a, c.b, c.c, c.flag); e->set_accent(1); break;
      case Op::Param: e->set_param(c.a, c.b); break;
      case Op::Wheel: e->set_wheel(c.x); break;
-@@ -1181,14 +1207,14 @@
+@@ -1181,14 +1210,14 @@
  }
  
  // accent < 0: none set around it (a note by hand); else the sequencer's, back to 1 after.
@@ -2909,7 +2951,7 @@
      call.op = EngineCall::Op::NoteOff; call.a = key;
      if (!keep_call(slot, call)) make_call(unsigned(&slot - slots.data()), slot, call);
  }
-@@ -1226,6 +1252,7 @@
+@@ -1226,6 +1255,7 @@
  // The engine's frames [at, at + frames) into its buffers; a kit's pads that go apart (Sidechain's key pad, Knob FX)
  // into theirs at the same frames.
  void EngineHost::render_engine(unsigned t, Slot& slot, unsigned at, unsigned frames) {
@@ -2917,7 +2959,7 @@
      if (slot.engine == &slot.sampler) {
          bool pad_key = keyed_pad == int(t);
          slot.sampler.set_key_pad(pad_key ? int(comp.key_pad()) : -1, pad_key ? key_pad_l + at : nullptr, pad_key ? key_pad_r + at : nullptr);
-@@ -2014,6 +2041,7 @@
+@@ -2014,6 +2044,7 @@
      if (key < 0 || key > 127) return false;
      if (is_midi(t)) return heard(t); // a MIDI track: always, unless muted (docs/MIDI_TRACKS.md)
      if (!out_channel[t] || !out_mode[t]) return false;
@@ -2925,7 +2967,7 @@
      if (out_mode[t] == 1) return true;
      const auto& slot = slots[t];
      if (!slot.engine) return true;
-@@ -2558,6 +2586,7 @@
+@@ -2558,6 +2589,7 @@
      Offer offer;
      while (offers.pop(offer)) {
          if (offer.slot > preview_slot) continue;
@@ -2933,7 +2975,7 @@
          for (auto& slot : slots) slot.sampler.sample_gone(offer.slot); // nothing may play the old one past here
          const SampleData* old = samples[offer.slot];
          samples[offer.slot] = offer.sample;
-@@ -3056,6 +3085,12 @@
+@@ -3056,6 +3088,12 @@
      keep_sources(input, usb, frames);
      take_stems(frames); // roadmap P4: the stems by the same bounds, before the bounce moves on
      render_out.process(master_l, master_r, frames);
@@ -2946,7 +2988,7 @@
      volume_now.aim(volume, frames, snap_mix); // main volume eased too: the knob's steps are up to dB apart
      park_gain.aim(park_wanted ? 0.0f : 1.0f, frames); // a Park fades out (and the next project in), never a jump
      bool park_fading = !(park_gain.flat() && park_gain.to == 1.0f);
-@@ -3072,7 +3107,7 @@
+@@ -3072,7 +3110,7 @@
              master_l[f] += blip; master_r[f] += blip;
          }
          out_l = std::max(out_l, std::fabs(master_l[f])); out_r = std::max(out_r, std::fabs(master_r[f])); // the mix, for the meters
@@ -2955,7 +2997,7 @@
          float left = dsp::master_clip(master_l[f] * v), right = dsp::master_clip(master_r[f] * v);
          peak = std::max(peak, std::max(std::fabs(left), std::fabs(right)));
          out[2 * f] = int32_t(std::clamp(left, -0.999f, 0.999f) * 2147483647.0f);
-@@ -3228,7 +3263,8 @@
+@@ -3228,7 +3266,8 @@
      taps.track = uint8_t(watched);
      taps.stamp = frame_now + frames;
      auto& slot = slots[size_t(watched)];
@@ -3923,7 +3965,19 @@
      switch (kind) {
 --- a/src/rhythmer/engine/plugin_engine.h
 +++ b/src/rhythmer/engine/plugin_engine.h
-@@ -48,7 +48,7 @@
+@@ -24,8 +24,11 @@
+         if (plugin == runner) return;
+         if (runner) runner->silence();
+         runner = plugin;
++        if(runner)runner->set_pad_mutes(pad_mutes);
+     }
+     PluginRunner* attached() const { return runner; }
++    void set_pad_mutes(uint64_t mask) {pad_mutes=mask;if(runner)runner->set_pad_mutes(mask);}
++    void set_pad_mute(unsigned pad,bool on) {if(pad>=64)return;const uint64_t bit=uint64_t(1)<<pad;set_pad_mutes(on?pad_mutes|bit:pad_mutes&~bit);}
+ 
+     void note_on(int key, int velocity) override {
+         int heard = accent != 1 ? int(std::lround(float(velocity) * accent)) : velocity;
+@@ -48,7 +51,7 @@
          runner->midi(0xb0, 64, 0);  // sustain up
          runner->midi(0xb0, 123, 0); // all notes off
      }
@@ -3932,6 +3986,14 @@
      // The track's parameters are its performance knobs (plugin_track); a plug-in's own are the rack's to set.
      void set_param(int id, int value) override {
          if (id < 0 || id >= plugin_track::Count) return;
+@@ -88,6 +91,7 @@
+ 
+ private:
+     PluginRunner* runner = nullptr;
++    uint64_t pad_mutes=0;
+     float accent = 1; // for the notes started next (set_accent)
+     MacroStage macros;
+     std::array<int, plugin_track::Count> stored {};
 --- a/src/rhythmer/engine/sample_data.cpp
 +++ b/src/rhythmer/engine/sample_data.cpp
 @@ -152,6 +152,7 @@
@@ -5103,6 +5165,21 @@
          } else if (name == "TRAK") {
              unsigned t = r.u8();
              if (t >= track_count) continue;
+--- /dev/null
++++ b/src/rhythmer/model/rhythmer_kit.h
+@@ -0,0 +1,12 @@
++// SPDX-License-Identifier: AGPL-3.0-only
++// Copyright (C) 2026 jazzy rhythmer
++#pragma once
++#include "rhythmer/model/project.h"
++#include <cstring>
++namespace rhythmer {
++inline bool rhythmer_kit_track(const Project& p, const Track& t) {
++    if(t.engine!=EngineKind::Plugin || t.plugin>=p.plugins.size())return false;
++    const auto& ref=p.plugins[t.plugin];
++    return ref.used() && (!std::strcmp(ref.name,"Rhythmer Kit") || !std::strcmp(ref.name,"Groove Kit"));
++}
++}
 --- a/src/rhythmer/pages/ask_sheet.cpp
 +++ b/src/rhythmer/pages/ask_sheet.cpp
 @@ -88,28 +88,47 @@
@@ -5621,6 +5698,15 @@
      unsigned step = unsigned(std::clamp(int(phase) - int(UpdatePhase::Saving), 0, 3));
      gauge(p, x, zone::picture_y + 78, w, float(step + 1) / 4.0f, colour::amber, 4);
      icon(p, Icon::Card, x, zone::picture_y + 92, 14, colour::mid);
+@@ -212,7 +212,7 @@
+         text = juce::String::fromUTF8(s.ui.notice); // notices may hold an en dash or a middle dot
+     } else if (s.ui.mute_mode() && !tracks_on_pads(s.ui)) { // mute mode: what the pads mute here
+         const auto& t = s.track();
+-        bool kit = mute_on_kit(s.ui, t.engine == EngineKind::Sampler && !t.levels && pad_job(s.ui) == play_pad);
++        bool kit = mute_on_kit(s.ui, (t.engine == EngineKind::Sampler && !t.levels && pad_job(s.ui) == play_pad) || rhythmer_kit_mute(s.project,s.ui,pad_job(s.ui)==play_pad));
+         text = kit ? "Mute: pads" : "Mute: tracks";
+         copying = true; // in the track's colour, as a mode
+     } else {
 @@ -276,7 +276,7 @@
      if (!card) h.left.push_back(pill(Icon::Card, "NO CARD", colour::amber));
      else if (s.ui.exit_off && !s.ui.exit_saved) h.left.push_back(pill(Icon::Rec, "SAVING", colour::amber));
@@ -7363,7 +7449,7 @@
  #include "rhythmer/engine/dsp.h"
  #include "rhythmer/engine/engine_host.h"
  #include "rhythmer/plugin/clap_instance.h"
-@@ -251,10 +254,12 @@
+@@ -251,10 +254,13 @@
      }
  
      void midi(uint8_t status, uint8_t data1, uint8_t data2) override {
@@ -7371,12 +7457,13 @@
          if (pending_count < pending.size()) pending[pending_count++] = {status, data1, data2};
          idle.midi(status, data1, data2);
      }
++    void set_pad_mutes(uint64_t mask) override {sound_rack_set_pad_mutes(instance.get(),mask);}
      void silence() override {
 +        cut_output = true;
          for (uint8_t ch = 0; ch < 16; ++ch) {
              midi(uint8_t(0xb0 | ch), 120, 0); // all sound off
              midi(uint8_t(0xb0 | ch), 123, 0); // all notes off
-@@ -320,6 +325,7 @@
+@@ -320,6 +326,7 @@
          pending_count = 0;
          stamp_clock(frames);
          instance->processBlock(buffer, midi_in);
@@ -7384,7 +7471,7 @@
          if (outs <= 0) {
              if (!add) { std::fill(left, left + frames, 0.0f); std::fill(right, right + frames, 0.0f); }
              return;
-@@ -383,6 +389,7 @@
+@@ -383,6 +390,7 @@
      }
  
      struct Midi { uint8_t status = 0, data1 = 0, data2 = 0; };
@@ -7392,7 +7479,7 @@
      PluginClock clock;
      EffectClock now;           // the engine host's clock as this render found it
      uint64_t block_seen = ~uint64_t(0);
-@@ -482,6 +489,7 @@
+@@ -482,6 +490,7 @@
      for (auto& job : wanted) push(std::move(job));
  }
  
@@ -7400,7 +7487,7 @@
  void PluginRack::set_states(PluginStates states) {
      std::lock_guard<std::mutex> held(lock);
      for (unsigned e = 0; e < max_plugins; ++e) {
-@@ -590,6 +598,7 @@
+@@ -590,6 +599,7 @@
      if (entry >= max_plugins) return;
      out.entry = uint8_t(entry);
      std::lock_guard<std::mutex> held(lock);
@@ -7408,7 +7495,7 @@
      for (const auto& v : entries[entry].file.drums) {
          unsigned k = unsigned(v.key) - DrumVoices::first;
          if (v.key < DrumVoices::first || k >= DrumVoices::keys) continue;
-@@ -615,6 +624,14 @@
+@@ -615,6 +625,14 @@
          return;
      }
      out.instrument = h->instrument;
@@ -7423,7 +7510,7 @@
      out.qlinks = h->qlinks;
      out.rows = uint16_t((h->shown.size() + 2) / 3);
      out.row = uint16_t(out.rows ? std::min<unsigned>(row, out.rows - 1u) : 0);
-@@ -622,8 +639,9 @@
+@@ -622,8 +640,9 @@
      out.programs = uint16_t(std::min<size_t>(h->programs.size(), 0xffff));
      const auto& params = h->instance->getParameters();
      auto read = [&](size_t at, PluginPanelParam& card) {
@@ -7434,7 +7521,7 @@
          std::string name = p->getName(int(sizeof(card.name) - 1)).trim().toStdString();
          put(card.name, sizeof(card.name), h->nam ? nam_card_name(name) : name);
          float v = p->getValue();
-@@ -633,27 +651,45 @@
+@@ -633,27 +652,45 @@
          int steps = p->getNumSteps();
          card.steps = uint16_t(steps > 1 && steps < plugin_param_max ? steps : 0);
      };
@@ -7485,7 +7572,7 @@
  }
  
  PluginPrograms PluginRack::programs(unsigned entry) const {
-@@ -663,8 +699,9 @@
+@@ -663,8 +700,9 @@
      std::lock_guard<std::mutex> held(lock);
      const auto& e = entries[entry];
      if (!e.live || e.status != PluginStatus::Ready) return out;
@@ -7496,7 +7583,7 @@
      out.loading = e.live->switching;
      out.finding = e.live->finding;
      return out;
-@@ -701,7 +738,7 @@
+@@ -701,7 +739,7 @@
          instance = e.live->instance.get(); // freed only on this thread, so it outlives the switch
      }
      if (program >= 0 && program < instance->getNumPrograms()) {
@@ -7505,7 +7592,7 @@
              instance->setCurrentProgram(program == 0 ? 1 : 0);
              std::this_thread::sleep_for(std::chrono::milliseconds(150));
          }
-@@ -761,6 +798,7 @@
+@@ -761,6 +799,7 @@
      push(std::move(job));
  }
  
@@ -7513,7 +7600,7 @@
  PluginRack::View PluginRack::view() const {
      std::lock_guard<std::mutex> held(lock);
      return shown;
-@@ -877,6 +915,7 @@
+@@ -877,6 +916,7 @@
  PluginRack::Known PluginRack::probe(const PluginFile& file) {
      Known found;
      found.path = file.path;
@@ -7521,7 +7608,7 @@
      int8_t kind = -1;
      std::string error;
      fs::path stage = stage_root() / (stage_tag + "probe-" + std::to_string(++stage_count));
-@@ -952,6 +991,7 @@
+@@ -952,6 +992,7 @@
      // A path relative to the card's top (a track Rhythmer's own synth was), or one in the card's old top-level
      // Plugins folder: on the card in now, in Rhythmer/Plugins.
      std::string path = card_plugin_path(top, job.path);
@@ -7529,7 +7616,7 @@
      auto file = describe_plugin(path);
      std::vector<uint8_t> state;
      {
-@@ -986,8 +1026,35 @@
+@@ -986,8 +1027,35 @@
      double device_rate = job.rate > 0 ? job.rate : 44100.0;
      double rate = file.fixed_rate ? double(file.fixed_rate) : device_rate; // what the plug-in itself runs at
      int block = int(EngineHost::block);
@@ -7567,7 +7654,7 @@
          juce::OwnedArray<juce::PluginDescription> types;
          auto host = juce_types(file.format, staged_path(file, stage), types);
          const juce::PluginDescription* chosen = types.isEmpty() ? nullptr : types[0];
-@@ -1031,7 +1098,7 @@
+@@ -1031,7 +1099,7 @@
      handle->format = file.format;
      handle->programs = named_programs(*handle->instance);
      handle->finding = file.format == PluginFormat::Clap; // looked for once it plays: find_presets()
@@ -7604,9 +7691,19 @@
      unsigned changes() const { return change_count.load(std::memory_order_acquire); } // the view or a status moved
      // For `status`: each entry in use as entry:state:name:format:load (tenths of a percent), comma separated.
      std::string summary() const;
+--- a/src/rhythmer/plugin/plugin_runner.h
++++ b/src/rhythmer/plugin/plugin_runner.h
+@@ -15,6 +15,7 @@
+     // A MIDI message for the next render() (a note, a controller, the bend),
+     // heard at that render's first frame.
+     virtual void midi(uint8_t status, uint8_t data1, uint8_t data2) = 0;
++    virtual void set_pad_mutes(uint64_t) {} // internal Rhythmer Kit only; external instruments ignore it
+     virtual void silence() = 0; // every note off and the sound cut, as on Stop
+     // An instrument adds its output into left/right; an effect works on them
+     // in place. `frames` is at most the engine host's block.
 --- /dev/null
 +++ b/src/rhythmer/plugin/sound_rack.cpp
-@@ -0,0 +1,580 @@
+@@ -0,0 +1,588 @@
 +// SPDX-License-Identifier: AGPL-3.0-only
 +// Copyright (C) 2026 jazzy rhythmer
 +#include "rhythmer/plugin/sound_rack.h"
@@ -7797,11 +7894,15 @@
 +        if(!data||n<1||n>32*1024*1024)return;
 +        Request r{4,0};r.bytes.assign(static_cast<const uint8_t*>(data),static_cast<const uint8_t*>(data)+n);enqueue(std::move(r));flush();
 +    }
++    // Note mute: shared original DSP instances and their existing release/FX tails stay intact.
++    // No parameter edits, graph rebuild, worker queue or locks on the audio thread.
++    void set_pad_mutes(uint64_t mask) noexcept {pad_mutes.store(mask,std::memory_order_relaxed);}
 +    void processBlock(AudioBuffer<float>& output,MidiBuffer& input) override{
 +        Graph* g;
 +        do {g=active.load(std::memory_order_seq_cst);hazard.store(g,std::memory_order_seq_cst);}while(g!=active.load(std::memory_order_seq_cst));
 +        output.clear();
 +        if(g){
++            const uint64_t muted=pad_mutes.load(std::memory_order_relaxed);
 +            // Segment at MIDI boundaries; incoming offsets survive both the
 +            // original engine and the percussion tape-rate conversion.
 +            int cursor=0;
@@ -7811,6 +7912,7 @@
 +                if(msg.isNoteOnOrOff()){
 +                    int note=msg.getNoteNumber();int slot=single<0?note-36:0;
 +                    if(slot>=0&&slot<pads)if(auto c=g->routes[size_t(slot)]){
++                        if(single<0 && msg.isNoteOn() && (muted&(uint64_t(1)<<slot)))continue; // note-offs always pass
 +                        auto m=msg;
 +                        if(msg.isNoteOn()){c->silenced=false;if(c->velocity_pressure)c->midi.addEvent(MidiMessage::channelPressureChange(msg.getChannel(),msg.getVelocity()),0);}
 +                        bool drum=c->drums;
@@ -8148,11 +8250,14 @@
 +    uint32_t design_cache_revision=0;std::vector<PluginDesignPage> design_cache;
 +    var catalog;uint32_t layout_revision=1;int single,focus=0;const int base;SoundLoader loader;double rate;int block;
 +    std::unique_ptr<KitFilterStage> kit_filter;KitOutputStage kit_output;uint64_t filter_sequence=0;
++    static_assert(std::atomic<uint64_t>::is_always_lock_free);
++    std::atomic<uint64_t> pad_mutes{0};
 +    std::atomic<Graph*> active{nullptr};std::atomic<Graph*> hazard{nullptr};std::vector<std::unique_ptr<Graph>> graphs;
 +    std::mutex lock;std::condition_variable wake,done;std::deque<Request> jobs;bool stopping=false,busy=false;std::thread worker;String last_error;
 +};
 +}
 +std::unique_ptr<AudioPluginInstance> make_sound_rack(const var& c,int single,SoundLoader loader,double rate,int block,String& error){try{return std::make_unique<Rack>(c,single,std::move(loader),rate,block);}catch(const std::exception& e){error=e.what();return {};}}
++void sound_rack_set_pad_mutes(AudioPluginInstance* p,uint64_t mask) noexcept {if(auto* r=dynamic_cast<Rack*>(p))r->set_pad_mutes(mask);}
 +int sound_rack_parameter_count(AudioPluginInstance* p){if(auto* r=dynamic_cast<Rack*>(p))return r->count();return -1;}
 +String sound_rack_preset_name(AudioPluginInstance* p){if(auto* r=dynamic_cast<Rack*>(p))return r->preset_name();return {};}
 +bool sound_rack_drum_voices(AudioPluginInstance* p,DrumVoices& out){if(auto* r=dynamic_cast<Rack*>(p))return r->drum_names(out);return false;}
@@ -8189,7 +8294,7 @@
 +}
 --- /dev/null
 +++ b/src/rhythmer/plugin/sound_rack.h
-@@ -0,0 +1,30 @@
+@@ -0,0 +1,31 @@
 +// SPDX-License-Identifier: AGPL-3.0-only
 +// Copyright (C) 2026 jazzy rhythmer
 +#pragma once
@@ -8218,6 +8323,7 @@
 +int sound_rack_focus(juce::AudioPluginInstance*);
 +std::array<int,3> sound_rack_quick_parameters(juce::AudioPluginInstance*);
 +void sound_rack_set_parameter_checked(juce::AudioPluginInstance*,int,float,uint32_t);
++void sound_rack_set_pad_mutes(juce::AudioPluginInstance*,uint64_t) noexcept;
 +bool is_sound_rack(juce::AudioPluginInstance*);
 +}
 --- a/src/rhythmer/plugin/vst2_instance.cpp
@@ -10440,6 +10546,70 @@
          for (const auto* c : {e.chop_before.get(), e.chop_after.get()}) if (c && c->sample < sample_slots) used[c->sample] = true;
      });
      return used;
+--- /dev/null
++++ b/src/rhythmer/shell/kit_mute_check.h
+@@ -0,0 +1,61 @@
++// SPDX-License-Identifier: AGPL-3.0-only
++// Copyright (C) 2026 jazzy rhythmer
++#pragma once
++#include "rhythmer/shell/shell.h"
++#include "rhythmer/shell/mute_mode.h"
++#include "rhythmer/model/project_file.h"
++#include "rhythmer/engine/plugin_engine.h"
++#include <functional>
++#include <iostream>
++#include <cstring>
++namespace rhythmer {
++inline int kit_mute_check(const std::function<void(Shell&,const std::string&)>& capture={}) {
++    auto host=std::make_unique<EngineHost>();auto shell=std::make_unique<Shell>(*host);auto& c=shell->context();unsigned checks=0;uint32_t now=10000;
++#define KM(ok,msg) do{++checks;if(!(ok)){std::cerr<<"KIT_MUTE_FAIL "<<checks<<": "<<msg<<'\n';return 1;}}while(false)
++    auto button=[&](SurfaceButton b,bool down){SurfaceEvent e;e.input.kind=SurfaceInput::Kind::Button;e.input.index=uint8_t(b);e.input.pressed=down;shell->surface(e,++now);};
++    auto tap=[&](SurfaceButton b){button(b,true);button(b,false);};
++    auto hit=[&](unsigned pad){SurfaceEvent e;e.pad=int(pad);e.midi.status=0x99;e.midi.value=100;shell->surface(e,++now);e.midi.status=0x89;e.midi.value=0;shell->surface(e,++now);};
++    auto setup=[&]{c.ui=UiState{};c.project.tracks[0]=Track{};auto& t=c.project.tracks[0];load_sound(t,EngineKind::Plugin,0);t.plugin=0;t.layout=PadLayout::Drums;
++        auto& ref=c.project.plugins[0];ref=PluginRef{};std::snprintf(ref.path,sizeof ref.path,"Plugins/RHYTHMER - Rhythmer Kit");std::snprintf(ref.name,sizeof ref.name,"Rhythmer Kit");
++        c.open(PageId::Stage);c.ui.drum_voices.entry=0;for(auto& name:c.ui.drum_voices.names)std::snprintf(name.data(),name.size(),"Drum");c.dirty=false;};
++    setup();const auto original_note=c.track().last_note;KM(rhythmer_kit_mute(c.project,c.ui,true),"kit identified on play page");
++    tap(SurfaceButton::Mute);KM(c.ui.mute_latch,"tap latches mute");
++    for(unsigned bank=0;bank<4;++bank){c.track().bank=uint8_t(bank);for(unsigned pad=0;pad<16;++pad){hit(pad);KM(c.track().pad_muted(bank*16+pad),"correct note/bank slot toggled");KM(!c.track().mix.mute,"never changes track mute");KM(c.track().last_note==original_note,"muting never plays/selects a note");hit(pad);KM(!c.track().pad_muted(bank*16+pad),"pad unmuted");}}
++    KM(c.dirty,"mute marks project dirty");
++    c.track().bank=7;hit(15);KM(c.track().pad_muted(63)&&!c.track().pad_muted(127),"saved out-of-range drum bank uses played bank D");hit(15);c.track().bank=0;
++    c.project.tracks[1].engine=EngineKind::Plugin;button(SurfaceButton::PadBank,true);hit(1);button(SurfaceButton::PadBank,false);KM(c.ui.track==1&&!c.project.tracks[0].any_pad_muted(),"track selection keeps priority during mute");c.ui.track=0;
++
++    c.track().bank=0;hit(0);hit(10);KM(c.track().pad_muted(0)&&c.track().pad_muted(10)&&!c.track().pad_muted(11),"independent pads");
++    {auto taps=std::make_unique<TrackTaps>();PadFacts facts{};facts.key_pads=true;PadScene scene{c.ui,c.project,shell->patterns(),*host,*taps,facts,now,nullptr,0};std::array<pad_light::Look,16> looks{};pad_looks(scene,looks);
++     KM(looks[0].hue==pad_light::Hue::Red&&looks[10].hue==pad_light::Hue::Red,"LEDs match muted pad numbers");KM(looks[11].hue!=pad_light::Hue::Red,"unmuted adjacent pad not marked muted");}
++    auto bytes=save_project(c.project,shell->patterns());auto restored=std::make_unique<Project>();auto patterns=std::make_unique<PatternBank>();
++    KM(load_project(bytes,*restored,*patterns).empty(),"project reload");KM(restored->tracks[0].pad_mutes==c.track().pad_mutes,"all masks persist");
++    const auto params=c.track().params;button(SurfaceButton::Shift,true);hit(10);button(SurfaceButton::Shift,false);
++    for(unsigned p=0;p<64;++p)KM(c.track().pad_muted(p)==(p!=10),"Shift solo includes all populated banks");
++    button(SurfaceButton::Shift,true);hit(10);button(SurfaceButton::Shift,false);KM(!c.track().any_pad_muted(),"second solo restores kit");KM(c.track().params==params,"mute and solo preserve sound controls");
++    c.ui.drum_voices.names[15][0]=0;hit(15);KM(!c.track().pad_muted(15)&&!c.track().mix.mute,"empty pad does not mute track");
++    c.ui.drum_voices.entry=no_plugin;hit(0);KM(!c.track().any_pad_muted(),"stale voice snapshot ignored");c.ui.drum_voices.entry=0;
++    hit(0);c.project.tracks[1].mix.mute=true;button(SurfaceButton::Shift,true);tap(SurfaceButton::Mute);button(SurfaceButton::Shift,false);
++    KM(!c.track().any_pad_muted()&&!c.project.tracks[1].mix.mute,"Shift Mute clears pads and tracks");
++    c.ui.mute_latch=false;button(SurfaceButton::Mute,true);now+=500;hit(1);button(SurfaceButton::Mute,false);KM(c.track().pad_muted(1)&&!c.ui.mute_mode(),"held mute ends on release");
++    tap(SurfaceButton::Mute);c.open(PageId::Tracks);hit(0);KM(c.track().mix.mute&&c.track().pad_muted(1),"Tracks retains track mute");
++    setup();std::snprintf(c.project.plugins[0].name,sizeof c.project.plugins[0].name,"Elixir");tap(SurfaceButton::Mute);hit(0);KM(c.track().mix.mute&&!c.track().any_pad_muted(),"standalone drums keep track mute");
++    setup();c.track().layout=PadLayout::Chromatic;KM(!rhythmer_kit_mute(c.project,c.ui,true),"non-drum layout excluded");c.track().layout=PadLayout::Drums;c.track().levels=true;KM(!rhythmer_kit_mute(c.project,c.ui,true),"16 Levels excluded");
++    setup();c.prints.freeze[0].state=FreezeState::Frozen;tap(SurfaceButton::Mute);hit(0);KM(c.ui.ask==UiState::Ask::Unfreeze&&!c.track().any_pad_muted(),"frozen kit asks to unfreeze instead of pretending to mute a print");
++    c.ui.ask=UiState::Ask::None;c.prints.freeze[0].state=FreezeState::Deep;c.ui.drum_voices={};hit(0);KM(c.ui.ask==UiState::Ask::Unfreeze,"deep frozen kit offers unfreeze before missing voice metadata");
++    c.ui.ask=UiState::Ask::None;c.track().set_pad_muted(0,true);button(SurfaceButton::Shift,true);tap(SurfaceButton::Mute);button(SurfaceButton::Shift,false);KM(c.ui.ask==UiState::Ask::Unfreeze&&c.track().pad_muted(0),"global clear preserves frozen baked mute until unfreezing");c.prints.freeze[0]={};
++    setup();c.track().engine=EngineKind::Sampler;c.track().pads[0].sample=1;tap(SurfaceButton::Mute);hit(0);KM(c.track().pad_muted(0)&&!c.track().mix.mute,"native Sample Kit preserved");
++    struct Runner:PluginRunner{uint64_t mask=0;void set_pad_mutes(uint64_t m)override{mask=m;}void midi(uint8_t,uint8_t,uint8_t)override{}void silence()override{}void render(float*,float*,unsigned)override{}} a,b;
++    PluginEngine engine;engine.set_pad_mutes(uint64_t(1)<<63);engine.attach(&a);KM(a.mask==(uint64_t(1)<<63),"late attach restores mask");engine.set_pad_mute(0,true);KM(a.mask==((uint64_t(1)<<63)|1),"live runner updated");engine.attach(&b);KM(b.mask==a.mask,"replacement runner receives mask");engine.set_pad_mutes(0);KM(b.mask==0,"unmute reaches runner");engine.set_pad_mute(64,true);KM(b.mask==0,"invalid index ignored");
++    // Commands and project restoration through the actual audio host, including bank D's highest bit.
++    {auto project=std::make_unique<Project>();auto patterns=std::make_unique<PatternBank>();project->tracks[0].engine=EngineKind::Plugin;project->tracks[0].plugin=0;project->tracks[0].set_pad_muted(63,true);
++     auto h=std::make_unique<EngineHost>(EngineHost::Lean{});h->load(*project,*patterns);a.mask=0;KM(h->offer_plugin(0,&a),"runner offer accepted");int32_t audio[256]{};h->render(audio,128,1);KM(a.mask==(uint64_t(1)<<63),"host project restore before late attachment");
++     KM(h->send({Command::Type::PadMute,0,0,11,1}),"mute command queued");h->render(audio,128,1);KM(a.mask==((uint64_t(1)<<63)|(uint64_t(1)<<11)),"host command reaches correct pad");
++     h->send({Command::Type::PadMute,0,0,0xffff,0});h->render(audio,128,1);KM(a.mask==0,"host global unmute reaches plugin");h->offer_plugin(0,nullptr);h->render(audio,128,1);}
++    setup();tap(SurfaceButton::Mute);hit(0);hit(7);hit(15);if(capture)capture(*shell,"01-kit-pad-mute");
++    c.open(PageId::Tracks);if(capture)capture(*shell,"02-track-mute-scope");
++    std::cout<<"KIT_MUTE_OK checks="<<checks<<" banks=4 project,pad-solo,unmute,track-scope,late-attach=ok\n";
++#undef KM
++    return 0;
++}
++}
 --- a/src/rhythmer/shell/lesson_jobs.cpp
 +++ b/src/rhythmer/shell/lesson_jobs.cpp
 @@ -91,7 +91,10 @@
@@ -10684,6 +10854,93 @@
          infos[file] = wav_of((folder / file).string());
          ++report.samples;
          order.push_back(file);
+--- a/src/rhythmer/shell/mute_mode.cpp
++++ b/src/rhythmer/shell/mute_mode.cpp
+@@ -33,30 +33,36 @@
+     c.send({Command::Type::PadMute, uint8_t(t), 0, uint16_t(kit), int16_t(on)});
+ }
+ 
+-void mute_pad(Context& c, unsigned pad, bool kit_pads) {
++void mute_pad(Context& c, unsigned pad, bool kit_pads, bool key_pads) {
+     if (c.ui.page == PageId::Looper) { loop_mute_pad(c, pad); return; } // the loop tracks, a column each
+     auto& ui = c.ui;
+     ui.mute_used = true;
+     pad %= 16;
+-    if (!mute_on_kit(ui, kit_pads)) { // the tracks
++    if (!mute_on_kit(ui, kit_pads || rhythmer_kit_mute(c.project,ui,key_pads))) { // the tracks
+         const auto& mix = c.project.tracks[pad].mix;
+         if (ui.shift) { ui.shift_used = true; c.set_solo(pad, !mix.solo); }
+         else c.set_mute(pad, !mix.mute);
+         return;
+     }
+     auto& t = c.track();
+-    unsigned kit = t.bank % sampler_banks * 16 + pad;
+-    if (!t.pads[kit].used()) { c.notice(pad_text("Empty", kit)); return; }
+-    if (!ui.shift) { set_pad_mute(c, ui.track, kit, !t.pad_muted(kit)); return; }
++    if(rhythmer_kit_track(c.project,t) && c.frozen_edit(ui.track))return; // a printed mix cannot isolate its pads
++    if(rhythmer_kit_track(c.project,t) && ui.drum_voices.entry!=t.plugin){c.notice("Kit loading");return;}
++    unsigned kit = mute_pad_slot(c.project,ui,pad);
++    if (!mute_pad_used(c.project,ui,kit)) { c.notice(pad_text("Empty", kit)); return; }
++    if (!ui.shift) { const bool on=!t.pad_muted(kit);set_pad_mute(c,ui.track,kit,on);c.notice(pad_text(on?"Muted":"Unmuted",kit));return; }
+     // Shift: solo the pad (every other used pad muted); on the soloed pad, the kit back.
+     ui.shift_used = true;
+-    bool alone = pad_soloed(t, kit);
++    bool alone = mute_pad_soloed(c.project,ui,kit);
+     for (unsigned n = 0; n < sampler_pads; ++n)
+-        if (t.pads[n].used()) set_pad_mute(c, ui.track, n, alone ? false : n != kit);
++        if (mute_pad_used(c.project,ui,n)) set_pad_mute(c, ui.track, n, alone ? false : n != kit);
+     c.notice(alone ? std::string("Solo off") : pad_text("Solo", kit));
+ }
+ 
+ void unmute_all(Context& c) {
++    // A frozen kit's mute decisions are baked into its stereo print. Keep the
++    // state honest until the user accepts the existing unfreeze confirmation.
++    for(unsigned t=0;t<track_count;++t)
++        if(rhythmer_kit_track(c.project,c.project.tracks[t]) && c.project.tracks[t].any_pad_muted() && c.frozen_edit(t))return;
+     for (unsigned t = 0; t < track_count; ++t) {
+         auto& track = c.project.tracks[t];
+         if (track.mix.mute) c.set_mute(t, false);
+--- a/src/rhythmer/shell/mute_mode.h
++++ b/src/rhythmer/shell/mute_mode.h
+@@ -2,6 +2,8 @@
+ // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
+ #pragma once
+ #include "rhythmer/shell/ui_state.h"
++#include "rhythmer/model/rhythmer_kit.h"
++#include "rhythmer/model/scales.h"
+ 
+ // Mute, as printed (RHYTHMER_PARITY.md, phase 1c): a tap latches mute mode,
+ // a hold lasts while Mute is held, Shift + Mute unmutes everything. In mute
+@@ -17,8 +19,28 @@
+ // Whether mute mode works on kit pads here: the pads play the selected
+ // track's kit (`kit_pads`), and the page is not one about tracks (Stage, Mix).
+ inline bool mute_on_kit(const UiState& ui, bool kit_pads) { return kit_pads && ui.page != PageId::Tracks; }
++// A Rhythmer Kit uses the existing 64 drum-note slots, but never sampler pad data.
++inline bool rhythmer_kit_mute(const Project& p,const UiState& ui,bool key_pads) {
++    const auto& t=p.tracks[ui.track%track_count];
++    return key_pads && rhythmer_kit_track(p,t) && drum_pads(t) && !t.levels;
++}
++inline unsigned mute_pad_slot(const Project& p,const UiState& ui,unsigned pad) {
++    const auto& t=p.tracks[ui.track%track_count];
++    return (rhythmer_kit_track(p,t)?drum_bank(t):t.bank%sampler_banks)*16+pad%16;
++}
++inline bool mute_pad_used(const Project& p,const UiState& ui,unsigned pad) {
++    const auto& t=p.tracks[ui.track%track_count];
++    if(!rhythmer_kit_track(p,t))return t.pads[pad%sampler_pads].used();
++    return ui.drum_voices.entry==t.plugin && ui.drum_voices.at(int(drum_first_key+pad%sampler_pads));
++}
++inline bool mute_pad_soloed(const Project& p,const UiState& ui,unsigned pad) {
++    const auto& t=p.tracks[ui.track%track_count];
++    if(!mute_pad_used(p,ui,pad)||t.pad_muted(pad))return false;
++    for(unsigned n=0;n<sampler_pads;++n)if(n!=pad&&mute_pad_used(p,ui,n)&&!t.pad_muted(n))return false;
++    return true;
++}
+ // A pad pressed in mute mode: mutes (or unmutes) a kit pad or a track; with Shift, solos.
+-void mute_pad(Context& c, unsigned pad, bool kit_pads);
++void mute_pad(Context& c, unsigned pad, bool kit_pads, bool key_pads=false);
+ void set_pad_mute(Context& c, unsigned track, unsigned kit, bool on);
+ // Shift + Mute: every track, every solo, every kit pad of every track.
+ void unmute_all(Context& c);
 --- /dev/null
 +++ b/src/rhythmer/shell/navigation_check.h
 @@ -0,0 +1,94 @@
@@ -10929,6 +11186,31 @@
      if (ui.resample_pick) return C::ResamplePick;
      if (facts.kit_pads && ui.copying == UiState::Copying::Pads) return C::PadCopy;
      if (ui.copying == UiState::Copying::Keys && (facts.key_pads || ui.page == PageId::Roll || (ui.page == PageId::StepEdit && !ui.step_pads)))
+--- a/src/rhythmer/shell/pad_lights.cpp
++++ b/src/rhythmer/shell/pad_lights.cpp
+@@ -184,6 +184,7 @@
+     int key = pad_note(s.project, t, pad).key;
+     if (drum_pads(t)) { // Drums pads: lit as a kit's, the drum hit last Full; a pad the plug-in has no voice on, dark
+         if (s.ui.drum_voices.any() && !s.ui.drum_voices.at(key)) return {};
++        if(rhythmer_kit_track(s.project,t) && drum_pad_of(key)>=0 && t.pad_muted(unsigned(drum_pad_of(key))))return red(faint);
+         return track(selected_index(s), key == int(t.last_note) ? full : dim);
+     }
+     if (prog_pads(t)) { // Prog: a pad with a chord white, the file's Root chord in the track's colour, a pad with none dark
+@@ -777,10 +778,10 @@
+         case PadContext::RecordKeys: look = record_keys_look(s, pad); break;
+         case PadContext::Mute:
+             if (ui.page == PageId::Looper) { look = loop_look(s, pad, true); break; }
+-            if (mute_on_kit(ui, s.facts.kit_pads)) {
+-                unsigned kit = kit_of(t, pad);
+-                if (!t.pads[kit].used()) break;
+-                look = t.pad_muted(kit) ? red(dim) : flare(pad_soloed(t, kit) ? white(mid) : kit_hue(s, kit, mid), snd.level[pad]);
++            if (mute_on_kit(ui, s.facts.kit_pads || rhythmer_kit_mute(s.project,ui,s.facts.key_pads))) {
++                unsigned kit = mute_pad_slot(s.project,ui,pad);
++                if (!mute_pad_used(s.project,ui,kit)) break;
++                look = t.pad_muted(kit) ? red(dim) : flare(mute_pad_soloed(s.project,ui,kit) ? white(mid) : kit_hue(s, kit, mid), snd.level[pad]);
+                 break;
+             }
+             if (const auto& tr = s.project.tracks[pad]; tr.used()) {
 --- a/src/rhythmer/shell/plugin_jobs.cpp
 +++ b/src/rhythmer/shell/plugin_jobs.cpp
 @@ -79,7 +79,7 @@
@@ -12800,6 +13082,15 @@
      if (ui_.name.open()) { // Shift: the character under the cursor; else the cursor
          if (ui_.shift) { ui_.shift_used = true; ui_.name.step_char(delta); } else ui_.name.move(delta);
          return;
+@@ -673,7 +693,7 @@
+     case PadContext::PatternCopy: pattern_copy_pad(context_, pad); return; // Shift + Erase with Seq held: from, then to
+     case PadContext::SeqLayer: seq_pad(context_, pad, true); return; // Seq held: the selected track's patterns (shell/seq_layer.cpp)
+     case PadContext::RecordKeys: context_.record_key(pad, velocity, true); return; // a take of Rhythmer's own sound: the instrument
+-    case PadContext::Mute: mute_pad(context_, pad, kit_pads()); return; // mute; with Shift, solo
++    case PadContext::Mute: mute_pad(context_, pad, kit_pads(), key_pads()); return; // mute; with Shift, solo
+     case PadContext::SamplePick: sample_pad(context_, pad); return; // Sample held: the pad becomes the last pad, unheard
+     case PadContext::LoopNow: ui_.shift_used = true; loop_grid_pad(context_, pad, true); return; // the loop grid: at once
+     case PadContext::Shift: // the printed Shift + pad jobs, on every page but the browser (its next empty pad)
 @@ -757,6 +777,11 @@
  
  void Shell::snapshot(Snapshot& out, uint32_t now) {
@@ -13609,7 +13900,7 @@
 +    {"chord-gen-open",[](Shell&,Snapshot& s){s.ui.page=PageId::Patterns;s.ui.sheet_open=true;s.ui.gen8_mode=0;s.ui.sheet_row=4;s.project.tracks[s.ui.track].engine=EngineKind::Midi;s.project.tracks[s.ui.track].chord_gen.type=1;s.project.root=2;s.project.scale=1;}},
 --- a/src/rhythmer/tools.cpp
 +++ b/src/rhythmer/tools.cpp
-@@ -1,6 +1,12 @@
+@@ -1,6 +1,13 @@
  // SPDX-License-Identifier: AGPL-3.0-only
  // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
  #include "rhythmer/tools.h"
@@ -13618,11 +13909,12 @@
 +#include "rhythmer/shell/track_workflow_check.h"
 +#include "rhythmer/shell/project_save_check.h"
 +#include "rhythmer/shell/sends_access_check.h"
++#include "rhythmer/shell/kit_mute_check.h"
 +#include "rhythmer/shell/navigation_check.h"
  #include "rhythmer/shell/menu.h"
  #include "rhythmer/shell/stage_map.h"
  #include "rhythmer/shell/expansion_install.h"
-@@ -825,7 +831,135 @@
+@@ -825,7 +832,135 @@
      void (*set)(Shell&, Snapshot&);
  };
  
@@ -13758,7 +14050,7 @@
      {"stage", [](Shell&, Snapshot& s) { s.ui.page = PageId::Stage; s.playing = true; }}, // track 1, a synth plug-in: B1 MIX
      // The place bar (shell/place_bar.h) on the kit's Pads, its pattern slot 8 made 4 bars long (no other preview
      // plays it): playing, at the top; recording, at the bottom; stopped, held where Shift + Play carries on.
-@@ -950,6 +1084,10 @@
+@@ -950,6 +1085,10 @@
      {"stageemptyslide", [](Shell&, Snapshot& s) { // the wheel just moved: Keygroup on its way to the middle
           on_stage(s, 12, 0, 0); s.ui.new_pick = uint8_t(NewType::Keygroup); s.ui.new_pick_from = 0; s.now = 1000; s.ui.new_pick_at = 960;
       }},
@@ -13769,7 +14061,7 @@
      {"tracks", [](Shell&, Snapshot& s) { // Pad Bank tapped twice; each track's share of a block (roadmap P2), one heavy
          s.ui.page = PageId::Tracks; s.ui.track = 2; s.playing = true;
          const float loads[] {0.04f, 0.11f, 0.07f, 0.02f, 0.66f, 0.09f, 0.03f, 0.05f};
-@@ -1288,6 +1426,7 @@
+@@ -1288,6 +1427,7 @@
      // plug-ins loading again (THAWING), and the question an edit of it asks.
      {"printdeep", [](Shell&, Snapshot& s) { print_scene(s); s.ui.shift = true; }},
      {"deepfreeze", [](Shell&, Snapshot& s) { deep_scene(s); on_stage(s, 2, 1, 0); }},
@@ -13777,7 +14069,7 @@
      {"thawing", [](Shell&, Snapshot& s) { deep_scene(s); on_stage(s, 2, 1, 0); s.thawing = 1u << 2; }},
      {"tracksdeep", [](Shell&, Snapshot& s) { // track 3 deep frozen, track 5 frozen
           deep_scene(s);
-@@ -2709,6 +2848,8 @@
+@@ -2709,6 +2849,8 @@
  
  // The boot animation at 30 frames a second, fading out over the starting
  // project's first page, as DIR/boot-NNN.png.
@@ -13786,7 +14078,7 @@
  int boot_frames(const std::string& folder) {
      EngineHost host;
      Shell shell(host);
-@@ -2721,17 +2862,20 @@
+@@ -2721,17 +2863,20 @@
      snapshot->pattern = shell.patterns().at[snapshot->ui.track][track.pattern];
      ui::BootAnimation boot;
      unsigned written = 0;
@@ -13816,10 +14108,17 @@
      }
      std::cout << "RHYTHMER_BOOT frames=" << written << '\n';
      return written > 1 ? 0 : 1;
-@@ -3100,6 +3244,22 @@
+@@ -3100,6 +3245,29 @@
  }
  
  std::optional<int> run_tool(int argc, char** argv) {
++    if(argc==3&&!std::strcmp(argv[1],"--rhythmer-kit-mute-check")){std::filesystem::create_directories(argv[2]);return kit_mute_check([&](Shell& shell,const std::string& name){
++        auto snapshot=std::make_unique<Snapshot>();shell.snapshot(*snapshot,100000);snapshot->now=100000;snapshot->ui.loading=false;snapshot->ui.notice[0]=0;
++        juce::Image image(juce::Image::ARGB,640,480,true);std::vector<ui::TextIssue> issues;ui::audit_text(&issues);
++        {juce::Graphics g(image);g.addTransform(juce::AffineTransform::scale(2.f));draw(g,*snapshot);}ui::audit_text(nullptr);
++        if(!issues.empty()){for(const auto& issue:issues)std::cerr<<"KIT MUTE TEXT "<<name<<" "<<issue.text<<" needed="<<issue.needed<<" box="<<issue.box<<'\n';throw std::runtime_error("KIT MUTE page text overflow");}
++        save_png(image,std::string(argv[2])+"/"+name+".png");
++    });}
 +    if(argc==3&&!std::strcmp(argv[1],"--rhythmer-sends-check")){std::filesystem::create_directories(argv[2]);return sends_access_check([&](Shell& shell,const std::string& name){
 +        auto snapshot=std::make_unique<Snapshot>();shell.snapshot(*snapshot,100000);snapshot->now=100000;snapshot->ui.loading=false;snapshot->ui.notice[0]=0;
 +        juce::Image image(juce::Image::ARGB,640,480,true);std::vector<ui::TextIssue> issues;ui::audit_text(&issues);
@@ -15610,6 +15909,26 @@
 +                           cwd=ROOT,check=True)
 +            env=dict(os.environ,ASAN_OPTIONS='detect_leaks=1:halt_on_error=1',UBSAN_OPTIONS='halt_on_error=1')
 +            subprocess.run([str(binary)],cwd=ROOT,env=env,check=True,timeout=120)
+--- /dev/null
++++ b/tests/test_kit_mute.py
+@@ -0,0 +1,17 @@
++"""Native button-routing regression for the Rhythmer Kit pad mute."""
++from pathlib import Path
++import subprocess
++import tempfile
++import unittest
++ROOT = Path(__file__).resolve().parents[1]
++class KitMuteTests(unittest.TestCase):
++    def test_native_buttons_and_mode_change(self):
++        binary = ROOT / 'build/rhythmer'
++        if not binary.is_file():
++            self.skipTest('Build the runtime first')
++        with tempfile.TemporaryDirectory() as out:
++            p = subprocess.run([str(binary), '--rhythmer-kit-mute-check', out], capture_output=True, text=True, timeout=120)
++            self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
++            self.assertIn('KIT_MUTE_OK', p.stdout)
++if __name__ == '__main__':
++    unittest.main()
 --- /dev/null
 +++ b/tests/test_project_saving.py
 @@ -0,0 +1,34 @@

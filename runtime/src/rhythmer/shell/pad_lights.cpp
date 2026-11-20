@@ -184,6 +184,7 @@ Look keys_base(const PadScene& s, unsigned pad) {
     int key = pad_note(s.project, t, pad).key;
     if (drum_pads(t)) { // Drums pads: lit as a kit's, the drum hit last Full; a pad the plug-in has no voice on, dark
         if (s.ui.drum_voices.any() && !s.ui.drum_voices.at(key)) return {};
+        if(rhythmer_kit_track(s.project,t) && drum_pad_of(key)>=0 && t.pad_muted(unsigned(drum_pad_of(key))))return red(faint);
         return track(selected_index(s), key == int(t.last_note) ? full : dim);
     }
     if (prog_pads(t)) { // Prog: a pad with a chord white, the file's Root chord in the track's colour, a pad with none dark
@@ -777,10 +778,10 @@ void pad_looks(const PadScene& s, std::array<Look, 16>& out) {
         case PadContext::RecordKeys: look = record_keys_look(s, pad); break;
         case PadContext::Mute:
             if (ui.page == PageId::Looper) { look = loop_look(s, pad, true); break; }
-            if (mute_on_kit(ui, s.facts.kit_pads)) {
-                unsigned kit = kit_of(t, pad);
-                if (!t.pads[kit].used()) break;
-                look = t.pad_muted(kit) ? red(dim) : flare(pad_soloed(t, kit) ? white(mid) : kit_hue(s, kit, mid), snd.level[pad]);
+            if (mute_on_kit(ui, s.facts.kit_pads || rhythmer_kit_mute(s.project,ui,s.facts.key_pads))) {
+                unsigned kit = mute_pad_slot(s.project,ui,pad);
+                if (!mute_pad_used(s.project,ui,kit)) break;
+                look = t.pad_muted(kit) ? red(dim) : flare(mute_pad_soloed(s.project,ui,kit) ? white(mid) : kit_hue(s, kit, mid), snd.level[pad]);
                 break;
             }
             if (const auto& tr = s.project.tracks[pad]; tr.used()) {

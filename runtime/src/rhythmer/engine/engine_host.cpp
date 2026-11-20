@@ -356,6 +356,7 @@ void EngineHost::load_track(unsigned t, const Track& track) {
     slot.sampler.manipulator.initial_source(track.break_source);
     slot.sampler.set_trims(track.zone_trims);
     slot.sampler.set_pad_mutes(track.pad_mutes);
+    static_assert(sampler_pads>=64);slot.plugin.set_pad_mutes(track.pad_mutes[0]);
     if (slot.engine) for (unsigned p = 0; p < info.param_count; ++p) slot.engine->set_param(int(p), track.params[p]);
     apply({Command::Type::Level, uint8_t(t), 0, 0, track.mix.level});
     apply({Command::Type::Pan, uint8_t(t), 0, 0, track.mix.pan});
@@ -566,6 +567,8 @@ void EngineHost::apply(const Command& c) {
         slot.sampler.set_trim(c.index, c.position, c.micros, int(c.pattern) - 128, c.value);
         break;
     case Type::PadMute:
+        if(c.index==0xffff)slot.plugin.set_pad_mutes(c.value?~uint64_t(0):0);
+        else slot.plugin.set_pad_mute(c.index,c.value!=0);
         if (c.index == 0xffff) for (unsigned pad = 0; pad < sampler_pads; ++pad) slot.sampler.set_pad_mute(pad, c.value != 0);
         else slot.sampler.set_pad_mute(c.index, c.value != 0);
         break;

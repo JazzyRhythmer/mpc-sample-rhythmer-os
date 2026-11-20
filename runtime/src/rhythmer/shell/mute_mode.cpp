@@ -33,30 +33,36 @@ void set_pad_mute(Context& c, unsigned t, unsigned kit, bool on) {
     c.send({Command::Type::PadMute, uint8_t(t), 0, uint16_t(kit), int16_t(on)});
 }
 
-void mute_pad(Context& c, unsigned pad, bool kit_pads) {
+void mute_pad(Context& c, unsigned pad, bool kit_pads, bool key_pads) {
     if (c.ui.page == PageId::Looper) { loop_mute_pad(c, pad); return; } // the loop tracks, a column each
     auto& ui = c.ui;
     ui.mute_used = true;
     pad %= 16;
-    if (!mute_on_kit(ui, kit_pads)) { // the tracks
+    if (!mute_on_kit(ui, kit_pads || rhythmer_kit_mute(c.project,ui,key_pads))) { // the tracks
         const auto& mix = c.project.tracks[pad].mix;
         if (ui.shift) { ui.shift_used = true; c.set_solo(pad, !mix.solo); }
         else c.set_mute(pad, !mix.mute);
         return;
     }
     auto& t = c.track();
-    unsigned kit = t.bank % sampler_banks * 16 + pad;
-    if (!t.pads[kit].used()) { c.notice(pad_text("Empty", kit)); return; }
-    if (!ui.shift) { set_pad_mute(c, ui.track, kit, !t.pad_muted(kit)); return; }
+    if(rhythmer_kit_track(c.project,t) && c.frozen_edit(ui.track))return; // a printed mix cannot isolate its pads
+    if(rhythmer_kit_track(c.project,t) && ui.drum_voices.entry!=t.plugin){c.notice("Kit loading");return;}
+    unsigned kit = mute_pad_slot(c.project,ui,pad);
+    if (!mute_pad_used(c.project,ui,kit)) { c.notice(pad_text("Empty", kit)); return; }
+    if (!ui.shift) { const bool on=!t.pad_muted(kit);set_pad_mute(c,ui.track,kit,on);c.notice(pad_text(on?"Muted":"Unmuted",kit));return; }
     // Shift: solo the pad (every other used pad muted); on the soloed pad, the kit back.
     ui.shift_used = true;
-    bool alone = pad_soloed(t, kit);
+    bool alone = mute_pad_soloed(c.project,ui,kit);
     for (unsigned n = 0; n < sampler_pads; ++n)
-        if (t.pads[n].used()) set_pad_mute(c, ui.track, n, alone ? false : n != kit);
+        if (mute_pad_used(c.project,ui,n)) set_pad_mute(c, ui.track, n, alone ? false : n != kit);
     c.notice(alone ? std::string("Solo off") : pad_text("Solo", kit));
 }
 
 void unmute_all(Context& c) {
+    // A frozen kit's mute decisions are baked into its stereo print. Keep the
+    // state honest until the user accepts the existing unfreeze confirmation.
+    for(unsigned t=0;t<track_count;++t)
+        if(rhythmer_kit_track(c.project,c.project.tracks[t]) && c.project.tracks[t].any_pad_muted() && c.frozen_edit(t))return;
     for (unsigned t = 0; t < track_count; ++t) {
         auto& track = c.project.tracks[t];
         if (track.mix.mute) c.set_mute(t, false);

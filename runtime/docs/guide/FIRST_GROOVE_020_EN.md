@@ -149,6 +149,15 @@ For buses B–D, press **B2 SENDS** on TRACKS. In BASIC, press **B3 ENABLE FULL*
 
 **Check:** KIT CUTOFF affects all kit pads; Pxx Volume affects only the selected pad. ECHO/SPACE on PERFORM are separate track effects, not the main engine filter or sends A/B.
 
+### Try a drum-pad mute
+
+1. Keep the patterns playing with recording off. Select **track 1**, then press **SAMPLE**. Use Rhythmer Kit's **Drums** layout with **16 Levels off**.
+2. Tap **MUTE**, then hit **pad 4** to remove the closed hat from the groove. Its LED turns red; the other drums, bass and chords keep playing.
+3. Hit pad 4 again to restore it. Tap **MUTE** again to leave mute mode. You can also hold MUTE while hitting pads, then release it.
+4. While mute mode is active, **SHIFT + a drum pad** solos that pad inside the kit; repeat on that pad to restore the populated kit pads. **SHIFT + MUTE** clears all project pad mutes and track mute/solo states.
+
+**Check:** SAMPLE's Rhythmer Kit screen says **Mute: pads**. On TRACKS, MUTE + pad still mutes whole tracks. Muting blocks new notes; existing releases and effect tails decay naturally. The project save below keeps the pad-mute state. If the kit is frozen, accept UNFREEZE and repeat the action.
+
 ## 8. Save and reopen
 
 ![SAVE: name the project after choosing its folder](../images/rhythmer/020-nameproject.png)

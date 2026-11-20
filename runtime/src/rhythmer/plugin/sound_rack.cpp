@@ -188,11 +188,15 @@ public:
         if(!data||n<1||n>32*1024*1024)return;
         Request r{4,0};r.bytes.assign(static_cast<const uint8_t*>(data),static_cast<const uint8_t*>(data)+n);enqueue(std::move(r));flush();
     }
+    // Note mute: shared original DSP instances and their existing release/FX tails stay intact.
+    // No parameter edits, graph rebuild, worker queue or locks on the audio thread.
+    void set_pad_mutes(uint64_t mask) noexcept {pad_mutes.store(mask,std::memory_order_relaxed);}
     void processBlock(AudioBuffer<float>& output,MidiBuffer& input) override{
         Graph* g;
         do {g=active.load(std::memory_order_seq_cst);hazard.store(g,std::memory_order_seq_cst);}while(g!=active.load(std::memory_order_seq_cst));
         output.clear();
         if(g){
+            const uint64_t muted=pad_mutes.load(std::memory_order_relaxed);
             // Segment at MIDI boundaries; incoming offsets survive both the
             // original engine and the percussion tape-rate conversion.
             int cursor=0;
@@ -202,6 +206,7 @@ public:
                 if(msg.isNoteOnOrOff()){
                     int note=msg.getNoteNumber();int slot=single<0?note-36:0;
                     if(slot>=0&&slot<pads)if(auto c=g->routes[size_t(slot)]){
+                        if(single<0 && msg.isNoteOn() && (muted&(uint64_t(1)<<slot)))continue; // note-offs always pass
                         auto m=msg;
                         if(msg.isNoteOn()){c->silenced=false;if(c->velocity_pressure)c->midi.addEvent(MidiMessage::channelPressureChange(msg.getChannel(),msg.getVelocity()),0);}
                         bool drum=c->drums;
@@ -539,11 +544,14 @@ private:
     uint32_t design_cache_revision=0;std::vector<PluginDesignPage> design_cache;
     var catalog;uint32_t layout_revision=1;int single,focus=0;const int base;SoundLoader loader;double rate;int block;
     std::unique_ptr<KitFilterStage> kit_filter;KitOutputStage kit_output;uint64_t filter_sequence=0;
+    static_assert(std::atomic<uint64_t>::is_always_lock_free);
+    std::atomic<uint64_t> pad_mutes{0};
     std::atomic<Graph*> active{nullptr};std::atomic<Graph*> hazard{nullptr};std::vector<std::unique_ptr<Graph>> graphs;
     std::mutex lock;std::condition_variable wake,done;std::deque<Request> jobs;bool stopping=false,busy=false;std::thread worker;String last_error;
 };
 }
 std::unique_ptr<AudioPluginInstance> make_sound_rack(const var& c,int single,SoundLoader loader,double rate,int block,String& error){try{return std::make_unique<Rack>(c,single,std::move(loader),rate,block);}catch(const std::exception& e){error=e.what();return {};}}
+void sound_rack_set_pad_mutes(AudioPluginInstance* p,uint64_t mask) noexcept {if(auto* r=dynamic_cast<Rack*>(p))r->set_pad_mutes(mask);}
 int sound_rack_parameter_count(AudioPluginInstance* p){if(auto* r=dynamic_cast<Rack*>(p))return r->count();return -1;}
 String sound_rack_preset_name(AudioPluginInstance* p){if(auto* r=dynamic_cast<Rack*>(p))return r->preset_name();return {};}
 bool sound_rack_drum_voices(AudioPluginInstance* p,DrumVoices& out){if(auto* r=dynamic_cast<Rack*>(p))return r->drum_names(out);return false;}

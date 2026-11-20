@@ -29,3 +29,8 @@ DECIDED: SAVE chooses a folder/name on first save and updates the current file t
 ### Discoverable SENDS in BASIC — 2026-11-20
 
 DECIDED: Keep MIX B2 SENDS visible in BASIC. Use the native confirmation to offer FULL; CANCEL preserves the mode and caller, ENABLE FULL persists the native FEATURES setting and opens track SENDS. Do not override repeat, shifted track actions or lesson restrictions. Existing FULL routes and native sampler pad-send cycling remain.
+
+
+### Rhythmer Kit pad mute — 2026-11-21
+
+Rhythmer Kit reuses native MUTE tap/hold, SHIFT pad solo and SHIFT MUTE global reset, with existing Track.pad_mutes project persistence. Only the mute context recognizes its drum-note slots; sampler loading, copying, erase, sends, track selection and standalone plug-ins retain native classification. TRACKS remains track mute. The audio host caches the first 64 slots across load/late attachment and passes a lock-free mask to the internal kit rack. Muted note-ons are blocked at original note positions; note-offs and existing release/effect tails continue, avoiding cuts to other pads that share original DSP. No new preset data, per-pad DSP clone, parameter-volume edits or project format is introduced. Native mute/solo remain performance state rather than undo steps.

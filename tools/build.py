@@ -122,6 +122,7 @@ if __name__ == '__main__':
                   'build/rhythmer --rhythmer-track-check && '
                   'build/rhythmer --rhythmer-project-save-check build/project-save-check && '
                   'build/rhythmer --rhythmer-sends-check build/sends-access-check && '
+                  'build/rhythmer --rhythmer-kit-mute-check build/kit-mute-check && '
                   'build/rhythmer --rhythmer-gen8-check && '
                   'build/rhythmer --rhythmer-monkey && '
                   'mkdir -p build/rhythmer-preview && build/rhythmer --rhythmer-preview build/rhythmer-preview && '

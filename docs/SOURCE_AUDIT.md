@@ -23,3 +23,8 @@ DECIDED: SAVE chooses a folder/name on first save and updates the current file t
 ### BASIC SENDS doorway — 2026-11-20
 
 The pinned Melodee v0.3.0 mixer hides B2 SENDS outside Full. The fork keeps its caption visible and offers the existing confirmation sheet to enable the native FEATURES setting. Full access, bus routing and source DSP are unchanged; other Basic gates remain. `tests/test_sends_access.py` exercises the actual surface dispatcher, cancel/back priority, shifted/repeat controls, native setting roundtrip and project-byte preservation.
+
+
+### Rhythmer Kit pad mute — 2026-11-21
+
+Rhythmer Kit reuses native MUTE tap/hold, SHIFT pad solo and SHIFT MUTE global reset, with existing Track.pad_mutes project persistence. Only the mute context recognizes its drum-note slots; sampler loading, copying, erase, sends, track selection and standalone plug-ins retain native classification. TRACKS remains track mute. The audio host caches the first 64 slots across load/late attachment and passes a lock-free mask to the internal kit rack. Muted note-ons are blocked at original note positions; note-offs and existing release/effect tails continue, avoiding cuts to other pads that share original DSP. No new preset data, per-pad DSP clone, parameter-volume edits or project format is introduced. Native mute/solo remain performance state rather than undo steps.

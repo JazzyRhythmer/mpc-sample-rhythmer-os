@@ -2,6 +2,8 @@
 // Copyright (C) 2026 Kerem Kilic (Ellic Studio)
 #pragma once
 #include "rhythmer/shell/ui_state.h"
+#include "rhythmer/model/rhythmer_kit.h"
+#include "rhythmer/model/scales.h"
 
 // Mute, as printed (RHYTHMER_PARITY.md, phase 1c): a tap latches mute mode,
 // a hold lasts while Mute is held, Shift + Mute unmutes everything. In mute
@@ -17,8 +19,28 @@ void mute_button(Context& c, bool pressed);
 // Whether mute mode works on kit pads here: the pads play the selected
 // track's kit (`kit_pads`), and the page is not one about tracks (Stage, Mix).
 inline bool mute_on_kit(const UiState& ui, bool kit_pads) { return kit_pads && ui.page != PageId::Tracks; }
+// A Rhythmer Kit uses the existing 64 drum-note slots, but never sampler pad data.
+inline bool rhythmer_kit_mute(const Project& p,const UiState& ui,bool key_pads) {
+    const auto& t=p.tracks[ui.track%track_count];
+    return key_pads && rhythmer_kit_track(p,t) && drum_pads(t) && !t.levels;
+}
+inline unsigned mute_pad_slot(const Project& p,const UiState& ui,unsigned pad) {
+    const auto& t=p.tracks[ui.track%track_count];
+    return (rhythmer_kit_track(p,t)?drum_bank(t):t.bank%sampler_banks)*16+pad%16;
+}
+inline bool mute_pad_used(const Project& p,const UiState& ui,unsigned pad) {
+    const auto& t=p.tracks[ui.track%track_count];
+    if(!rhythmer_kit_track(p,t))return t.pads[pad%sampler_pads].used();
+    return ui.drum_voices.entry==t.plugin && ui.drum_voices.at(int(drum_first_key+pad%sampler_pads));
+}
+inline bool mute_pad_soloed(const Project& p,const UiState& ui,unsigned pad) {
+    const auto& t=p.tracks[ui.track%track_count];
+    if(!mute_pad_used(p,ui,pad)||t.pad_muted(pad))return false;
+    for(unsigned n=0;n<sampler_pads;++n)if(n!=pad&&mute_pad_used(p,ui,n)&&!t.pad_muted(n))return false;
+    return true;
+}
 // A pad pressed in mute mode: mutes (or unmutes) a kit pad or a track; with Shift, solos.
-void mute_pad(Context& c, unsigned pad, bool kit_pads);
+void mute_pad(Context& c, unsigned pad, bool kit_pads, bool key_pads=false);
 void set_pad_mute(Context& c, unsigned track, unsigned kit, bool on);
 // Shift + Mute: every track, every solo, every kit pad of every track.
 void unmute_all(Context& c);

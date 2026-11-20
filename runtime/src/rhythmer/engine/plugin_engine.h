@@ -24,8 +24,11 @@ public:
         if (plugin == runner) return;
         if (runner) runner->silence();
         runner = plugin;
+        if(runner)runner->set_pad_mutes(pad_mutes);
     }
     PluginRunner* attached() const { return runner; }
+    void set_pad_mutes(uint64_t mask) {pad_mutes=mask;if(runner)runner->set_pad_mutes(mask);}
+    void set_pad_mute(unsigned pad,bool on) {if(pad>=64)return;const uint64_t bit=uint64_t(1)<<pad;set_pad_mutes(on?pad_mutes|bit:pad_mutes&~bit);}
 
     void note_on(int key, int velocity) override {
         int heard = accent != 1 ? int(std::lround(float(velocity) * accent)) : velocity;
@@ -88,6 +91,7 @@ public:
 
 private:
     PluginRunner* runner = nullptr;
+    uint64_t pad_mutes=0;
     float accent = 1; // for the notes started next (set_accent)
     MacroStage macros;
     std::array<int, plugin_track::Count> stored {};

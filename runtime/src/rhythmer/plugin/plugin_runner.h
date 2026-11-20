@@ -15,6 +15,7 @@ public:
     // A MIDI message for the next render() (a note, a controller, the bend),
     // heard at that render's first frame.
     virtual void midi(uint8_t status, uint8_t data1, uint8_t data2) = 0;
+    virtual void set_pad_mutes(uint64_t) {} // internal Rhythmer Kit only; external instruments ignore it
     virtual void silence() = 0; // every note off and the sound cut, as on Stop
     // An instrument adds its output into left/right; an effect works on them
     // in place. `frames` is at most the engine host's block.

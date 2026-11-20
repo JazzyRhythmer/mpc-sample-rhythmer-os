@@ -46,6 +46,7 @@ static void design_view(var& view,AudioPluginInstance* synth,bool state_check=fa
 #include "engine_filter_check.inc"
 #include "acid_aliases.inc"
 #include "kit_mix_check.inc"
+#include "kit_mute_check.inc"
 int main(int argc,char** argv){try{
     if(argc>3&&String(argv[3])=="transport")return transport_check();
     require(argc>=3,"catalogue and Plugins required");ScopedJuceInitialiser_GUI init;
@@ -69,6 +70,7 @@ int main(int argc,char** argv){try{
     }
     require(hidden==7,"Unexpected kit-only source count");
     String error;
+    if(argc>3&&String(argv[3])=="kitmute")return kit_mute_audio(catalog,loader);
     if(argc>3&&String(argv[3])=="kitmix")return kit_mix_check(catalog,loader);
     if(argc>3&&String(argv[3])=="acidaliases")return acid_aliases(catalog,loader);
     if(argc>3&&String(argv[3])=="qualityreview")return quality_review(catalog,loader,argv[1]);

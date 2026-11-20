@@ -6,6 +6,7 @@
 #include "rhythmer/shell/track_workflow_check.h"
 #include "rhythmer/shell/project_save_check.h"
 #include "rhythmer/shell/sends_access_check.h"
+#include "rhythmer/shell/kit_mute_check.h"
 #include "rhythmer/shell/navigation_check.h"
 #include "rhythmer/shell/menu.h"
 #include "rhythmer/shell/stage_map.h"
@@ -3244,6 +3245,13 @@ static int mpc3_export(const char* path, const char* folder, const char* name, i
 }
 
 std::optional<int> run_tool(int argc, char** argv) {
+    if(argc==3&&!std::strcmp(argv[1],"--rhythmer-kit-mute-check")){std::filesystem::create_directories(argv[2]);return kit_mute_check([&](Shell& shell,const std::string& name){
+        auto snapshot=std::make_unique<Snapshot>();shell.snapshot(*snapshot,100000);snapshot->now=100000;snapshot->ui.loading=false;snapshot->ui.notice[0]=0;
+        juce::Image image(juce::Image::ARGB,640,480,true);std::vector<ui::TextIssue> issues;ui::audit_text(&issues);
+        {juce::Graphics g(image);g.addTransform(juce::AffineTransform::scale(2.f));draw(g,*snapshot);}ui::audit_text(nullptr);
+        if(!issues.empty()){for(const auto& issue:issues)std::cerr<<"KIT MUTE TEXT "<<name<<" "<<issue.text<<" needed="<<issue.needed<<" box="<<issue.box<<'\n';throw std::runtime_error("KIT MUTE page text overflow");}
+        save_png(image,std::string(argv[2])+"/"+name+".png");
+    });}
     if(argc==3&&!std::strcmp(argv[1],"--rhythmer-sends-check")){std::filesystem::create_directories(argv[2]);return sends_access_check([&](Shell& shell,const std::string& name){
         auto snapshot=std::make_unique<Snapshot>();shell.snapshot(*snapshot,100000);snapshot->now=100000;snapshot->ui.loading=false;snapshot->ui.notice[0]=0;
         juce::Image image(juce::Image::ARGB,640,480,true);std::vector<ui::TextIssue> issues;ui::audit_text(&issues);

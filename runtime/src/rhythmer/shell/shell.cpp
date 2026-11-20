@@ -693,7 +693,7 @@ void Shell::hit(unsigned pad, uint8_t velocity, bool down) {
     case PadContext::PatternCopy: pattern_copy_pad(context_, pad); return; // Shift + Erase with Seq held: from, then to
     case PadContext::SeqLayer: seq_pad(context_, pad, true); return; // Seq held: the selected track's patterns (shell/seq_layer.cpp)
     case PadContext::RecordKeys: context_.record_key(pad, velocity, true); return; // a take of Rhythmer's own sound: the instrument
-    case PadContext::Mute: mute_pad(context_, pad, kit_pads()); return; // mute; with Shift, solo
+    case PadContext::Mute: mute_pad(context_, pad, kit_pads(), key_pads()); return; // mute; with Shift, solo
     case PadContext::SamplePick: sample_pad(context_, pad); return; // Sample held: the pad becomes the last pad, unheard
     case PadContext::LoopNow: ui_.shift_used = true; loop_grid_pad(context_, pad, true); return; // the loop grid: at once
     case PadContext::Shift: // the printed Shift + pad jobs, on every page but the browser (its next empty pad)

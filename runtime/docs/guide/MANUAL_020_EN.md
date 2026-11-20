@@ -190,6 +190,7 @@ Load **Rhythmer Kit** from the top of the plug-in list. It has **36 complete fac
 | --- | --- | --- |
 | Change the whole kit | PRESETS → choose another kit | Multiple pad sounds change |
 | Change one pad's source | Sound screen EDIT → encoder push → PAD SOURCE; hit the pad, then K2 ENGINE / K3 SOUND | The selected P number and engine/sound name match the pad |
+| Mute / unmute one pad | SAMPLE → MUTE → hit the pad; hit it again to unmute | Only that pad stops starting new notes |
 | Change one pad's volume | Return to the sound screen's EDIT; hit the pad; use the first row's K1 Pxx Volume | Only that pad's level changes |
 | Shape the whole kit | PRESETS KIT CUTOFF / KIT RESONANCE | All pads pass through the same whole-kit filter |
 | Save the whole kit | Tools → B3 SAVE → K1 slot → K2 SAVE KIT → STATUS READY | User Kit appears in KIT PRESETS |
@@ -197,6 +198,17 @@ Load **Rhythmer Kit** from the top of the plug-in list. It has **36 complete fac
 The tool's **B3** cycles **PAD SOURCE → SAVE → EDIT**. Its **B2 KIT PRESETS** opens the preset list. **SHIFT + encoder push** returns to the original sound-editor position.
 
 **KIT …** means a whole-kit control. **P01 … / P11 …** means that selected pad's control. Hit a different pad to edit it. A pad's engine can also have its own filter. This is separate from the whole-kit filter. Do not expect the KIT CUTOFF value to change when selecting another pad.
+
+### Mute and solo kit pads
+
+1. Select the Rhythmer Kit track and press **SAMPLE**. Use its **Drums** pad layout and leave **16 Levels** off.
+2. Tap **MUTE** to latch mute mode, then hit a pad to mute/unmute it. Alternatively, hold MUTE while hitting pads and release MUTE afterwards.
+3. While mute mode is active, **SHIFT + pad** solos that populated pad across banks A–D. Repeat on the soloed pad to restore the populated pads.
+4. Tap **MUTE** again to leave latched mute mode. Pad mute settings remain active while patterns and live notes play.
+
+Muted pad LEDs are red; a soloed pad is white. The screen says **Mute: pads** and shows the affected pad number after a change. **SHIFT + MUTE** clears all pad mutes and track mute/solo states across the project. On **TRACKS**, MUTE + pad still operates on whole tracks. Hold PAD BANK to select a different track as usual.
+
+Pad mute blocks new notes from the pads, sequencer and incoming MIDI; existing release and effect tails decay naturally. It does not change pad volume, the sound design or the recorded pattern. Mutes belong to the project, survive project save/load and remain when changing the kit preset. User Kit presets do not store track mute settings. A frozen kit plays a stereo print: accept the existing UNFREEZE prompt, then repeat the mute action to edit its individual pads.
 
 ## 8. Load samples or an MPC kit
 

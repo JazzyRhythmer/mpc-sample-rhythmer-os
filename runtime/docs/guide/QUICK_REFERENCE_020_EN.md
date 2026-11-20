@@ -11,6 +11,7 @@
 | Open TRACKS | PAD FX + KNOB FX together | Track grid / mix; B1 TRACK SETUP when repeat/arp is off |
 | Select track 1–16 | Hold PAD BANK, tap its pad, release | Header's track number changes |
 | Mix sends A–D | TRACKS → B2 SENDS | BASIC: B1 CANCEL / B3 ENABLE FULL. In SENDS, K1 send, K2 bus, K3 return |
+| Rhythmer Kit pad mute | SAMPLE → MUTE → pad | Drums layout, 16 Levels off; tap MUTE again to leave mute mode. SHIFT + pad solos; SHIFT + MUTE clears all project mutes/solos |
 | Play notes / drums | SAMPLE | Pads play the selected instrument |
 | Choose a pattern on one track | SEQ → B1 until PATTERNS | Pads choose that track's patterns |
 | Launch across tracks | SEQ → B1 until SEQUENCES | Pads launch a sequence number across tracks |

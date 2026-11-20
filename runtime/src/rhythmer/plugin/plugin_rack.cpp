@@ -258,6 +258,7 @@ public:
         if (pending_count < pending.size()) pending[pending_count++] = {status, data1, data2};
         idle.midi(status, data1, data2);
     }
+    void set_pad_mutes(uint64_t mask) override {sound_rack_set_pad_mutes(instance.get(),mask);}
     void silence() override {
         cut_output = true;
         for (uint8_t ch = 0; ch < 16; ++ch) {

@@ -35,6 +35,8 @@ Rhythmer Kit's EDIT list starts with the selected pad's native **Volume**, follo
 
 P01–P16 labels identify the pad you are editing; ALL PADS identifies the kit-wide filter. The 36 complete sixteen-pad factory kits retain their mixed-engine flexibility, pad-source replacement and User Kit saving.
 
+Mute individual Rhythmer Kit pads with MUTE + pad, solo a pad with SHIFT + pad in mute mode, and clear project mutes with SHIFT + MUTE. Pad LEDs show the state, which is kept in the project without changing the kit's sound settings. TRACKS retains whole-track mute. Existing release and effect tails decay naturally.
+
 ### Shape it. Save it. Come back to it.
 
 Parameter names and ordering are refined across oscillator, filter, envelope, LFO, modulation and effects controls. Source, Destination and Amount stay together, and named choices make settings such as Key Tracking and Polarity easier to read.

@@ -26,5 +26,6 @@ uint32_t sound_rack_revision(juce::AudioPluginInstance*);
 int sound_rack_focus(juce::AudioPluginInstance*);
 std::array<int,3> sound_rack_quick_parameters(juce::AudioPluginInstance*);
 void sound_rack_set_parameter_checked(juce::AudioPluginInstance*,int,float,uint32_t);
+void sound_rack_set_pad_mutes(juce::AudioPluginInstance*,uint64_t) noexcept;
 bool is_sound_rack(juce::AudioPluginInstance*);
 }
